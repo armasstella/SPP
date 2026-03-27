@@ -92,5 +92,4 @@ public class OrganizacionVinculadaDTO {
         public void setPersonaResponsable(String personaResponsable) {
             this.personaResponsable = personaResponsable;
         }
-    }
 }
