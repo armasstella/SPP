@@ -1,7 +1,7 @@
 package spp.businesslogic.domain;
 
 public class Usuario {
-    
+
     private String estado;
     private String ultimaConexion;
     private String primerNombre;

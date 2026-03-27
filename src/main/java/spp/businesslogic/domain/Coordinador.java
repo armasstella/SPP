@@ -1,6 +1,6 @@
 package spp.businesslogic.domain;
 
-public class Coordinador extends Usuario{
+public class Coordinador extends Usuario {
 
     private String numeroPersonal;
 
