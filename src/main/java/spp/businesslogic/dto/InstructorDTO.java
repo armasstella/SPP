@@ -1,18 +1,18 @@
 package spp.businesslogic.dto;
 
-public class ProfesorDTO extends UsuarioDTO {
+public class InstructorDTO extends UserDTO {
 
     private String numeroPersonal;
     private String turno;
 
-    public ProfesorDTO () {
+    public InstructorDTO() {
         super();
     }
 
-    public ProfesorDTO (String estado, String ultimaConexion, String primerNombre,
-                     String segundoNombre, String primerApellido, String segundoApellido,
-                     String correoElectronico, String telefono, String contrasenia,
-                     String numeroPersonal, String turno) {
+    public InstructorDTO(String estado, String ultimaConexion, String primerNombre,
+                         String segundoNombre, String primerApellido, String segundoApellido,
+                         String correoElectronico, String telefono, String contrasenia,
+                         String numeroPersonal, String turno) {
         super(estado, ultimaConexion, primerNombre, segundoNombre, primerApellido, segundoApellido,
                 correoElectronico, telefono, contrasenia);
         this.numeroPersonal = numeroPersonal;
