@@ -1,14 +1,15 @@
 package spp.businesslogic.interfaces;
 
 import spp.businesslogic.dto.CoordinatorDTO;
+import spp.businesslogic.exceptions.CoordinatorException;
+import spp.businesslogic.exceptions.DataAccessException;
+import spp.businesslogic.exceptions.LogicLayerException;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public interface ICoordinatorDAO {
-    void addCordinator(CoordinatorDTO coordinatorDTO);
-    int insertUser(Connection connection, CoordinatorDTO dto) throws SQLException;
-    void insertCoordinator(Connection connection, CoordinatorDTO dto, int userId) throws SQLException;
-    int getGeneratedKey(PreparedStatement preparedStatement) throws SQLException;
+    void addCoordinator(CoordinatorDTO coordinatorDTO) throws CoordinatorException;
+    void insertCoordinator(CoordinatorDTO dto, int userId) throws LogicLayerException;
+
 }

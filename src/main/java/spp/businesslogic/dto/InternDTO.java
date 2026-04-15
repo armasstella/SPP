@@ -35,7 +35,7 @@ public class InternDTO extends UserDTO {
     }
 
     public void setGender(String gender) {
-        this.studentNumber = gender;
+        this.gender = gender;
     }
 
     public String getGender() {
@@ -49,7 +49,6 @@ public class InternDTO extends UserDTO {
     public boolean getSpeaksIndigenousLanguage() {
         return speaksIndigenousLanguage;
     }
-
 
     public void setFechaNacimiento (LocalDateTime fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;

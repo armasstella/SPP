@@ -1,12 +1,18 @@
 package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.UserDTO;
+import spp.businesslogic.exceptions.DataAccessException;
+import spp.businesslogic.exceptions.LogicLayerException;
 import spp.businesslogic.interfaces.IUserDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Statement;
+import java.sql.ResultSet;
+
 
 public class UserDAO implements IUserDAO {
 
@@ -15,41 +21,63 @@ public class UserDAO implements IUserDAO {
     }
 
     @Override
-    public void addUser(UserDTO userDTO) {
-
-        String sqlUsuario = "INSERT INTO usuario" +
+    public int insertUser(UserDTO userDTO) throws LogicLayerException {
+        final String INSERT_USER = "INSERT INTO usuario " +
                 "(estado, ultima_conexion, nombre, apellidos, " +
                 "correo_electronico, telefono, contraseña) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection connection = MySQLConnection.getConnection()) {
+        MySQLConnection database = new MySQLConnection();
+        Connection connection = null;
 
-            connection.setAutoCommit(false);
+        try {
+            connection = database.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    INSERT_USER, Statement.RETURN_GENERATED_KEYS);
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sqlUsuario, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, userDTO.getStatus());
+            preparedStatement.setString(2, userDTO.getLastConnection());
+            preparedStatement.setString(3, userDTO.getFirstName() + " " + userDTO.getSecondName());
+            preparedStatement.setString(4, userDTO.getFirstLastName() + " " +
+                    userDTO.getSecondLastName());
+            preparedStatement.setString(5, userDTO.getEmail());
+            preparedStatement.setString(6, userDTO.getPhoneNumber());
+            preparedStatement.setString(7, userDTO.getPassword());
 
-                preparedStatement.setString(1, userDTO.getStatus());
-                preparedStatement.setString(2, userDTO.getLastConnection());
-                preparedStatement.setString(3, userDTO.getFirstName() + " " + userDTO.getSecondName());
-                preparedStatement.setString(4, userDTO.getFirstLastName() + " " + userDTO.getSecondLastName());
-                preparedStatement.setString(5, userDTO.getEmail());
-                preparedStatement.setString(6, userDTO.getPhoneNumber());
-                preparedStatement.setString(7, userDTO.getPassword());
-
-                int affectedRows = preparedStatement.executeUpdate();
-
-                if (affectedRows == 0) {
-                    throw new SQLException("Fallo al insertar el usuario. No se afectaron filas.");
-                }
-
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new LogicLayerException("Fallo al insertar el usuario. No se afectaron filas.");
             }
 
-            connection.commit();
+            return getGeneratedKey(preparedStatement);
 
+        } catch (SQLIntegrityConstraintViolationException e) {
+            AppLogger.logError(e);
+            throw new LogicLayerException("Error de integridad al insertar usuario", e);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            AppLogger.logError(e);
+            throw new LogicLayerException("Error al insertar usuario", e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    AppLogger.logError(e);
+                }
+            }
         }
-
     }
 
+    @Override
+    public int getGeneratedKey(PreparedStatement preparedStatement) throws DataAccessException {
+        try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+            if (!resultSet.next()) {
+                throw new DataAccessException("No se generó ninguna llave.");
+            }
+            return resultSet.getInt(1);
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DataAccessException("Error al obtener llave generada", e);
+        }
+    }
 }
