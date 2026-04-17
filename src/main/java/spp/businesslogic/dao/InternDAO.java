@@ -1,8 +1,7 @@
 package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.InternDTO;
-import spp.businesslogic.exceptions.DataAccessException;
-import spp.businesslogic.exceptions.InternException;
+import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.exceptions.LogicLayerException;
 import spp.businesslogic.interfaces.IInternDAO;
 import spp.dataaccess.connection.MySQLConnection;
@@ -24,52 +23,48 @@ public class InternDAO implements IInternDAO {
     }
 
     @Override
-    public void addIntern(InternDTO internDTO) throws InternException {
-        try {
-            int generatedId = userDAO.insertUser(internDTO);
-            insertIntern(internDTO, generatedId);
-        } catch (LogicLayerException e) {
-            AppLogger.logError(e);
-            throw InternException.insertError(e);
-        }
-    }
-
-    @Override
-    public void insertIntern(InternDTO internDTO, int userId) throws LogicLayerException {
+    public void addIntern(InternDTO internDTO) throws DAOException {
         final String INSERT_INTERN = "INSERT INTO practicante " +
                 "(id_usuario, matricula, sexo, habla_lengua_indigena, fecha_nacimiento) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
-        MySQLConnection database = new MySQLConnection();
-        Connection connection = null;
-
         try {
-            connection = database.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INTERN);
-            preparedStatement.setInt(1, userId);
-            preparedStatement.setString(2, internDTO.getStudentNumber());
-            preparedStatement.setString(3, internDTO.getGender());
-            preparedStatement.setBoolean(4, internDTO.getSpeaksIndigenousLanguage());
-            preparedStatement.setTimestamp(5, Timestamp.valueOf(internDTO.getFechaNacimiento()));
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            connection.setAutoCommit(false);
 
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new DataAccessException("Fallo al insertar al practicante. No se afectaron filas.");
+            try {
+                int generatedId = userDAO.insertUser(internDTO);
+
+                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INTERN);
+                preparedStatement.setInt(1, generatedId);
+                preparedStatement.setString(2, internDTO.getStudentNumber());
+                preparedStatement.setString(3, internDTO.getGender());
+                preparedStatement.setBoolean(4, internDTO.getSpeaksIndigenousLanguage());
+                preparedStatement.setTimestamp(5, Timestamp.valueOf(internDTO.getFechaNacimiento()));
+
+                int affectedRows = preparedStatement.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new LogicLayerException("Fallo al insertar al practicante. No se afectaron filas.");
+                }
+
+                connection.commit();
+
+            } catch (LogicLayerException | SQLIntegrityConstraintViolationException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw DAOException.insertError(e);
+            } catch (SQLException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw DAOException.insertError(e);
+            } finally {
+                connection.setAutoCommit(true);
+                connection.close();
             }
-        } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(e);
-            throw new LogicLayerException("Error de integridad al insertar practicante", e);
+
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new LogicLayerException("Error al insertar practicante", e);
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    AppLogger.logError(e);
-                }
-            }
+            throw DAOException.insertError(e);
         }
     }
 
