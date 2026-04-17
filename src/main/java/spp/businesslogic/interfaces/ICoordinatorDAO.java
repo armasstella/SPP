@@ -11,5 +11,6 @@ import java.sql.SQLException;
 
 public interface ICoordinatorDAO {
     void addCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException;
+    boolean inactivateCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException;
 
 }

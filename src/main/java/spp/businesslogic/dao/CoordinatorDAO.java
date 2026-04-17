@@ -52,7 +52,6 @@ public class CoordinatorDAO implements ICoordinatorDAO {
                 throw DAOException.insertError(e);
             } finally {
                 connection.setAutoCommit(true);
-                connection.close();
             }
 
         } catch (SQLException e) {
@@ -60,6 +59,44 @@ public class CoordinatorDAO implements ICoordinatorDAO {
             throw DAOException.insertError(e);
         }
     }
+
+    @Override
+    public boolean inactivateCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException {
+
+        final String INACTIVATE_COORDINATOR = "UPDATE coordinador " +
+                "SET estado = 'inactivo' WHERE num_personal = ?";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            connection.setAutoCommit(false);
+
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement(INACTIVATE_COORDINATOR);
+                preparedStatement.setString(1, coordinatorDTO.getNumeroPersonal());
+
+                int affectedRows = preparedStatement.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new LogicLayerException("Error. No se afectaron filas al insertar coordinador.");
+                }
+
+                connection.commit();
+
+            } catch (SQLException | LogicLayerException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw DAOException.insertError(e);
+            } finally {
+                connection.setAutoCommit(true);
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw DAOException.insertError(e);
+        }
+
+        return true;
+    }
+
 
     public static void main(String[] args) {
         try {
