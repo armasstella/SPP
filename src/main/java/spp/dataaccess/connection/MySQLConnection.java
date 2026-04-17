@@ -12,15 +12,28 @@ public class MySQLConnection {
     private static final String USER = DatabaseConfiguration.getUser();
     private static final String PASSWORD = DatabaseConfiguration.getPassword();
 
-    public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection (URL, USER, PASSWORD);
+    private static MySQLConnection instance;
+    private Connection connection;
+
+    private MySQLConnection() throws SQLException {
+        this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+
+    public static MySQLConnection getInstance() throws SQLException {
+        if (instance == null || instance.connection.isClosed()) {
+            instance = new MySQLConnection();
+        }
+        return instance;
+    }
+
+    public Connection getConnection() {
+        return this.connection;
     }
 
     public static void main(String[] args) {
-        MySQLConnection database = new MySQLConnection();
         Connection connection = null;
         try {
-            connection = database.getConnection();
+            connection = MySQLConnection.getInstance().getConnection();
             if (connection != null) {
                 System.out.println("Conexión exitosa a la base de datos");
             } else {
@@ -30,14 +43,6 @@ public class MySQLConnection {
         } catch (SQLException e) {
             AppLogger.logError(e);
             System.out.println("Error al conectar: " + e.getMessage());
-        } finally {
-            if(connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    AppLogger.logError(e);
-                }
-            }
         }
     }
 
