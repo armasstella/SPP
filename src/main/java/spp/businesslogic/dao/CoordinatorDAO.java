@@ -1,7 +1,7 @@
 package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.CoordinatorDTO;
-import spp.businesslogic.exceptions.CoordinatorException;
+import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.exceptions.LogicLayerException;
 import spp.businesslogic.interfaces.ICoordinatorDAO;
 import spp.dataaccess.connection.MySQLConnection;
@@ -20,39 +20,44 @@ public class CoordinatorDAO implements ICoordinatorDAO {
     }
 
     @Override
-    public void addCoordinator(CoordinatorDTO coordinatorDTO) throws CoordinatorException {
-        try {
-            int generatedId = userDAO.insertUser(coordinatorDTO);
-            insertCoordinator(coordinatorDTO, generatedId);
-        } catch (LogicLayerException e) {
-            AppLogger.logError(e);
-            throw CoordinatorException.insertError(e);
-        }
-
-    }
-
-    @Override
-    public void insertCoordinator(CoordinatorDTO dto, int userId) throws LogicLayerException {
+    public void addCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException {
         final String INSERT_COORDINATOR = "INSERT INTO coordinador " +
                 "(id_usuario, num_personal) VALUES (?, ?)";
 
-        MySQLConnection database = new MySQLConnection();
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            connection.setAutoCommit(false);
 
-        try (Connection connection = database.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_COORDINATOR);
-            preparedStatement.setInt(1, userId);
-            preparedStatement.setString(2, dto.getNumeroPersonal());
+            try {
+                int generatedId = userDAO.insertUser(coordinatorDTO);
 
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new LogicLayerException("Fallo al insertar al coordinador. No se afectaron filas.");
+                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_COORDINATOR);
+                preparedStatement.setInt(1, generatedId);
+                preparedStatement.setString(2, coordinatorDTO.getNumeroPersonal());
+
+                int affectedRows = preparedStatement.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new LogicLayerException("Error. No se afectaron filas al insertar coordinador.");
+                }
+
+                connection.commit();
+
+            } catch (LogicLayerException | SQLIntegrityConstraintViolationException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw DAOException.insertError(e);
+            } catch (SQLException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw DAOException.insertError(e);
+            } finally {
+                connection.setAutoCommit(true);
+                connection.close();
             }
-        } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(e);
-            throw new LogicLayerException("Error de integridad al insertar coordinador", e);
+
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new LogicLayerException("Error al insertar coordinador", e);
+            throw DAOException.insertError(e);
         }
     }
 

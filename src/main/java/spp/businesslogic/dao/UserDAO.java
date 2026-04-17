@@ -1,6 +1,7 @@
 package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.UserDTO;
+import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.exceptions.DataAccessException;
 import spp.businesslogic.exceptions.LogicLayerException;
 import spp.businesslogic.interfaces.IUserDAO;
@@ -14,7 +15,7 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 
 
-public class UserDAO implements IUserDAO {
+class UserDAO implements IUserDAO {
 
     public UserDAO() {
 
@@ -27,11 +28,9 @@ public class UserDAO implements IUserDAO {
                 "correo_electronico, telefono, contraseña) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        MySQLConnection database = new MySQLConnection();
-        Connection connection = null;
-
         try {
-            connection = database.getConnection();
+            Connection connection = MySQLConnection.getInstance().getConnection();
+
             PreparedStatement preparedStatement = connection.prepareStatement(
                     INSERT_USER, Statement.RETURN_GENERATED_KEYS);
 
@@ -57,27 +56,19 @@ public class UserDAO implements IUserDAO {
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new LogicLayerException("Error al insertar usuario", e);
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    AppLogger.logError(e);
-                }
-            }
         }
     }
 
     @Override
-    public int getGeneratedKey(PreparedStatement preparedStatement) throws DataAccessException {
+    public int getGeneratedKey(PreparedStatement preparedStatement) throws LogicLayerException {
         try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
             if (!resultSet.next()) {
-                throw new DataAccessException("No se generó ninguna llave.");
+                throw new LogicLayerException("No se generó ninguna llave.");
             }
             return resultSet.getInt(1);
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DataAccessException("Error al obtener llave generada", e);
+            throw new LogicLayerException("Error al obtener llave generada", e);
         }
     }
 }
