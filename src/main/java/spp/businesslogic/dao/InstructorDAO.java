@@ -1,8 +1,7 @@
 package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.InstructorDTO;
-import spp.businesslogic.exceptions.DataAccessException;
-import spp.businesslogic.exceptions.InstructorException;
+import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.exceptions.LogicLayerException;
 import spp.businesslogic.interfaces.IInstructorDAO;
 import spp.dataaccess.connection.MySQLConnection;
@@ -21,49 +20,45 @@ public class InstructorDAO implements IInstructorDAO {
     }
 
     @Override
-    public void addInstructor(InstructorDTO instructorDTO) throws InstructorException {
-        try {
-            int generatedId = userDAO.insertUser(instructorDTO);
-            insertInstructor(instructorDTO, generatedId);
-        } catch (LogicLayerException e) {
-            AppLogger.logError(e);
-            throw InstructorException.insertError(e);
-        }
-    }
-
-    @Override
-    public void insertInstructor(InstructorDTO instructorDTO, int userId) throws DataAccessException {
+    public void addInstructor(InstructorDTO instructorDTO) throws DAOException {
         final String INSERT_INSTRUCTOR = "INSERT INTO profesor " +
                 "(id_usuario, num_personal, turno) VALUES (?, ?, ?)";
 
-        MySQLConnection database = new MySQLConnection();
-        Connection connection = null;
-
         try {
-            connection = database.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INSTRUCTOR);
-            preparedStatement.setInt(1, userId);
-            preparedStatement.setString(2, instructorDTO.getNumeroPersonal());
-            preparedStatement.setString(3, instructorDTO.getTurno());
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            connection.setAutoCommit(false);
 
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new DataAccessException("Fallo al insertar al instructor. No se afectaron filas.");
+            try {
+                int generatedId = userDAO.insertUser(instructorDTO);
+
+                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INSTRUCTOR);
+                preparedStatement.setInt(1, generatedId);
+                preparedStatement.setString(2, instructorDTO.getNumeroPersonal());
+                preparedStatement.setString(3, instructorDTO.getTurno());
+
+                int affectedRows = preparedStatement.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new LogicLayerException("Fallo al insertar al instructor. No se afectaron filas.");
+                }
+
+                connection.commit();
+
+            } catch (LogicLayerException | SQLIntegrityConstraintViolationException e) {
+                connection.rollback();;
+                AppLogger.logError(e);
+                throw DAOException.insertError(e);
+            } catch (SQLException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw DAOException.insertError(e);
+            } finally {
+                connection.setAutoCommit(true);
+                connection.close();
             }
-        } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(e);
-            throw new DataAccessException("Error de integridad al insertar instructor", e);
+
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DataAccessException("Error al insertar instructor", e);
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    AppLogger.logError(e);
-                }
-            }
+            throw DAOException.insertError(e);
         }
     }
 
