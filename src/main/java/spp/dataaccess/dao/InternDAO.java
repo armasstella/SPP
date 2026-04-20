@@ -2,7 +2,6 @@ package spp.dataaccess.dao;
 
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.exceptions.LogicLayerException;
 import spp.businesslogic.interfaces.IInternDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
@@ -42,19 +41,23 @@ public class InternDAO implements IInternDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new LogicLayerException("Fallo al insertar al practicante. No se afectaron filas.");
+                    throw new DAOException("Fallo al insertar al practicante. No se afectaron filas.");
                 }
 
                 connection.commit();
 
-            } catch (LogicLayerException | SQLIntegrityConstraintViolationException e) {
+            } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error al insertar el usuario", e);
+            } catch (SQLIntegrityConstraintViolationException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw new SQLIntegrityConstraintViolationException("Error al insertar el usuario: Datos duplicados", e);
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error al insertar el practicante", e);
             } finally {
                 connection.setAutoCommit(true);
                 connection.close();
@@ -62,7 +65,7 @@ public class InternDAO implements IInternDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw DAOException.insertError(e);
+            throw new DAOException("Error al acceder a la base de datos", e);
         }
 
         return true;

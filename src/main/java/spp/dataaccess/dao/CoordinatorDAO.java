@@ -2,7 +2,6 @@ package spp.dataaccess.dao;
 
 import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.exceptions.LogicLayerException;
 import spp.businesslogic.interfaces.ICoordinatorDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
@@ -37,26 +36,30 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new LogicLayerException("Error. No se afectaron filas al insertar coordinador.");
+                    throw new DAOException("Error. No se afectaron filas al insertar coordinador.");
                 }
 
                 connection.commit();
 
-            } catch (LogicLayerException | SQLIntegrityConstraintViolationException e) {
+            } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error al insertar el usuario", e);
+            } catch (SQLIntegrityConstraintViolationException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw new DAOException("Error. Datos duplicados al insertar.", e);
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error al insertar el coordinador", e);
             } finally {
                 connection.setAutoCommit(true);
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw DAOException.insertError(e);
+            throw new DAOException("Error al acceder a la base de datos", e);
         }
 
         return true;
@@ -78,22 +81,22 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new LogicLayerException("Error. No se afectaron filas al insertar coordinador.");
+                    throw new DAOException("Error. No se afectaron filas al inactivar el coordinador.");
                 }
 
                 connection.commit();
 
-            } catch (SQLException | LogicLayerException e) {
+            } catch (SQLException | DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error al inactivar el coordinador", e);
             } finally {
                 connection.setAutoCommit(true);
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw DAOException.insertError(e);
+            throw new DAOException("Error al acceder a la base de datos", e);
         }
 
         return true;

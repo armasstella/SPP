@@ -2,7 +2,6 @@ package spp.dataaccess.dao;
 
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.exceptions.LogicLayerException;
 import spp.businesslogic.interfaces.ILinkedOrganizationDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
@@ -42,19 +41,23 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new LogicLayerException("Fallo al insertar la organización vinculada. No se afectaron filas.");
+                    throw new DAOException("Fallo al insertar la organización vinculada. No se afectaron filas.");
                 }
 
                 connection.commit();
 
-            } catch (LogicLayerException | SQLIntegrityConstraintViolationException e) {
+            } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error al insertar la organización vinculada", e);
+            } catch (SQLIntegrityConstraintViolationException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw new DAOException("Error. Datos duplicados al insertar la Organización Vinculada", e);
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error general al insertar la organización vinculada", e);
             } finally {
                 connection.setAutoCommit(true);
                 connection.close();
@@ -62,7 +65,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw DAOException.insertError(e);
+            throw new DAOException("Error al acceder a la base de datos", e);
         }
     }
 }

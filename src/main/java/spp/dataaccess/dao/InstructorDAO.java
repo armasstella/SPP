@@ -2,7 +2,6 @@ package spp.dataaccess.dao;
 
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.exceptions.LogicLayerException;
 import spp.businesslogic.interfaces.IInstructorDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
@@ -38,19 +37,23 @@ public class InstructorDAO implements IInstructorDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new LogicLayerException("Fallo al insertar al instructor. No se afectaron filas.");
+                    throw new DAOException("Fallo al insertar al profesor. No se afectaron filas.");
                 }
 
                 connection.commit();
 
-            } catch (LogicLayerException | SQLIntegrityConstraintViolationException e) {
-                connection.rollback();;
+            } catch (DAOException e) {
+                connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error al insertar el usuario", e);
+            } catch (SQLIntegrityConstraintViolationException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw new SQLIntegrityConstraintViolationException("Error al insertar el profesor: Datos duplicados", e);
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error al insertar el profesor", e);
             } finally {
                 connection.setAutoCommit(true);
                 connection.close();
@@ -58,7 +61,7 @@ public class InstructorDAO implements IInstructorDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw DAOException.insertError(e);
+            throw new DAOException("Error al acceder a la base de datos", e);
         }
 
         return true;
