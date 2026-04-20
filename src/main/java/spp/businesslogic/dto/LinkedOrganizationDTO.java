@@ -15,20 +15,6 @@ public class LinkedOrganizationDTO {
 
         }
 
-        public LinkedOrganizationDTO(String name, String rfc,
-                                     String address, String fiscalAddress, String business,
-                                     String phoneNumber, String email,
-                                     String personResponsible) {
-            this.name = name;
-            this.rfc = rfc;
-            this.address = address;
-            this.fiscalAddress = fiscalAddress;
-            this.business = business;
-            this.phoneNumber = phoneNumber;
-            this.email = email;
-            this.personResponsible = personResponsible;
-        }
-
         public String getName() {
             return name;
         }
