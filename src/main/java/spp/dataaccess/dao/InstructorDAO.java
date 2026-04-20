@@ -28,7 +28,7 @@ public class InstructorDAO implements IInstructorDAO {
             connection.setAutoCommit(false);
 
             try {
-                int generatedId = userDAO.insertUser(instructorDTO);
+                int generatedId = userDAO.addUser(instructorDTO);
 
                 PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INSTRUCTOR);
                 preparedStatement.setInt(1, generatedId);
