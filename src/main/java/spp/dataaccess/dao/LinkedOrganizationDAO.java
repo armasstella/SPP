@@ -1,4 +1,4 @@
-package spp.businesslogic.dao;
+package spp.dataaccess.dao;
 
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
@@ -20,7 +20,8 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     @Override
     public void addLinkedOrganization(LinkedOrganizationDTO linkedOrganizationDTO) throws DAOException {
         final String INSERT_LINKED_ORGANIZATION = "INSERT INTO organizacionvinculada " +
-                "(nombre, rfc, direccion, direccion_fiscal, giro, telefono, correo, persona_responsable, Proyecto_id_proyecto) " +
+                "(nombre, rfc, direccion, direccion_fiscal, giro, telefono, correo, persona_responsable, " +
+                "Proyecto_id_proyecto) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {

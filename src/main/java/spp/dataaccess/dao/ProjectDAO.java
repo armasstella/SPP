@@ -1,44 +1,45 @@
-package spp.businesslogic.dao;
+package spp.dataaccess.dao;
 
-import spp.businesslogic.dto.ActivityDTO;
+import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.exceptions.LogicLayerException;
-import spp.businesslogic.interfaces.IActivityDAO;
+import spp.businesslogic.interfaces.IProjectDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.Timestamp;
 
-public class ActivityDAO implements IActivityDAO {
+public class ProjectDAO implements IProjectDAO {
 
-    public ActivityDAO() {
+    public ProjectDAO() {
 
     }
 
     @Override
-    public void addActivity(ActivityDTO activityDTO) throws DAOException {
-        final String INSERT_ACTIVITY = "INSERT INTO Actividad " +
-                "(titulo, descripcion, fecha_limite, id_profesor_usuario, id_profesor_num_personal) VALUES " +
-                "(?, ?, ?, ?, ?)";
+    public void addProject(ProjectDTO projectDTO) throws DAOException {
+        final String INSERT_PROJECT = "INSERT INTO Proyecto " +
+                "(descripcion, disponibilidad, id_practicante_usuario, id_practicante_matricula, " +
+                "id_coordinador_usuario, id_coordinador_num_personal) VALUES " +
+                "(?, ?, ?, ?, ?, ?)";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             connection.setAutoCommit(false);
 
             try {
-                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ACTIVITY);
-                preparedStatement.setString(1, activityDTO.getTitle());
-                preparedStatement.setString(2, activityDTO.getDescription());
-                preparedStatement.setTimestamp(3, Timestamp.valueOf(activityDTO.getDeadline()));
-                preparedStatement.setInt(4, 1);
+                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PROJECT);
+                preparedStatement.setString(1, projectDTO.getDescription());
+                preparedStatement.setString(2, String.valueOf(projectDTO.getDisponibility()));
+                preparedStatement.setInt(3, 30);
+                preparedStatement.setString(4, "S21099999");
                 preparedStatement.setInt(5, 1);
+                preparedStatement.setString(6, "00100");
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new LogicLayerException("Fallo al insertar la actividad. No se afectaron filas.");
+                    throw new LogicLayerException("Fallo al insertar el proyecto. No se afectaron filas.");
                 }
 
                 connection.commit();
@@ -52,17 +53,12 @@ public class ActivityDAO implements IActivityDAO {
                 AppLogger.logError(e);
                 throw DAOException.insertError(e);
             } finally {
-                connection.setAutoCommit(true);
-                connection.close();
+               connection.setAutoCommit(true);
+               connection.close();
             }
-
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw DAOException.insertError(e);
         }
-    }
-
-    public static void main(String[] args) {
-
     }
 }

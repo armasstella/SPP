@@ -1,4 +1,4 @@
-package spp.businesslogic.dao;
+package spp.dataaccess.dao;
 
 import spp.businesslogic.dto.UserDTO;
 import spp.businesslogic.exceptions.DAOException;

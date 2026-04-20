@@ -1,41 +1,48 @@
-package spp.businesslogic.dao;
+package spp.dataaccess.dao;
 
-import spp.businesslogic.dto.MessageDTO;
+import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.exceptions.LogicLayerException;
-import spp.businesslogic.interfaces.IMessageDAO;
+import spp.businesslogic.interfaces.IInternDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Timestamp;
 
-public class MessageDAO implements IMessageDAO {
+public class InternDAO implements IInternDAO {
 
-    public MessageDAO() {
+    private final UserDAO userDAO = new UserDAO();
+
+    public InternDAO() {
 
     }
 
     @Override
-    public void sendMessage(MessageDTO messageDTO) throws DAOException {
-        final String INSERT_MESSAGE = "INSERT INTO Mensaje " +
-                "(contenido, estado, id_usuario_remitente, id_usuario_destinatario) VALUES " +
-                "(?, ?, ?, ?)";
+    public void addIntern(InternDTO internDTO) throws DAOException {
+        final String INSERT_INTERN = "INSERT INTO practicante " +
+                "(id_usuario, matricula, sexo, habla_lengua_indigena, fecha_nacimiento) " +
+                "VALUES (?, ?, ?, ?, ?)";
+
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             connection.setAutoCommit(false);
 
             try {
-                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_MESSAGE);
-                preparedStatement.setString(1, messageDTO.getContent());
-                preparedStatement.setString(2, String.valueOf(messageDTO.getMessageStatus()));
-                preparedStatement.setInt(3, 1);
-                preparedStatement.setInt(4, 6);
+                int generatedId = userDAO.insertUser(internDTO);
+
+                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INTERN);
+                preparedStatement.setInt(1, generatedId);
+                preparedStatement.setString(2, internDTO.getStudentNumber());
+                preparedStatement.setString(3, internDTO.getGender());
+                preparedStatement.setBoolean(4, internDTO.getSpeaksIndigenousLanguage());
+                preparedStatement.setTimestamp(5, Timestamp.valueOf(internDTO.getBirthDate()));
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new LogicLayerException("Fallo al enviar el mensaje. No se afectaron filas.");
+                    throw new LogicLayerException("Fallo al insertar al practicante. No se afectaron filas.");
                 }
 
                 connection.commit();
@@ -58,4 +65,5 @@ public class MessageDAO implements IMessageDAO {
             throw DAOException.insertError(e);
         }
     }
+
 }

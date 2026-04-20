@@ -1,4 +1,4 @@
-package spp.businesslogic.dao;
+package spp.dataaccess.dao;
 
 import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
@@ -20,7 +20,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
     }
 
     @Override
-    public void addCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException {
+    public boolean addCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException {
         final String INSERT_COORDINATOR = "INSERT INTO coordinador " +
                 "(id_usuario, num_personal) VALUES (?, ?)";
 
@@ -33,7 +33,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
                 PreparedStatement preparedStatement = connection.prepareStatement(INSERT_COORDINATOR);
                 preparedStatement.setInt(1, generatedId);
-                preparedStatement.setString(2, coordinatorDTO.getNumeroPersonal());
+                preparedStatement.setString(2, coordinatorDTO.getPersonalNumber());
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
@@ -58,6 +58,8 @@ public class CoordinatorDAO implements ICoordinatorDAO {
             AppLogger.logError(e);
             throw DAOException.insertError(e);
         }
+
+        return true;
     }
 
     @Override
@@ -72,7 +74,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(INACTIVATE_COORDINATOR);
-                preparedStatement.setString(1, coordinatorDTO.getNumeroPersonal());
+                preparedStatement.setString(1, coordinatorDTO.getPersonalNumber());
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
@@ -95,21 +97,6 @@ public class CoordinatorDAO implements ICoordinatorDAO {
         }
 
         return true;
-    }
-
-
-    public static void main(String[] args) {
-        try {
-            CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
-
-            coordinatorDAO.addCoordinator(new CoordinatorDTO("null", "2026-04-13 17:12:08",
-                    "Luna", "Luisa",
-                    "Linares", "Contreras", "lululico@email.com",
-                    "2289090456", "sdj8sdyd.", "12300"));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 }
