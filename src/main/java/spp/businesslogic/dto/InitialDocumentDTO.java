@@ -1,12 +1,11 @@
 package spp.businesslogic.dto;
 
-public class EvidenceDTO {
+public class InitialDocumentDTO {
 
     private String metadata;
-    private int grade;
     private InternDTO internDTO;
 
-    public EvidenceDTO() {
+    public InitialDocumentDTO() {
 
     }
 
@@ -16,13 +15,5 @@ public class EvidenceDTO {
 
     public void setMetadata(String metadata) {
         this.metadata = metadata;
-    }
-
-    public int getGrade() {
-        return grade;
-    }
-
-    public void setGrade(int grade) {
-        this.grade = grade;
     }
 }
