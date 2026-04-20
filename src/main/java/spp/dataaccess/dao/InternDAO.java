@@ -30,7 +30,7 @@ public class InternDAO implements IInternDAO {
             connection.setAutoCommit(false);
 
             try {
-                int generatedId = userDAO.insertUser(internDTO);
+                int generatedId = userDAO.addUser(internDTO);
 
                 PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INTERN);
                 preparedStatement.setInt(1, generatedId);

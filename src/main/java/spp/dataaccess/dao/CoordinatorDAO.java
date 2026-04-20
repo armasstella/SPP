@@ -28,7 +28,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
             connection.setAutoCommit(false);
 
             try {
-                int generatedId = userDAO.insertUser(coordinatorDTO);
+                int generatedId = userDAO.addUser(coordinatorDTO);
 
                 PreparedStatement preparedStatement = connection.prepareStatement(INSERT_COORDINATOR);
                 preparedStatement.setInt(1, generatedId);
