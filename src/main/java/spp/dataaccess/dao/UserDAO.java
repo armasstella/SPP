@@ -2,8 +2,6 @@ package spp.dataaccess.dao;
 
 import spp.businesslogic.dto.UserDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.exceptions.DataAccessException;
-import spp.businesslogic.exceptions.LogicLayerException;
 import spp.businesslogic.interfaces.IUserDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
@@ -22,7 +20,7 @@ class UserDAO implements IUserDAO {
     }
 
     @Override
-    public int insertUser(UserDTO userDTO) throws LogicLayerException {
+    public int insertUser(UserDTO userDTO) throws DAOException {
         final String INSERT_USER = "INSERT INTO usuario " +
                 "(estado, ultima_conexion, nombre, apellidos, " +
                 "correo_electronico, telefono, contraseña) " +
@@ -45,30 +43,30 @@ class UserDAO implements IUserDAO {
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == 0) {
-                throw new LogicLayerException("Fallo al insertar el usuario. No se afectaron filas.");
+                throw new DAOException("Fallo al insertar el usuario. No se afectaron filas.");
             }
 
             return getGeneratedKey(preparedStatement);
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.logError(e);
-            throw new LogicLayerException("Error de integridad al insertar usuario", e);
+            throw new DAOException("Error de integridad de datos al insertar usuario", e);
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new LogicLayerException("Error al insertar usuario", e);
+            throw new DAOException("Error al insertar usuario", e);
         }
     }
 
     @Override
-    public int getGeneratedKey(PreparedStatement preparedStatement) throws LogicLayerException {
+    public int getGeneratedKey(PreparedStatement preparedStatement) throws DAOException {
         try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
             if (!resultSet.next()) {
-                throw new LogicLayerException("No se generó ninguna llave.");
+                throw new DAOException("No se generó ninguna llave.");
             }
             return resultSet.getInt(1);
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new LogicLayerException("Error al obtener llave generada", e);
+            throw new DAOException("Error al obtener llave generada", e);
         }
     }
 }
