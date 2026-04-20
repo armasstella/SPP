@@ -2,7 +2,6 @@ package spp.dataaccess.dao;
 
 import spp.businesslogic.dto.MessageDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.exceptions.LogicLayerException;
 import spp.businesslogic.interfaces.IMessageDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
@@ -35,19 +34,23 @@ public class MessageDAO implements IMessageDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new LogicLayerException("Fallo al enviar el mensaje. No se afectaron filas.");
+                    throw new DAOException("Fallo al enviar el mensaje. No se afectaron filas.");
                 }
 
                 connection.commit();
 
-            } catch (LogicLayerException | SQLIntegrityConstraintViolationException e) {
+            } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error al enviar mensaje", e);
+            } catch (SQLIntegrityConstraintViolationException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw new DAOException("Integridad de datos violada al enviar mensaje", e);
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error general al enviar mensaje", e);
             } finally {
                 connection.setAutoCommit(true);
                 connection.close();
@@ -55,7 +58,7 @@ public class MessageDAO implements IMessageDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw DAOException.insertError(e);
+            throw new DAOException("Error al acceder a la base de datos", e);
         }
         return true;
     }

@@ -53,7 +53,7 @@ class UserDAO implements IUserDAO {
             throw new DAOException("Error de integridad de datos al insertar usuario", e);
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al insertar usuario", e);
+            throw new DAOException("Error general al insertar usuario", e);
         }
     }
 
