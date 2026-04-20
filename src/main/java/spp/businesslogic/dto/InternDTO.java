@@ -9,6 +9,7 @@ public class InternDTO extends UserDTO {
     private String gender;
     private boolean speaksIndigenousLanguage;
     private LocalDateTime birthDate;
+    private int coveredHours;
 
     public InternDTO() {
         super();
@@ -44,6 +45,14 @@ public class InternDTO extends UserDTO {
 
     public LocalDateTime getBirthDate() {
         return birthDate;
+    }
+
+    public void setCoveredHours(int coveredHours) {
+        this.coveredHours = coveredHours;
+    }
+
+    public int getCoveredHours() {
+        return coveredHours;
     }
 
 }
