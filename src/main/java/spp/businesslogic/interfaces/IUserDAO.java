@@ -6,6 +6,6 @@ import spp.businesslogic.exceptions.DAOException;
 import java.sql.PreparedStatement;
 
 public interface IUserDAO {
-    int insertUser(UserDTO userDTO) throws DAOException;
+    int addUser(UserDTO userDTO) throws DAOException;
     int getGeneratedKey(PreparedStatement preparedStatement) throws DAOException;
 }
