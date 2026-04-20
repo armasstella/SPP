@@ -20,7 +20,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
     @Override
     public boolean addCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException {
-        final String INSERT_COORDINATOR = "INSERT INTO coordinador " +
+        final String INSERT_COORDINATOR = "INSERT INTO Coordinadores " +
                 "(id_usuario, num_personal) VALUES (?, ?)";
 
         try {
@@ -68,8 +68,10 @@ public class CoordinatorDAO implements ICoordinatorDAO {
     @Override
     public boolean inactivateCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException {
 
-        final String INACTIVATE_COORDINATOR = "UPDATE coordinador " +
-                "SET estado = 'inactivo' WHERE num_personal = ?";
+        final String INACTIVATE_COORDINATOR = "UPDATE Usuarios " +
+                "INNER JOIN Coordinadores ON Usuarios.id_usuario = Coordinadores.id_usuario " +
+                "SET Usuarios.estado = 'Inactivo' " +
+                "WHERE Coordinadores.num_personal = ?;";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -90,6 +92,44 @@ public class CoordinatorDAO implements ICoordinatorDAO {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al inactivar el coordinador", e);
+            } finally {
+                connection.setAutoCommit(true);
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error al acceder a la base de datos", e);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean activateCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException {
+        final String ACTIVATE_COORDINATOR = "UPDATE Usuarios " +
+                "INNER JOIN Coordinadores ON Usuarios.id_usuario = Coordinadores.id_usuario " +
+                "SET Usuarios.estado = 'Activo' " +
+                "WHERE Coordinadores.num_personal = ?;";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            connection.setAutoCommit(false);
+
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement(ACTIVATE_COORDINATOR);
+                preparedStatement.setString(1, coordinatorDTO.getPersonalNumber());
+
+                int affectedRows = preparedStatement.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new DAOException("Error. No se afectaron filas al activar el coordinador.");
+                }
+
+                connection.commit();
+
+            } catch (SQLException | DAOException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw new DAOException("Error al activar el coordinador", e);
             } finally {
                 connection.setAutoCommit(true);
             }
