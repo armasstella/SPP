@@ -20,7 +20,7 @@ public class InstructorDAO implements IInstructorDAO {
     }
 
     @Override
-    public void addInstructor(InstructorDTO instructorDTO) throws DAOException {
+    public boolean addInstructor(InstructorDTO instructorDTO) throws DAOException {
         final String INSERT_INSTRUCTOR = "INSERT INTO profesor " +
                 "(id_usuario, num_personal, turno) VALUES (?, ?, ?)";
 
@@ -33,8 +33,8 @@ public class InstructorDAO implements IInstructorDAO {
 
                 PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INSTRUCTOR);
                 preparedStatement.setInt(1, generatedId);
-                preparedStatement.setString(2, instructorDTO.getNumeroPersonal());
-                preparedStatement.setString(3, instructorDTO.getTurno());
+                preparedStatement.setString(2, instructorDTO.getPersonalNumber());
+                preparedStatement.setString(3, instructorDTO.getShift());
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
@@ -60,20 +60,8 @@ public class InstructorDAO implements IInstructorDAO {
             AppLogger.logError(e);
             throw DAOException.insertError(e);
         }
-    }
 
-    public static void main(String[] args) {
-        try {
-            InstructorDAO instructorDAO = new InstructorDAO();
-
-            instructorDAO.addInstructor(new InstructorDTO("null", "2026-03-27 14:33:08",
-                    "Juan", "",
-                    "Alfonso", "Rodriguez", "juan@email.com",
-                    "2299000011", "contr4s3ñA..", "54321", "Matutino"));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        return true;
     }
 
 }

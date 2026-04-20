@@ -21,7 +21,7 @@ public class InternDAO implements IInternDAO {
     }
 
     @Override
-    public void addIntern(InternDTO internDTO) throws DAOException {
+    public boolean addIntern(InternDTO internDTO) throws DAOException {
         final String INSERT_INTERN = "INSERT INTO practicante " +
                 "(id_usuario, matricula, sexo, habla_lengua_indigena, fecha_nacimiento) " +
                 "VALUES (?, ?, ?, ?, ?)";
@@ -64,6 +64,8 @@ public class InternDAO implements IInternDAO {
             AppLogger.logError(e);
             throw DAOException.insertError(e);
         }
+
+        return true;
     }
 
 }
