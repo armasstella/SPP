@@ -18,7 +18,7 @@ public class ActivityDAO implements IActivityDAO {
     }
 
     @Override
-    public void addActivity(ActivityDTO activityDTO) throws DAOException {
+    public boolean addActivity(ActivityDTO activityDTO) throws DAOException {
         final String INSERT_ACTIVITY = "INSERT INTO Actividades " +
                 "(titulo, descripcion, fecha_limite, id_profesor_usuario, id_profesor_num_personal) VALUES " +
                 "(?, ?, ?, ?, ?)";
@@ -28,12 +28,13 @@ public class ActivityDAO implements IActivityDAO {
             connection.setAutoCommit(false);
 
             try {
+
                 PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ACTIVITY);
                 preparedStatement.setString(1, activityDTO.getTitle());
                 preparedStatement.setString(2, activityDTO.getDescription());
-                preparedStatement.setTimestamp(3, Timestamp.valueOf(activityDTO.getDeadline()));
-                preparedStatement.setInt(4, 1);
-                preparedStatement.setInt(5, 1);
+                preparedStatement.setTimestamp(3, Timestamp.valueOf(activityDTO.getSubmissionDate()));
+                preparedStatement.setInt(4, activityDTO.getInstructorDTO().getId());
+                preparedStatement.setString(5, activityDTO.getInstructorDTO().getPersonalNumber());
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
@@ -61,5 +62,7 @@ public class ActivityDAO implements IActivityDAO {
             AppLogger.logError(e);
             throw new DAOException("Error al acceder a la base de datos", e);
         }
+
+        return true;
     }
 }

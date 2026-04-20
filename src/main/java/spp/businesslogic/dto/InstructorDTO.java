@@ -2,11 +2,20 @@ package spp.businesslogic.dto;
 
 public class InstructorDTO extends UserDTO {
 
+    private int id;
     private String personalNumber;
     private String shift;
 
     public InstructorDTO() {
         super();
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getPersonalNumber() {

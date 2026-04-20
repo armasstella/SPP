@@ -69,4 +69,22 @@ class UserDAO implements IUserDAO {
             throw new DAOException("Error al obtener llave generada", e);
         }
     }
+
+    @Override
+    public int obtainId(String email) throws DAOException {
+        final String SELECT_ID = "SELECT id FROM Usuarios WHERE correo_electronico = ?";
+        try (Connection connection = MySQLConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ID)) {
+
+            preparedStatement.setString(1, email);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("id");
+                }
+                throw new DAOException("Usuario no encontrado con email: " + email);
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error al obtener ID de usuario", e);
+        }
+    }
 }
