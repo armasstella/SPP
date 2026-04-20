@@ -9,7 +9,6 @@ public class LinkedOrganizationDTO {
         private String business;
         private String phoneNumber;
         private String email;
-        private String personResponsible;
 
         public LinkedOrganizationDTO() {
 
@@ -69,13 +68,5 @@ public class LinkedOrganizationDTO {
 
         public void setEmail(String email) {
             this.email = email;
-        }
-
-        public String getPersonResponsible() {
-            return personResponsible;
-        }
-
-        public void setPersonResponsible(String personResponsible) {
-            this.personResponsible = personResponsible;
         }
 }

@@ -1,0 +1,54 @@
+package spp.businesslogic.dao;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.DisplayName;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import spp.businesslogic.dto.LinkedOrganizationDTO;
+import spp.businesslogic.exceptions.DAOException;
+import spp.businesslogic.dao.LinkedOrganizationDAOTest;
+import spp.dataaccess.dao.LinkedOrganizationDAO;
+
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class LinkedOrganizationDAOTest {
+
+    private LinkedOrganizationDAO linkedOrganizationDAO;
+    private LinkedOrganizationDTO testLinkedOrganization;
+
+    @BeforeAll
+    public void setUpAll() {
+        linkedOrganizationDAO = new LinkedOrganizationDAO();
+    }
+
+    @BeforeEach
+    public void setUp() {
+        testLinkedOrganization = new LinkedOrganizationDTO();
+        testLinkedOrganization.setName("");
+        testLinkedOrganization.setRfc("");
+        testLinkedOrganization.setAddress("");
+        testLinkedOrganization.setFiscalAddress("");
+        testLinkedOrganization.setBusiness("");
+        testLinkedOrganization.setPhoneNumber("");
+        testLinkedOrganization.setEmail("");
+    }
+
+    @Test
+    @DisplayName("Debe insertar una organización vinculada exitosamente")
+    void testAddLinkedOrganizationSuccess() throws DAOException {
+        boolean result = linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
+        assertTrue(result, "El método debería retornar true al insertar exitosamente");
+    }
+
+    @Test
+    @DisplayName("Debe lanzar DAOException al insertar un número de personal duplicado")
+    void testAddLinkedOrganizationFailedDuplicatedData() throws DAOException {
+        linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
+        assertThrows(DAOException.class, () ->
+            linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization));
+    }
+}

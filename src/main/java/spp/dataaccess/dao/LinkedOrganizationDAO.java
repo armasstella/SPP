@@ -17,11 +17,10 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     }
 
     @Override
-    public void addLinkedOrganization(LinkedOrganizationDTO linkedOrganizationDTO) throws DAOException {
+    public boolean addLinkedOrganization(LinkedOrganizationDTO linkedOrganizationDTO) throws DAOException {
         final String INSERT_LINKED_ORGANIZATION = "INSERT INTO Organizaciones_Vinculadas " +
-                "(nombre, rfc, direccion, direccion_fiscal, giro, telefono, correo, persona_responsable, " +
-                "Proyecto_id_proyecto) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "(nombre, rfc, direccion, direccion_fiscal, giro, telefono, correo)" +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -36,8 +35,6 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
                 preparedStatement.setString(5, linkedOrganizationDTO.getBusiness());
                 preparedStatement.setString(6, linkedOrganizationDTO.getPhoneNumber());
                 preparedStatement.setString(7, linkedOrganizationDTO.getEmail());
-                preparedStatement.setString(8, linkedOrganizationDTO.getPersonResponsible());
-                preparedStatement.setInt(9, 4);
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
@@ -67,5 +64,6 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
             AppLogger.logError(e);
             throw new DAOException("Error al acceder a la base de datos", e);
         }
+        return true;
     }
 }
