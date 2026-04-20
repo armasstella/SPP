@@ -4,7 +4,6 @@ import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
 
 public interface ICoordinatorDAO {
-    void addCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException;
+    boolean addCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException;
     boolean inactivateCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException;
-
 }
