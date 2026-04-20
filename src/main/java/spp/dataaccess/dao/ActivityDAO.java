@@ -2,7 +2,6 @@ package spp.dataaccess.dao;
 
 import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.exceptions.LogicLayerException;
 import spp.businesslogic.interfaces.IActivityDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
@@ -38,19 +37,21 @@ public class ActivityDAO implements IActivityDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new LogicLayerException("Fallo al insertar la actividad. No se afectaron filas.");
+                    throw new DAOException("Fallo al insertar la actividad. No se afectaron filas.");
                 }
 
                 connection.commit();
 
-            } catch (LogicLayerException | SQLIntegrityConstraintViolationException e) {
+            } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error al insertar una actividad", e);
+            } catch (SQLIntegrityConstraintViolationException e) {
+                throw new DAOException("Fallo al insertar la actividad: Restricción de integridad violada", e);
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw DAOException.insertError(e);
+                throw new DAOException("Error general al insertar una actividad", e);
             } finally {
                 connection.setAutoCommit(true);
                 connection.close();
@@ -58,11 +59,7 @@ public class ActivityDAO implements IActivityDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw DAOException.insertError(e);
+            throw new DAOException("Error al acceder a la base de datos", e);
         }
-    }
-
-    public static void main(String[] args) {
-
     }
 }

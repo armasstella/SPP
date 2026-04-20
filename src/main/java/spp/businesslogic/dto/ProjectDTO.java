@@ -4,6 +4,8 @@ public class ProjectDTO {
 
     private String description;
     private boolean disponibility;
+    private ProjectManagerDTO projectManagerDTO;
+    private LinkedOrganizationDTO linkedOrganizationDTO;
 
     public ProjectDTO() {
 

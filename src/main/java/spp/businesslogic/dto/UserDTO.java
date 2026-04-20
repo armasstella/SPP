@@ -16,20 +16,6 @@ public class UserDTO {
 
     }
 
-    public UserDTO(String status, String lastConnection, String firstName,
-                   String secondName, String firstLastName, String secondLastName,
-                   String email, String phoneNumber, String password) {
-        this.status = status;
-        this.lastConnection = lastConnection;
-        this.firstName = firstName;
-        this.secondName = secondName;
-        this.firstLastName = firstLastName;
-        this.secondLastName = secondLastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.password = password;
-    }
-
     public String getStatus() {
         return status;
     }
