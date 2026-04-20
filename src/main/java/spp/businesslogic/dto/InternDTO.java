@@ -4,26 +4,14 @@ import java.time.LocalDateTime;
 
 public class InternDTO extends UserDTO {
 
+
     private String studentNumber;
     private String gender;
     private boolean speaksIndigenousLanguage;
-    private LocalDateTime fechaNacimiento;
+    private LocalDateTime birthDate;
 
     public InternDTO() {
         super();
-    }
-
-    public InternDTO(String estado, String ultimaConexion, String primerNombre,
-                     String segundoNombre, String primerApellido, String segundoApellido,
-                     String correoElectronico, String telefono, String contrasenia,
-                     String  matricula, String sexo, boolean hablaLenguaIndigena,
-                     LocalDateTime fechaNacimiento) {
-        super(estado, ultimaConexion, primerNombre, segundoNombre, primerApellido, segundoApellido,
-                correoElectronico, telefono, contrasenia);
-        this.studentNumber = matricula;
-        this.gender = sexo;
-        this.speaksIndigenousLanguage = hablaLenguaIndigena;
-        this.fechaNacimiento = fechaNacimiento;
     }
 
     public void setStudentNumber(String studentNumber) {
@@ -50,12 +38,12 @@ public class InternDTO extends UserDTO {
         return speaksIndigenousLanguage;
     }
 
-    public void setFechaNacimiento (LocalDateTime fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
+    public void setBirthDate(LocalDateTime birthDate) {
+        this.birthDate = birthDate;
     }
 
-    public LocalDateTime getFechaNacimiento () {
-        return fechaNacimiento;
+    public LocalDateTime getBirthDate() {
+        return birthDate;
     }
 
 }

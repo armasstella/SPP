@@ -5,6 +5,8 @@ import spp.businesslogic.enums.MesaggeStatus;
 public class MessageDTO {
     private String content;
     private MesaggeStatus messageStatus;
+    private int sender;
+    private int receiver;
 
     public MessageDTO() {
 
@@ -24,5 +26,21 @@ public class MessageDTO {
 
     public MesaggeStatus getMessageStatus() {
         return messageStatus;
+    }
+
+    public void setSender(int sender) {
+        this.sender = sender;
+    }
+
+    public int getSender() {
+        return sender;
+    }
+
+    public void setReceiver(int receiver) {
+        this.receiver = receiver;
+    }
+
+    public int getReceiver() {
+        return receiver;
     }
 }
