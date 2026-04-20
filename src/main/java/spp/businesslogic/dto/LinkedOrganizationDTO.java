@@ -2,6 +2,7 @@ package spp.businesslogic.dto;
 
 public class LinkedOrganizationDTO {
 
+        private int id;
         private String name;
         private String rfc;
         private String address;
@@ -12,6 +13,14 @@ public class LinkedOrganizationDTO {
 
         public LinkedOrganizationDTO() {
 
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return id;
         }
 
         public String getName() {

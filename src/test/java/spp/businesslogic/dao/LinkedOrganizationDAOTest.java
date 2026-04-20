@@ -10,9 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.dao.LinkedOrganizationDAOTest;
 import spp.dataaccess.dao.LinkedOrganizationDAO;
-
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class LinkedOrganizationDAOTest {
@@ -21,20 +19,20 @@ public class LinkedOrganizationDAOTest {
     private LinkedOrganizationDTO testLinkedOrganization;
 
     @BeforeAll
-    public void setUpAll() {
+    void setUpAll() {
         linkedOrganizationDAO = new LinkedOrganizationDAO();
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         testLinkedOrganization = new LinkedOrganizationDTO();
-        testLinkedOrganization.setName("");
-        testLinkedOrganization.setRfc("");
-        testLinkedOrganization.setAddress("");
-        testLinkedOrganization.setFiscalAddress("");
-        testLinkedOrganization.setBusiness("");
-        testLinkedOrganization.setPhoneNumber("");
-        testLinkedOrganization.setEmail("");
+        testLinkedOrganization.setName("OV 1");
+        testLinkedOrganization.setRfc("1234");
+        testLinkedOrganization.setAddress("Dirección 1");
+        testLinkedOrganization.setFiscalAddress("Dirección fiscal 1");
+        testLinkedOrganization.setBusiness("Giro");
+        testLinkedOrganization.setPhoneNumber("9241564162");
+        testLinkedOrganization.setEmail("linkedo@gmail.com");
     }
 
     @Test
@@ -45,7 +43,7 @@ public class LinkedOrganizationDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException al insertar un número de personal duplicado")
+    @DisplayName("Debe lanzar DAOException al insertar un dato duplicado")
     void testAddLinkedOrganizationFailedDuplicatedData() throws DAOException {
         linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
         assertThrows(DAOException.class, () ->

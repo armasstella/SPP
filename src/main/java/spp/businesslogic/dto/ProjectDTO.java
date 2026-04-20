@@ -27,5 +27,19 @@ public class ProjectDTO {
         return disponibility;
     }
 
+    public void setProjectManagerDTO(ProjectManagerDTO projectManagerDTO) {
+        this.projectManagerDTO = projectManagerDTO;
+    }
 
+    public ProjectManagerDTO getProjectManagerDTO() {
+        return projectManagerDTO;
+    }
+
+    public void setLinkedOrganizationDTO(LinkedOrganizationDTO linkedOrganizationDTO) {
+        this.linkedOrganizationDTO = linkedOrganizationDTO;
+    }
+
+    public LinkedOrganizationDTO getLinkedOrganizationDTO() {
+        return linkedOrganizationDTO;
+    }
 }

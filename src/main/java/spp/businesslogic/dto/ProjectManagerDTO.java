@@ -1,15 +1,28 @@
 package spp.businesslogic.dto;
 
+import spp.dataaccess.dao.ProjectManagerDAO;
+
 public class ProjectManagerDTO {
+
+    private int id;
     private String firstName;
     private String secondName;
     private String firstLastName;
     private String secondLastName;
     private String responsability;
     private String role;
+    private String phoneNumber;
 
     public ProjectManagerDTO() {
 
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void setFirstName(String firstName) {
@@ -58,5 +71,13 @@ public class ProjectManagerDTO {
 
     public String getRole() {
         return role;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 }
