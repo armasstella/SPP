@@ -17,11 +17,10 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     @Override
-    public void addProject(ProjectDTO projectDTO) throws DAOException {
+    public boolean addProject(ProjectDTO projectDTO) throws DAOException {
         final String INSERT_PROJECT = "INSERT INTO Proyectos " +
-                "(descripcion, disponibilidad, id_practicante_usuario, id_practicante_matricula, " +
-                "id_coordinador_usuario, id_coordinador_num_personal) VALUES " +
-                "(?, ?, ?, ?, ?, ?)";
+                "(descripcion, disponibilidad, " +
+                "id_organizacion_vinculada, id_encargado_proyecto) VALUES (?, ?, ?, ?)";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -30,11 +29,9 @@ public class ProjectDAO implements IProjectDAO {
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PROJECT);
                 preparedStatement.setString(1, projectDTO.getDescription());
-                preparedStatement.setString(2, String.valueOf(projectDTO.getDisponibility()));
-                preparedStatement.setInt(3, 30);
-                preparedStatement.setString(4, "S21099999");
-                preparedStatement.setInt(5, 1);
-                preparedStatement.setString(6, "00100");
+                preparedStatement.setBoolean(2, projectDTO.getDisponibility());
+                preparedStatement.setInt(3, projectDTO.getLinkedOrganizationDTO().getId());
+                preparedStatement.setInt(4, projectDTO.getProjectManagerDTO().getId());
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
@@ -63,5 +60,6 @@ public class ProjectDAO implements IProjectDAO {
             AppLogger.logError(e);
             throw new DAOException("Error al acceder a la base de datos", e);
         }
+        return true;
     }
 }

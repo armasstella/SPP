@@ -2,6 +2,7 @@ package spp.businesslogic.dto;
 
 public class LinkedOrganizationDTO {
 
+        private int id;
         private String name;
         private String rfc;
         private String address;
@@ -9,10 +10,17 @@ public class LinkedOrganizationDTO {
         private String business;
         private String phoneNumber;
         private String email;
-        private String personResponsible;
 
         public LinkedOrganizationDTO() {
 
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return id;
         }
 
         public String getName() {
@@ -69,13 +77,5 @@ public class LinkedOrganizationDTO {
 
         public void setEmail(String email) {
             this.email = email;
-        }
-
-        public String getPersonResponsible() {
-            return personResponsible;
-        }
-
-        public void setPersonResponsible(String personResponsible) {
-            this.personResponsible = personResponsible;
         }
 }
