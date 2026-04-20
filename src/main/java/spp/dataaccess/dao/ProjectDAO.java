@@ -19,7 +19,7 @@ public class ProjectDAO implements IProjectDAO {
 
     @Override
     public void addProject(ProjectDTO projectDTO) throws DAOException {
-        final String INSERT_PROJECT = "INSERT INTO Proyecto " +
+        final String INSERT_PROJECT = "INSERT INTO Proyectos " +
                 "(descripcion, disponibilidad, id_practicante_usuario, id_practicante_matricula, " +
                 "id_coordinador_usuario, id_coordinador_num_personal) VALUES " +
                 "(?, ?, ?, ?, ?, ?)";

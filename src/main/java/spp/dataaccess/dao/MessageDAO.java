@@ -19,7 +19,7 @@ public class MessageDAO implements IMessageDAO {
 
     @Override
     public boolean sendMessage(MessageDTO messageDTO) throws DAOException {
-        final String INSERT_MESSAGE = "INSERT INTO Mensaje " +
+        final String INSERT_MESSAGE = "INSERT INTO Mensajes " +
                 "(contenido, estado, id_usuario_remitente, id_usuario_destinatario) VALUES " +
                 "(?, ?, ?, ?)";
         try {

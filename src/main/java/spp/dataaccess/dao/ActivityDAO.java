@@ -20,7 +20,7 @@ public class ActivityDAO implements IActivityDAO {
 
     @Override
     public void addActivity(ActivityDTO activityDTO) throws DAOException {
-        final String INSERT_ACTIVITY = "INSERT INTO Actividad " +
+        final String INSERT_ACTIVITY = "INSERT INTO Actividades " +
                 "(titulo, descripcion, fecha_limite, id_profesor_usuario, id_profesor_num_personal) VALUES " +
                 "(?, ?, ?, ?, ?)";
 

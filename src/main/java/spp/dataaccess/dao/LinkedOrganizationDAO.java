@@ -18,7 +18,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
     @Override
     public void addLinkedOrganization(LinkedOrganizationDTO linkedOrganizationDTO) throws DAOException {
-        final String INSERT_LINKED_ORGANIZATION = "INSERT INTO organizacionvinculada " +
+        final String INSERT_LINKED_ORGANIZATION = "INSERT INTO Organizaciones_Vinculadas " +
                 "(nombre, rfc, direccion, direccion_fiscal, giro, telefono, correo, persona_responsable, " +
                 "Proyecto_id_proyecto) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";

@@ -21,7 +21,7 @@ class UserDAO implements IUserDAO {
 
     @Override
     public int insertUser(UserDTO userDTO) throws DAOException {
-        final String INSERT_USER = "INSERT INTO usuario " +
+        final String INSERT_USER = "INSERT INTO Usuarios " +
                 "(estado, ultima_conexion, nombre, apellidos, " +
                 "correo_electronico, telefono, contraseña) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";

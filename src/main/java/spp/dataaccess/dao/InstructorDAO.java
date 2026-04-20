@@ -20,7 +20,7 @@ public class InstructorDAO implements IInstructorDAO {
 
     @Override
     public boolean addInstructor(InstructorDTO instructorDTO) throws DAOException {
-        final String INSERT_INSTRUCTOR = "INSERT INTO profesor " +
+        final String INSERT_INSTRUCTOR = "INSERT INTO Profesores " +
                 "(id_usuario, num_personal, turno) VALUES (?, ?, ?)";
 
         try {
