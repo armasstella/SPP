@@ -23,7 +23,7 @@ public class MySQLConnectionTest {
 
     @Test
     @DisplayName("Debe retornar siempre la misma instancia (Singleton)")
-    void testSingletonInstance() throws SQLException {
+    void testSameSingletonInstanceSucces() throws SQLException {
         MySQLConnection instance1 = MySQLConnection.getInstance();
         MySQLConnection instance2 = MySQLConnection.getInstance();
         assertSame(instance1, instance2, "Debe retornar la misma instancia Singleton");
