@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.CoordinatorController"
+            prefWidth="520" prefHeight="440"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/coordinator.css">
+
+    <top>
+        <VBox styleClass="header">
+            <Label text="COORDINADORES" styleClass="header-title"/>
+            <Label text="Panel de administración" styleClass="header-subtitle"/>
+            <Rectangle height="2" styleClass="header-divider" VBox.vgrow="NEVER"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox styleClass="options-container" alignment="CENTER" spacing="16">
+            <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
+
+            <Button text="Registrar nuevo coordinador"
+                    styleClass="option-btn, btn-add"
+                    maxWidth="Infinity"
+                    onAction="#handleGoToAdd"/>
+
+            <Button text="Activar coordinador"
+                    styleClass="option-btn, btn-activate"
+                    maxWidth="Infinity"
+                    onAction="#handleGoToActivate"/>
+
+            <Button text="Inactivar coordinador"
+                    styleClass="option-btn, btn-inactivate"
+                    maxWidth="Infinity"
+                    onAction="#handleGoToInactivate"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT">
+            <padding><Insets top="12" bottom="16" left="48" right="48"/></padding>
+            <Button text="Volver" styleClass="btn-back" onAction="#handleBack"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

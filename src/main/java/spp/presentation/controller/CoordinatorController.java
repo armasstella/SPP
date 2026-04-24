@@ -1,0 +1,227 @@
+package spp.presentation.controller;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import spp.businesslogic.dto.CoordinatorDTO;
+import spp.businesslogic.exceptions.DAOException;
+import spp.dataaccess.dao.CoordinatorDAO;
+import spp.utils.logger.AppLogger;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class CoordinatorController implements Initializable {
+
+    @FXML private TextField txtFirstName;
+    @FXML private TextField txtSecondName;
+    @FXML private TextField txtFirstLastName;
+    @FXML private TextField txtSecondLastName;
+    @FXML private TextField txtEmail;
+    @FXML private TextField txtPhoneNumber;
+    @FXML private TextField txtPersonalNumber;
+    @FXML private TextField txtPassword;
+
+    @FXML private TextField txtPersonalNumberToggle;
+    @FXML private Label     lblTitle;
+    @FXML private Label     lblSubtitle;
+    @FXML private Button    btnConfirm;
+
+    @FXML private Label lblStatus;
+
+    private final CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
+
+    public enum ToggleMode { ACTIVATE, INACTIVATE }
+    private ToggleMode toggleMode;
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        clearStatus();
+        if (toggleMode != null) applyToggleModeUI();
+    }
+
+    @FXML
+    private void handleGoToAdd(ActionEvent event) {
+        loadView("/spp/presentation/view/AddCoordinatorView.fxml",
+                "Registrar Coordinador", event);
+    }
+
+    @FXML
+    private void handleGoToActivate(ActionEvent event) {
+        loadView("/spp/presentation/view/ToggleCoordinatorView.fxml",
+                "Activar Coordinador", event,
+                ToggleMode.ACTIVATE);
+    }
+
+    @FXML
+    private void handleGoToInactivate(ActionEvent event) {
+        loadView("/spp/presentation/view/ToggleCoordinatorView.fxml",
+                "Inactivar Coordinador", event,
+                ToggleMode.INACTIVATE);
+    }
+
+    @FXML
+    private void handleBack(ActionEvent event) {
+        loadView("/spp/presentation/view/MainMenuView.fxml",
+                "Menú Principal", event);
+    }
+
+    @FXML
+    private void handleSave(ActionEvent event) {
+
+        clearStatus();
+        if (!validateAddFields()) return;
+
+        CoordinatorDTO dto = new CoordinatorDTO();
+        dto.setFirstName(txtFirstName.getText().trim());
+        dto.setSecondName(txtSecondName.getText().trim());
+        dto.setFirstLastName(txtFirstLastName.getText().trim());
+        dto.setSecondLastName(txtSecondLastName.getText().trim());
+        dto.setEmail(txtEmail.getText().trim());
+        dto.setPhoneNumber(txtPhoneNumber.getText().trim());
+        dto.setPersonalNumber(txtPersonalNumber.getText().trim());
+        dto.setPassword(txtPassword.getText().trim());
+
+        try {
+            if (coordinatorDAO.addCoordinator(dto)) {
+                showSuccess("Coordinador registrado correctamente.");
+                clearAddFields();
+            }
+        } catch (DAOException e) {
+            AppLogger.logError(e);
+            showError(e.getMessage());
+        }
+    }
+
+    public void setToggleMode(ToggleMode mode) {
+        this.toggleMode = mode;
+        if (lblTitle != null) applyToggleModeUI();
+    }
+
+    @FXML
+    private void handleConfirm(ActionEvent event) {
+        clearStatus();
+
+        String personalNumber = txtPersonalNumberToggle.getText().trim();
+        if (personalNumber.isBlank()) {
+            showError("Ingresa el número de personal.");
+            return;
+        }
+
+        CoordinatorDTO dto = new CoordinatorDTO();
+        dto.setPersonalNumber(personalNumber);
+
+        try {
+            boolean success;
+            if (toggleMode == ToggleMode.ACTIVATE) {
+                success = coordinatorDAO.activateCoordinator(dto);
+                if (success) showSuccess("Coordinador activado correctamente.");
+            } else {
+                success = coordinatorDAO.inactivateCoordinator(dto);
+                if (success) showSuccess("Coordinador inactivado correctamente.");
+            }
+            if (success) txtPersonalNumberToggle.clear();
+
+        } catch (DAOException e) {
+            AppLogger.logError(e);
+            showError("✗ " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleCancel(ActionEvent event) {
+        loadView("/spp/presentation/view/CoordinatorOptionsView.fxml",
+                "Opciones para Coordinador", event);
+    }
+
+    private boolean validateAddFields() {
+        if (txtFirstName.getText().isBlank() ||
+                txtFirstLastName.getText().isBlank() ||
+                txtEmail.getText().isBlank() ||
+                txtPhoneNumber.getText().isBlank() ||
+                txtPersonalNumber.getText().isBlank() ||
+                txtPassword.getText().isBlank()) {
+            showError("Completa todos los campos obligatorios.");
+            return false;
+        }
+        return true;
+    }
+
+    private void clearAddFields() {
+        txtFirstName.clear();
+        txtSecondName.clear();
+        txtFirstLastName.clear();
+        txtSecondLastName.clear();
+        txtEmail.clear();
+        txtPhoneNumber.clear();
+        txtPersonalNumber.clear();
+        txtPassword.clear();
+    }
+
+    private void applyToggleModeUI() {
+        if (toggleMode == ToggleMode.ACTIVATE) {
+            lblTitle.setText("ACTIVAR COORDINADOR");
+            lblSubtitle.setText("Reactivar cuenta de coordinador");
+            btnConfirm.setText("Activar ◎");
+            btnConfirm.getStyleClass().removeAll("btn-danger");
+            btnConfirm.getStyleClass().add("btn-primary");
+        } else {
+            lblTitle.setText("INACTIVAR COORDINADOR");
+            lblSubtitle.setText("Desactivar cuenta de coordinador");
+            btnConfirm.setText("Inactivar ○");
+            btnConfirm.getStyleClass().removeAll("btn-primary");
+            btnConfirm.getStyleClass().add("btn-danger");
+        }
+    }
+
+    private void showSuccess(String msg) {
+        lblStatus.setText(msg);
+        lblStatus.getStyleClass().removeAll("error", "success");
+        lblStatus.getStyleClass().add("success");
+    }
+
+    private void showError(String msg) {
+        lblStatus.setText(msg);
+        lblStatus.getStyleClass().removeAll("error", "success");
+        lblStatus.getStyleClass().add("error");
+    }
+
+    private void clearStatus() {
+        if (lblStatus != null) {
+            lblStatus.setText("");
+            lblStatus.getStyleClass().removeAll("error", "success");
+        }
+    }
+
+    private void loadView(String fxmlPath, String title, ActionEvent event) {
+        loadView(fxmlPath, title, event, null);
+    }
+
+    private void loadView(String fxmlPath, String title, ActionEvent event, ToggleMode mode) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+
+            if (mode != null) {
+                CoordinatorController ctrl = loader.getController();
+                ctrl.setToggleMode(mode);
+            }
+
+            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle(title);
+            stage.show();
+
+        } catch (IOException e) {
+            AppLogger.logError(e);
+        }
+    }
+}

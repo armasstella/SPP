@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.CoordinatorController"
+            prefWidth="480" prefHeight="520"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/coordinator.css">
+
+    <top>
+        <VBox styleClass="header">
+            <Label text="REGISTRAR COORDINADOR" styleClass="header-title"/>
+            <Label text="Nuevo usuario del sistema" styleClass="header-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox styleClass="form-container" spacing="14">
+            <padding><Insets top="24" bottom="20" left="48" right="48"/></padding>
+
+            <Label text="Primer nombre *" styleClass="field-label"/>
+            <TextField fx:id="txtFirstName" promptText="Ej. Juan" styleClass="field-input"/>
+
+            <Label text="Segundo nombre" styleClass="field-label"/>
+            <TextField fx:id="txtSecondName" promptText="Opcional" styleClass="field-input"/>
+
+            <Label text="Primer apellido *" styleClass="field-label"/>
+            <TextField fx:id="txtFirstLastName" promptText="Ej. García" styleClass="field-input"/>
+
+            <Label text="Segundo apellido" styleClass="field-label"/>
+            <TextField fx:id="txtSecondLastName" promptText="Ej. López" styleClass="field-input"/>
+
+            <Label text="Correo electrónico *" styleClass="field-label"/>
+            <TextField fx:id="txtEmail" promptText="correo@uv.mx" styleClass="field-input"/>
+
+            <Label text="Teléfono *" styleClass="field-label"/>
+            <TextField fx:id="txtPhoneNumber" promptText="228 111 2222" styleClass="field-input"/>
+
+            <Label text="Número de personal *" styleClass="field-label"/>
+            <TextField fx:id="txtPersonalNumber" promptText="Ej. 12345" styleClass="field-input"/>
+
+            <Label text="Contraseña *" styleClass="field-label"/>
+            <TextField fx:id="txtPassword" promptText="Mínimo 8 carácteres" styleClass="field-input"/>
+
+            <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding><Insets top="12" bottom="16" left="48" right="48"/></padding>
+            <Button text="Cancelar" styleClass="btn-back" onAction="#handleCancel"/>
+            <Button text="Registrar" styleClass="btn-primary" onAction="#handleSave"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
