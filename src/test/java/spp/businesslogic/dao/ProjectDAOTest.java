@@ -39,9 +39,8 @@ public class ProjectDAOTest {
 
     @Test
     @DisplayName("Debe insertar un proyecto exitosamente")
-    void testProjectSuccess() throws DAOException {
+    void testAddProjectSuccess() throws DAOException {
         boolean result = projectDAO.addProject(testProject);
         assertTrue(result, "El método debería retornar true al insertar exitosamente");
     }
-
 }
