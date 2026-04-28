@@ -6,7 +6,6 @@
 .header {
     -fx-background-color: #114B5F;
     -fx-padding: 26 48 20 48;
-    -fx-spacing: 4;
 }
 
 .header-title {
@@ -147,5 +146,94 @@
     -fx-text-fill: #00AB4F;
 }
 .lbl-status.error {
-    -fx-text-fill: #114B5F;
+    -fx-text-fill: #e30a0a;
+}
+
+.scroll-pane {
+    -fx-background-color: #FFFFFF;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-pref-width: 8;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+}
+
+.scroll-bar > .corner {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar:vertical,
+.scroll-pane .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-pref-width: 12px;
+    -fx-pref-height: 12px;
+}
+
+.scroll-pane .scroll-bar .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane .scroll-bar .thumb {
+    -fx-background-color: rgba(17, 75, 95, 0.25);
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.scroll-pane .scroll-bar .thumb:hover {
+    -fx-background-color: rgba(17, 75, 95, 0.5);
+}
+
+.scroll-pane .scroll-bar .thumb:pressed {
+    -fx-background-color: rgba(17, 75, 95, 0.85);
+}
+
+.scroll-pane .scroll-bar .increment-button,
+.scroll-pane .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-pane .scroll-bar .increment-arrow,
+.scroll-pane .scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+
+.left-element {
+    -fx-max-width: infinity;
+    -fx-max-height: infinity;
+    -fx-alignment: center-left;
+}
+
+.right-element {
+    -fx-max-width: infinity;
+    -fx-max-height: infinity;
+    -fx-alignment: bottom-right;
+}
+
+.header-subtitle-logout {
+    -fx-text-fill: #AFFFC5;
+    -fx-font-size: 12px;
+    -fx-font-weight: 300;
+    -fx-letter-spacing: 1px;
+}
+
+.header-subtitle-logout:hover {
+    -fx-text-fill: #e30a0a;
+    -fx-font-size: 12px;
+    -fx-font-weight: 300;
+    -fx-letter-spacing: 1px;
 }

@@ -13,7 +13,7 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 
 
-class UserDAO implements IUserDAO {
+public class UserDAO implements IUserDAO {
 
     public UserDAO() {
 
@@ -22,9 +22,9 @@ class UserDAO implements IUserDAO {
     @Override
     public int addUser(UserDTO userDTO) throws DAOException {
         final String INSERT_USER = "INSERT INTO Usuarios " +
-                "(estado, ultima_conexion, nombre, apellidos, " +
+                "(nombre, apellidos, " +
                 "correo_electronico, telefono, contraseña) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?)";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -32,14 +32,12 @@ class UserDAO implements IUserDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     INSERT_USER, Statement.RETURN_GENERATED_KEYS);
 
-            preparedStatement.setString(1, userDTO.getStatus());
-            preparedStatement.setString(2, userDTO.getLastConnection());
-            preparedStatement.setString(3, userDTO.getFirstName() + " " + userDTO.getSecondName());
-            preparedStatement.setString(4, userDTO.getFirstLastName() + " " +
+            preparedStatement.setString(1, userDTO.getFirstName() + " " + userDTO.getSecondName());
+            preparedStatement.setString(2, userDTO.getFirstLastName() + " " +
                     userDTO.getSecondLastName());
-            preparedStatement.setString(5, userDTO.getEmail());
-            preparedStatement.setString(6, userDTO.getPhoneNumber());
-            preparedStatement.setString(7, userDTO.getPassword());
+            preparedStatement.setString(3, userDTO.getEmail());
+            preparedStatement.setString(4, userDTO.getPhoneNumber());
+            preparedStatement.setString(5, userDTO.getPassword());
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == 0) {
@@ -72,14 +70,15 @@ class UserDAO implements IUserDAO {
 
     @Override
     public int obtainId(String email) throws DAOException {
-        final String SELECT_ID = "SELECT id FROM Usuarios WHERE correo_electronico = ?";
-        try (Connection connection = MySQLConnection.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ID)) {
+        final String SELECT_ID = "SELECT id_usuario FROM Usuarios WHERE correo_electronico = ?";
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
 
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ID);
             preparedStatement.setString(1, email);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    return resultSet.getInt("id");
+                    return resultSet.getInt("id_usuario");
                 }
                 throw new DAOException("Usuario no encontrado con email: " + email);
             }
@@ -87,4 +86,26 @@ class UserDAO implements IUserDAO {
             throw new DAOException("Error al obtener ID de usuario", e);
         }
     }
+
+    @Override
+    public boolean login(String identifier, String password) throws DAOException {
+        final String SELECT_LOGIN = "SELECT id_usuario FROM Usuarios " +
+                "WHERE correo_electronico = ? AND contraseña = ?";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement ps = connection.prepareStatement(SELECT_LOGIN);
+            ps.setString(1, identifier);
+            ps.setString(2, password);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error al verificar credenciales de administrador", e);
+        }
+    }
+
+
 }

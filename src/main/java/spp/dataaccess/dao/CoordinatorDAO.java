@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.ResultSet;
 
 public class CoordinatorDAO implements ICoordinatorDAO {
 
@@ -140,6 +141,49 @@ public class CoordinatorDAO implements ICoordinatorDAO {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean login(String personalNumber, String password) throws DAOException {
+        final String SELECT_LOGIN = "SELECT C.id_usuario " +
+                        "FROM Coordinadores C " +
+                        "INNER JOIN Usuarios U ON C.id_usuario = U.id_usuario " +
+                        "WHERE C.num_personal = ? AND U.contraseña = ? AND U.estado = 'Activo'";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement ps = connection.prepareStatement(SELECT_LOGIN);
+            ps.setString(1, personalNumber);
+            ps.setString(2, password);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error al verificar credenciales de coordinador", e);
+        }
+    }
+
+    @Override
+    public boolean existCoordinator(String personalNumber) throws DAOException {
+        final String SELECT_EXISTS = "SELECT C.id_usuario " +
+                        "FROM Coordinadores C " +
+                        "INNER JOIN Usuarios U ON C.id_usuario = U.id_usuario " +
+                        "WHERE C.num_personal = ? AND U.estado = 'Activo'";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement ps = connection.prepareStatement(SELECT_EXISTS);
+            ps.setString(1, personalNumber);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error al verificar existencia de coordinador", e);
+        }
     }
 
 }

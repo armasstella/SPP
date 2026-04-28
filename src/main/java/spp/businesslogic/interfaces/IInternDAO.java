@@ -5,4 +5,5 @@ import spp.businesslogic.exceptions.DAOException;
 
 public interface IInternDAO{
     boolean addIntern(InternDTO internDTO) throws DAOException;
+    boolean login(String matricula, String password) throws DAOException;
 }

@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
+import java.sql.ResultSet;
 
 public class InternDAO implements IInternDAO {
 
@@ -69,6 +70,29 @@ public class InternDAO implements IInternDAO {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean login(String matricula, String password) throws DAOException {
+        final String SELECT_LOGIN =
+                "SELECT P.id_usuario " +
+                        "FROM Practicantes P " +
+                        "INNER JOIN Usuarios U ON P.id_usuario = U.id_usuario " +
+                        "WHERE P.matricula = ? AND U.contraseña = ? AND U.estado = 'Activo'";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement ps = connection.prepareStatement(SELECT_LOGIN);
+            ps.setString(1, matricula);
+            ps.setString(2, password);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error al verificar credenciales de practicante", e);
+        }
     }
 
 }
