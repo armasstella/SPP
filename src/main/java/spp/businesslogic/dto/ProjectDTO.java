@@ -2,6 +2,7 @@ package spp.businesslogic.dto;
 
 public class ProjectDTO {
 
+    private int id;
     private String description;
     private boolean disponibility;
     private ProjectManagerDTO projectManagerDTO;
@@ -9,6 +10,14 @@ public class ProjectDTO {
 
     public ProjectDTO() {
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setDescription(String description) {

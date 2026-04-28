@@ -42,12 +42,11 @@ public class InternDAOTest {
         testIntern.setGender("M");
         testIntern.setSpeaksIndigenousLanguage(true);
         testIntern.setBirthDate(LocalDateTime.parse("2026-12-06T12:41:20"));
-        testIntern.setCoveredHours(0);
     }
 
     @Test
     @DisplayName("Debe insertar un practicante exitosamente")
-    void testInsertInternSucess() throws DAOException {
+    void testInsertInternSuccess() throws DAOException {
         boolean result = internDAO.addIntern(testIntern);
         assertTrue(result, "El practicante se ha insertado correctamente");
     }

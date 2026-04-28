@@ -22,8 +22,8 @@ public class InternDAO implements IInternDAO {
     @Override
     public boolean addIntern(InternDTO internDTO) throws DAOException {
         final String INSERT_INTERN = "INSERT INTO Practicantes " +
-                "(id_usuario, matricula, sexo, habla_lengua_indigena, fecha_nacimiento, horas_cubiertas) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+                "(id_usuario, matricula, sexo, habla_lengua_indigena, fecha_nacimiento) " +
+                "VALUES (?, ?, ?, ?, ?)";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -38,7 +38,6 @@ public class InternDAO implements IInternDAO {
                 preparedStatement.setString(3, internDTO.getGender());
                 preparedStatement.setBoolean(4, internDTO.getSpeaksIndigenousLanguage());
                 preparedStatement.setTimestamp(5, Timestamp.valueOf(internDTO.getBirthDate()));
-                preparedStatement.setInt(6, 0);
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {

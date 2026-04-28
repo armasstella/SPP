@@ -13,7 +13,8 @@ import spp.dataaccess.dao.ActivityDAO;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ActivityDAOTest {
@@ -41,9 +42,9 @@ public class ActivityDAOTest {
 
     @Test
     @DisplayName("Debe insertar una actividad exitosamente")
-    void testAddActivitySuccess() throws DAOException{
+    void testAddActivitySuccess() throws DAOException {
         boolean result = activityDAO.addActivity(testActivity);
-        assertTrue(result, "El método deberpia retornar true al insertar exitosamente");
+        assertTrue(result, "El método debería retornar true al insertar exitosamente");
     }
 
     @Test

@@ -4,15 +4,22 @@ import java.time.LocalDateTime;
 
 public class InternDTO extends UserDTO {
 
-
+    private int id;
     private String studentNumber;
     private String gender;
     private boolean speaksIndigenousLanguage;
     private LocalDateTime birthDate;
-    private int coveredHours;
 
     public InternDTO() {
         super();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setStudentNumber(String studentNumber) {
@@ -46,13 +53,4 @@ public class InternDTO extends UserDTO {
     public LocalDateTime getBirthDate() {
         return birthDate;
     }
-
-    public void setCoveredHours(int coveredHours) {
-        this.coveredHours = coveredHours;
-    }
-
-    public int getCoveredHours() {
-        return coveredHours;
-    }
-
 }
