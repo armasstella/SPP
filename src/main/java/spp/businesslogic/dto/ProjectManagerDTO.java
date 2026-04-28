@@ -1,7 +1,5 @@
 package spp.businesslogic.dto;
 
-import spp.dataaccess.dao.ProjectManagerDAO;
-
 public class ProjectManagerDTO {
 
     private int id;

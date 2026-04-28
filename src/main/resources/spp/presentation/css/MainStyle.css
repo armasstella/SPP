@@ -237,3 +237,17 @@
     -fx-font-weight: 300;
     -fx-letter-spacing: 1px;
 }
+
+.btn-label {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 2px;
+    -fx-text-fill: #AFFFC5;
+}
+
+/* Efecto al pasar el ratón (opcional) */
+.btn-label:hover {
+    -fx-underline: true;             /* Subrayar al pasar el ratón */
+    -fx-text-fill: #000080;           /* Oscurecer un poco */
+}

@@ -78,12 +78,12 @@ public class InstructorDAO implements IInstructorDAO {
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement ps = connection.prepareStatement(SELECT_LOGIN);
-            ps.setString(1, personalNumber);
-            ps.setString(2, password);
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LOGIN);
+            preparedStatement.setString(1, personalNumber);
+            preparedStatement.setString(2, password);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next();
             }
         } catch (SQLException e) {
             AppLogger.logError(e);

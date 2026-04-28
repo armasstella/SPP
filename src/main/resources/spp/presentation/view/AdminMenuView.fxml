@@ -29,7 +29,7 @@
             <javafx.scene.layout.Pane HBox.hgrow="ALWAYS" />
 
             <VBox styleClass="right-element">
-                <Label text="Salir" styleClass="header-subtitle-logout"/>
+                <Button text="Salir" styleClass="btn-label" onAction="#goToLoginView"/>
             </VBox>
         </HBox>
 
@@ -60,12 +60,5 @@
                     onAction="#goToInactivateCoordinatorView"/>
         </VBox>
     </center>
-
-    <bottom>
-        <HBox styleClass="footer" alignment="CENTER_RIGHT">
-            <padding><Insets top="12" bottom="16" left="48" right="48"/></padding>
-            <Button text="Volver" styleClass="btn-back" onAction="#goToMainMenu"/>
-        </HBox>
-    </bottom>
 
 </BorderPane>

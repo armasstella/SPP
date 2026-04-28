@@ -64,14 +64,14 @@ public class CoordinatorController implements Initializable {
 
     @FXML
     private void goToActivateCoordinatorView(ActionEvent event) {
-        loadView("/spp/presentation/view/ToggleCoordinatorView.fxml",
+        loadView("/spp/presentation/view/ChangeStatusCoordinatorView.fxml",
                 "Activar Coordinador", event,
                 ToggleMode.ACTIVATE);
     }
 
     @FXML
     private void goToInactivateCoordinatorView(ActionEvent event) {
-        loadView("/spp/presentation/view/ToggleCoordinatorView.fxml",
+        loadView("/spp/presentation/view/ChangeStatusCoordinatorView.fxml",
                 "Inactivar Coordinador", event,
                 ToggleMode.INACTIVATE);
     }
@@ -80,6 +80,12 @@ public class CoordinatorController implements Initializable {
     private void goToMainMenu(ActionEvent event) {
         loadView("/spp/presentation/view/MainMenuView.fxml",
                 "Menú Principal", event);
+    }
+
+    @FXML
+    private void goToLoginView(ActionEvent event) {
+        loadView("/spp/presentation/view/LoginView.fxml",
+                "Inicia sesión", event);
     }
 
     private void setAllCoordinatorDTO(ActionEvent event, CoordinatorDTO coordinatorDTO) {
@@ -160,7 +166,7 @@ public class CoordinatorController implements Initializable {
 
     @FXML
     private void cancel(ActionEvent event) {
-        loadView("/spp/presentation/view/AdminView.fxml",
+        loadView("/spp/presentation/view/AdminMenuView.fxml",
                 "Opciones para Coordinador", event);
     }
 

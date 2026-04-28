@@ -3,7 +3,7 @@ package spp.dataaccess.connection;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.DriverManager;
-import spp.utils.DatabaseConfiguration;
+import spp.utils.database.DatabaseConfiguration;
 import spp.utils.logger.AppLogger;
 
 public class MySQLConnection {
