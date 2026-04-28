@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.ProjectController"
+            prefWidth="480" prefHeight="520"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <top>
+        <VBox styleClass="header">
+            <Label text="REGISTRAR PROYECTO" styleClass="header-title"/>
+            <Label text="Nuevo Proyecto" styleClass="header-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox styleClass="form-container" spacing="14">
+            <padding><Insets top="24" bottom="20" left="48" right="48"/></padding>
+
+            <Label text="Descripción *" styleClass="field-label"/>
+            <TextField fx:id="txtDescription" promptText="Ej. Salva Animales" styleClass="field-input"/>
+
+            <Label text="Disponibilidad *" styleClass="field-label"/>
+            <TextField fx:id="txtDisponibility" promptText="Ej. Disponible" styleClass="field-input"/>
+
+            <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding><Insets top="12" bottom="16" left="48" right="48"/></padding>
+            <Button text="Registrar" styleClass="btn-primary" onAction="#saveProject"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
+
