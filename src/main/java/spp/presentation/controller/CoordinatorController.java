@@ -31,9 +31,9 @@ public class CoordinatorController implements Initializable {
     @FXML private TextField txtPassword;
 
     @FXML private TextField txtPersonalNumberToggle;
-    @FXML private Label     lblTitle;
-    @FXML private Label     lblSubtitle;
-    @FXML private Button    btnConfirm;
+    @FXML private Label lblTitle;
+    @FXML private Label lblSubtitle;
+    @FXML private Button btnConfirm;
 
     @FXML private Label lblStatus;
 
@@ -43,55 +43,71 @@ public class CoordinatorController implements Initializable {
     private ToggleMode toggleMode;
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         clearStatus();
-        if (toggleMode != null) applyToggleModeUI();
+        if (toggleMode != null) {
+            applyToggleModeUI();
+        }
     }
 
     @FXML
-    private void handleGoToAdd(ActionEvent event) {
+    private void goToAddCoordinatorView(ActionEvent event) {
         loadView("/spp/presentation/view/AddCoordinatorView.fxml",
                 "Registrar Coordinador", event);
     }
 
     @FXML
-    private void handleGoToActivate(ActionEvent event) {
+    private void goToAddInstructorView(ActionEvent event) {
+        loadView("/spp/presentation/view/AddCoordinatorView.fxml",
+                "Registrar Coordinador", event);
+    }
+
+    @FXML
+    private void goToActivateCoordinatorView(ActionEvent event) {
         loadView("/spp/presentation/view/ToggleCoordinatorView.fxml",
                 "Activar Coordinador", event,
                 ToggleMode.ACTIVATE);
     }
 
     @FXML
-    private void handleGoToInactivate(ActionEvent event) {
+    private void goToInactivateCoordinatorView(ActionEvent event) {
         loadView("/spp/presentation/view/ToggleCoordinatorView.fxml",
                 "Inactivar Coordinador", event,
                 ToggleMode.INACTIVATE);
     }
 
     @FXML
-    private void handleBack(ActionEvent event) {
+    private void goToMainMenu(ActionEvent event) {
         loadView("/spp/presentation/view/MainMenuView.fxml",
                 "Menú Principal", event);
     }
 
+    private void setAllCoordinatorDTO(ActionEvent event, CoordinatorDTO coordinatorDTO) {
+
+        coordinatorDTO.setFirstName(txtFirstName.getText().trim());
+        coordinatorDTO.setSecondName(txtSecondName.getText().trim());
+        coordinatorDTO.setFirstLastName(txtFirstLastName.getText().trim());
+        coordinatorDTO.setSecondLastName(txtSecondLastName.getText().trim());
+        coordinatorDTO.setEmail(txtEmail.getText().trim());
+        coordinatorDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
+        coordinatorDTO.setPersonalNumber(txtPersonalNumber.getText().trim());
+        coordinatorDTO.setPassword(txtPassword.getText().trim());
+
+    }
+
     @FXML
-    private void handleSave(ActionEvent event) {
+    private void saveCoordinator(ActionEvent event) {
 
         clearStatus();
-        if (!validateAddFields()) return;
+        if (validateEmptyFields()) {
+            return;
+        }
 
-        CoordinatorDTO dto = new CoordinatorDTO();
-        dto.setFirstName(txtFirstName.getText().trim());
-        dto.setSecondName(txtSecondName.getText().trim());
-        dto.setFirstLastName(txtFirstLastName.getText().trim());
-        dto.setSecondLastName(txtSecondLastName.getText().trim());
-        dto.setEmail(txtEmail.getText().trim());
-        dto.setPhoneNumber(txtPhoneNumber.getText().trim());
-        dto.setPersonalNumber(txtPersonalNumber.getText().trim());
-        dto.setPassword(txtPassword.getText().trim());
+        CoordinatorDTO coordinatorDTO = new CoordinatorDTO();
+        setAllCoordinatorDTO(event, coordinatorDTO);
 
         try {
-            if (coordinatorDAO.addCoordinator(dto)) {
+            if (coordinatorDAO.addCoordinator(coordinatorDTO)) {
                 showSuccess("Coordinador registrado correctamente.");
                 clearAddFields();
             }
@@ -103,46 +119,53 @@ public class CoordinatorController implements Initializable {
 
     public void setToggleMode(ToggleMode mode) {
         this.toggleMode = mode;
-        if (lblTitle != null) applyToggleModeUI();
+        if (lblTitle != null) {
+            applyToggleModeUI();
+        }
     }
 
     @FXML
-    private void handleConfirm(ActionEvent event) {
+    private void changeStatus(ActionEvent event) {
         clearStatus();
-
         String personalNumber = txtPersonalNumberToggle.getText().trim();
+
         if (personalNumber.isBlank()) {
             showError("Ingresa el número de personal.");
             return;
         }
 
-        CoordinatorDTO dto = new CoordinatorDTO();
-        dto.setPersonalNumber(personalNumber);
-
         try {
-            boolean success;
-            if (toggleMode == ToggleMode.ACTIVATE) {
-                success = coordinatorDAO.activateCoordinator(dto);
-                if (success) showSuccess("Coordinador activado correctamente.");
-            } else {
-                success = coordinatorDAO.inactivateCoordinator(dto);
-                if (success) showSuccess("Coordinador inactivado correctamente.");
+            boolean success = executeChangeStatus(personalNumber);
+            if (success) {
+                String message = (toggleMode == ToggleMode.ACTIVATE)
+                        ? "Coordinador activado correctamente."
+                        : "Coordinador inactivado correctamente.";
+                showSuccess(message);
+                txtPersonalNumberToggle.clear();
             }
-            if (success) txtPersonalNumberToggle.clear();
-
         } catch (DAOException e) {
             AppLogger.logError(e);
-            showError("✗ " + e.getMessage());
+            showError(e.getMessage());
         }
     }
 
+    private boolean executeChangeStatus(String personalNumber) throws DAOException {
+        CoordinatorDTO coordinatorDTO = new CoordinatorDTO();
+        coordinatorDTO.setPersonalNumber(personalNumber);
+
+        return (toggleMode == ToggleMode.ACTIVATE)
+                ? coordinatorDAO.activateCoordinator(coordinatorDTO)
+                : coordinatorDAO.inactivateCoordinator(coordinatorDTO);
+    }
+
     @FXML
-    private void handleCancel(ActionEvent event) {
-        loadView("/spp/presentation/view/CoordinatorOptionsView.fxml",
+    private void cancel(ActionEvent event) {
+        loadView("/spp/presentation/view/AdminView.fxml",
                 "Opciones para Coordinador", event);
     }
 
-    private boolean validateAddFields() {
+    private boolean validateEmptyFields() {
+        boolean emptyFields = false;
         if (txtFirstName.getText().isBlank() ||
                 txtFirstLastName.getText().isBlank() ||
                 txtEmail.getText().isBlank() ||
@@ -150,9 +173,9 @@ public class CoordinatorController implements Initializable {
                 txtPersonalNumber.getText().isBlank() ||
                 txtPassword.getText().isBlank()) {
             showError("Completa todos los campos obligatorios.");
-            return false;
+            emptyFields = true;
         }
-        return true;
+        return emptyFields;
     }
 
     private void clearAddFields() {
@@ -170,26 +193,26 @@ public class CoordinatorController implements Initializable {
         if (toggleMode == ToggleMode.ACTIVATE) {
             lblTitle.setText("ACTIVAR COORDINADOR");
             lblSubtitle.setText("Reactivar cuenta de coordinador");
-            btnConfirm.setText("Activar ◎");
+            btnConfirm.setText("Activar");
             btnConfirm.getStyleClass().removeAll("btn-danger");
             btnConfirm.getStyleClass().add("btn-primary");
         } else {
             lblTitle.setText("INACTIVAR COORDINADOR");
             lblSubtitle.setText("Desactivar cuenta de coordinador");
-            btnConfirm.setText("Inactivar ○");
+            btnConfirm.setText("Inactivar");
             btnConfirm.getStyleClass().removeAll("btn-primary");
             btnConfirm.getStyleClass().add("btn-danger");
         }
     }
 
-    private void showSuccess(String msg) {
-        lblStatus.setText(msg);
+    private void showSuccess(String message) {
+        lblStatus.setText(message);
         lblStatus.getStyleClass().removeAll("error", "success");
         lblStatus.getStyleClass().add("success");
     }
 
-    private void showError(String msg) {
-        lblStatus.setText(msg);
+    private void showError(String message) {
+        lblStatus.setText(message);
         lblStatus.getStyleClass().removeAll("error", "success");
         lblStatus.getStyleClass().add("error");
     }
@@ -216,7 +239,7 @@ public class CoordinatorController implements Initializable {
             }
 
             Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
+            stage.setScene(new Scene(root, 420, 380));
             stage.setTitle(title);
             stage.show();
 

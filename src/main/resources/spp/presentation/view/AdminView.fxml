@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+
+        <BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.CoordinatorController"
+            prefWidth="520" prefHeight="440"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <top>
+        <HBox styleClass="header">
+            <VBox>
+                <Label text="Menú Administrador" styleClass="header-title"/>
+                <Label text="¿Qué desea hacer hoy?" styleClass="header-subtitle"/>
+                <Rectangle height="2" styleClass="header-divider" VBox.vgrow="NEVER"/>
+            </VBox>
+
+            <javafx.scene.layout.Pane HBox.hgrow="ALWAYS" />
+
+            <VBox styleClass="right-element">
+                <Label text="Salir" styleClass="header-subtitle-logout"/>
+            </VBox>
+        </HBox>
+
+    </top>
+
+    <center>
+        <VBox styleClass="options-container" alignment="CENTER" spacing="16">
+            <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
+
+            <Button text="Registrar nuevo coordinador"
+                    styleClass="option-btn, btn-add"
+                    maxWidth="Infinity"
+                    onAction="#goToAddCoordinatorView"/>
+
+            <Button text="Registrar nuevo profesor"
+                    styleClass="option-btn, btn-add"
+                    maxWidth="Infinity"
+                    onAction="#goToAddInstructorView"/>
+
+            <Button text="Activar coordinador"
+                    styleClass="option-btn, btn-activate"
+                    maxWidth="Infinity"
+                    onAction="#goToActivateCoordinatorView"/>
+
+            <Button text="Inactivar coordinador"
+                    styleClass="option-btn, btn-inactivate"
+                    maxWidth="Infinity"
+                    onAction="#goToInactivateCoordinatorView"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT">
+            <padding><Insets top="12" bottom="16" left="48" right="48"/></padding>
+            <Button text="Volver" styleClass="btn-back" onAction="#goToMainMenu"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
