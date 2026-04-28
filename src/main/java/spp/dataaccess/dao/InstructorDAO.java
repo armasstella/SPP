@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.ResultSet;
 
 public class InstructorDAO implements IInstructorDAO {
 
@@ -65,6 +66,29 @@ public class InstructorDAO implements IInstructorDAO {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean login(String personalNumber, String password) throws DAOException {
+        final String SELECT_LOGIN =
+                "SELECT P.id_usuario " +
+                        "FROM Profesores P " +
+                        "INNER JOIN Usuarios U ON P.id_usuario = U.id_usuario " +
+                        "WHERE P.num_personal = ? AND U.contraseña = ? AND U.estado = 'Activo'";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement ps = connection.prepareStatement(SELECT_LOGIN);
+            ps.setString(1, personalNumber);
+            ps.setString(2, password);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error al verificar credenciales de instructor", e);
+        }
     }
 
 }
