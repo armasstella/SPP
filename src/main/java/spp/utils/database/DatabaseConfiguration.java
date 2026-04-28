@@ -1,4 +1,4 @@
-package spp.utils;
+package spp.utils.database;
 
 import java.io.InputStream;
 import java.util.Properties;
