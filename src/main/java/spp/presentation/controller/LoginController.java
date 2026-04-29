@@ -173,8 +173,8 @@ public class LoginController {
             Parent root = loader.load();
 
             if (mode != null) {
-                CoordinatorController ctrl = loader.getController();
-                ctrl.setToggleMode(mode);
+                CoordinatorController controller = loader.getController();
+                controller.setToggleMode(mode);
             }
 
             Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
