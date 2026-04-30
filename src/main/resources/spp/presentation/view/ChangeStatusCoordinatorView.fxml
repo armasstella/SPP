@@ -10,7 +10,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="spp.presentation.controller.CoordinatorController"
+            fx:controller="spp.presentation.controller.AdminMenuController"
             prefWidth="440" prefHeight="340"
             styleClass="root-pane"
             stylesheets="@/spp/presentation/css/MainStyle.css">

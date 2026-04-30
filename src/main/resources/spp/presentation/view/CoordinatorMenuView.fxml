@@ -39,50 +39,44 @@
                     <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
                     <Button text="Registrar Practicante"
                             styleClass="option-btn, btn-add"
-                            maxWidth="Infinity"
+                            />
+                    <Button text="Registrar Proyecto"
+                            styleClass="option-btn, btn-add"
                             />
 
                     <Button text="Asignar Proyecto"
                             styleClass="option-btn, btn-activate"
-                            maxWidth="Infinity"
-                           />
+                            />
 
                     <Button text="Inactivar Practicante"
                             styleClass="option-btn, btn-inactivate"
-                            maxWidth="Infinity"
-                            />
-
-                    <Button text="Generar Reporte"
-                            styleClass="option-btn, btn-activate"
-                            maxWidth="-Infinity"
                             />
                 </VBox>
                 <VBox spacing="16">
                     <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
-                    <Button text="Registrar Proyecto"
-                            styleClass="option-btn, btn-add"
-                            maxWidth="Infinity"
-                            />
-
                     <Button text="Registrar Encargado de Proyecto"
                             styleClass="option-btn, btn-add"
-                            maxWidth="Infinity"
+                            />
+                    <Button text="Registrar Organización"
+                            styleClass="option-btn, btn-add"
                             />
 
                     <Button text="Actualizar Proyecto"
                             styleClass="option-btn, btn-activate"
-                            maxWidth="Infinity"
                             />
 
                     <Button text="Eliminar Proyecto"
                             styleClass="option-btn, btn-inactivate"
-                            maxWidth="Infinity"
-                            />
-                    <Button text="Registrar Organización"
-                            styleClass="option-btn, btn-add"
-                            maxWidth="-Infinity"
                             />
                 </VBox>
+
+            </HBox>
+            <HBox styleClass="options-container" alignment="CENTER" spacing="16">
+                <Button text="Generar Reporte"
+                        styleClass="option-btn, btn-activate"
+                        style="-fx-pref-width: 556; -fx-pref-height: 60;"
+                        alignment="CENTER"
+                />
             </HBox>
         </VBox>
     </center>

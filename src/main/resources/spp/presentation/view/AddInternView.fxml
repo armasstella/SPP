@@ -17,8 +17,8 @@
 
     <top>
         <VBox styleClass="header">
-            <Label text="REGISTRAR ORGANIZACIÓN" styleClass="header-title"/>
-            <Label text="Nueva organización vinculada" styleClass="header-subtitle"/>
+            <Label text="REGISTRAR PRACTICANTE" styleClass="header-title"/>
+            <Label text="Nuevo Practicante" styleClass="header-subtitle"/>
         </VBox>
     </top>
 

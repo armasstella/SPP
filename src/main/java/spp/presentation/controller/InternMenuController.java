@@ -23,13 +23,13 @@ public class InternMenuController {
         loadView(fxmlPath, title, event, null);
     }
 
-    private void loadView(String fxmlPath, String title, ActionEvent event, CoordinatorController.ToggleMode mode) {
+    private void loadView(String fxmlPath, String title, ActionEvent event, AdminMenuController.ToggleMode mode) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
 
             if (mode != null) {
-                CoordinatorController controller = loader.getController();
+                AdminMenuController controller = loader.getController();
                 controller.setToggleMode(mode);
             }
 

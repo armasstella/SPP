@@ -17,8 +17,8 @@
 
     <top>
         <VBox styleClass="header">
-            <Label text="REGISTRAR PRACTICANTE" styleClass="header-title"/>
-            <Label text="Nuevo Practicante" styleClass="header-subtitle"/>
+            <Label text="REGISTRAR ORGANIZACIÓN" styleClass="header-title"/>
+            <Label text="Nueva Organización" styleClass="header-subtitle"/>
         </VBox>
     </top>
 
@@ -26,7 +26,7 @@
         <VBox styleClass="form-container" spacing="14">
             <padding><Insets top="24" bottom="20" left="48" right="48"/></padding>
 
-            <Label text="Nombre de la empresa *" styleClass="field-label"/>
+            <Label text="Nombre de la organización *" styleClass="field-label"/>
             <TextField fx:id="txtName" promptText="Ej. Aceites Palma A.C., C.V." styleClass="field-input"/>
 
             <Label text="RFC *" styleClass="field-label"/>
@@ -38,7 +38,7 @@
             <Label text="Dirección Fiscal *" styleClass="field-label"/>
             <TextField fx:id="txtFiscalAddress" promptText="Ej. Guadalupe Victoria 419" styleClass="field-input"/>
 
-            <Label text="Giro de la empresa *" styleClass="field-label"/>
+            <Label text="Giro de la organización *" styleClass="field-label"/>
             <TextField fx:id="txtBusiness" promptText="Ej. Industrial" styleClass="field-input"/>
 
             <Label text="Teléfono *" styleClass="field-label"/>
