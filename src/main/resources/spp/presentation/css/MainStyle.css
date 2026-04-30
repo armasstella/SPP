@@ -56,6 +56,7 @@
     -fx-font-size: 14px;
     -fx-font-weight: 400;
     -fx-text-fill: #114B5F;
+    -fx-max-width: 260px;
 }
 .field-input:focused {
     -fx-border-color: #005BAA;
@@ -65,12 +66,13 @@
 
 .option-btn {
     -fx-font-size: 14px;
-    -fx-font-weight: 700; /* Bold */
+    -fx-font-weight: 700;
     -fx-padding: 18 24;
     -fx-background-radius: 6px;
     -fx-border-radius: 6px;
     -fx-cursor: hand;
-    -fx-alignment: CENTER_LEFT;
+    -fx-alignment: CENTER;
+    -fx-pref-width: 270px;
 }
 
 .btn-primary, .btn-add {
@@ -246,8 +248,7 @@
     -fx-text-fill: #AFFFC5;
 }
 
-/* Efecto al pasar el ratón (opcional) */
 .btn-label:hover {
-    -fx-underline: true;             /* Subrayar al pasar el ratón */
-    -fx-text-fill: #000080;           /* Oscurecer un poco */
+    -fx-underline: true;
+    -fx-text-fill: #000080;
 }

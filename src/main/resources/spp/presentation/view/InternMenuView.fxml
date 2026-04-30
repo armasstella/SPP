@@ -44,32 +44,22 @@
                     <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
                     <Button text="Subir Actividad"
                             styleClass="option-btn, btn-add"
-                            maxWidth="Infinity"
                     />
 
                     <Button text="Generar y Subir Reporte"
                             styleClass="option-btn, btn-activate"
-                            maxWidth="Infinity"
                     />
-                </VBox>
-                <VBox spacing="16">
-                    <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
                     <Button text="Subir Documento"
                             styleClass="option-btn, btn-add"
-                            maxWidth="Infinity"
                     />
 
                     <Button text="Generar y Subir Evaluación"
                             styleClass="option-btn, btn-activate"
-                            maxWidth="Infinity"
+                    />
+                    <Button text="Solicitar Proyecto"
+                            styleClass="option-btn, btn-add"
                     />
                 </VBox>
-            </HBox>
-            <HBox styleClass="options-container" alignment="CENTER" spacing="16">
-                <Button text="Solicitar Proyecto"
-                        styleClass="option-btn, btn-add"
-                        maxWidth="-Infinity"
-                />
             </HBox>
         </VBox>
     </center>

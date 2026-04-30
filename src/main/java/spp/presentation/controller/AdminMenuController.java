@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class CoordinatorController implements Initializable {
+public class AdminMenuController implements Initializable {
 
     @FXML private TextField txtFirstName;
     @FXML private TextField txtSecondName;
@@ -59,7 +59,7 @@ public class CoordinatorController implements Initializable {
     @FXML
     private void goToAddInstructorView(ActionEvent event) {
         loadView("/spp/presentation/view/AddCoordinatorView.fxml",
-                "Registrar Coordinador", event);
+                "Registrar Profesor", event);
     }
 
     @FXML
@@ -67,6 +67,20 @@ public class CoordinatorController implements Initializable {
         loadView("/spp/presentation/view/ChangeStatusCoordinatorView.fxml",
                 "Activar Coordinador", event,
                 ToggleMode.ACTIVATE);
+    }
+
+    @FXML
+    private void goToActivateInstructorView(ActionEvent event) {
+        loadView("/spp/presentation/view/ChangeStatusInstructorView.fxml",
+                "Activar Profesor", event,
+                ToggleMode.ACTIVATE);
+    }
+
+    @FXML
+    private void goToInactiveInstructorView(ActionEvent event) {
+        loadView("/spp/presentation/view/ChangeStatusInstructorView.fxml",
+                "Inactivar Profesor", event,
+                ToggleMode.INACTIVATE);
     }
 
     @FXML
@@ -240,7 +254,7 @@ public class CoordinatorController implements Initializable {
             Parent root = loader.load();
 
             if (mode != null) {
-                CoordinatorController controller = loader.getController();
+                AdminMenuController controller = loader.getController();
                 controller.setToggleMode(mode);
             }
 

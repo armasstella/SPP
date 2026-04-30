@@ -11,7 +11,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="spp.presentation.controller.CoordinatorController"
+            fx:controller="spp.presentation.controller.AdminMenuController"
             prefWidth="480" prefHeight="520"
             styleClass="root-pane"
             stylesheets="@/spp/presentation/css/MainStyle.css">
@@ -19,7 +19,7 @@
     <top>
         <VBox styleClass="header">
             <Label text="REGISTRAR COORDINADOR" styleClass="header-title"/>
-            <Label text="Nuevo usuario del sistema" styleClass="header-subtitle"/>
+            <Label text="Nuevo Coordinador" styleClass="header-subtitle"/>
         </VBox>
     </top>
 
@@ -36,7 +36,7 @@
                                 <TextField fx:id="txtFirstName" promptText="Ej. Juan" styleClass="field-input"/>
 
                                 <Label text="Segundo nombre" styleClass="field-label"/>
-                                <TextField fx:id="txtSecondName" promptText="Opcional" styleClass="field-input"/>
+                                <TextField fx:id="txtSecondName" promptText="Ej. Carlos" styleClass="field-input"/>
 
                                 <Label text="Primer apellido *" styleClass="field-label"/>
                                 <TextField fx:id="txtFirstLastName" promptText="Ej. García" styleClass="field-input"/>

@@ -69,7 +69,7 @@ public class LoginController {
                     break;
             }
         } catch (DAOException e) {
-            showError("Fallo en conexión al logear");
+            showError("Fallo de conexión al intentar ingresar al sistema");
         }
 
         if (accessGranted) {
@@ -103,7 +103,7 @@ public class LoginController {
     }
 
     private void goToInstructorMainMenu(ActionEvent event) {
-        loadView("/spp/presentation/view/MainMenuInstructorView.fxml",
+        loadView("/spp/presentation/view/InstructorMenuView.fxml",
                 "Menú Principal", event);
     }
 
@@ -167,13 +167,13 @@ public class LoginController {
         loadView(fxmlPath, title, event, null);
     }
 
-    private void loadView(String fxmlPath, String title, ActionEvent event, CoordinatorController.ToggleMode mode) {
+    private void loadView(String fxmlPath, String title, ActionEvent event, AdminMenuController.ToggleMode mode) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
 
             if (mode != null) {
-                CoordinatorController controller = loader.getController();
+                AdminMenuController controller = loader.getController();
                 controller.setToggleMode(mode);
             }
 
