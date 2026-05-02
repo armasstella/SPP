@@ -83,6 +83,12 @@ public class InternController implements Initializable {
     }
 
     @FXML
+    private void cancel(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml",
+                "Cancelar", event);
+    }
+
+    @FXML
     private void saveIntern(ActionEvent event) {
 
         clearStatus();
