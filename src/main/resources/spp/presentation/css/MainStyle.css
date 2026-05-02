@@ -151,10 +151,6 @@
     -fx-text-fill: #e30a0a;
 }
 
-.scroll-pane {
-    -fx-background-color: #FFFFFF;
-}
-
 .scroll-bar:vertical .thumb {
     -fx-pref-width: 8;
     -fx-background-color: #FFFFFF;
@@ -167,9 +163,11 @@
 
 .scroll-pane {
     -fx-background-color: transparent;
-    -fx-background: #FFFFFF;
+    -fx-background: transparent;
     -fx-border-color: transparent;
     -fx-padding: 0;
+    -fx-fit-to-width: true;
+    -fx-vbar-policy: AS_NEEDED;
 }
 
 .scroll-pane > .viewport {

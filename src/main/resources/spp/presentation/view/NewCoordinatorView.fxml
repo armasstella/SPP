@@ -30,8 +30,7 @@
                 <padding>
                     <Insets top="24" bottom="20" left="48" right="48"/>
                 </padding>
-                    <ScrollPane fitToWidth="true" vbarPolicy="AS_NEEDED" style="-fx-background-color: transaparent;
-                     -fx-background: transparent">
+                    <ScrollPane>
                         <content>
                             <VBox spacing="14">
                                 <padding>
