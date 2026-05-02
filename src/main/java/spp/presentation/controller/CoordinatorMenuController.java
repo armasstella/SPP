@@ -2,66 +2,67 @@ package spp.presentation.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.stage.Stage;
-import spp.utils.logger.AppLogger;
-
-import java.io.IOException;
+import spp.utils.view.ViewNavigator;
 
 public class CoordinatorMenuController {
 
     @FXML
-    private void goToAddInternView(ActionEvent event) {
-        loadView("/spp/presentation/view/NewInternView.fxml",
+    private void goToNewInternView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/NewInternView.fxml",
                 "Registrar Practicante", event);
     }
 
     @FXML
-    private void goToInactivateInternView(ActionEvent event) {
-        loadView("/spp/presentation/view/InactivateInternView.fxml",
+    private void goToInternDeactivationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/InternDeactivationView.fxml",
                 "Inactivar Practicante", event);
     }
 
     @FXML
-    private void goToAddLinkedOrganizationView(ActionEvent event) {
-        loadView("/spp/presentation/view/NewLinkedOrganizationView.fxml",
+    private void goToNewLinkedOrganizationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/NewLinkedOrganizationView.fxml",
                 "Registrar Organización", event);
     }
 
     @FXML
-    private void goToAddProjectManagerView(ActionEvent event) {
-        loadView("/spp/presentation/view/NewProjectManagerView.fxml",
+    private void goToNewProjectManagerView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/NewProjectManagerView.fxml",
                 "Registrar Encargado de Proyecto", event);
     }
 
     @FXML
-    private void goToAddProjectView(ActionEvent event) {
-        loadView("/spp/presentation/view/NewProjectView.fxml",
+    private void goToNewProjectView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/NewProjectView.fxml",
                 "Registrar Proyecto", event);
     }
 
     @FXML
     private void goToLoginView(ActionEvent event) {
-        loadView("/spp/presentation/view/LoginView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/LoginView.fxml",
                 "Iniciar sesión", event);
     }
 
-    private void loadView(String fxmlPath, String title, ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Parent root = loader.load();
+    @FXML
+    private void goToProjectAssignmentView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/ProjectAssignmentView.fxml",
+                "Asignar Proyecto", event);
+    }
 
-            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+    @FXML
+    private void goToProjectUpdateView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/ProjectUpdateView.fxml",
+                "Actualizar Proyecto", event);
+    }
 
-            stage.setScene(new Scene(root));
-            stage.setTitle(title);
-            stage.show();
+    @FXML
+    private void goToProjectDeletionView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/ProjectDeletionView.fxml",
+                "Eliminar Proyecto", event);
+    }
 
-        } catch (IOException e) {
-            AppLogger.logError(e);
-        }
+    @FXML
+    private void goToReportGenerationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/ReportGenerationView.fxml",
+                "Generar Reporte", event);
     }
 }
