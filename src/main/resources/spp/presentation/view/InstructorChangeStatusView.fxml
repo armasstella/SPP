@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.AdminMenuController"
+            prefWidth="440" prefHeight="340"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <top>
+        <VBox styleClass="header">
+            <Label fx:id="lblTitle" text="CAMBIAR ESTADO" styleClass="header-title"/>
+            <Label fx:id="lblSubtitle" text="Modificar estado del Profesor" styleClass="header-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox styleClass="form-container" spacing="14" alignment="CENTER">
+            <padding>
+                <Insets top="36" bottom="20" left="48" right="48"/>
+            </padding>
+
+            <Label text="Número de personal" styleClass="field-label"/>
+            <TextField fx:id="txtPersonalNumberToggle"
+                       promptText="Ingresa el número de personal"
+                       styleClass="field-input"/>
+
+            <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding><Insets top="12" bottom="16" left="48" right="48"/></padding>
+            <Button text="Cancelar" styleClass="btn-back" onAction="#cancel"/>
+            <Button fx:id="btnConfirm" text="Confirmar" styleClass="btn-primary" onAction="#changeStatus"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
