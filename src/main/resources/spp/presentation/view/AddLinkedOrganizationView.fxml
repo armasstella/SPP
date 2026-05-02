@@ -30,7 +30,6 @@
                 <padding>
                     <Insets top="24" bottom="20" left="48" right="48"/>
                 </padding>
-                <children>
                     <ScrollPane fitToWidth="true" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent;
                      -fx-background: transparent">
                         <content>
@@ -38,7 +37,6 @@
                                 <padding>
                                     <Insets left="5" right="5" top="5" bottom="5"/>
                                 </padding>
-                                <children>
                                     <Label text="Nombre de la organización *" styleClass="field-label"/>
                                     <TextField fx:id="txtName" promptText="Ej. Aceites Palma A.C., C.V."
                                                styleClass="field-input"/>
@@ -64,13 +62,10 @@
 
                                     <Label text="Correo electrónico *" styleClass="field-label"/>
                                     <TextField fx:id="txtEmail" promptText="correo@uv.mx" styleClass="field-input"/>
-                                </children>
                             </VBox>
                         </content>
                     </ScrollPane>
-
                     <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
-                </children>
             </VBox>
         </StackPane>
     </center>

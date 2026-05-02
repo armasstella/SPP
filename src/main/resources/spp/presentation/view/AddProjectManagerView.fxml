@@ -30,7 +30,6 @@
                 <padding>
                     <Insets top="24" bottom="20" left="48" right="48"/>
                 </padding>
-                <children>
                     <ScrollPane fitToWidth="true" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent;
                      -fx-background: transparent">
                         <content>
@@ -38,7 +37,6 @@
                                 <padding>
                                     <Insets left="5" right="5" top="5" bottom="5"/>
                                 </padding>
-                                <children>
                                     <Label text="Primer nombre *" styleClass="field-label"/>
                                     <TextField fx:id="txtFirstName" promptText="Ej. Juan" styleClass="field-input"/>
 
@@ -63,13 +61,11 @@
                                     <Label text="Número de teléfono *" styleClass="field-label"/>
                                     <TextField fx:id="txtPhoneNumber" promptText="228 221 4321"
                                                styleClass="field-input"/>
-                                </children>
                             </VBox>
                         </content>
                     </ScrollPane>
 
                     <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
-                </children>
             </VBox>
         </StackPane>
     </center>
