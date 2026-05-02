@@ -52,40 +52,40 @@ public class AdminMenuController implements Initializable {
 
     @FXML
     private void goToAddCoordinatorView(ActionEvent event) {
-        loadView("/spp/presentation/view/AddCoordinatorView.fxml",
+        loadView("/spp/presentation/view/NewCoordinatorView.fxml",
                 "Registrar Coordinador", event);
     }
 
     @FXML
     private void goToAddInstructorView(ActionEvent event) {
-        loadView("/spp/presentation/view/AddCoordinatorView.fxml",
+        loadView("/spp/presentation/view/NewCoordinatorView.fxml",
                 "Registrar Profesor", event);
     }
 
     @FXML
     private void goToActivateCoordinatorView(ActionEvent event) {
-        loadView("/spp/presentation/view/ChangeStatusCoordinatorView.fxml",
+        loadView("/spp/presentation/view/CoordinatorChangeStatusView.fxml",
                 "Activar Coordinador", event,
                 ToggleMode.ACTIVATE);
     }
 
     @FXML
     private void goToActivateInstructorView(ActionEvent event) {
-        loadView("/spp/presentation/view/ChangeStatusInstructorView.fxml",
+        loadView("/spp/presentation/view/InstructorChangeStatusView.fxml",
                 "Activar Profesor", event,
                 ToggleMode.ACTIVATE);
     }
 
     @FXML
     private void goToInactiveInstructorView(ActionEvent event) {
-        loadView("/spp/presentation/view/ChangeStatusInstructorView.fxml",
+        loadView("/spp/presentation/view/InstructorChangeStatusView.fxml",
                 "Inactivar Profesor", event,
                 ToggleMode.INACTIVATE);
     }
 
     @FXML
     private void goToInactivateCoordinatorView(ActionEvent event) {
-        loadView("/spp/presentation/view/ChangeStatusCoordinatorView.fxml",
+        loadView("/spp/presentation/view/CoordinatorChangeStatusView.fxml",
                 "Inactivar Coordinador", event,
                 ToggleMode.INACTIVATE);
     }
@@ -181,7 +181,7 @@ public class AdminMenuController implements Initializable {
     @FXML
     private void cancel(ActionEvent event) {
         loadView("/spp/presentation/view/AdminMenuView.fxml",
-                "Opciones para Coordinador", event);
+                "Menu Administrador", event);
     }
 
     private boolean validateEmptyFields() {
