@@ -7,6 +7,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.StackPane?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -23,33 +25,49 @@
     </top>
 
     <center>
-        <VBox styleClass="form-container" spacing="14">
-            <padding><Insets top="24" bottom="20" left="48" right="48"/></padding>
+        <StackPane>
+            <VBox spacing="14" maxWidth="400" alignment="TOP_CENTER">
+                <padding>
+                    <Insets top="24" bottom="20" left="48" right="48"/>
+                </padding>
+                    <ScrollPane fitToWidth="true" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent;
+                     -fx-background: transparent">
+                        <content>
+                            <VBox spacing="14">
+                                <padding>
+                                    <Insets left="5" right="5" top="5" bottom="5"/>
+                                </padding>
+                                    <Label text="Nombre de la organización *" styleClass="field-label"/>
+                                    <TextField fx:id="txtName" promptText="Ej. Aceites Palma A.C., C.V."
+                                               styleClass="field-input"/>
 
-            <Label text="Nombre de la organización *" styleClass="field-label"/>
-            <TextField fx:id="txtName" promptText="Ej. Aceites Palma A.C., C.V." styleClass="field-input"/>
+                                    <Label text="RFC *" styleClass="field-label"/>
+                                    <TextField fx:id="txtRfc" promptText="Ej. PAM130316E60" styleClass="field-input"/>
 
-            <Label text="RFC *" styleClass="field-label"/>
-            <TextField fx:id="txtRfc" promptText="Ej. PAM130316E60" styleClass="field-input"/>
+                                    <Label text="Dirección *" styleClass="field-label"/>
+                                    <TextField fx:id="txtAddress" promptText="Ej. Guadalupe Victoria 419"
+                                               styleClass="field-input"/>
 
-            <Label text="Dirección *" styleClass="field-label"/>
-            <TextField fx:id="txtAddress" promptText="Ej. Guadalupe Victoria 419" styleClass="field-input"/>
+                                    <Label text="Dirección Fiscal *" styleClass="field-label"/>
+                                    <TextField fx:id="txtFiscalAddress" promptText="Ej. Guadalupe Victoria 419"
+                                               styleClass="field-input"/>
 
-            <Label text="Dirección Fiscal *" styleClass="field-label"/>
-            <TextField fx:id="txtFiscalAddress" promptText="Ej. Guadalupe Victoria 419" styleClass="field-input"/>
+                                    <Label text="Giro de la organización *" styleClass="field-label"/>
+                                    <TextField fx:id="txtBusiness" promptText="Ej. Industrial"
+                                               styleClass="field-input"/>
 
-            <Label text="Giro de la organización *" styleClass="field-label"/>
-            <TextField fx:id="txtBusiness" promptText="Ej. Industrial" styleClass="field-input"/>
+                                    <Label text="Teléfono *" styleClass="field-label"/>
+                                    <TextField fx:id="txtPhoneNumber" promptText="228 111 2222"
+                                               styleClass="field-input"/>
 
-            <Label text="Teléfono *" styleClass="field-label"/>
-            <TextField fx:id="txtPhoneNumber" promptText="228 111 2222" styleClass="field-input"/>
-
-            <Label text="Correo electrónico *" styleClass="field-label"/>
-            <TextField fx:id="txtEmail" promptText="correo@uv.mx" styleClass="field-input"/>
-
-
-            <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true"/>
-        </VBox>
+                                    <Label text="Correo electrónico *" styleClass="field-label"/>
+                                    <TextField fx:id="txtEmail" promptText="correo@uv.mx" styleClass="field-input"/>
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                    <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
+            </VBox>
+        </StackPane>
     </center>
 
     <bottom>
