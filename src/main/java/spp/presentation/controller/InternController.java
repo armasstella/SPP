@@ -5,12 +5,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.DatePicker;
+import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.dataaccess.dao.InternDAO;
 import spp.utils.logger.AppLogger;
-
+import spp.utils.view.ViewNavigator;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class InternController implements Initializable {
@@ -23,18 +30,32 @@ public class InternController implements Initializable {
     @FXML private TextField txtPhoneNumber;
     @FXML private TextField txtStudentNumber;
     @FXML private TextField txtPassword;
-
+    @FXML private ComboBox<String> cmbGender;
+    @FXML private RadioButton rbYes;
+    @FXML private RadioButton rbNo;
+    @FXML private VBox vbLanguageDetail;
+    @FXML private TextField txtIndigenousLanguage;
     @FXML private Label lblStatus;
+    @FXML private DatePicker dpBirthDate;
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    private final InternDAO internDAO = new InternDAO();;
+    private final InternDAO internDAO = new InternDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         clearStatus();
+        configureDatePicker();
+        toggleIndigenousLanguageField();
     }
 
     @FXML
-    private void setAllIntern(ActionEvent event, InternDTO internDTO) {
+    private void goToLoginView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/LoginView.fxml",
+                "Inicia sesión", event);
+    }
+
+    @FXML
+    private void setAllIntern(InternDTO internDTO) {
         internDTO.setFirstName(txtFirstName.getText().trim());
         internDTO.setSecondName(txtSecondName.getText().trim());
         internDTO.setFirstLastName(txtFirstLastName.getText().trim());
@@ -43,6 +64,22 @@ public class InternController implements Initializable {
         internDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
         internDTO.setStudentNumber(txtStudentNumber.getText().trim());
         internDTO.setPassword(txtPassword.getText().trim());
+        internDTO.setGender(cmbGender.getValue());
+        internDTO.setSpeaksIndigenousLanguage(rbYes.isSelected());
+        internDTO.setIndigenousLanguage(txtIndigenousLanguage.getText().trim());
+        LocalDate selectedDate = dpBirthDate.getValue();
+        internDTO.setBirthDate(selectedDate.atStartOfDay());
+    }
+
+    @FXML
+    private void toggleIndigenousLanguageField() {
+        boolean isVisible = rbYes.isSelected();
+        vbLanguageDetail.setVisible(isVisible);
+        vbLanguageDetail.setManaged(isVisible);
+
+        if (!isVisible) {
+            txtIndigenousLanguage.clear();
+        }
     }
 
     @FXML
@@ -54,7 +91,7 @@ public class InternController implements Initializable {
         }
 
         InternDTO internDTO = new InternDTO();
-        setAllIntern(event, internDTO);
+        setAllIntern(internDTO);
 
         try {
             if (internDAO.addIntern(internDTO)) {
@@ -74,7 +111,9 @@ public class InternController implements Initializable {
                 txtEmail.getText().isBlank() ||
                 txtPhoneNumber.getText().isBlank() ||
                 txtStudentNumber.getText().isBlank() ||
-                txtPassword.getText().isBlank()){
+                txtPassword.getText().isBlank() ||
+                cmbGender.getValue() == null ||
+                dpBirthDate.getValue() == null) {
             showError("Completa todos los campos obligatorios.");
             validFields = false;
         }
@@ -90,6 +129,10 @@ public class InternController implements Initializable {
         txtPhoneNumber.clear();
         txtStudentNumber.clear();
         txtPassword.clear();
+        cmbGender.setValue(null);
+        dpBirthDate.setValue(null);
+        rbNo.setSelected(true);
+        toggleIndigenousLanguageField();
     }
 
     private void showSuccess(String message) {
@@ -109,5 +152,26 @@ public class InternController implements Initializable {
             lblStatus.setText("");
             lblStatus.getStyleClass().removeAll("error", "success");
         }
+    }
+
+    private void configureDatePicker() {
+        dpBirthDate.setConverter(new StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date) {
+                return (date != null) ? dateFormatter.format(date) : "";
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if (string != null && !string.isEmpty()) {
+                    try {
+                        return LocalDate.parse(string, dateFormatter);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+                return null;
+            }
+        });
     }
 }

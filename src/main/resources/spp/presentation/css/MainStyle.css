@@ -252,3 +252,98 @@
     -fx-underline: true;
     -fx-text-fill: #000080;
 }
+
+.combo-box-custom {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #114B5F;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.combo-box-custom:focused {
+    -fx-border-color: #005BAA;
+}
+
+.combo-box-custom .list-view {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #114B5F;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 4);
+}
+
+.combo-box-custom .list-cell {
+    -fx-padding: 8 12;
+    -fx-text-fill: #114B5F;
+    -fx-font-size: 14px;
+}
+
+.combo-box-custom .list-cell:hover {
+    -fx-background-color: #AFFFC5;
+    -fx-text-fill: #114B5F;
+}
+
+.combo-box-custom .list-cell:selected {
+    -fx-background-color: transparent;
+    -fx-text-fill: #114B5F;
+}
+
+.combo-box-custom .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.combo-box-custom .arrow {
+    -fx-background-color: #114B5F;
+}
+
+.radio-button-custom {
+    -fx-text-fill: #114B5F;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.radio-button-custom .radio {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #114B5F;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.radio-button-custom:selected .radio .dot {
+    -fx-background-color: #005BAA;
+    -fx-background-insets: 2;
+}
+
+.radio-button-custom:focused .radio {
+    -fx-border-color: #005BAA;
+}
+
+.date-picker-custom {
+    -fx-background-color: transparent;
+}
+
+.date-picker-custom > .text-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #114B5F;
+    -fx-border-width: 1.5px 0 1.5px 1.5px;
+    -fx-border-radius: 5px 0 0 5px;
+    -fx-background-radius: 5px 0 0 5px;
+    -fx-padding: 10 14;
+    -fx-font-size: 14px;
+    -fx-text-fill: #114B5F;
+}
+
+.date-picker-custom > .arrow-button {
+    -fx-background-color: #114B5F;
+    -fx-background-radius: 0 5px 5px 0;
+    -fx-cursor: hand;
+}
+
+.date-picker-custom > .arrow-button > .arrow {
+    -fx-background-color: #FFFFFF;
+}
+
+.date-picker-custom:focused > .text-field {
+    -fx-border-color: #005BAA;
+}

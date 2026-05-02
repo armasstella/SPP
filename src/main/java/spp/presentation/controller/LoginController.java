@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class LoginController {
 
-    @FXML private TextField txtUser;
+    @FXML private TextField txtEmail;
     @FXML private TextField txtPassword;
     @FXML private Label lblStatus;
 
@@ -36,7 +36,7 @@ public class LoginController {
             return;
         }
 
-        String user = txtUser.getText().trim();
+        String user = txtEmail.getText().trim();
         String password = txtPassword.getText().trim();
 
         int userType = determinateTypeUser(user);
@@ -69,7 +69,7 @@ public class LoginController {
                     break;
             }
         } catch (DAOException e) {
-            showError("Fallo de conexión al intentar ingresar al sistema");
+            showError("Fallo en conexión al logear");
         }
 
         if (accessGranted) {
@@ -103,7 +103,7 @@ public class LoginController {
     }
 
     private void goToInstructorMainMenu(ActionEvent event) {
-        loadView("/spp/presentation/view/InstructorMenuView.fxml",
+        loadView("/spp/presentation/view/MainMenuInstructorView.fxml",
                 "Menú Principal", event);
     }
 
@@ -144,7 +144,7 @@ public class LoginController {
 
     private boolean validateEmptyFields() {
         boolean emptyFields = false;
-        if (txtUser.getText().isBlank() || txtPassword.getText().isBlank()) {
+        if (txtEmail.getText().isBlank() || txtPassword.getText().isBlank()) {
             showError("Completa todos los campos obligatorios.");
             emptyFields = true;
         }
@@ -164,18 +164,9 @@ public class LoginController {
     }
 
     private void loadView(String fxmlPath, String title, ActionEvent event) {
-        loadView(fxmlPath, title, event, null);
-    }
-
-    private void loadView(String fxmlPath, String title, ActionEvent event, AdminMenuController.ToggleMode mode) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
-
-            if (mode != null) {
-                AdminMenuController controller = loader.getController();
-                controller.setToggleMode(mode);
-            }
 
             Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 420, 380));

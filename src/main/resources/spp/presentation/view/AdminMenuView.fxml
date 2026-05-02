@@ -9,7 +9,7 @@
 <?import javafx.scene.shape.Rectangle?>
 
 
-        <BorderPane xmlns="http://javafx.com/javafx"
+<BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="spp.presentation.controller.AdminMenuController"
             prefWidth="520" prefHeight="440"

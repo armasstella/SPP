@@ -20,18 +20,9 @@ public class InternMenuController {
     }
 
     private void loadView(String fxmlPath, String title, ActionEvent event) {
-        loadView(fxmlPath, title, event, null);
-    }
-
-    private void loadView(String fxmlPath, String title, ActionEvent event, AdminMenuController.ToggleMode mode) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
-
-            if (mode != null) {
-                AdminMenuController controller = loader.getController();
-                controller.setToggleMode(mode);
-            }
 
             Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 420, 380));

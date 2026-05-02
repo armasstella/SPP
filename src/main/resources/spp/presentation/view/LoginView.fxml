@@ -27,8 +27,8 @@
         <VBox styleClass="options-container" alignment="CENTER" spacing="16">
             <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
 
-            <Label text="Usuario" styleClass="field-label"/>
-            <TextField fx:id="txtUser" promptText="Ingrese usuario" styleClass="field-input"/>
+            <Label text="Correo" styleClass="field-label"/>
+            <TextField fx:id="txtEmail" promptText="Ingrese usuario" styleClass="field-input"/>
 
             <Label text="Contraseña" styleClass="field-label"/>
             <TextField fx:id="txtPassword" promptText="Ingrese contraseña" styleClass="field-input"/>

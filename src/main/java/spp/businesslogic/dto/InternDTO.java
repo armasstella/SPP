@@ -8,6 +8,7 @@ public class InternDTO extends UserDTO {
     private String studentNumber;
     private String gender;
     private boolean speaksIndigenousLanguage;
+    private String indigenousLanguage;
     private LocalDateTime birthDate;
 
     public InternDTO() {
@@ -44,6 +45,14 @@ public class InternDTO extends UserDTO {
 
     public boolean getSpeaksIndigenousLanguage() {
         return speaksIndigenousLanguage;
+    }
+
+    public void setIndigenousLanguage(String indigenousLanguage) {
+        this.indigenousLanguage = indigenousLanguage;
+    }
+
+    public String getIndigenousLanguage() {
+        return indigenousLanguage;
     }
 
     public void setBirthDate(LocalDateTime birthDate) {
