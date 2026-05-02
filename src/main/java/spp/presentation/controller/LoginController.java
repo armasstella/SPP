@@ -2,21 +2,14 @@ package spp.presentation.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import spp.businesslogic.exceptions.DAOException;
 import spp.dataaccess.dao.CoordinatorDAO;
 import spp.dataaccess.dao.InternDAO;
 import spp.dataaccess.dao.InstructorDAO;
 import spp.dataaccess.dao.UserDAO;
-import spp.utils.logger.AppLogger;
-
-import java.io.IOException;
+import spp.utils.view.ViewNavigator;
 
 public class LoginController {
 
@@ -98,22 +91,22 @@ public class LoginController {
     }
 
     private void goToCoordinatorMainMenu(ActionEvent event) {
-        loadView("/spp/presentation/view/CoordinatorMenuView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml",
                 "Menú Principal", event);
     }
 
     private void goToInstructorMainMenu(ActionEvent event) {
-        loadView("/spp/presentation/view/MainMenuInstructorView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/MainMenuInstructorView.fxml",
                 "Menú Principal", event);
     }
 
     private void goToInternMainMenu(ActionEvent event) {
-        loadView("/spp/presentation/view/InternMenuView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/InternMenuView.fxml",
                 "Menú Principal", event);
     }
 
     private void goToAdminView(ActionEvent event) {
-        loadView("/spp/presentation/view/AdminMenuView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/AdminMenuView.fxml",
                 "Menú Principal", event);
     }
 
@@ -161,20 +154,5 @@ public class LoginController {
         lblStatus.setText(message);
         lblStatus.getStyleClass().removeAll("error", "success");
         lblStatus.getStyleClass().add("error");
-    }
-
-    private void loadView(String fxmlPath, String title, ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root, 420, 380));
-            stage.setTitle(title);
-            stage.show();
-
-        } catch (IOException e) {
-            AppLogger.logError(e);
-        }
     }
 }

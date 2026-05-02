@@ -14,6 +14,7 @@ import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.dataaccess.dao.CoordinatorDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.ViewNavigator;
 
 import java.io.IOException;
 import java.net.URL;
@@ -52,53 +53,50 @@ public class AdminMenuController implements Initializable {
 
     @FXML
     private void goToAddCoordinatorView(ActionEvent event) {
-        loadView("/spp/presentation/view/NewCoordinatorView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/NewCoordinatorView.fxml",
                 "Registrar Coordinador", event);
     }
 
     @FXML
     private void goToAddInstructorView(ActionEvent event) {
-        loadView("/spp/presentation/view/NewCoordinatorView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/NewCoordinatorView.fxml",
                 "Registrar Profesor", event);
     }
 
     @FXML
     private void goToActivateCoordinatorView(ActionEvent event) {
-        loadView("/spp/presentation/view/CoordinatorChangeStatusView.fxml",
-                "Activar Coordinador", event,
-                ToggleMode.ACTIVATE);
+        loadViewWithMode("/spp/presentation/view/CoordinatorChangeStatusView.fxml",
+                "Activar Coordinador", event, ToggleMode.ACTIVATE);
     }
 
     @FXML
-    private void goToActivateInstructorView(ActionEvent event) {
-        loadView("/spp/presentation/view/InstructorChangeStatusView.fxml",
-                "Activar Profesor", event,
-                ToggleMode.ACTIVATE);
+    private void goToInactivateCoordinatorView(ActionEvent event) {
+        loadViewWithMode("/spp/presentation/view/CoordinatorChangeStatusView.fxml",
+                "Inactivar Coordinador", event, ToggleMode.INACTIVATE);
     }
 
     @FXML
-    private void goToInactiveInstructorView(ActionEvent event) {
-        loadView("/spp/presentation/view/InstructorChangeStatusView.fxml",
+    private void goToActiveInstructorView(ActionEvent event) {
+        loadViewWithMode("/spp/presentation/view/InstructorChangeStatusView.fxml",
                 "Inactivar Profesor", event,
                 ToggleMode.INACTIVATE);
     }
 
     @FXML
-    private void goToInactivateCoordinatorView(ActionEvent event) {
-        loadView("/spp/presentation/view/CoordinatorChangeStatusView.fxml",
+    private void goToInactiveInstructorView(ActionEvent event) {
+        loadViewWithMode("/spp/presentation/view/CoordinatorChangeStatusView.fxml",
                 "Inactivar Coordinador", event,
                 ToggleMode.INACTIVATE);
     }
 
     @FXML
     private void goToMainMenu(ActionEvent event) {
-        loadView("/spp/presentation/view/MainMenuView.fxml",
-                "Menú Principal", event);
+        ViewNavigator.loadView("/spp/presentation/view/MainMenuView.fxml", "Menú Principal", event);
     }
 
     @FXML
     private void goToLoginView(ActionEvent event) {
-        loadView("/spp/presentation/view/LoginView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/LoginView.fxml",
                 "Inicia sesión", event);
     }
 
@@ -180,7 +178,7 @@ public class AdminMenuController implements Initializable {
 
     @FXML
     private void cancel(ActionEvent event) {
-        loadView("/spp/presentation/view/AdminMenuView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/AdminMenuView.fxml",
                 "Menu Administrador", event);
     }
 
@@ -244,25 +242,16 @@ public class AdminMenuController implements Initializable {
         }
     }
 
-    private void loadView(String fxmlPath, String title, ActionEvent event) {
-        loadView(fxmlPath, title, event, null);
-    }
-
-    private void loadView(String fxmlPath, String title, ActionEvent event, ToggleMode mode) {
+    private void loadViewWithMode(String fxmlPath, String title, ActionEvent event, ToggleMode mode) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
-
-            if (mode != null) {
-                AdminMenuController controller = loader.getController();
-                controller.setToggleMode(mode);
-            }
-
+            AdminMenuController controller = loader.getController();
+            controller.setToggleMode(mode);
             Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 420, 380));
             stage.setTitle(title);
             stage.show();
-
         } catch (IOException e) {
             AppLogger.logError(e);
         }
