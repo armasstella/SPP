@@ -10,10 +10,10 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/spp/presentation/view/LoginView.fxml")
+                getClass().getResource("/spp/presentation/view/CoordinatorMenuView.fxml")
         );
         Scene scene = new Scene(loader.load(), 420, 380);
-        stage.setTitle("Registrar Usuario");
+        stage.setTitle("Sistema para Practicas Profesionales");
         stage.setScene(scene);
         stage.show();
     }
