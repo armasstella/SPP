@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
 
+<?import javafx.scene.layout.StackPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="spp.presentation.controller.AdminMenuController"
@@ -24,48 +25,56 @@
     </top>
 
     <center>
-        <VBox styleClass="form-container" spacing="14">
-            <padding><Insets top="24" bottom="20" left="48" right="48"/></padding>
+        <StackPane>
+            <VBox spacing="14" maxWidth="400" alignment="TOP_CENTER">
+                <padding>
+                    <Insets top="24" bottom="20" left="48" right="48"/>
+                </padding>
+                <children>
+                    <ScrollPane fitToWidth="true" vbarPolicy="AS_NEEDED" style="-fx-background-color: transaparent;
+                     -fx-background: transparent">
+                        <content>
+                            <VBox spacing="14">
+                                <padding>
+                                    <Insets left="5" right="5" top="5" bottom="5"/>
+                                </padding>
+                                <children>
+                                    <Label text="Primer nombre *" styleClass="field-label"/>
+                                    <TextField fx:id="txtFirstName" promptText="Ej. Juan" styleClass="field-input"/>
 
-            <children>
-                <ScrollPane fitToWidth="true">
-                    <content>
-                        <VBox spacing="14">
-                            <children>
-                                <Label text="Primer nombre *" styleClass="field-label"/>
-                                <TextField fx:id="txtFirstName" promptText="Ej. Juan" styleClass="field-input"/>
+                                    <Label text="Segundo nombre" styleClass="field-label"/>
+                                    <TextField fx:id="txtSecondName" promptText="Ej. Carlos" styleClass="field-input"/>
 
-                                <Label text="Segundo nombre" styleClass="field-label"/>
-                                <TextField fx:id="txtSecondName" promptText="Ej. Carlos" styleClass="field-input"/>
+                                    <Label text="Primer apellido *" styleClass="field-label"/>
+                                    <TextField fx:id="txtFirstLastName" promptText="Ej. García"
+                                               styleClass="field-input"/>
 
-                                <Label text="Primer apellido *" styleClass="field-label"/>
-                                <TextField fx:id="txtFirstLastName" promptText="Ej. García" styleClass="field-input"/>
+                                    <Label text="Segundo apellido" styleClass="field-label"/>
+                                    <TextField fx:id="txtSecondLastName" promptText="Ej. López"
+                                               styleClass="field-input"/>
 
-                                <Label text="Segundo apellido" styleClass="field-label"/>
-                                <TextField fx:id="txtSecondLastName" promptText="Ej. López" styleClass="field-input"/>
+                                    <Label text="Correo electrónico *" styleClass="field-label"/>
+                                    <TextField fx:id="txtEmail" promptText="correo@uv.mx" styleClass="field-input"/>
 
-                                <Label text="Correo electrónico *" styleClass="field-label"/>
-                                <TextField fx:id="txtEmail" promptText="correo@uv.mx" styleClass="field-input"/>
+                                    <Label text="Teléfono *" styleClass="field-label"/>
+                                    <TextField fx:id="txtPhoneNumber" promptText="228 111 2222"
+                                               styleClass="field-input"/>
 
-                                <Label text="Teléfono *" styleClass="field-label"/>
-                                <TextField fx:id="txtPhoneNumber" promptText="228 111 2222" styleClass="field-input"/>
+                                    <Label text="Número de personal *" styleClass="field-label"/>
+                                    <TextField fx:id="txtPersonalNumber" promptText="Ej. 12345"
+                                               styleClass="field-input"/>
 
-                                <Label text="Número de personal *" styleClass="field-label"/>
-                                <TextField fx:id="txtPersonalNumber" promptText="Ej. 12345" styleClass="field-input"/>
-
-                                <Label text="Contraseña *" styleClass="field-label"/>
-                                <TextField fx:id="txtPassword" promptText="Mínimo 8 carácteres" styleClass="field-input"/>
-
-
-                            </children>
-                        </VBox>
-                    </content>
-                </ScrollPane>
-
-                <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true"/>
-
-            </children>
-        </VBox>
+                                    <Label text="Contraseña *" styleClass="field-label"/>
+                                    <TextField fx:id="txtPassword" promptText="Mínimo 8 carácteres"
+                                               styleClass="field-input"/>
+                                </children>
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                        <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
+                </children>
+            </VBox>
+        </StackPane>
     </center>
 
     <bottom>
