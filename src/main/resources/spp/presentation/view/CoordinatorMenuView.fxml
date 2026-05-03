@@ -45,39 +45,42 @@
                     <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
                     <Button text="Registrar Practicante"
                             styleClass="option-btn, btn-add"
-                            onAction="#goToAddInternView"
+                            onAction="#goToNewInternView"
                             />
                     <Button text="Registrar Proyecto"
                             styleClass="option-btn, btn-add"
-                            onAction="#goToAddProjectView"
+                            onAction="#goToNewProjectView"
                             />
 
                     <Button text="Asignar Proyecto"
                             styleClass="option-btn, btn-activate"
+                            onAction="#goToProjectAssignmentView"
                             />
 
                     <Button text="Inactivar Practicante"
                             styleClass="option-btn, btn-inactivate"
-                            onAction="#goToInactivateInternView"
+                            onAction="#goToInternDeactivationView"
                             />
                 </VBox>
                 <VBox spacing="16">
                     <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
                     <Button text="Registrar Encargado de Proyecto"
                             styleClass="option-btn, btn-add"
-                            onAction="#goToAddProjectManagerView"
+                            onAction="#goToNewProjectManagerView"
                             />
                     <Button text="Registrar Organización"
                             styleClass="option-btn, btn-add"
-                            onAction="#goToAddLinkedOrganizationView"
+                            onAction="#goToNewLinkedOrganizationView"
                             />
 
                     <Button text="Actualizar Proyecto"
                             styleClass="option-btn, btn-activate"
+                            onAction="#goToProjectUpdateView"
                             />
 
                     <Button text="Eliminar Proyecto"
                             styleClass="option-btn, btn-inactivate"
+                            onAction="#goToProjectDeletionView"
                             />
                 </VBox>
 
@@ -87,6 +90,7 @@
                         styleClass="option-btn, btn-activate"
                         style="-fx-pref-width: 556; -fx-pref-height: 60;"
                         alignment="CENTER"
+                        onAction="#goToReportGenerationView"
                 />
             </HBox>
         </VBox>

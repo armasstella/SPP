@@ -30,7 +30,9 @@
                 </VBox>
             </HBox>
             <VBox alignment="CENTER_RIGHT">
-                <padding><Insets top="12" bottom="16" left="48" right="48"/></padding>
+                <padding>
+                    <Insets top="12" bottom="16" left="48" right="48"/>
+                </padding>
                 <Rectangle height="4" styleClass="header-divider" VBox.vgrow="NEVER"/>
                 <Button text="Ver Buzón de Mensajes" styleClass="btn-primary"/>
             </VBox>
@@ -41,7 +43,9 @@
         <VBox styleClass="options-container">
             <HBox styleClass="options-container" alignment="CENTER" spacing="16">
                 <VBox alignment="CENTER" spacing="16">
-                    <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
+                    <padding>
+                        <Insets top="28" bottom="28" left="48" right="48"/>
+                    </padding>
                     <Button text="Subir Actividad"
                             styleClass="option-btn, btn-add"
                     />
