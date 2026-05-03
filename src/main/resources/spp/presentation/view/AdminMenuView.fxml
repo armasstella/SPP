@@ -42,30 +42,20 @@
                     maxWidth="Infinity"
                     onAction="#goToAddCoordinatorView"/>
 
-            <Button text="Activar Coordinador"
-                    styleClass="option-btn, btn-activate"
+            <Button text="Registrar Profesor"
+                    styleClass="option-btn, btn-add"
                     maxWidth="Infinity"
-                    onAction="#goToActivateCoordinatorView"/>
+                    onAction="#goToAddInstructorView"/>
 
             <Button text="Inactivar Coordinador"
                     styleClass="option-btn, btn-inactivate"
                     maxWidth="Infinity"
                     onAction="#goToInactivateCoordinatorView"/>
 
-            <Button text="Registrar Profesor"
-                    styleClass="option-btn, btn-add"
-                    maxWidth="Infinity"
-                    onAction="#goToAddInstructorView"/>
-
-            <Button text="Activar Profesor"
-                    styleClass="option-btn, btn-activate"
-                    maxWidth="Infinity"
-                    onAction="#goToActivateInstructorView"/>
-
             <Button text="Inactivar Profesor"
                     styleClass="option-btn, btn-inactivate"
                     maxWidth="Infinity"
-                    onAction="#goToInactiveInstructorView"/>
+                    onAction="#goToInactivateInstructorView"/>
         </VBox>
     </center>
 

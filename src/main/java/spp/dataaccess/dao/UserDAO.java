@@ -1,10 +1,13 @@
 package spp.dataaccess.dao;
 
+import spp.businesslogic.dto.LoginResultDTO;
 import spp.businesslogic.dto.UserDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IUserDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
+import spp.utils.password.PasswordHasher;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -14,6 +17,8 @@ import java.sql.ResultSet;
 
 
 public class UserDAO implements IUserDAO {
+
+    private final PasswordHasher passwordHasher = new PasswordHasher();
 
     public UserDAO() {
 
@@ -37,7 +42,7 @@ public class UserDAO implements IUserDAO {
                     userDTO.getSecondLastName());
             preparedStatement.setString(3, userDTO.getEmail());
             preparedStatement.setString(4, userDTO.getPhoneNumber());
-            preparedStatement.setString(5, userDTO.getPassword());
+            preparedStatement.setString(5, passwordHasher.hashPassword(userDTO.getPassword()));
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == 0) {
@@ -88,22 +93,28 @@ public class UserDAO implements IUserDAO {
     }
 
     @Override
-    public boolean login(String identifier, String password) throws DAOException {
-        final String SELECT_LOGIN = "SELECT id_usuario FROM Usuarios " +
-                "WHERE correo_electronico = ? AND contraseña = ?";
+    public LoginResultDTO login(String email, String password) throws DAOException {
+        final String CALL_SP_OBTAIN_USER = "CALL sp_obtener_usuario_login(?)";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LOGIN);
-            preparedStatement.setString(1, identifier);
-            preparedStatement.setString(2, password);
+            PreparedStatement preparedStatement = connection.prepareStatement(CALL_SP_OBTAIN_USER);
+            preparedStatement.setString(1, email);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next();
+                if (resultSet.next()) {
+                    String storedHash = resultSet.getString("contraseña");
+                    String userType = resultSet.getString("tipo_usuario");
+
+                    if (passwordHasher.verifyPassword(storedHash, password)) {
+                        return new LoginResultDTO(userType);
+                    }
+                }
+                throw new DAOException("Credenciales incorrectas");
             }
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al verificar credenciales de administrador", e);
+            throw new DAOException("Error al verificar credenciales", e);
         }
     }
 

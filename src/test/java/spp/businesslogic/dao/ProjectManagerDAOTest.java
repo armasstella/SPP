@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.exceptions.DataAccessException;
 import spp.dataaccess.dao.ProjectManagerDAO;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -47,7 +46,7 @@ public class ProjectManagerDAOTest {
     @DisplayName("Debe lanzar DAOException al insertar un duplicado")
     void testAddProjectManagerFailedDuplicatedData() throws DAOException {
         projectManagerDAO.addProjectManagerDAO(testProjectManager);
-        assertThrows(DataAccessException.class, () ->
+        assertThrows(DAOException.class, () ->
             projectManagerDAO.addProjectManagerDAO(testProjectManager));
     }
 }

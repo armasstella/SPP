@@ -10,40 +10,34 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="spp.presentation.controller.AdminMenuController"
-            prefWidth="440" prefHeight="340"
+            fx:controller="spp.presentation.controller.CoordinatorDeactivationController"
+            prefWidth="440" prefHeight="300"
             styleClass="root-pane"
             stylesheets="@/spp/presentation/css/MainStyle.css">
 
     <top>
         <VBox styleClass="header">
-            <Label fx:id="lblTitle" text="CAMBIAR ESTADO" styleClass="header-title"/>
-            <Label fx:id="lblSubtitle" text="Modificar estado del Profesor" styleClass="header-subtitle"/>
+            <Label text="INACTIVAR COORDINADOR" styleClass="header-title"/>
+            <Label text="Desactivar cuenta de coordinador" styleClass="header-subtitle"/>
         </VBox>
     </top>
 
     <center>
         <VBox styleClass="form-container" spacing="14" alignment="CENTER">
-            <padding>
-                <Insets top="36" bottom="20" left="48" right="48"/>
-            </padding>
-
-            <Label text="Número de personal" styleClass="field-label"/>
+            <padding><Insets top="36" bottom="20" left="48" right="48"/></padding>
+            <Label text="Número de personal *" styleClass="field-label"/>
             <TextField fx:id="txtPersonalNumberToggle"
                        promptText="Ingresa el número de personal"
                        styleClass="field-input"/>
-
             <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true"/>
         </VBox>
     </center>
 
     <bottom>
         <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
-            <padding>
-                <Insets top="12" bottom="16" left="48" right="48"/>
-            </padding>
+            <padding><Insets top="12" bottom="16" left="48" right="48"/></padding>
             <Button text="Cancelar" styleClass="btn-back" onAction="#cancel"/>
-            <Button fx:id="btnConfirm" text="Confirmar" styleClass="btn-primary" onAction="#changeStatus"/>
+            <Button text="Inactivar" styleClass="btn-danger" onAction="#deactivateCoordinator"/>
         </HBox>
     </bottom>
 

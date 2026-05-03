@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.StackPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="spp.presentation.controller.AdminMenuController"
+            fx:controller="spp.presentation.controller.NewCoordinatorController"
             prefWidth="480" prefHeight="520"
             styleClass="root-pane"
             stylesheets="@/spp/presentation/css/MainStyle.css">
