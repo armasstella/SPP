@@ -68,27 +68,4 @@ public class InstructorDAO implements IInstructorDAO {
         return true;
     }
 
-    @Override
-    public boolean login(String personalNumber, String password) throws DAOException {
-        final String SELECT_LOGIN =
-                "SELECT P.id_usuario " +
-                        "FROM Profesores P " +
-                        "INNER JOIN Usuarios U ON P.id_usuario = U.id_usuario " +
-                        "WHERE P.num_personal = ? AND U.contraseña = ? AND U.estado = 'Activo'";
-
-        try {
-            Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LOGIN);
-            preparedStatement.setString(1, personalNumber);
-            preparedStatement.setString(2, password);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next();
-            }
-        } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("Error al verificar credenciales de instructor", e);
-        }
-    }
-
 }

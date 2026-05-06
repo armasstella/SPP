@@ -46,7 +46,7 @@ public class ProjectManagerController implements Initializable {
     private void saveProjectManager(ActionEvent event) {
 
         clearStatus();
-        if (!validateAddFields()) {
+        if (validateRegistrationInputs()) {
             return;
         }
 
@@ -56,7 +56,7 @@ public class ProjectManagerController implements Initializable {
         try {
             if (projectManagerDAO.addProjectManagerDAO(projectManagerDTO)) {
                 showSuccess("Encargado de proyecto registrado correctamente.");
-                clearAddFields();
+                clearInputFields();
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
@@ -70,20 +70,20 @@ public class ProjectManagerController implements Initializable {
                 "Menú Coordinador", event);
     }
 
-    private boolean validateAddFields() {
-        boolean validFields = true;
+    private boolean validateRegistrationInputs() {
+        boolean validFields = false;
         if (txtFirstName.getText().isBlank() ||
                 txtFirstLastName.getText().isBlank() ||
                 txtResponsability.getText().isBlank() ||
                 txtRole.getText().isBlank() ||
                 txtPhoneNumber.getText().isBlank()){
             showError("Completa todos los campos obligatorios.");
-            validFields = false;
+            validFields = true;
         }
         return validFields;
     }
 
-    private void clearAddFields() {
+    private void clearInputFields() {
         txtFirstName.clear();
         txtSecondName.clear();
         txtFirstLastName.clear();

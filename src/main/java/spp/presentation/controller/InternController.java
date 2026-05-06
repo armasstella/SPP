@@ -92,7 +92,7 @@ public class InternController implements Initializable {
     private void saveIntern(ActionEvent event) {
 
         clearStatus();
-        if (!validateAddFields()) {
+        if (validateRegistrationInputs()) {
             return;
         }
 
@@ -102,7 +102,7 @@ public class InternController implements Initializable {
         try {
             if (internDAO.addIntern(internDTO)) {
                 showSuccess("Practicante registrado correctamente.");
-                clearAddFields();
+                clearInputFields();
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
@@ -110,8 +110,8 @@ public class InternController implements Initializable {
         }
     }
 
-    private boolean validateAddFields() {
-        boolean validFields = true;
+    private boolean validateRegistrationInputs() {
+        boolean validFields = false;
         if (txtFirstName.getText().isBlank() ||
                 txtFirstLastName.getText().isBlank() ||
                 txtEmail.getText().isBlank() ||
@@ -121,12 +121,12 @@ public class InternController implements Initializable {
                 cmbGender.getValue() == null ||
                 dpBirthDate.getValue() == null) {
             showError("Completa todos los campos obligatorios.");
-            validFields = false;
+            validFields = true;
         }
         return validFields;
     }
 
-    private void clearAddFields() {
+    private void clearInputFields() {
         txtFirstName.clear();
         txtSecondName.clear();
         txtFirstLastName.clear();

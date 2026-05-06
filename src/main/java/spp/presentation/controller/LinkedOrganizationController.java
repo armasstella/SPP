@@ -47,7 +47,7 @@ public class LinkedOrganizationController implements Initializable {
     private void saveLinkedOrganization(ActionEvent event) {
 
         clearStatus();
-        if (!validateAddFields()) {
+        if (validateRegistrationInputs()) {
             return;
         }
 
@@ -57,7 +57,7 @@ public class LinkedOrganizationController implements Initializable {
         try {
             if (linkedOrganizationDAO.addLinkedOrganization(linkedOrganizationDTO)) {
                 showSuccess("Organización registrada correctamente.");
-                clearAddFields();
+                clearInputFields();
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
@@ -71,8 +71,8 @@ public class LinkedOrganizationController implements Initializable {
     }
 
 
-    private boolean validateAddFields() {
-        boolean validFields = true;
+    private boolean validateRegistrationInputs() {
+        boolean validFields = false;
         if (txtName.getText().isBlank() ||
                 txtName.getText().isBlank() ||
                 txtRfc.getText().isBlank() ||
@@ -82,12 +82,12 @@ public class LinkedOrganizationController implements Initializable {
                 txtPhoneNumber.getText().isBlank() ||
                 txtEmail.getText().isBlank()){
             showError("Completa todos los campos obligatorios.");
-            validFields = false;
+            validFields = true;
         }
         return validFields;
     }
 
-    private void clearAddFields() {
+    private void clearInputFields() {
         txtName.clear();
         txtRfc.clear();
         txtAddress.clear();

@@ -20,9 +20,11 @@ public class LoginController {
 
     @FXML
     private void login(ActionEvent event) {
-        if (validateEmptyFields()) return;
+        if (validateEmptyDataFields()) {
+            return;
+        }
 
-        String email    = txtEmail.getText().trim();
+        String email = txtEmail.getText().trim();
         String password = txtPassword.getText().trim();
 
         try {
@@ -53,7 +55,7 @@ public class LoginController {
                         "Menú Practicante", event);
                 break;
             case "Profesor":
-                ViewNavigator.loadView("/spp/presentation/view/MainMenuInstructorView.fxml",
+                ViewNavigator.loadView("/spp/presentation/view/InstructorMenuView.fxml",
                         "Menú Profesor", event);
                 break;
             case "Administrador":
@@ -65,7 +67,7 @@ public class LoginController {
         }
     }
 
-    private boolean validateEmptyFields() {
+    private boolean validateEmptyDataFields() {
         boolean emptyFields = false;
         if (txtEmail.getText().isBlank() || txtPassword.getText().isBlank()) {
             showError("Completa todos los campos obligatorios.");

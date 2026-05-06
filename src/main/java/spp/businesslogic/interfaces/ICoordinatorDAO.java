@@ -7,6 +7,5 @@ public interface ICoordinatorDAO {
     boolean addCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException;
     boolean inactivateCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException;
     boolean activateCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException;
-    boolean login(String personalNumber, String password) throws DAOException;
     boolean existCoordinator(String personalNumber) throws DAOException;
 }

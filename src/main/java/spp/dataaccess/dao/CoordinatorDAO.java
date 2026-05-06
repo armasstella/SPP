@@ -143,27 +143,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
         return true;
     }
 
-    @Override
-    public boolean login(String personalNumber, String password) throws DAOException {
-        final String SELECT_LOGIN = "SELECT C.id_usuario " +
-                        "FROM Coordinadores C " +
-                        "INNER JOIN Usuarios U ON C.id_usuario = U.id_usuario " +
-                        "WHERE C.num_personal = ? AND U.contraseña = ? AND U.estado = 'Activo'";
 
-        try {
-            Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LOGIN);
-            preparedStatement.setString(1, personalNumber);
-            preparedStatement.setString(2, password);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next();
-            }
-        } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("Error al verificar credenciales de coordinador", e);
-        }
-    }
 
     @Override
     public boolean existCoordinator(String personalNumber) throws DAOException {

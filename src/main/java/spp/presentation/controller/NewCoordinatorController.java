@@ -46,7 +46,8 @@ public class NewCoordinatorController implements Initializable {
         return coordinatorDTO;
     }
 
-    private boolean validateAddFields() {
+    private boolean validateRegistrationInputs() {
+        boolean emptyFields = false;
         if (txtFirstName.getText().isBlank() ||
                 txtFirstLastName.getText().isBlank() ||
                 txtEmail.getText().isBlank() ||
@@ -54,20 +55,22 @@ public class NewCoordinatorController implements Initializable {
                 txtPersonalNumber.getText().isBlank() ||
                 txtPassword.getText().isBlank()) {
             showError("Completa todos los campos obligatorios.");
-            return false;
+            emptyFields = true;
         }
-        return true;
+        return emptyFields;
     }
 
     @FXML
     private void saveCoordinator(ActionEvent event) {
         clearStatus();
-        if (!validateAddFields()) return;
+        if (validateRegistrationInputs()) {
+            return;
+        }
 
         try {
             if (coordinatorDAO.addCoordinator(buildCoordinatorDTO())) {
                 showSuccess("Coordinador registrado correctamente.");
-                clearAddFields();
+                clearInputFields();
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
@@ -81,7 +84,7 @@ public class NewCoordinatorController implements Initializable {
                 "Menú Administrador", event);
     }
 
-    private void clearAddFields() {
+    private void clearInputFields() {
         txtFirstName.clear();
         txtSecondName.clear();
         txtFirstLastName.clear();

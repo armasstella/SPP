@@ -37,7 +37,7 @@ public class ProjectController implements Initializable {
     private void saveProject(ActionEvent event) {
 
         clearStatus();
-        if (!validateAddFields()) {
+        if (validateRegistrationInputs()) {
             return;
         }
 
@@ -47,7 +47,7 @@ public class ProjectController implements Initializable {
         try {
             if (projectDAO.addProject(projectDTO)) {
                 showSuccess("Practicante registrado correctamente.");
-                clearAddFields();
+                clearInputFields();
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
@@ -60,17 +60,17 @@ public class ProjectController implements Initializable {
         ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml", "Cancelar", event);
     }
 
-    private boolean validateAddFields() {
-        boolean validFields = true;
+    private boolean validateRegistrationInputs() {
+        boolean emptyFields = false;
         if (txtDescription.getText().isBlank() ||
                 txtDisponibility.getText().isBlank()){
             showError("Completa todos los campos obligatorios.");
-            validFields = false;
+            emptyFields = true;
         }
-        return validFields;
+        return emptyFields;
     }
 
-    private void clearAddFields() {
+    private void clearInputFields() {
         txtDescription.clear();
         txtDisponibility.clear();
     }
