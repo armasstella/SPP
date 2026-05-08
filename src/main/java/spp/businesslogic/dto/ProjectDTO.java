@@ -7,6 +7,8 @@ public class ProjectDTO {
     private boolean disponibility;
     private ProjectManagerDTO projectManagerDTO;
     private LinkedOrganizationDTO linkedOrganizationDTO;
+    private int placesAvailable;
+    private String name;
 
     public ProjectDTO() {
 
@@ -50,5 +52,20 @@ public class ProjectDTO {
 
     public LinkedOrganizationDTO getLinkedOrganizationDTO() {
         return linkedOrganizationDTO;
+    }
+
+    public void setPlacesAvailable(int placesAvailable) {
+        this.placesAvailable = placesAvailable;
+    }
+
+    public int getPlacesAvailable() {
+        return placesAvailable;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 }

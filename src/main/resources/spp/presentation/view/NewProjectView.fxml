@@ -36,12 +36,24 @@
                                 <padding>
                                     <Insets left="5" right="5" top="5" bottom="5"/>
                                 </padding>
-                                    <Label text="Descripción *" styleClass="field-label"/>
-                                    <TextField fx:id="txtDescription" promptText="Ej. Salva Animales"
+                                    <Label text="Nombre del Proyecto *" styleClass="field-label"/>
+                                    <TextField fx:id="txtName" promptText="Ej. Sistema para Prácticas Profesionales"
                                                styleClass="field-input"/>
 
-                                    <Label text="Disponibilidad *" styleClass="field-label"/>
-                                    <TextField fx:id="txtDisponibility" promptText="Ej. Disponible"
+                                    <Label text="Descripción *" styleClass="field-label"/>
+                                    <TextField fx:id="txtDescription" promptText="Ej. Desarrollo de software para..."
+                                               styleClass="field-input"/>
+
+                                    <Label text="Cupo *" styleClass="field-label"/>
+                                    <TextField fx:id="txtPlacesAvailable" promptText="Ej. 4"
+                                               styleClass="field-input"/>
+
+                                    <Label text="Encargado del Proyecto *" styleClass="field-label"/>
+                                    <TextField fx:id="txtProjectManager" promptText="Ingrese el id del encargado"
+                                               styleClass="field-input"/>
+
+                                    <Label text="Organización Responsable *" styleClass="field-label"/>
+                                    <TextField fx:id="txtLinkedOrganization" promptText="Ingrese el id de la organización"
                                                styleClass="field-input"/>
                             </VBox>
                         </content>

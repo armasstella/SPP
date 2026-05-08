@@ -5,7 +5,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.dto.ProjectDTO;
+import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.dataaccess.dao.ProjectDAO;
 import spp.utils.logger.AppLogger;
@@ -15,10 +17,16 @@ import java.util.ResourceBundle;
 
 public class ProjectController implements Initializable {
 
+    @FXML private TextField txtName;
     @FXML private TextField txtDescription;
-    @FXML private TextField txtDisponibility;
+    @FXML private TextField txtPlacesAvailable;
+    @FXML private TextField txtProjectManager;
+    @FXML private TextField txtLinkedOrganization;
 
     @FXML private Label lblStatus;
+
+    ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
+    LinkedOrganizationDTO linkedOrganizationDTO = new LinkedOrganizationDTO();
 
     private final ProjectDAO projectDAO = new ProjectDAO();
 
@@ -29,8 +37,13 @@ public class ProjectController implements Initializable {
 
     @FXML
     private void setAllProject(ActionEvent event, ProjectDTO projectDTO) {
+        projectDTO.setName(txtName.getText().trim());
         projectDTO.setDescription(txtDescription.getText().trim());
-        projectDTO.setDisponibility(Boolean.parseBoolean(txtDisponibility.getText().trim()));
+        projectDTO.setPlacesAvailable(Integer.parseInt(txtPlacesAvailable.getText().trim()));
+        projectManagerDTO.setId(Integer.parseInt(txtProjectManager.getText().trim()));
+        projectDTO.setProjectManagerDTO(projectManagerDTO);
+        linkedOrganizationDTO.setId(Integer.parseInt(txtLinkedOrganization.getText().trim()));
+        projectDTO.setLinkedOrganizationDTO(linkedOrganizationDTO);
     }
 
     @FXML
@@ -46,7 +59,7 @@ public class ProjectController implements Initializable {
 
         try {
             if (projectDAO.addProject(projectDTO)) {
-                showSuccess("Practicante registrado correctamente.");
+                showSuccess("Proyecto registrado correctamente.");
                 clearInputFields();
             }
         } catch (DAOException e) {
@@ -62,8 +75,11 @@ public class ProjectController implements Initializable {
 
     private boolean validateRegistrationInputs() {
         boolean emptyFields = false;
-        if (txtDescription.getText().isBlank() ||
-                txtDisponibility.getText().isBlank()){
+        if (txtName.getText().isBlank() ||
+                txtDescription.getText().isBlank() ||
+                txtPlacesAvailable.getText().isBlank() ||
+                txtProjectManager.getText().isBlank() ||
+                txtLinkedOrganization.getText().isBlank()) {
             showError("Completa todos los campos obligatorios.");
             emptyFields = true;
         }
@@ -71,8 +87,11 @@ public class ProjectController implements Initializable {
     }
 
     private void clearInputFields() {
+        txtName.clear();
         txtDescription.clear();
-        txtDisponibility.clear();
+        txtPlacesAvailable.clear();
+        txtProjectManager.clear();
+        txtLinkedOrganization.clear();
     }
 
     private void showSuccess(String message) {
