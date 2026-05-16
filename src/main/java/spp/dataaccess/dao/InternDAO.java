@@ -22,6 +22,7 @@ public class InternDAO implements IInternDAO {
 
     @Override
     public boolean addIntern(InternDTO internDTO) throws DAOException {
+        boolean isAddSuccessful = false;
         final String INSERT_INTERN = "INSERT INTO Practicantes " +
                 "(id_usuario, matricula, sexo, habla_lengua_indigena, fecha_nacimiento) " +
                 "VALUES (?, ?, ?, ?, ?)";
@@ -46,6 +47,7 @@ public class InternDAO implements IInternDAO {
                 }
 
                 connection.commit();
+                isAddSuccessful = true;
 
             } catch (DAOException e) {
                 connection.rollback();
@@ -69,7 +71,53 @@ public class InternDAO implements IInternDAO {
             throw new DAOException("Error al acceder a la base de datos", e);
         }
 
-        return true;
+        return isAddSuccessful;
     }
+
+    @Override
+    public int obtainId(String studentNumber) throws DAOException {
+        final String SELECT_ID = "SELECT U.id_usuario FROM Usuarios U INNER JOIN Practicantes P " +
+                "ON U.id_usuario = P.id_usuario AND P.matricula = ?";
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ID);
+            preparedStatement.setString(1, studentNumber);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("id_usuario");
+                }
+                throw new DAOException("Usuario no encontrado con matricula: " + studentNumber);
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Error al obtener practicante", e);
+        }
+    }
+
+    @Override
+    public boolean searchStudentNumberRegister(String studentNumber) throws DAOException {
+        boolean isSearchSuccessful = false;
+        final String SEARCH_STUDENT = "SELECT f_existe_estudiante(?)";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_STUDENT);
+            preparedStatement.setString(1, studentNumber);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    isSearchSuccessful = resultSet.getBoolean(1);
+                    if (!isSearchSuccessful) {
+                        throw new DAOException("Esta matrícula no es valida");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error al buscar matricula", e);
+        }
+        return isSearchSuccessful;
+    }
+
+
 
 }

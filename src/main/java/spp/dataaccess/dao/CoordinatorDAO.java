@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CoordinatorDAO implements ICoordinatorDAO {
 
@@ -164,6 +166,33 @@ public class CoordinatorDAO implements ICoordinatorDAO {
             AppLogger.logError(e);
             throw new DAOException("Error al verificar existencia de coordinador", e);
         }
+    }
+
+    @Override
+    public List<CoordinatorDTO> obtainAllActiveCoordinators() throws DAOException {
+        List<CoordinatorDTO> coordinatorsList = new ArrayList<>();
+        final String SELECT_ALL_COORDINATORS = "SELECT nombre, apellidos, correo_electronico, num_personal " +
+                "FROM Usuarios u INNER JOIN Coordinadores c ON u.id_usuario = c.id_usuario AND u.estado = 'Activo'";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_COORDINATORS);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                CoordinatorDTO coordinatorDTO = new CoordinatorDTO();
+                coordinatorDTO.setFirstName(resultSet.getString("nombre"));
+                coordinatorDTO.setFirstLastName(resultSet.getString("apellidos"));
+                coordinatorDTO.setEmail(resultSet.getString("correo_electronico"));
+                coordinatorDTO.setPersonalNumber(resultSet.getString("num_personal"));
+                coordinatorsList.add(coordinatorDTO);
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error al obtener lista de coordinadores", e);
+        }
+        return coordinatorsList;
     }
 
 }

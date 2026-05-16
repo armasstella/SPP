@@ -12,4 +12,10 @@ public class InternMenuController {
                 "Inicia sesión", event);
     }
 
+    @FXML
+    private void goToUploadDocumentsView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/UploadDocumentsView.fxml",
+                "Subir documentos", event);
+    }
+
 }

@@ -55,6 +55,7 @@
                     />
                     <Button text="Subir Documento"
                             styleClass="option-btn, btn-add"
+                            onAction="#goToUploadDocumentsView"
                     />
 
                     <Button text="Generar y Subir Evaluación"
