@@ -2,10 +2,15 @@ package spp.presentation.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dto.InstructorDTO;
+import spp.businesslogic.exceptions.DAOException;
+import spp.dataaccess.dao.InstructorDAO;
+import spp.utils.logger.AppLogger;
 import spp.utils.view.ViewNavigator;
+
 
 public class NewInstructorController {
 
@@ -18,6 +23,7 @@ public class NewInstructorController {
     @FXML private TextField txtPersonalNumber;
     @FXML private TextField txtPassword;
     @FXML private Label lblStatus;
+    @FXML private ComboBox<String> cmbShift;
 
     private InstructorDTO buildInstructorDTO() {
         InstructorDTO instructorDTO = new InstructorDTO();
@@ -29,11 +35,26 @@ public class NewInstructorController {
         instructorDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
         instructorDTO.setPersonalNumber(txtPersonalNumber.getText().trim());
         instructorDTO.setPassword(txtPassword.getText().trim());
+        instructorDTO.setShift(cmbShift.getValue());
         return instructorDTO;
     }
 
     @FXML
-    private void saveInstructor() {
+    private void saveInstructor(ActionEvent event) {
+        final InstructorDAO instructorDAO = new InstructorDAO();
+        if (validateRegistrationInputs()) {
+            return;
+        }
+
+        try {
+            if (instructorDAO.addInstructor(buildInstructorDTO())) {
+                showSuccess("Profesot registrado correctamente.");
+                clearInputFields();
+            }
+        } catch (DAOException e) {
+            AppLogger.logError(e);
+            showError(e.getMessage());
+        }
 
     }
 
@@ -41,6 +62,45 @@ public class NewInstructorController {
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/AdminMenuView.fxml",
                 "Menú Administrador", event);
+    }
+
+    private boolean validateRegistrationInputs() {
+        boolean emptyFields = false;
+        if (txtFirstName.getText().isBlank() ||
+                txtFirstLastName.getText().isBlank() ||
+                txtEmail.getText().isBlank() ||
+                txtPhoneNumber.getText().isBlank() ||
+                txtPersonalNumber.getText().isBlank() ||
+                txtPassword.getText().isBlank() ||
+                cmbShift.getValue() == null) {
+            showError("Completa todos los campos obligatorios.");
+            emptyFields = true;
+        }
+        return emptyFields;
+    }
+
+    private void clearInputFields() {
+        txtFirstName.clear();
+        txtSecondName.clear();
+        txtFirstLastName.clear();
+        txtSecondLastName.clear();
+        txtEmail.clear();
+        txtPhoneNumber.clear();
+        txtPersonalNumber.clear();
+        txtPassword.clear();
+        cmbShift.setValue(null);
+    }
+
+    private void showSuccess(String message) {
+        lblStatus.setText(message);
+        lblStatus.getStyleClass().removeAll("error", "success");
+        lblStatus.getStyleClass().add("success");
+    }
+
+    private void showError(String message) {
+        lblStatus.setText(message);
+        lblStatus.getStyleClass().removeAll("error", "success");
+        lblStatus.getStyleClass().add("error");
     }
 
 }

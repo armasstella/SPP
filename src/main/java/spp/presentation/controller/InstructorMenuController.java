@@ -12,4 +12,10 @@ public class InstructorMenuController {
                 "Inicia sesión", event);
     }
 
+    @FXML
+    private void goToNewActivityView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/NewActivityView.fxml",
+                "Nueva actividad" , event);
+    }
+
 }
