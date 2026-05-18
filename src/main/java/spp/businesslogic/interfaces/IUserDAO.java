@@ -11,4 +11,5 @@ public interface IUserDAO {
     int getGeneratedKey(PreparedStatement preparedStatement) throws DAOException;
     int obtainId(String email) throws DAOException;
     LoginResultDTO login(String identifier, String password) throws DAOException;
+    boolean searchEmailRegister(String email) throws DAOException;
 }

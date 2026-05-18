@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 public class ProjectDAO implements IProjectDAO {
+    private static final int NO_ROWS_AFFECTED = 0;
 
     public ProjectDAO() {
 
@@ -36,7 +37,7 @@ public class ProjectDAO implements IProjectDAO {
                 preparedStatement.setString(5, projectDTO.getName());
 
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == 0) {
+                if (affectedRows == NO_ROWS_AFFECTED) {
                     throw new DAOException("Fallo al insertar el proyecto. No se afectaron filas.");
                 }
 

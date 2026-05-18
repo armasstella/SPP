@@ -65,4 +65,24 @@ public class CoordinatorMenuController {
         ViewNavigator.loadView("/spp/presentation/view/ReportGenerationView.fxml",
                 "Generar Reporte", event);
     }
+
+    @FXML
+    private void goToGroupAssignationToInstructorView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/GroupAssignationToInstructorView.fxml",
+                "Asignar grupo", event);
+    }
+
+    @FXML
+    private void goToMessageCenter(ActionEvent event) {
+
+        MessageCenterController messageCenterController = ViewNavigator.loadView(
+                "/spp/presentation/view/MessageCenterView.fxml",
+                "Centro de mensajes", event);
+
+        if (messageCenterController != null) {
+            messageCenterController.setPreviousView("/spp/presentation/view/CoordinatorMenuView.fxml",
+                    "Menú Coordinador");
+        }
+
+    }
 }

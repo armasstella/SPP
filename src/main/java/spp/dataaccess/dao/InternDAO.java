@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.sql.ResultSet;
 
 public class InternDAO implements IInternDAO {
+    private static final int NO_ROWS_AFFECTED = 0;
 
     private final UserDAO userDAO = new UserDAO();
 
@@ -42,7 +43,7 @@ public class InternDAO implements IInternDAO {
                 preparedStatement.setTimestamp(5, Timestamp.valueOf(internDTO.getBirthDate()));
 
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == 0) {
+                if (affectedRows == NO_ROWS_AFFECTED) {
                     throw new DAOException("Fallo al insertar al practicante. No se afectaron filas.");
                 }
 

@@ -33,7 +33,7 @@
                     <Insets top="12" bottom="16" left="48" right="48"/>
                 </padding>
                 <Rectangle height="4" styleClass="header-divider" VBox.vgrow="NEVER"/>
-                <Button text="Ver Buzón de Mensajes" styleClass="btn-primary"/>
+                <Button text="Ver Buzón de Mensajes" styleClass="btn-primary" onAction="#goToMessageCenter"/>
             </VBox>
         </VBox>
     </top>
@@ -41,7 +41,7 @@
     <center>
         <VBox styleClass="options-container">
             <HBox styleClass="options-container" alignment="CENTER" spacing="16">
-                <VBox alignment="CENTER" spacing="16">
+                <VBox alignment="TOP_CENTER" spacing="16">
                     <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
                     <Button text="Registrar Practicante"
                             styleClass="option-btn, btn-add"
@@ -62,7 +62,7 @@
                             onAction="#goToInternDeactivationView"
                             />
                 </VBox>
-                <VBox spacing="16">
+                <VBox alignment="TOP_CENTER" spacing="16">
                     <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
                     <Button text="Registrar Encargado de Proyecto"
                             styleClass="option-btn, btn-add"
@@ -82,6 +82,17 @@
                             styleClass="option-btn, btn-inactivate"
                             onAction="#goToProjectDeletionView"
                             />
+                </VBox>
+                <VBox alignment="TOP_CENTER" spacing="16">
+                    <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
+                    <Button text="Asignar grupo a Profesor"
+                            styleClass="option-btn, btn-add"
+                            onAction="#goToGroupAssignationToInstructorView"
+                    />
+
+                    <Button text="Información de EE"
+                            styleClass="option-btn, btn-add"
+                    />
                 </VBox>
 
             </HBox>

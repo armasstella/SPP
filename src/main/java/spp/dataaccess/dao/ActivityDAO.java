@@ -12,6 +12,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 
 public class ActivityDAO implements IActivityDAO {
+    private static final int NO_ROWS_AFFECTED = 0;
 
     public ActivityDAO() {
 
@@ -37,7 +38,7 @@ public class ActivityDAO implements IActivityDAO {
                 preparedStatement.setString(5, activityDTO.getInstructorDTO().getPersonalNumber());
 
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == 0) {
+                if (affectedRows == NO_ROWS_AFFECTED) {
                     throw new DAOException("Fallo al insertar la actividad. No se afectaron filas.");
                 }
 

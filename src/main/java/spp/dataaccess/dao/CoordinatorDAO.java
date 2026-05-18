@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoordinatorDAO implements ICoordinatorDAO {
+    private static final int NO_ROWS_AFFECTED = 0;
 
     private final UserDAO userDAO = new UserDAO();
 
@@ -38,7 +39,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
                 preparedStatement.setString(2, coordinatorDTO.getPersonalNumber());
 
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == 0) {
+                if (affectedRows == NO_ROWS_AFFECTED) {
                     throw new DAOException("Error. No se afectaron filas al insertar coordinador.");
                 }
 
@@ -85,7 +86,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
                 preparedStatement.setString(1, coordinatorDTO.getPersonalNumber());
 
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == 0) {
+                if (affectedRows == NO_ROWS_AFFECTED) {
                     throw new DAOException("Error. No se afectaron filas al inactivar el coordinador.");
                 }
 
@@ -123,7 +124,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
                 preparedStatement.setString(1, coordinatorDTO.getPersonalNumber());
 
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == 0) {
+                if (affectedRows == NO_ROWS_AFFECTED) {
                     throw new DAOException("Error. No se afectaron filas al activar el coordinador.");
                 }
 

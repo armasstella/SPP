@@ -10,7 +10,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/spp/presentation/view/CoordinatorMenuView.fxml")
+                getClass().getResource("/spp/presentation/view/LoginView.fxml")
         );
         Scene scene = new Scene(loader.load(), 420, 380);
         stage.setTitle("Sistema para Practicas Profesionales");

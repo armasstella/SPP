@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
+    private static final int NO_ROWS_AFFECTED = 0;
 
     public LinkedOrganizationDAO() {
 
@@ -37,7 +38,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
                 preparedStatement.setString(7, linkedOrganizationDTO.getEmail());
 
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == 0) {
+                if (affectedRows == NO_ROWS_AFFECTED) {
                     throw new DAOException("Fallo al insertar la organización vinculada. No se afectaron filas.");
                 }
 
