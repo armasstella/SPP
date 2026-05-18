@@ -4,7 +4,7 @@ public class ProjectDTO {
 
     private int id;
     private String description;
-    private boolean disponibility;
+    private boolean availability;
     private ProjectManagerDTO projectManagerDTO;
     private LinkedOrganizationDTO linkedOrganizationDTO;
     private int placesAvailable;
@@ -30,12 +30,12 @@ public class ProjectDTO {
         return description;
     }
 
-    public void setDisponibility(boolean disponibility) {
-        this.disponibility = disponibility;
+    public void setAvailability(boolean availability) {
+        this.availability = availability;
     }
 
-    public boolean getDisponibility() {
-        return disponibility;
+    public boolean getAvailability() {
+        return availability;
     }
 
     public void setProjectManagerDTO(ProjectManagerDTO projectManagerDTO) {
@@ -65,6 +65,7 @@ public class ProjectDTO {
     public String getName() {
         return name;
     }
+    
     public void setName(String name) {
         this.name = name;
     }

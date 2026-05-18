@@ -27,7 +27,7 @@
             <javafx.scene.layout.Pane HBox.hgrow="ALWAYS" />
 
             <VBox styleClass="right-element">
-                <Button text="Salir" styleClass="btn-label" onAction="#goToLoginView"/>
+                <Button text="Cerrar Sesión" styleClass="btn-label" onAction="#goToLoginView"/>
             </VBox>
         </HBox>
 
@@ -35,28 +35,33 @@
 
     <center>
         <VBox styleClass="options-container" alignment="CENTER" spacing="16">
-            <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
+            <HBox styleClass="options-container" alignment="CENTER" spacing="16">
+                <VBox alignment="CENTER" spacing="16">
+                    <padding>
+                        <Insets top="28" bottom="28" left="48" right="48"/>
+                    </padding>
 
-            <Button text="Registrar Coordinador"
-                    styleClass="option-btn, btn-add"
-                    maxWidth="Infinity"
-                    onAction="#goToAddCoordinatorView"/>
+                    <Button text="Registrar Coordinador"
+                            styleClass="option-btn, btn-add"
+                            maxWidth="Infinity"
+                            onAction="#goToAddCoordinatorView"/>
 
-            <Button text="Registrar Profesor"
-                    styleClass="option-btn, btn-add"
-                    maxWidth="Infinity"
-                    onAction="#goToAddInstructorView"/>
+                    <Button text="Registrar Profesor"
+                            styleClass="option-btn, btn-add"
+                            maxWidth="Infinity"
+                            onAction="#goToAddInstructorView"/>
 
-            <Button text="Inactivar Coordinador"
-                    styleClass="option-btn, btn-inactivate"
-                    maxWidth="Infinity"
-                    onAction="#goToInactivateCoordinatorView"/>
+                    <Button text="Inactivar Coordinador"
+                            styleClass="option-btn, btn-inactivate"
+                            maxWidth="Infinity"
+                            onAction="#goToInactivateCoordinatorView"/>
 
-            <Button text="Inactivar Profesor"
-                    styleClass="option-btn, btn-inactivate"
-                    maxWidth="Infinity"
-                    onAction="#goToInactivateInstructorView"/>
+                    <Button text="Inactivar Profesor"
+                            styleClass="option-btn, btn-inactivate"
+                            maxWidth="Infinity"
+                            onAction="#goToInactivateInstructorView"/>
+                </VBox>
+            </HBox>
         </VBox>
     </center>
-
 </BorderPane>
