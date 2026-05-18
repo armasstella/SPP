@@ -32,7 +32,7 @@ public class ProjectDAOTest {
 
         testProject = new ProjectDTO();
         testProject.setDescription(" ");
-        testProject.setDisponibility(true);
+        testProject.setAvailability(true);
         testProject.setProjectManagerDTO(projectManager);
         testProject.setLinkedOrganizationDTO(linkedOrganization);
     }
