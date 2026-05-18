@@ -29,6 +29,7 @@ public class LoginController {
 
         try {
             LoginResultDTO result = userDAO.login(email, password);
+            int idUser = userDAO.obtainId(email);
 
             if (result == null) {
                 showError("Usuario o contraseña incorrectos.");

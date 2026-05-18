@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InstructorDAO implements IInstructorDAO {
+    private static final int NO_ROWS_AFFECTED = 0;
 
     private final UserDAO userDAO = new UserDAO();
 
@@ -40,7 +41,7 @@ public class InstructorDAO implements IInstructorDAO {
                 preparedStatement.setString(3, instructorDTO.getShift());
 
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == 0) {
+                if (affectedRows == NO_ROWS_AFFECTED) {
                     throw new DAOException("Fallo al insertar al profesor. No se afectaron filas.");
                 }
 
@@ -106,7 +107,7 @@ public class InstructorDAO implements IInstructorDAO {
                 preparedStatement.setString(1, instructorDTO.getPersonalNumber());
 
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == 0) {
+                if (affectedRows == NO_ROWS_AFFECTED) {
                     throw new DAOException("Error. No se afectaron filas al inactivar el profesor.");
                 }
 

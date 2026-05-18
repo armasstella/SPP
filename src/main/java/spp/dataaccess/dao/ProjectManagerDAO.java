@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 public class ProjectManagerDAO implements IProjectManagerDAO {
+    private static final int NO_ROWS_AFFECTED = 0;
 
     public ProjectManagerDAO() {
 
@@ -37,7 +38,7 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                 preparedStatement.setString(5, projectManagerDTO.getPhoneNumber());
 
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == 0) {
+                if (affectedRows == NO_ROWS_AFFECTED) {
                     throw new DAOException("Fallo al insertar el encargado del proyecto. No se afectaron filas.");
                 }
 

@@ -34,7 +34,7 @@
                     <Insets top="12" bottom="16" left="48" right="48"/>
                 </padding>
                 <Rectangle height="4" styleClass="header-divider" VBox.vgrow="NEVER"/>
-                <Button text="Ver Buzón de Mensajes" styleClass="btn-primary"/>
+                <Button text="Ver Buzón de Mensajes" styleClass="btn-primary" onAction="#goToMessageCenter"/>
             </VBox>
         </VBox>
     </top>

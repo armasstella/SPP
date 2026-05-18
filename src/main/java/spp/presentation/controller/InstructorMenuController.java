@@ -18,4 +18,18 @@ public class InstructorMenuController {
                 "Nueva actividad" , event);
     }
 
+    @FXML
+    private void goToMessageCenter(ActionEvent event) {
+
+        MessageCenterController messageCenterController = ViewNavigator.loadView(
+                "/spp/presentation/view/MessageCenterView.fxml",
+                "Centro de mensajes", event);
+
+        if (messageCenterController != null) {
+            messageCenterController.setPreviousView("/spp/presentation/view/InstructorMenuView.fxml",
+                    "Menú Profesor");
+        }
+
+    }
+
 }
