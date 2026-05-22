@@ -1,70 +1,173 @@
 package spp.presentation.controller;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.dataaccess.dao.ProjectDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.AlertHelper;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class ProjectUpdateController implements Initializable {
 
+    @FXML private Label lblMessageBeforeEdition;
+    @FXML private Label lblMessageInEdition;
+    @FXML private VBox vbShowAllProjects;
+    @FXML private VBox vbEditProject;
+    @FXML private HBox hbButtonsBeforeEdition;
+    @FXML private HBox hbButtonsInEdition;
     @FXML private TextField txtName;
     @FXML private TextField txtDescription;
     @FXML private TextField txtPlacesAvailable;
     @FXML private TextField txtLinkedOrganizationId;
     @FXML private TextField txtProjectManagerId;
-
-    @FXML private TextField txtId;
-
+    @FXML private TableView<ProjectDTO> tblProjects;
+    @FXML private TableColumn<ProjectDTO, String> clmnName;
+    @FXML private TableColumn<ProjectDTO, String> clmnDescription;
+    @FXML private TableColumn<ProjectDTO, String> clmnAvailability;
+    @FXML private TableColumn<ProjectDTO, String> clmnPlacesAvailable;
+    @FXML private TableColumn<ProjectDTO, String> clmnLinkedOrganization;
+    @FXML private TableColumn<ProjectDTO, String> clmnProjectManager;
     @FXML private Label lblStatus;
 
     private final ProjectDAO projectDAO = new ProjectDAO();
+    private ObservableList<ProjectDTO> projectsObservableList;
+    private ProjectDTO projectInEdition;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         clearStatus();
+        setUpColumns();
+        obtainProjects();
+    }
+
+    private void obtainProjects() {
+        try {
+            List<ProjectDTO> projectsList = projectDAO.obtainAllProjects();
+            projectsObservableList = FXCollections.observableArrayList(projectsList);
+            tblProjects.setItems(projectsObservableList);
+        } catch (DAOException e) {
+            showError("Error al obtener lista de proyectos.");
+        }
+    }
+
+    private void setUpColumns() {
+        clmnName.setCellValueFactory(
+                new PropertyValueFactory<>("name"));
+        clmnDescription.setCellValueFactory(
+                new PropertyValueFactory<>("description"));
+        clmnPlacesAvailable.setCellValueFactory(
+                new PropertyValueFactory<>("placesAvailable"));
+        clmnAvailability.setCellValueFactory(
+                new PropertyValueFactory<>("availability"));
+        clmnLinkedOrganization.setCellValueFactory(
+                cellData -> {
+                    LinkedOrganizationDTO linkedOrganizationDTO = cellData.getValue().getLinkedOrganizationDTO();;
+                    String name = (linkedOrganizationDTO != null) ? linkedOrganizationDTO.getName() : "Sin organización vinculada";
+                    return new SimpleStringProperty(name);
+                });
+        clmnProjectManager.setCellValueFactory(
+                cellData -> {
+                    ProjectManagerDTO projectManagerDTO = cellData.getValue().getProjectManagerDTO();
+                    String name = (projectManagerDTO != null) ? projectManagerDTO.getFirstName() : "Sin encargado";
+                    return new SimpleStringProperty(name);
+                }
+        );
+    }
+
+    @FXML
+    private void continueToEdit(ActionEvent event) {
+        projectInEdition = tblProjects.getSelectionModel().getSelectedItem();
+        if (projectInEdition == null) {
+            showError("Debe seleccionar un proyecto");
+            return;
+        }
+        lblStatus.setText("");
+        lblMessageBeforeEdition.setVisible(false);
+        vbShowAllProjects.setVisible(false);
+        hbButtonsBeforeEdition.setVisible(false);
+        lblMessageInEdition.setVisible(true);
+        vbEditProject.setVisible(true);
+        hbButtonsInEdition.setVisible(true);
+        txtName.setText(projectInEdition.getName());
+        txtDescription.setText(projectInEdition.getDescription());
+        txtPlacesAvailable.setText(String.valueOf(projectInEdition.getPlacesAvailable()));
+    }
+
+
+    @FXML
+    private void cancelEdition(ActionEvent event) {
+        if (areRequiredInputFieldsEmpty()) {
+            if (AlertHelper.showConfirmation("¿Seguro que desea cancelar?",
+                    "La información registrada se perderá")) {
+
+                clearInputFields();
+                lblStatus.setText("");
+                lblMessageInEdition.setVisible(false);
+                vbEditProject.setVisible(false);
+                hbButtonsInEdition.setVisible(false);
+                lblMessageBeforeEdition.setVisible(true);
+                vbShowAllProjects.setVisible(true);
+                hbButtonsBeforeEdition.setVisible(true);
+            }
+        } else {
+            clearInputFields();
+            lblStatus.setText("");
+            lblMessageInEdition.setVisible(false);
+            vbEditProject.setVisible(false);
+            hbButtonsInEdition.setVisible(false);
+            lblMessageBeforeEdition.setVisible(true);
+            vbShowAllProjects.setVisible(true);
+            hbButtonsBeforeEdition.setVisible(true);
+        }
+    }
+
+    private boolean areRequiredInputFieldsEmpty() {
+        return txtName.getText().isBlank() ||
+                txtDescription.getText().isBlank() ||
+                txtPlacesAvailable.getText().isBlank();
+
     }
 
     @FXML
     private void updateProject(ActionEvent event) {
 
         clearStatus();
-        if (validateUpdateInputs()) {
+        if (!validateUpdateInputs()) {
             return;
         }
 
         try {
-            int projectId = Integer.parseInt(txtId.getText().trim());
             String newName = txtName.getText().trim();
             String newDescription = txtDescription.getText().trim();
             int newPlacesAvailable = Integer.parseInt(txtPlacesAvailable.getText().trim());
-            int newLinkedOrganizationId = Integer.parseInt(txtLinkedOrganizationId.getText().trim());
-            int newProjectManagerId = Integer.parseInt(txtProjectManagerId.getText().trim());
 
             ProjectDTO projectDTO = new ProjectDTO();
-            projectDTO.setId(projectId);
             projectDTO.setName(newName);
             projectDTO.setDescription(newDescription);
             projectDTO.setPlacesAvailable(newPlacesAvailable);
-
-            LinkedOrganizationDTO newLinkedOrganizationDTO = new LinkedOrganizationDTO();
-            newLinkedOrganizationDTO.setId(newLinkedOrganizationId);
-            projectDTO.setLinkedOrganizationDTO(newLinkedOrganizationDTO);
-
-            ProjectManagerDTO newProjectManagerDTO = new ProjectManagerDTO();
-            newProjectManagerDTO.setId(newProjectManagerId);
-            projectDTO.setProjectManagerDTO(newProjectManagerDTO);
+            projectDTO.setId(projectInEdition.getId());
 
             if (projectDAO.updateProject(projectDTO)) {
+                showAllProjects();
                 showSuccess("Proyecto actualizado correctamente.");
                 clearInputFields();
             }
@@ -76,22 +179,35 @@ public class ProjectUpdateController implements Initializable {
         }
     }
 
+    private void showAllProjects() {
+        showSuccess("Proyecto actualizado correctamente.");
+        lblMessageInEdition.setVisible(false);
+        vbEditProject.setVisible(false);
+        hbButtonsInEdition.setVisible(false);
+        lblMessageBeforeEdition.setVisible(true);
+        vbShowAllProjects.setVisible(true);
+        hbButtonsBeforeEdition.setVisible(true);
+        obtainProjects();
+    }
+
     @FXML
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml", "Cancelar", event);
     }
 
     private boolean validateUpdateInputs() {
-        boolean emptyFields = false;
-        if (txtId.getText().isBlank()) {
-            showError("Ingrese el ID del proyecto.");
-            emptyFields = true;
+        boolean areInputsValid = true;
+        if (areRequiredInputFieldsEmpty()) {
+            showError("Los campos no deben estar vacíos.");
+            areInputsValid = false;
         }
-        return emptyFields;
+        return areInputsValid;
     }
 
     private void clearInputFields() {
-        txtId.clear();
+        txtName.setText("");
+        txtDescription.setText("");
+        txtPlacesAvailable.setText("");
     }
 
     private void showSuccess(String message) {

@@ -116,8 +116,8 @@ public class ProjectDAO implements IProjectDAO {
 
     @Override
     public boolean updateProject(ProjectDTO projectDTO) throws DAOException {
-        final String UPDATE_PROJECT = "UPDATE Proyectos SET descripcion = ?, id_organizacion_vinculada, " +
-                "id_encargado_proyecto = ?, cupo = ?, nombre = ? WHERE id_project = ?";
+        final String UPDATE_PROJECT = "UPDATE Proyectos SET descripcion = ?, " +
+                "nombre = ?, cupo = ?  WHERE id_proyecto = ?";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -126,11 +126,9 @@ public class ProjectDAO implements IProjectDAO {
             try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PROJECT)) {
 
                 preparedStatement.setString(1, projectDTO.getDescription());
-                preparedStatement.setInt(2, projectDTO.getLinkedOrganizationDTO().getId());
-                preparedStatement.setInt(3, projectDTO.getProjectManagerDTO().getId());
-                preparedStatement.setInt(4, projectDTO.getPlacesAvailable());
-                preparedStatement.setString(5, projectDTO.getName());
-                preparedStatement.setInt(6, projectDTO.getId());
+                preparedStatement.setString(2, projectDTO.getName());
+                preparedStatement.setInt(3, projectDTO.getPlacesAvailable());
+                preparedStatement.setInt(4, projectDTO.getId());
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
