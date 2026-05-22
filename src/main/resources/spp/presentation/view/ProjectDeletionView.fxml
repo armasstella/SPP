@@ -7,6 +7,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
 
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
@@ -31,18 +33,20 @@
                 <Insets top="36" bottom="20" left="48" right="48"/>
             </padding>
 
-            <Label text="Dé clic sobre el proyecto que desea eliminar" styleClass="lbl-status"/>
+            <Label text="De clic sobre el proyecto que desea eliminar." styleClass="lbl-status"/>
             <TableView fx:id="tblProjects" prefHeight="400">
                 <columns>
                     <TableColumn fx:id="clmnName" text="Nombre" prefWidth="120"
                                  sortable="false" reorderable="false"/>
                     <TableColumn fx:id="clmnDescription" text="Descripción" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnAvailibility" text="Disponibilidad" prefWidth="120"
+                    <TableColumn fx:id="clmnAvailability" text="Disponibilidad" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnOrganization" text="Organización" prefWidth="120"
+                    <TableColumn fx:id="clmnPlacesAvailable" text="Cupo" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnManager" text="Encargado" prefWidth="120"
+                    <TableColumn fx:id="clmnLinkedOrganization" text="Organización Vinculada" prefWidth="120"
+                                 sortable="false" reorderable="false"/>
+                    <TableColumn fx:id="clmnProjectManager" text="Encargado de Proyecto" prefWidth="120"
                                  sortable="false" reorderable="false"/>
                 </columns>
                 <columnResizePolicy>
