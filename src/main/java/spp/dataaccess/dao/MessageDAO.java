@@ -1,6 +1,6 @@
 package spp.dataaccess.dao;
 
-import spp.businesslogic.dto.ActiveSession;
+import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.MessageDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IMessageDAO;
@@ -29,7 +29,7 @@ public class MessageDAO implements IMessageDAO {
                 "(asunto, contenido, id_usuario_remitente, id_usuario_destinatario, fecha) VALUES " +
                 "(?, ?, ?, ?, NOW())";
 
-        String email = ActiveSession.get().getEmail();
+        String email = ActiveSessionDTO.get().getEmail();
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -79,7 +79,7 @@ public class MessageDAO implements IMessageDAO {
                 "FROM Mensajes m INNER JOIN Usuarios destinatario ON m.id_usuario_destinatario = destinatario.id_usuario " +
                 "INNER JOIN Usuarios remitente ON m.id_usuario_remitente = remitente.id_usuario " +
                 "WHERE destinatario.correo_electronico = ?";
-        String email = ActiveSession.get().getEmail();
+        String email = ActiveSessionDTO.get().getEmail();
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();

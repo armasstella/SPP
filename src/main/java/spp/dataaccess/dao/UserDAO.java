@@ -1,6 +1,6 @@
 package spp.dataaccess.dao;
 
-import spp.businesslogic.dto.ActiveSession;
+import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.LoginResultDTO;
 import spp.businesslogic.dto.SessionDTO;
 import spp.businesslogic.dto.UserDTO;
@@ -116,7 +116,7 @@ public class UserDAO implements IUserDAO {
 
                         int idUser = obtainId(email);
                         String token = sessionDAO.createSession(idUser);
-                        ActiveSession.initialize(new SessionDTO(email), token);
+                        ActiveSessionDTO.initialize(new SessionDTO(email), token);
 
                         return new LoginResultDTO(userType);
                     }
@@ -157,6 +157,4 @@ public class UserDAO implements IUserDAO {
 
         return isSearchSuccessful;
     }
-
-
 }

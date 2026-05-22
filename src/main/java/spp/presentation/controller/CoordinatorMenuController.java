@@ -74,7 +74,6 @@ public class CoordinatorMenuController {
 
     @FXML
     private void goToMessageCenter(ActionEvent event) {
-
         MessageCenterController messageCenterController = ViewNavigator.loadView(
                 "/spp/presentation/view/MessageCenterView.fxml",
                 "Centro de mensajes", event);
