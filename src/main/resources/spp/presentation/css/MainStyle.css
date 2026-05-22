@@ -432,7 +432,6 @@
     -fx-cursor: hand;
 }
 
-/* Estados del Thumb */
 .table-view .scroll-bar .thumb:hover,
 .scroll-pane .scroll-bar .thumb:hover {
     -fx-background-color: rgba(17, 75, 95, 0.5);

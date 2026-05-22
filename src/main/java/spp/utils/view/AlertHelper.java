@@ -32,7 +32,7 @@ public class AlertHelper {
         if (btnYes != null) {
             btnYes.getStyleClass().clear();
             btnYes.getStyleClass().addAll("button", "btn-primary");
-            btnYes.setText("Sí, inactivar");
+            btnYes.setText("Sí, confirmar");
         }
 
         Button btnNo = (Button) dialogPane.lookupButton(ButtonType.NO);

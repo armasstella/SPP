@@ -1,11 +1,11 @@
 package spp.businesslogic.dto;
 
-public class ActiveSession {
+public class ActiveSessionDTO {
 
     private static SessionDTO sessionDTO = null;
     private static String token = null;
 
-    private ActiveSession() {
+    private ActiveSessionDTO() {
 
     }
 

@@ -30,20 +30,4 @@ public class MySQLConnection {
         return this.connection;
     }
 
-    public static void main(String[] args) {
-        Connection connection = null;
-        try {
-            connection = MySQLConnection.getInstance().getConnection();
-            if (connection != null) {
-                System.out.println("Conexión exitosa a la base de datos");
-            } else {
-                System.out.println("La conexión es null, revisa tus credenciales");
-            }
-
-        } catch (SQLException e) {
-            AppLogger.logError(e);
-            System.out.println("Error al conectar: " + e.getMessage());
-        }
-    }
-
 }
