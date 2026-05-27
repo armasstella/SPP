@@ -1,4 +1,4 @@
-package spp.dataaccess.dao;
+package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.MessageDTO;

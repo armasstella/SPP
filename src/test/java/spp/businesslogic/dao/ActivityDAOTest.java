@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.ActivityDAO;
 
 import java.time.LocalDateTime;
 

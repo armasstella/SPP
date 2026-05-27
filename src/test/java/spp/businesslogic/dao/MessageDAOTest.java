@@ -8,7 +8,6 @@ import org.junit.jupiter.api.TestInstance;
 import spp.businesslogic.dto.MessageDTO;
 import spp.businesslogic.enums.MesaggeStatus;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.MessageDAO;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

@@ -11,8 +11,8 @@ import javafx.util.StringConverter;
 import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.ActivityDAO;
-import spp.dataaccess.dao.InstructorDAO;
+import spp.businesslogic.dao.ActivityDAO;
+import spp.businesslogic.dao.InstructorDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.ViewNavigator;
 

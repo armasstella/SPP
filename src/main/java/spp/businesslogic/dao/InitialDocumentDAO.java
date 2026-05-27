@@ -1,4 +1,4 @@
-package spp.dataaccess.dao;
+package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.InitialDocumentDTO;
 import spp.businesslogic.exceptions.DAOException;

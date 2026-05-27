@@ -14,8 +14,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import spp.businesslogic.dto.MessageDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.MessageDAO;
-import spp.dataaccess.dao.UserDAO;
+import spp.businesslogic.dao.MessageDAO;
+import spp.businesslogic.dao.UserDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.ViewNavigator;
 

@@ -12,7 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.InternDAO;
+import spp.businesslogic.dao.InternDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;

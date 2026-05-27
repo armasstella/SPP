@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.InternDAO;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

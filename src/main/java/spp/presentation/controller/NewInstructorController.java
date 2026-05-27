@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.InstructorDAO;
+import spp.businesslogic.dao.InstructorDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.ViewNavigator;
 

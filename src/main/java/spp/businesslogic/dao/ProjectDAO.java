@@ -1,4 +1,4 @@
-package spp.dataaccess.dao;
+package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.dto.ProjectDTO;
@@ -49,7 +49,7 @@ public class ProjectDAO implements IProjectDAO {
 
                 connection.commit();
 
-            } catch (DAOException e) {
+            }  catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar el proyecto", e);

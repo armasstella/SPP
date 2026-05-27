@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.LinkedOrganizationDAO;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class LinkedOrganizationDAOTest {
