@@ -1,6 +1,5 @@
 package spp.businesslogic.dao;
 
-import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
