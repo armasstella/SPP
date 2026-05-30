@@ -7,8 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.LinkedOrganizationDAO;
+import spp.businesslogic.dao.LinkedOrganizationDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -29,7 +30,7 @@ public class LinkedOrganizationController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        clearStatus();
+
     }
 
     @FXML
@@ -46,7 +47,6 @@ public class LinkedOrganizationController implements Initializable {
     @FXML
     private void saveLinkedOrganization(ActionEvent event) {
 
-        clearStatus();
         if (validateRegistrationInputs()) {
             return;
         }
@@ -56,12 +56,12 @@ public class LinkedOrganizationController implements Initializable {
 
         try {
             if (linkedOrganizationDAO.addLinkedOrganization(linkedOrganizationDTO)) {
-                showSuccess("Organización registrada correctamente.");
+                StatusLabel.showSuccess(lblStatus, "Organización registrada correctamente.");
                 clearInputFields();
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
-            showError(e.getMessage());
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -81,7 +81,7 @@ public class LinkedOrganizationController implements Initializable {
                 txtBusiness.getText().isBlank() ||
                 txtPhoneNumber.getText().isBlank() ||
                 txtEmail.getText().isBlank()){
-            showError("Completa todos los campos obligatorios.");
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             validFields = true;
         }
         return validFields;
@@ -97,22 +97,4 @@ public class LinkedOrganizationController implements Initializable {
         txtEmail.clear();
     }
 
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
-
-    private void clearStatus() {
-        if (lblStatus != null) {
-            lblStatus.setText("");
-            lblStatus.getStyleClass().removeAll("error", "success");
-        }
-    }
 }

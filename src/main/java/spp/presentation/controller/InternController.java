@@ -12,8 +12,9 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.InternDAO;
+import spp.businesslogic.dao.InternDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
 import java.time.LocalDate;
@@ -43,7 +44,6 @@ public class InternController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        clearStatus();
         configureDatePicker();
         toggleIndigenousLanguageField();
     }
@@ -91,7 +91,6 @@ public class InternController implements Initializable {
     @FXML
     private void saveIntern(ActionEvent event) {
 
-        clearStatus();
         if (validateRegistrationInputs()) {
             return;
         }
@@ -101,12 +100,12 @@ public class InternController implements Initializable {
 
         try {
             if (internDAO.addIntern(internDTO)) {
-                showSuccess("Practicante registrado correctamente.");
+                StatusLabel.showSuccess(lblStatus, "Practicante registrado correctamente.");
                 clearInputFields();
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
-            showError(e.getMessage());
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -120,7 +119,7 @@ public class InternController implements Initializable {
                 txtPassword.getText().isBlank() ||
                 cmbGender.getValue() == null ||
                 dpBirthDate.getValue() == null) {
-            showError("Completa todos los campos obligatorios.");
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             validFields = true;
         }
         return validFields;
@@ -139,25 +138,6 @@ public class InternController implements Initializable {
         dpBirthDate.setValue(null);
         rbNo.setSelected(true);
         toggleIndigenousLanguageField();
-    }
-
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
-
-    private void clearStatus() {
-        if (lblStatus != null) {
-            lblStatus.setText("");
-            lblStatus.getStyleClass().removeAll("error", "success");
-        }
     }
 
     private void configureDatePicker() {

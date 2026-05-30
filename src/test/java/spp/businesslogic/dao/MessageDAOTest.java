@@ -8,7 +8,6 @@ import org.junit.jupiter.api.TestInstance;
 import spp.businesslogic.dto.MessageDTO;
 import spp.businesslogic.enums.MesaggeStatus;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.MessageDAO;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,10 +25,11 @@ public class MessageDAOTest {
     @BeforeEach
     void setUpEach() {
         testMessage = new MessageDTO();
-        testMessage.setContent("Hola");
+        testMessage.setSubject("Saludo");
+        testMessage.setContent("Hola, cambia tu contraseña");
         testMessage.setMessageStatus(MesaggeStatus.ENVIADO);
-        testMessage.setReceiver(1);
-        testMessage.setSender(7);
+        testMessage.setReceiver(28);
+        testMessage.setSender(31);
     }
 
     @Test

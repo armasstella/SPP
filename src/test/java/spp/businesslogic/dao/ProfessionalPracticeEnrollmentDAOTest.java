@@ -14,7 +14,6 @@ import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.ProfessionalPracticeEnrollmentDAO;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 

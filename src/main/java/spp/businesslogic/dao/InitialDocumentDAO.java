@@ -1,12 +1,16 @@
-package spp.dataaccess.dao;
+package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.InitialDocumentDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IInitialDocumentDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.ResultSet;
 
-import java.sql.*;
 
 public class InitialDocumentDAO implements IInitialDocumentDAO {
     private static final int NO_ROWS_AFFECTED = 0;

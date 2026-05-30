@@ -9,8 +9,9 @@ import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.ProjectDAO;
+import spp.businesslogic.dao.ProjectDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -32,7 +33,7 @@ public class ProjectController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        clearStatus();
+
     }
 
     @FXML
@@ -49,7 +50,6 @@ public class ProjectController implements Initializable {
     @FXML
     private void saveProject(ActionEvent event) {
 
-        clearStatus();
         if (validateRegistrationInputs()) {
             return;
         }
@@ -59,12 +59,12 @@ public class ProjectController implements Initializable {
 
         try {
             if (projectDAO.addProject(projectDTO)) {
-                showSuccess("Proyecto registrado correctamente.");
+                StatusLabel.showSuccess(lblStatus, "Proyecto registrado correctamente.");
                 clearInputFields();
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
-            showError(e.getMessage());
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -80,7 +80,7 @@ public class ProjectController implements Initializable {
                 txtPlacesAvailable.getText().isBlank() ||
                 txtProjectManager.getText().isBlank() ||
                 txtLinkedOrganization.getText().isBlank()) {
-            showError("Completa todos los campos obligatorios.");
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             emptyFields = true;
         }
         return emptyFields;
@@ -92,24 +92,5 @@ public class ProjectController implements Initializable {
         txtPlacesAvailable.clear();
         txtProjectManager.clear();
         txtLinkedOrganization.clear();
-    }
-
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
-
-    private void clearStatus() {
-        if (lblStatus != null) {
-            lblStatus.setText("");
-            lblStatus.getStyleClass().removeAll("error", "success");
-        }
     }
 }

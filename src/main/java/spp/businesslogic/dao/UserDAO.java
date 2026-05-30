@@ -1,4 +1,4 @@
-package spp.dataaccess.dao;
+package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.LoginResultDTO;
@@ -125,7 +125,7 @@ public class UserDAO implements IUserDAO {
             }
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al verificar credenciales", e);
+            throw new DAOException("Error de conexión al verificar credenciales", e);
         }
     }
 

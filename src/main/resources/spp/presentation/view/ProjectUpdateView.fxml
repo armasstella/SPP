@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
@@ -38,17 +39,17 @@
             <VBox fx:id="vbShowAllProjects" visible="true" VBox.vgrow="ALWAYS" managed="${vbShowAllProjects.visible}">
                 <TableView fx:id="tblProjects" prefHeight="400">
                     <columns>
-                        <TableColumn fx:id="clmnName" text="Nombre" prefWidth="120"
+                        <TableColumn fx:id="colName" text="Nombre" prefWidth="120"
                                      sortable="false" reorderable="false"/>
-                        <TableColumn fx:id="clmnDescription" text="Descripción" prefWidth="120"
+                        <TableColumn fx:id="colDescription" text="Descripción" prefWidth="120"
                                      sortable="false" reorderable="false"/>
-                        <TableColumn fx:id="clmnAvailability" text="Disponibilidad" prefWidth="120"
+                        <TableColumn fx:id="colAvailability" text="Disponibilidad" prefWidth="120"
                                      sortable="false" reorderable="false"/>
-                        <TableColumn fx:id="clmnPlacesAvailable" text="Cupo" prefWidth="120"
+                        <TableColumn fx:id="colPlacesAvailable" text="Cupo" prefWidth="120"
                                      sortable="false" reorderable="false"/>
-                        <TableColumn fx:id="clmnLinkedOrganization" text="Organización Vinculada" prefWidth="120"
+                        <TableColumn fx:id="colLinkedOrganization" text="Organización Vinculada" prefWidth="120"
                                      sortable="false" reorderable="false"/>
-                        <TableColumn fx:id="clmnProjectManager" text="Encargado de Proyecto" prefWidth="120"
+                        <TableColumn fx:id="colProjectManager" text="Encargado de Proyecto" prefWidth="120"
                                      sortable="false" reorderable="false"/>
                     </columns>
                     <columnResizePolicy>
@@ -56,14 +57,14 @@
                     </columnResizePolicy>
                 </TableView>
             </VBox>
-            <VBox fx:id="vbEditProject" visible="false" managed="${vbEditProject.visible}">
+            <VBox fx:id="vbEditProject" visible="false" managed="${vbEditProject.visible}" alignment="CENTER">
                 <Label text="Nombre del Proyecto *" styleClass="field-label"/>
                 <TextField fx:id="txtName" promptText="Ej. Sistema para Prácticas Profesionales"
                            styleClass="field-input"/>
 
                 <Label text="Descripción *" styleClass="field-label"/>
-                <TextField fx:id="txtDescription" promptText="Ej. Desarrollo de software para..."
-                           styleClass="field-input"/>
+                <TextArea fx:id="txtDescription" promptText="Ej. Desarrollo de software para..."
+                           styleClass="field-input" VBox.vgrow="ALWAYS" wrapText="true"/>
 
                 <Label text="Cupo *" styleClass="field-label"/>
                 <TextField fx:id="txtPlacesAvailable" promptText="Ej. 4"
@@ -76,7 +77,7 @@
 
     <bottom>
         <VBox>
-            <HBox fx:id="hbButtonsBeforeEdition" visible="true" managed="${hbButtonsBeforeEdition.visible}"
+            <HBox fx:id="hbContinueButtons" visible="true" managed="${hbContinueButtons.visible}"
                   styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
                 <padding>
                     <Insets top="12" bottom="16" left="48" right="48"/>
@@ -85,7 +86,7 @@
                 <Button text="Continuar" styleClass="btn-primary"
                         onAction="#continueToEdit"/>
             </HBox>
-            <HBox fx:id="hbButtonsInEdition" visible="false" managed="${hbButtonsInEdition.visible}"
+            <HBox fx:id="hbEditionButtons" visible="false" managed="${hbEditionButtons.visible}"
                     styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
                 <padding>
                     <Insets top="12" bottom="16" left="48" right="48"/>

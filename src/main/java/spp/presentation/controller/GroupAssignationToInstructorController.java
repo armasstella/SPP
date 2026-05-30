@@ -6,7 +6,6 @@ import spp.utils.view.ViewNavigator;
 
 public class GroupAssignationToInstructorController {
 
-
     @FXML
     private void cancel (ActionEvent event) {
         ViewNavigator.loadView(

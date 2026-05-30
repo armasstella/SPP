@@ -7,12 +7,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.InstructorDAO;
+import spp.businesslogic.dao.InstructorDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
 import java.net.URL;
@@ -41,7 +41,7 @@ public class InstructorDeactivationController implements Initializable {
     public void deactivateInstructor() {
         InstructorDTO instructorSelected = tblInstructors.getSelectionModel().getSelectedItem();
         if(instructorSelected == null) {
-            showError("Seleccione el profesor a inactivar");
+            StatusLabel.showError(lblStatus, "Seleccione el profesor a inactivar");
             return;
         }
 
@@ -50,11 +50,11 @@ public class InstructorDeactivationController implements Initializable {
             try {
                 if (instructorDAO.deactivateInstructor(instructorSelected)) {
                     obtainInstructors();
-                    showSuccess("Profesor inactivado exitosamente.");
+                    StatusLabel.showSuccess(lblStatus, "Profesor inactivado exitosamente.");
                 }
             } catch (DAOException e) {
                 AppLogger.logError(e);
-                showError("Error al inactivar profesor.");
+                StatusLabel.showError(lblStatus, "Error al inactivar profesor.");
             }
         }
     }
@@ -86,21 +86,8 @@ public class InstructorDeactivationController implements Initializable {
             instructorsObservableList = FXCollections.observableArrayList(instructorsList);
             tblInstructors.setItems(instructorsObservableList);
         } catch (DAOException e) {
-            showError("Error al obtener la lista de coordinadores.");
+            StatusLabel.showError(lblStatus, "Error al obtener la lista de coordinadores.");
         }
     }
-
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
-
 
 }

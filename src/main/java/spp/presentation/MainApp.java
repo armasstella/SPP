@@ -12,9 +12,12 @@ public class MainApp extends Application {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/spp/presentation/view/LoginView.fxml")
         );
-        Scene scene = new Scene(loader.load(), 420, 380);
-        stage.setTitle("Sistema para Practicas Profesionales");
+
+        Scene scene = new Scene(loader.load());
         stage.setScene(scene);
+        stage.setTitle("Inicio");
+        stage.setMinWidth(400);
+        stage.setMinHeight(480);
         stage.show();
     }
 

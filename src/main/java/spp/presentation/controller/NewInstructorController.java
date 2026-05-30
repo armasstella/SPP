@@ -7,8 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.InstructorDAO;
+import spp.businesslogic.dao.InstructorDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
 
@@ -48,12 +49,12 @@ public class NewInstructorController {
 
         try {
             if (instructorDAO.addInstructor(buildInstructorDTO())) {
-                showSuccess("Profesot registrado correctamente.");
+                StatusLabel.showSuccess(lblStatus, "Profesor registrado correctamente.");
                 clearInputFields();
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
-            showError(e.getMessage());
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }
@@ -73,7 +74,7 @@ public class NewInstructorController {
                 txtPersonalNumber.getText().isBlank() ||
                 txtPassword.getText().isBlank() ||
                 cmbShift.getValue() == null) {
-            showError("Completa todos los campos obligatorios.");
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             emptyFields = true;
         }
         return emptyFields;
@@ -89,18 +90,6 @@ public class NewInstructorController {
         txtPersonalNumber.clear();
         txtPassword.clear();
         cmbShift.setValue(null);
-    }
-
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
     }
 
 }

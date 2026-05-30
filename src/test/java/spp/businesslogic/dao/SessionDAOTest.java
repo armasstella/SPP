@@ -3,8 +3,6 @@ package spp.businesslogic.dao;
 import org.junit.jupiter.api.*;
 import spp.businesslogic.dto.SessionDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.SessionDAO;
-import spp.dataaccess.dao.UserDAO;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

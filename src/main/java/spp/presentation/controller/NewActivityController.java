@@ -11,9 +11,10 @@ import javafx.util.StringConverter;
 import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.ActivityDAO;
-import spp.dataaccess.dao.InstructorDAO;
+import spp.businesslogic.dao.ActivityDAO;
+import spp.businesslogic.dao.InstructorDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
 import java.net.URL;
@@ -47,12 +48,12 @@ public class NewActivityController implements Initializable {
 
         try {
             if (activityDAO.addActivity(activityDTO)) {
-                showSuccess("Actividad añadida correctamente");
+                StatusLabel.showSuccess(lblStatus, "Actividad añadida correctamente");
                 clearInputFields();
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
-            showError("Error al añadir actividad");
+            StatusLabel.showError(lblStatus, "Error al añadir actividad");
         }
 
     }
@@ -90,26 +91,13 @@ public class NewActivityController implements Initializable {
         if (txtTitle.getText().isBlank() ||
                 taDescription.getText().isBlank() ||
                 dpSubmissionDate.getValue() == null) {
-            showError("Completa todos los campos obligatorios.");
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             thereAreEmptyFields = true;
         }
 
 
         return thereAreEmptyFields;
     }
-
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
-
 
     private void configureDatePicker() {
         dpSubmissionDate.setConverter(new StringConverter<LocalDate>() {

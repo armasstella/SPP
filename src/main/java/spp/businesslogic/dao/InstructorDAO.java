@@ -1,6 +1,5 @@
-package spp.dataaccess.dao;
+package spp.businesslogic.dao;
 
-import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IInstructorDAO;

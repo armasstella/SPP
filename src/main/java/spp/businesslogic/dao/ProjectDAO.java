@@ -1,4 +1,4 @@
-package spp.dataaccess.dao;
+package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.dto.ProjectDTO;
@@ -175,7 +175,7 @@ public class ProjectDAO implements IProjectDAO {
                 "INNER JOIN organizaciones_vinculadas ov " +
                 " ON p.id_organizacion_vinculada = ov.id_organizacion_vinculada " +
                 "INNER JOIN encargados_proyectos ep " +
-                " ON ep.id_encargado_proyecto = p.id_encargado_proyecto;";
+                " ON ep.id_encargado_proyecto = p.id_encargado_proyecto";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();

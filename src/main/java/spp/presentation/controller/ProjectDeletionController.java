@@ -14,9 +14,10 @@ import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.ProjectDAO;
+import spp.businesslogic.dao.ProjectDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
 import java.net.URL;
@@ -49,7 +50,7 @@ public class ProjectDeletionController implements Initializable {
     public void deleteProject(ActionEvent event) {
         ProjectDTO projectSelected = tblProjects.getSelectionModel().getSelectedItem();
         if(projectSelected == null) {
-            showError("Seleccione el proyecto a eliminar.");
+            StatusLabel.showError(lblStatus, "Seleccione el proyecto a eliminar.");
             return;
         }
 
@@ -58,11 +59,11 @@ public class ProjectDeletionController implements Initializable {
             try {
                 if (projectDAO.deleteProject(projectSelected)) {
                     obtainProjects();
-                    showSuccess("Proyecto eliminado exitosamente.");
+                    StatusLabel.showSuccess(lblStatus, "Proyecto eliminado exitosamente.");
                 }
             } catch (DAOException e) {
                 AppLogger.logError(e);
-                showError("Error al eliminar proyecto.");
+                StatusLabel.showError(lblStatus, "Error al eliminar proyecto.");
             }
         }
     }
@@ -73,7 +74,7 @@ public class ProjectDeletionController implements Initializable {
             projectsObservableList = FXCollections.observableArrayList(projectsList);
             tblProjects.setItems(projectsObservableList);
         } catch (DAOException e) {
-            showError("Error al obtener lista de proyectos.");
+            StatusLabel.showError(lblStatus, "Error al obtener lista de proyectos.");
         }
     }
 
@@ -106,25 +107,5 @@ public class ProjectDeletionController implements Initializable {
         ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml",
                 "Cancelar", event);
     }
-
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
-
-    private void clearStatus() {
-        if (lblStatus != null) {
-            lblStatus.setText("");
-            lblStatus.getStyleClass().removeAll("error", "success");
-        }
-    }
-
 
 }

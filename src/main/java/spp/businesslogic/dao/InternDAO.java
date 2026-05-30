@@ -1,4 +1,4 @@
-package spp.dataaccess.dao;
+package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
@@ -125,7 +125,8 @@ public class InternDAO implements IInternDAO {
     public List<InternDTO> obtainAllActiveInterns() throws DAOException {
         List<InternDTO> internsList = new ArrayList<>();
         final String SELECT_ALL_INTERNS = "SELECT p.matricula, u.nombre, u.apellidos, u.correo_electronico " +
-                "FROM Usuarios u INNER JOIN Practicantes p on u.id_usuario = p.id_usuario AND u.estado = 'Activo'";
+                "FROM Usuarios u INNER JOIN Practicantes p on u.id_usuario = p.id_usuario AND u.estado = 'Activo' " +
+                "ORDER BY p.matricula";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -155,7 +156,7 @@ public class InternDAO implements IInternDAO {
         final String INACTIVATE_INTERN = "UPDATE Usuarios " +
                 "INNER JOIN Practicantes ON Usuarios.id_usuario = Practicantes.id_usuario " +
                 "SET Usuarios.estado = 'Inactivo' " +
-                "WHERE Practicantes.matricula = ?;";
+                "WHERE Practicantes.matricula = ?";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();

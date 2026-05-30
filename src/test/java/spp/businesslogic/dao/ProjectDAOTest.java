@@ -9,7 +9,7 @@ import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.dto.LinkedOrganizationDTO;
-import spp.dataaccess.dao.ProjectDAO;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -32,7 +32,7 @@ public class ProjectDAOTest {
 
         testProject = new ProjectDTO();
         testProject.setDescription(" ");
-        testProject.setAvailability(true);
+        testProject.setAvailability("Disponible");
         testProject.setProjectManagerDTO(projectManager);
         testProject.setLinkedOrganizationDTO(linkedOrganization);
     }
