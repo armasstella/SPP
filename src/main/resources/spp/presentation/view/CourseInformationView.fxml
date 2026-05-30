@@ -15,7 +15,7 @@
 <?import javafx.scene.control.TableColumn?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="spp.presentation.controller.CoordinatorMenuController"
+            fx:controller="spp.presentation.controller.CourseInformationController"
             prefWidth="520" prefHeight="440"
             styleClass="root-pane"
             stylesheets="@/spp/presentation/css/MainStyle.css">
@@ -34,9 +34,9 @@
                     <Insets top="24" bottom="20" left="48" right="48"/>
                 </padding>
                 <HBox spacing="15" alignment="CENTER_LEFT">
-                    <TextField fx:id="txtSearch" promptText="Buscar producto" styleClass="field-input" prefWidth="300"/>
+                    <TextField fx:id="txtSearch" promptText="Buscar curso" styleClass="field-input" prefWidth="300"/>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <Button text="Registrar Curso" styleClass="btn-save" onAction="#goToNewCourseView"/>
+                    <Button text="Registrar Curso" styleClass="btn-add" onAction="#goToNewCourseView"/>
                 </HBox>
 
                 <TableView fx:id="tblCourses" VBox.vgrow="ALWAYS" styleClass="custom-table">
