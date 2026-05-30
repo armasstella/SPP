@@ -10,6 +10,8 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TableColumn?>
 
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="spp.presentation.controller.ProjectDeletionController"
@@ -52,7 +54,6 @@
                 </columnResizePolicy>
             </TableView>
 
-
             <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true"/>
         </VBox>
     </center>
@@ -67,5 +68,4 @@
                     onAction="#deleteProject"/>
         </HBox>
     </bottom>
-
 </BorderPane>
