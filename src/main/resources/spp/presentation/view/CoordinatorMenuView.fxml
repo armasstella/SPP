@@ -90,8 +90,9 @@
                             onAction="#goToGroupAssignationToInstructorView"
                     />
 
-                    <Button text="Información de EE"
+                    <Button text="Información de cursos"
                             styleClass="option-btn, btn-add"
+                            onAction="#goToCourseInformationView"
                     />
                 </VBox>
 

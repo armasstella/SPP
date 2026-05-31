@@ -71,7 +71,7 @@ public class CourseInformationController implements Initializable {
 
     @FXML
     private void goBackToMenu(ActionEvent event) {
-        ViewNavigator.loadView("/com.mycompany.italiapizza/presentation/view/CoordinatorMenuView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml",
                 "Menú Principal", event);
     }
 }

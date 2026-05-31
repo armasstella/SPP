@@ -87,6 +87,12 @@ public class CoordinatorMenuController {
     }
 
     @FXML
+    private void goToCourseInformationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/CourseInformationView.fxml",
+                "Cursos", event);
+    }
+
+    @FXML
     private void goToMessageCenter(ActionEvent event) {
         MessageCenterController messageCenterController = ViewNavigator.loadView(
                 "/spp/presentation/view/MessageCenterView.fxml",
