@@ -14,6 +14,7 @@ import spp.businesslogic.dao.InitialDocumentDAO;
 import spp.businesslogic.dao.InternDAO;
 import spp.utils.file.FileUtils;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
 import java.io.File;
@@ -42,7 +43,7 @@ public class UploadDocumentsController {
     private void uploadClassSchedule(ActionEvent event) {
         if (validateEmptyInputs() && searchStudent()) {
             if (searchClassSchedule()) {
-                showError("Ya ha subido el horario.\nComuníquese con el coordinador.");
+                StatusLabel.showError(lblStatus, "Ya ha subido el horario.\nComuníquese con el coordinador.");
             } else {
                 initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.CLASS_SCHEDULE));
                 selectFile(event);
@@ -55,7 +56,7 @@ public class UploadDocumentsController {
         try {
             existsClassSchedule = initialDocumentDAO.searchClassScheduleForIntern(txtStudentNumber.getText().trim());
         } catch (DAOException e) {
-            showError("Error al buscar horario.");
+            StatusLabel.showError(lblStatus, "Error al buscar horario.");
         }
         return existsClassSchedule;
     }
@@ -64,7 +65,8 @@ public class UploadDocumentsController {
     private void uploadActivitiesSchedule(ActionEvent event) {
         if (validateEmptyInputs() && searchStudent()) {
             if (searchActivitiesSchedule()) {
-                showError("Ya ha subido la calendarización de actividades.\nComuníquese con el coordinador.");
+                StatusLabel.showError(lblStatus, "Ya ha subido la calendarización de actividades." +
+                        "\nComuníquese con el coordinador.");
             } else {
                 initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.ACTIVITIES_SCHEDULE));
                 selectFile(event);
@@ -78,7 +80,7 @@ public class UploadDocumentsController {
         try {
             existsActivitiesSchedule = initialDocumentDAO.searchActivitiesScheduleForIntern(txtStudentNumber.getText().trim());
         } catch (DAOException e) {
-            showError("Error al buscar calendarización de actividades.");
+            StatusLabel.showError(lblStatus, "Error al buscar calendarización de actividades.");
         }
         return existsActivitiesSchedule;
     }
@@ -99,7 +101,7 @@ public class UploadDocumentsController {
                 return;
             }
 
-            showSuccess("Archivo cargado exitosamente");
+            StatusLabel.showSuccess(lblStatus, "Archivo cargado exitosamente");
             lblSelectedDocument.setText("No hay archivo seleccionado");
             txtStudentNumber.clear();
             selectedDocument = null;
@@ -111,34 +113,34 @@ public class UploadDocumentsController {
         try {
             existsStudentNumber = internDAO.searchStudentNumberRegister(txtStudentNumber.getText().trim());
         } catch (DAOException e) {
-            showError("La matricula ingresada no es correcta");
+            StatusLabel.showError(lblStatus, "La matricula ingresada no es correcta");
         }
         return existsStudentNumber;
     }
 
     private boolean validateEmptyInputs() {
         if (selectedDocument == null) {
-            showError("No se ha elegido un archivo.");
+            StatusLabel.showError(lblStatus, "No se ha elegido un archivo.");
             return true;
         }
 
         if (txtStudentNumber.getText().isBlank()) {
-            showError("Completa el campo de matrícula.");
+            StatusLabel.showError(lblStatus, "Completa el campo de matrícula.");
             return true;
         }
 
         String extension = FileUtils.getExtension(selectedDocument.getName());
 
         if (!FileUtils.ALLOWED_EXTENSIONS.contains(extension)) {
-            showError("Formato invalido. Solo se acepta PDF o DOCX.");
+            StatusLabel.showError(lblStatus, "Formato invalido. Solo se acepta PDF o DOCX.");
             return true;
         }
         if (selectedDocument.length() == 0) {
-            showError("El documento está vacío y no puede guardarse.");
+            StatusLabel.showError(lblStatus, "El documento está vacío y no puede guardarse.");
             return true;
         }
         if (selectedDocument.length() > FileUtils.MAX_BYTES) {
-            showError("El tamaño de archivo excede el permitido.");
+            StatusLabel.showError(lblStatus, "El tamaño de archivo excede el permitido.");
             return true;
         }
 
@@ -198,18 +200,4 @@ public class UploadDocumentsController {
             lblSelectedDocument.setText("Archivo seleccionado: " + selectedDocument.getName());
         }
     }
-
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
-
-
 }

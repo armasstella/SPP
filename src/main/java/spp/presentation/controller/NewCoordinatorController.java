@@ -9,6 +9,7 @@ import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.CoordinatorDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
 import java.net.URL;
@@ -30,7 +31,7 @@ public class NewCoordinatorController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        clearStatus();
+
     }
 
     private CoordinatorDTO buildCoordinatorDTO() {
@@ -54,7 +55,7 @@ public class NewCoordinatorController implements Initializable {
                 txtPhoneNumber.getText().isBlank() ||
                 txtPersonalNumber.getText().isBlank() ||
                 txtPassword.getText().isBlank()) {
-            showError("Completa todos los campos obligatorios.");
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             emptyFields = true;
         }
         return emptyFields;
@@ -62,19 +63,18 @@ public class NewCoordinatorController implements Initializable {
 
     @FXML
     private void saveCoordinator(ActionEvent event) {
-        clearStatus();
         if (validateRegistrationInputs()) {
             return;
         }
 
         try {
             if (coordinatorDAO.addCoordinator(buildCoordinatorDTO())) {
-                showSuccess("Coordinador registrado correctamente.");
+                StatusLabel.showSuccess(lblStatus, "Coordinador registrado correctamente.");
                 clearInputFields();
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
-            showError(e.getMessage());
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -95,22 +95,4 @@ public class NewCoordinatorController implements Initializable {
         txtPassword.clear();
     }
 
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
-
-    private void clearStatus() {
-        if (lblStatus != null) {
-            lblStatus.setText("");
-            lblStatus.getStyleClass().removeAll("error", "success");
-        }
-    }
 }

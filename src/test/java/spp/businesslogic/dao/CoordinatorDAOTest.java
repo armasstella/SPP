@@ -28,15 +28,15 @@ public class CoordinatorDAOTest {
     void setUp() {
         testCoordinator = new CoordinatorDTO();
         testCoordinator.setStatus("null");
-        testCoordinator.setLastConnection("2025-07-07 12:00:00");
-        testCoordinator.setFirstName("Stella");
+        testCoordinator.setLastConnection("2025-05-12 12:00:00");
+        testCoordinator.setFirstName("Leonardo");
         testCoordinator.setSecondName("");
-        testCoordinator.setFirstLastName("Armas");
-        testCoordinator.setSecondLastName("Mendoza");
-        testCoordinator.setEmail("armaaaaas@uv.mx");
-        testCoordinator.setPhoneNumber("92490004567");
-        testCoordinator.setPassword("ilmgwnil.");
-        testCoordinator.setPersonalNumber("78243");
+        testCoordinator.setFirstLastName("Masin");
+        testCoordinator.setSecondLastName("Dominguez");
+        testCoordinator.setEmail("leomado@uv.mx");
+        testCoordinator.setPhoneNumber("8565567890");
+        testCoordinator.setPassword("le000ps");
+        testCoordinator.setPersonalNumber("00001");
     }
 
     @Test
@@ -70,7 +70,7 @@ public class CoordinatorDAOTest {
     void testActivateCoordinatorSuccess() throws DAOException {
         coordinatorDAO.inactivateCoordinator(testCoordinator);
 
-        boolean result = coordinatorDAO.inactivateCoordinator(testCoordinator);
+        boolean result = coordinatorDAO.activateCoordinator(testCoordinator);
         assertTrue(result);
     }
 

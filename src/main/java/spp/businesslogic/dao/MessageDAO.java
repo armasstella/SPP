@@ -98,7 +98,7 @@ public class MessageDAO implements IMessageDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos");
+            throw new DAOException("Error de conexión al acceder a la base de datos");
         }
         return messagesList;
     }

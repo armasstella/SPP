@@ -1,11 +1,11 @@
 package spp.businesslogic.dao;
 
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Assertions;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
 
@@ -28,15 +28,15 @@ public class InstructorDAOTest {
         testInstructor = new InstructorDTO();
         testInstructor.setStatus("null");
         testInstructor.setLastConnection("2025-03-17 07:00:00");
-        testInstructor.setFirstName("Uri");
-        testInstructor.setSecondName("Abdiel");
+        testInstructor.setFirstName("Eliel");
+        testInstructor.setSecondName("");
         testInstructor.setFirstLastName("Masin");
         testInstructor.setSecondLastName("Campechano");
-        testInstructor.setEmail("abdibiri@uv.mx");
-        testInstructor.setPhoneNumber("2299001290");
-        testInstructor.setPassword("myP4ss23d");
-        testInstructor.setPersonalNumber("12720");
-        testInstructor.setShift("M");
+        testInstructor.setEmail("eleliel@uv.mx");
+        testInstructor.setPhoneNumber("2293962454");
+        testInstructor.setPassword(".eliile.");
+        testInstructor.setPersonalNumber("00002");
+        testInstructor.setShift("Matutino");
     }
 
     @Test
@@ -54,6 +54,14 @@ public class InstructorDAOTest {
         assertThrows(DAOException.class, () -> {
             instructorDAO.addInstructor(testInstructor);
         });
+    }
+
+    @Test
+    @DisplayName("Debe obtener el id del profesor recién insertado")
+    void testObtainIdSuccess() throws DAOException {
+        int result = instructorDAO.obtainId(testInstructor.getPersonalNumber());
+        Assertions.assertTrue(result > 0,
+                "No se obtuvo un id válido para el número de personal dado");
     }
 
 }

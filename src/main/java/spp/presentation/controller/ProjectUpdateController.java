@@ -7,9 +7,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -20,6 +21,8 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
+import spp.utils.view.InputFilter;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
 import java.util.List;
@@ -31,20 +34,20 @@ public class ProjectUpdateController implements Initializable {
     @FXML private Label lblMessageInEdition;
     @FXML private VBox vbShowAllProjects;
     @FXML private VBox vbEditProject;
-    @FXML private HBox hbButtonsBeforeEdition;
-    @FXML private HBox hbButtonsInEdition;
+    @FXML private HBox hbContinueButtons;
+    @FXML private HBox hbEditionButtons;
     @FXML private TextField txtName;
-    @FXML private TextField txtDescription;
+    @FXML private TextArea txtDescription;
     @FXML private TextField txtPlacesAvailable;
     @FXML private TextField txtLinkedOrganizationId;
     @FXML private TextField txtProjectManagerId;
     @FXML private TableView<ProjectDTO> tblProjects;
-    @FXML private TableColumn<ProjectDTO, String> clmnName;
-    @FXML private TableColumn<ProjectDTO, String> clmnDescription;
-    @FXML private TableColumn<ProjectDTO, String> clmnAvailability;
-    @FXML private TableColumn<ProjectDTO, String> clmnPlacesAvailable;
-    @FXML private TableColumn<ProjectDTO, String> clmnLinkedOrganization;
-    @FXML private TableColumn<ProjectDTO, String> clmnProjectManager;
+    @FXML private TableColumn<ProjectDTO, String> colName;
+    @FXML private TableColumn<ProjectDTO, String> colDescription;
+    @FXML private TableColumn<ProjectDTO, String> colAvailability;
+    @FXML private TableColumn<ProjectDTO, String> colPlacesAvailable;
+    @FXML private TableColumn<ProjectDTO, String> colLinkedOrganization;
+    @FXML private TableColumn<ProjectDTO, String> colProjectManager;
     @FXML private Label lblStatus;
 
     private final ProjectDAO projectDAO = new ProjectDAO();
@@ -54,9 +57,17 @@ public class ProjectUpdateController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        clearStatus();
         setUpColumns();
         obtainProjects();
+        setUpFields();
+    }
+
+    private void setUpFields() {
+        String textPattern = "[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ¿?¡!'\"()/$#=%+\\-\\[\\]{}.,_ ]*";
+
+        InputFilter.applyFilter(txtName, textPattern, 100);
+        InputFilter.applyFilter(txtDescription, textPattern, 500);
+        InputFilter.applyFilter(txtPlacesAvailable, "\\d*", 2);
     }
 
     private void obtainProjects() {
@@ -65,26 +76,26 @@ public class ProjectUpdateController implements Initializable {
             projectsObservableList = FXCollections.observableArrayList(projectsList);
             tblProjects.setItems(projectsObservableList);
         } catch (DAOException e) {
-            showError("Error al obtener lista de proyectos.");
+            StatusLabel.showError(lblStatus, "Error al obtener lista de proyectos.");
         }
     }
 
     private void setUpColumns() {
-        clmnName.setCellValueFactory(
+        colName.setCellValueFactory(
                 new PropertyValueFactory<>("name"));
-        clmnDescription.setCellValueFactory(
+        colDescription.setCellValueFactory(
                 new PropertyValueFactory<>("description"));
-        clmnPlacesAvailable.setCellValueFactory(
+        colPlacesAvailable.setCellValueFactory(
                 new PropertyValueFactory<>("placesAvailable"));
-        clmnAvailability.setCellValueFactory(
+        colAvailability.setCellValueFactory(
                 new PropertyValueFactory<>("availability"));
-        clmnLinkedOrganization.setCellValueFactory(
+        colLinkedOrganization.setCellValueFactory(
                 cellData -> {
-                    LinkedOrganizationDTO linkedOrganizationDTO = cellData.getValue().getLinkedOrganizationDTO();;
+                    LinkedOrganizationDTO linkedOrganizationDTO = cellData.getValue().getLinkedOrganizationDTO();
                     String name = (linkedOrganizationDTO != null) ? linkedOrganizationDTO.getName() : "Sin organización vinculada";
                     return new SimpleStringProperty(name);
                 });
-        clmnProjectManager.setCellValueFactory(
+        colProjectManager.setCellValueFactory(
                 cellData -> {
                     ProjectManagerDTO projectManagerDTO = cellData.getValue().getProjectManagerDTO();
                     String name = (projectManagerDTO != null) ? projectManagerDTO.getFirstName() : "Sin encargado";
@@ -97,25 +108,26 @@ public class ProjectUpdateController implements Initializable {
     private void continueToEdit(ActionEvent event) {
         projectInEdition = tblProjects.getSelectionModel().getSelectedItem();
         if (projectInEdition == null) {
-            showError("Debe seleccionar un proyecto");
+            StatusLabel.showError(lblStatus, "Debe seleccionar un proyecto");
             return;
         }
         lblStatus.setText("");
         lblMessageBeforeEdition.setVisible(false);
         vbShowAllProjects.setVisible(false);
-        hbButtonsBeforeEdition.setVisible(false);
+        hbContinueButtons.setVisible(false);
         lblMessageInEdition.setVisible(true);
         vbEditProject.setVisible(true);
-        hbButtonsInEdition.setVisible(true);
+        hbEditionButtons.setVisible(true);
         txtName.setText(projectInEdition.getName());
         txtDescription.setText(projectInEdition.getDescription());
         txtPlacesAvailable.setText(String.valueOf(projectInEdition.getPlacesAvailable()));
     }
 
-
     @FXML
     private void cancelEdition(ActionEvent event) {
-        if (areRequiredInputFieldsEmpty()) {
+        if (!txtName.getText().isBlank() ||
+                !txtDescription.getText().isBlank() ||
+                !txtPlacesAvailable.getText().isBlank()) {
             if (AlertHelper.showConfirmation("¿Seguro que desea cancelar?",
                     "La información registrada se perderá")) {
 
@@ -123,20 +135,20 @@ public class ProjectUpdateController implements Initializable {
                 lblStatus.setText("");
                 lblMessageInEdition.setVisible(false);
                 vbEditProject.setVisible(false);
-                hbButtonsInEdition.setVisible(false);
+                hbEditionButtons.setVisible(false);
                 lblMessageBeforeEdition.setVisible(true);
                 vbShowAllProjects.setVisible(true);
-                hbButtonsBeforeEdition.setVisible(true);
+                hbContinueButtons.setVisible(true);
             }
         } else {
             clearInputFields();
             lblStatus.setText("");
             lblMessageInEdition.setVisible(false);
             vbEditProject.setVisible(false);
-            hbButtonsInEdition.setVisible(false);
+            hbEditionButtons.setVisible(false);
             lblMessageBeforeEdition.setVisible(true);
             vbShowAllProjects.setVisible(true);
-            hbButtonsBeforeEdition.setVisible(true);
+            hbContinueButtons.setVisible(true);
         }
     }
 
@@ -150,7 +162,6 @@ public class ProjectUpdateController implements Initializable {
     @FXML
     private void updateProject(ActionEvent event) {
 
-        clearStatus();
         if (!validateUpdateInputs()) {
             return;
         }
@@ -168,25 +179,26 @@ public class ProjectUpdateController implements Initializable {
 
             if (projectDAO.updateProject(projectDTO)) {
                 showAllProjects();
-                showSuccess("Proyecto actualizado correctamente.");
+                StatusLabel.showSuccess(lblStatus, "Proyecto actualizado correctamente.");
                 clearInputFields();
             }
         } catch (NumberFormatException e) {
-            showError("El ID debe ser un número válido.");
+            AppLogger.logError(e);
+            StatusLabel.showError(lblStatus, "El ID debe ser un número válido.");
         } catch (DAOException e) {
             AppLogger.logError(e);
-            showError(e.getMessage());
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
     private void showAllProjects() {
-        showSuccess("Proyecto actualizado correctamente.");
+        StatusLabel.showSuccess(lblStatus, "Proyecto actualizado correctamente.");
         lblMessageInEdition.setVisible(false);
         vbEditProject.setVisible(false);
-        hbButtonsInEdition.setVisible(false);
+        hbEditionButtons.setVisible(false);
         lblMessageBeforeEdition.setVisible(true);
         vbShowAllProjects.setVisible(true);
-        hbButtonsBeforeEdition.setVisible(true);
+        hbContinueButtons.setVisible(true);
         obtainProjects();
     }
 
@@ -198,7 +210,7 @@ public class ProjectUpdateController implements Initializable {
     private boolean validateUpdateInputs() {
         boolean areInputsValid = true;
         if (areRequiredInputFieldsEmpty()) {
-            showError("Los campos no deben estar vacíos.");
+            StatusLabel.showError(lblStatus, "Los campos no deben estar vacíos.");
             areInputsValid = false;
         }
         return areInputsValid;
@@ -210,22 +222,5 @@ public class ProjectUpdateController implements Initializable {
         txtPlacesAvailable.setText("");
     }
 
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
 
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
-
-    private void clearStatus() {
-        if (lblStatus != null) {
-            lblStatus.setText("");
-            lblStatus.getStyleClass().removeAll("error", "success");
-        }
-    }
 }

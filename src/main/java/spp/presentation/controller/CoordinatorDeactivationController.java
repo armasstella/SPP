@@ -12,6 +12,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.CoordinatorDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
 import java.net.URL;
@@ -32,7 +33,6 @@ public class CoordinatorDeactivationController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        clearStatus();
         setUpColumns();
         obtainCoordinators();
     }
@@ -56,7 +56,7 @@ public class CoordinatorDeactivationController implements Initializable {
             coordinatorsObservableList = FXCollections.observableArrayList(coordinatorsList);
             tblCoordinators.setItems(coordinatorsObservableList);
         } catch (DAOException e) {
-            showError("Error al obtener la lista de coordinadores.");
+            StatusLabel.showError(lblStatus, "Error al obtener la lista de coordinadores.");
         }
 
     }
@@ -65,7 +65,7 @@ public class CoordinatorDeactivationController implements Initializable {
     private void deactivateCoordinator(ActionEvent event) {
         CoordinatorDTO coordinatorSelected = tblCoordinators.getSelectionModel().getSelectedItem();
         if (coordinatorSelected == null) {
-            showError("Seleccione el coordinador a inactivar");
+            StatusLabel.showError(lblStatus, "Seleccione el coordinador a inactivar");
             return;
         }
         if (AlertHelper.showConfirmation("Confirmar acción",
@@ -73,34 +73,16 @@ public class CoordinatorDeactivationController implements Initializable {
             try {
                 if (coordinatorDAO.inactivateCoordinator(coordinatorSelected)) {
                     obtainCoordinators();
-                    showSuccess("Coordinador inactivado exitosamente.");
+                    StatusLabel.showSuccess(lblStatus, "Coordinador inactivado exitosamente.");
                 }
             } catch (DAOException e) {
                 AppLogger.logError(e);
-                showError("Error al inactivar coordinador.");
+                StatusLabel.showError(lblStatus, "Error al inactivar coordinador.");
             }
 
         }
     }
 
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
-
-    private void clearStatus() {
-        if (lblStatus != null) {
-            lblStatus.setText("");
-            lblStatus.getStyleClass().removeAll("error", "success");
-        }
-    }
 
     @FXML
     private void cancel(ActionEvent event) {

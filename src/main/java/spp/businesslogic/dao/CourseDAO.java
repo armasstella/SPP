@@ -20,6 +20,33 @@ public class CourseDAO implements ICourseDAO {
 
     }
 
+    @Override
+    public boolean searchCourses() throws DAOException {
+        boolean isSearchSuccessful = false;
+
+        final String SEARCH_COURSES = "SELECT f_hay_experiencias_educativas()";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_COURSES);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    isSearchSuccessful = resultSet.getBoolean(1);
+                    if (!isSearchSuccessful) {
+                        throw new DAOException("No se encontraron experiencias educativas registradas");
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error de conexión al buscar cursos");
+        }
+
+        return isSearchSuccessful;
+
+    }
 
     @Override
     public List<CourseDTO> obtainAllActiveCourses() throws DAOException {

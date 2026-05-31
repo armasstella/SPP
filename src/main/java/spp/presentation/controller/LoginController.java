@@ -8,6 +8,7 @@ import spp.businesslogic.dto.LoginResultDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.UserDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
 public class LoginController {
@@ -32,16 +33,16 @@ public class LoginController {
             int idUser = userDAO.obtainId(email);
 
             if (result == null) {
-                showError("Usuario o contraseña incorrectos.");
+                StatusLabel.showError(lblStatus, "Usuario o contraseña incorrectos.");
                 return;
             }
 
-            showSuccess("Bienvenido al sistema.");
+            StatusLabel.showSuccess(lblStatus, "Bienvenido al sistema.");
             goToView(result.getUserType(), event);
 
         } catch (DAOException e) {
             AppLogger.logError(e);
-            showError(e.getMessage());
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -64,28 +65,17 @@ public class LoginController {
                         "Menú Administrador", event);
                 break;
             default:
-                showError("Tipo de usuario no reconocido.");
+                StatusLabel.showError(lblStatus, "Tipo de usuario no reconocido.");
         }
     }
 
     private boolean validateEmptyDataFields() {
         boolean emptyFields = false;
         if (txtEmail.getText().isBlank() || txtPassword.getText().isBlank()) {
-            showError("Completa todos los campos obligatorios.");
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             emptyFields = true;
         }
         return emptyFields;
     }
 
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
 }

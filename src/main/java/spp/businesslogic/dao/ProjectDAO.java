@@ -49,7 +49,7 @@ public class ProjectDAO implements IProjectDAO {
 
                 connection.commit();
 
-            }  catch (DAOException e) {
+            } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar el proyecto", e);
@@ -175,7 +175,7 @@ public class ProjectDAO implements IProjectDAO {
                 "INNER JOIN organizaciones_vinculadas ov " +
                 " ON p.id_organizacion_vinculada = ov.id_organizacion_vinculada " +
                 "INNER JOIN encargados_proyectos ep " +
-                " ON ep.id_encargado_proyecto = p.id_encargado_proyecto;";
+                " ON ep.id_encargado_proyecto = p.id_encargado_proyecto";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();

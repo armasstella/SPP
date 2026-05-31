@@ -9,6 +9,7 @@ import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectManagerDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -28,7 +29,6 @@ public class ProjectManagerController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        clearStatus();
     }
 
     @FXML
@@ -45,7 +45,6 @@ public class ProjectManagerController implements Initializable {
     @FXML
     private void saveProjectManager(ActionEvent event) {
 
-        clearStatus();
         if (validateRegistrationInputs()) {
             return;
         }
@@ -55,12 +54,12 @@ public class ProjectManagerController implements Initializable {
 
         try {
             if (projectManagerDAO.addProjectManagerDAO(projectManagerDTO)) {
-                showSuccess("Encargado de proyecto registrado correctamente.");
+                StatusLabel.showSuccess(lblStatus, "Encargado de proyecto registrado correctamente.");
                 clearInputFields();
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
-            showError(e.getMessage());
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -77,7 +76,7 @@ public class ProjectManagerController implements Initializable {
                 txtResponsability.getText().isBlank() ||
                 txtRole.getText().isBlank() ||
                 txtPhoneNumber.getText().isBlank()){
-            showError("Completa todos los campos obligatorios.");
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             validFields = true;
         }
         return validFields;
@@ -93,21 +92,4 @@ public class ProjectManagerController implements Initializable {
         txtPhoneNumber.clear();
     }
 
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
-
-    private void clearStatus() {
-        if (lblStatus != null) {
-            lblStatus.setText("");
-            lblStatus.getStyleClass().removeAll("error", "success");
-        }
-    }
 }

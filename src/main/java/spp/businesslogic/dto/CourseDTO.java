@@ -17,6 +17,7 @@ public class CourseDTO {
     public int getIdCourse() {
         return idCourse;
     }
+
     public void setIdCourse(int idCourse) {
         this.idCourse = idCourse;
     }

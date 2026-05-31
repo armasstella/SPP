@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Assertions;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
 
@@ -30,17 +31,17 @@ public class InternDAOTest {
         testIntern = new InternDTO();
         testIntern.setStatus("null");
         testIntern.setLastConnection("2025-11-22 19:15:13");
-        testIntern.setFirstName("Jane");
-        testIntern.setSecondName("Doe");
-        testIntern.setFirstLastName("Smith");
-        testIntern.setSecondLastName("Juárez");
-        testIntern.setEmail("doedoe.dot@gmail.com");
-        testIntern.setPhoneNumber("2223331234");
-        testIntern.setPassword("cdevfrbgt");
-        testIntern.setStudentNumber("S23061267");
+        testIntern.setFirstName("Uri");
+        testIntern.setSecondName("Abdiel");
+        testIntern.setFirstLastName("Masin");
+        testIntern.setSecondLastName("Campechano");
+        testIntern.setEmail("zS24013314@estudiantes.uv.mx");
+        testIntern.setPhoneNumber("2299192196");
+        testIntern.setPassword("s0yUr14bd1");
+        testIntern.setStudentNumber("S24013314");
         testIntern.setGender("M");
         testIntern.setSpeaksIndigenousLanguage(true);
-        testIntern.setBirthDate(LocalDateTime.parse("2026-12-06T12:41:20"));
+        testIntern.setBirthDate(LocalDateTime.parse("2006-07-07T00:00:00"));
     }
 
     @Test
@@ -55,6 +56,14 @@ public class InternDAOTest {
     void testInsertInternFailedDuplicated() throws DAOException {
         internDAO.addIntern(testIntern);
         assertThrows(DAOException.class,() -> internDAO.addIntern(testIntern));
+    }
+
+    @Test
+    @DisplayName("Debe obtener el id del practicante recién insertado")
+    void testObtainIdSuccess() throws DAOException {
+        int result = internDAO.obtainId(testIntern.getStudentNumber());
+        Assertions.assertTrue(result > 0,
+                "No se obtuvo un id válido para la matricula dada");
     }
 
 

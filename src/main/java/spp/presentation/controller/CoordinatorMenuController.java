@@ -2,9 +2,14 @@ package spp.presentation.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import spp.businesslogic.dao.CourseDAO;
+import spp.businesslogic.exceptions.DAOException;
+import spp.utils.view.AlertHelper;
 import spp.utils.view.ViewNavigator;
 
 public class CoordinatorMenuController {
+
+    CourseDAO courseDAO = new CourseDAO();
 
     @FXML
     private void goToNewInternView(ActionEvent event) {
@@ -62,8 +67,17 @@ public class CoordinatorMenuController {
 
     @FXML
     private void goToReportGenerationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/ReportGenerationView.fxml",
-                "Generar Reporte", event);
+
+        try {
+            if (courseDAO.searchCourses()) {
+                ViewNavigator.loadView("/spp/presentation/view/ReportGenerationView.fxml",
+                        "Generar Reporte", event);
+            }
+        } catch (DAOException e) {
+            AlertHelper.showErrorMessage("No puede realizar la operación",
+                    "No hay información de cursos para extraer información.\nRegistre cursos primero.");
+        }
+
     }
 
     @FXML

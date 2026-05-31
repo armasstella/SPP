@@ -17,6 +17,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.MessageDAO;
 import spp.businesslogic.dao.UserDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
 import java.net.URL;
@@ -70,7 +71,7 @@ public class MessageCenterController implements Initializable {
             messagesObservableList = FXCollections.observableArrayList(messagesList);
             tblMessages.setItems(messagesObservableList);
         } catch (DAOException e) {
-            showError("Error al obtener mensajes");
+            StatusLabel.showError(lblStatus, "Error al obtener mensajes");
         }
     }
 
@@ -95,7 +96,7 @@ public class MessageCenterController implements Initializable {
         if(txtRecipient.getText().trim().isEmpty() ||
             txtSubject.getText().trim().isEmpty() ||
             txtBody.getText().trim().isEmpty()) {
-            showError("Llene todo los campos.");
+            StatusLabel.showError(lblStatus, "Llene todo los campos.");
             return;
         }
 
@@ -103,20 +104,19 @@ public class MessageCenterController implements Initializable {
             if (userDAO.searchEmailRegister(txtRecipient.getText().trim())) {
                 try {
                     if (messageDAO.sendMessage(buildMessageDTO())) {
-                        showSuccess("Mensaje enviado correctamente.");
+                        StatusLabel.showSuccess(lblStatus, "Mensaje enviado correctamente.");
                     }
                     clearNewMessageFields();
                 } catch (DAOException e) {
                     AppLogger.logError(e);
-                    showError("Error enviando mensaje");
+                    StatusLabel.showError(lblStatus, "Error enviando mensaje");
                 }
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
-            showError("El correo ingresado no está registrado en el sistema\nNo es posible enviarle mensaje.");
+            StatusLabel.showError(lblStatus, "El correo ingresado no está registrado en el sistema" +
+                    "\nNo es posible enviarle mensaje.");
         }
-
-
 
     }
 
@@ -140,25 +140,7 @@ public class MessageCenterController implements Initializable {
             previosViewTitle != null) {
             ViewNavigator.loadView(previousViewPath, previosViewTitle, event);
         } else {
-            showError("Error al regresar. Reinicie el programa");
+            StatusLabel.showError(lblStatus, "Error al regresar. Reinicie el programa");
         }
     }
-
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
-    }
-
-
-
-
-
-
 }
