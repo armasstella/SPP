@@ -1,6 +1,8 @@
 package spp.businesslogic.dto;
 
+
 import java.time.LocalDateTime;
+
 
 public class ActivityDTO {
 
@@ -44,7 +46,5 @@ public class ActivityDTO {
     public void setInstructorDTO(InstructorDTO instructorDTO) {
         this.instructorDTO = instructorDTO;
     }
-
-
 
 }

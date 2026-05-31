@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ICoordinatorDAO;
@@ -13,9 +14,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CoordinatorDAO implements ICoordinatorDAO {
-    private static final int NO_ROWS_AFFECTED = 0;
 
+public class CoordinatorDAO implements ICoordinatorDAO {
+
+    private static final int NO_ROWS_AFFECTED = 0;
     private final UserDAO userDAO = new UserDAO();
 
     public CoordinatorDAO() {
@@ -49,14 +51,17 @@ public class CoordinatorDAO implements ICoordinatorDAO {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar el usuario", e);
+
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error. Datos duplicados al insertar.", e);
+
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar el coordinador", e);
+
             } finally {
                 connection.setAutoCommit(true);
             }
@@ -67,11 +72,11 @@ public class CoordinatorDAO implements ICoordinatorDAO {
         }
 
         return true;
+
     }
 
     @Override
     public boolean inactivateCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException {
-
         final String INACTIVATE_COORDINATOR = "UPDATE Usuarios " +
                 "INNER JOIN Coordinadores ON Usuarios.id_usuario = Coordinadores.id_usuario " +
                 "SET Usuarios.estado = 'Inactivo' " +
@@ -96,6 +101,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al inactivar el coordinador", e);
+
             } finally {
                 connection.setAutoCommit(true);
             }
@@ -106,6 +112,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
         }
 
         return true;
+
     }
 
     @Override
@@ -134,6 +141,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al activar el coordinador", e);
+
             } finally {
                 connection.setAutoCommit(true);
             }
@@ -144,9 +152,8 @@ public class CoordinatorDAO implements ICoordinatorDAO {
         }
 
         return true;
+
     }
-
-
 
     @Override
     public boolean existCoordinator(String personalNumber) throws DAOException {
@@ -163,10 +170,12 @@ public class CoordinatorDAO implements ICoordinatorDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return resultSet.next();
             }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("Error al verificar existencia de coordinador", e);
         }
+
     }
 
     @Override
@@ -193,7 +202,9 @@ public class CoordinatorDAO implements ICoordinatorDAO {
             AppLogger.logError(e);
             throw new DAOException("Error al obtener lista de coordinadores", e);
         }
+
         return coordinatorsList;
+
     }
 
 }

@@ -32,7 +32,8 @@
             </padding>
 
             <Label fx:id="lblMessageBeforeEdition" visible="true" managed="${lblMessageBeforeEdition.visible}"
-                   text="De clic sobre el «Proyecto» que desea actualizar. Después de clic en Continuar." styleClass="lbl-status"/>
+                   text="De clic sobre el «Proyecto» que desea actualizar. Después de clic en Continuar."
+                   styleClass="lbl-status"/>
             <Label fx:id="lblMessageInEdition" visible="false" managed="${lblMessageInEdition.visible}"
                    text="Reemplace la información con la nueva." styleClass="lbl-status"/>
 

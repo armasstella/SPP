@@ -55,7 +55,8 @@
                         </VBox>
                     </content>
                 </ScrollPane>
-                <Label fx:id="lblSelectedDocument" text="Ningún archivo seleccionado" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
+                <Label fx:id="lblSelectedDocument" text="Ningún archivo seleccionado" styleClass="lbl-status"
+                       wrapText="true" alignment="CENTER"/>
                 <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
             </VBox>
         </StackPane>

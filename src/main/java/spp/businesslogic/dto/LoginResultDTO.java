@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class LoginResultDTO {
     private final String userType;
 
@@ -10,4 +11,5 @@ public class LoginResultDTO {
     public String getUserType() {
         return userType;
     }
+
 }

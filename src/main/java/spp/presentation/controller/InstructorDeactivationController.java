@@ -1,11 +1,14 @@
 package spp.presentation.controller;
 
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
@@ -14,27 +17,27 @@ import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
-
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+
 public class InstructorDeactivationController implements Initializable {
+
     @FXML private Label lblStatus;
     @FXML private TableView<InstructorDTO> tblInstructors;
-    @FXML private TableColumn<InstructorDTO, String> clmnNames;
-    @FXML private TableColumn<InstructorDTO, String> clmnSurnames;
-    @FXML private TableColumn<InstructorDTO, String> clmnEmail;
-    @FXML private TableColumn<InstructorDTO, String> clmnPersonalNumber;
-    @FXML private TableColumn<InstructorDTO, String> clmnShift;
-
+    @FXML private TableColumn<InstructorDTO, String> colNames;
+    @FXML private TableColumn<InstructorDTO, String> colSurnames;
+    @FXML private TableColumn<InstructorDTO, String> colEmail;
+    @FXML private TableColumn<InstructorDTO, String> colPersonalNumber;
+    @FXML private TableColumn<InstructorDTO, String> colShift;
     private final InstructorDAO instructorDAO = new InstructorDAO();
-    private ObservableList<InstructorDTO> instructorsObservableList;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpColumns();
         obtainInstructors();
+
     }
 
     @FXML
@@ -57,24 +60,26 @@ public class InstructorDeactivationController implements Initializable {
                 StatusLabel.showError(lblStatus, "Error al inactivar profesor.");
             }
         }
+
     }
 
     @FXML
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/AdminMenuView.fxml",
                 "Menú Administrador", event);
+
     }
 
     private void setUpColumns() {
-        clmnNames.setCellValueFactory(
+        colNames.setCellValueFactory(
                 new PropertyValueFactory<>("firstName"));
-        clmnSurnames.setCellValueFactory(
+        colSurnames.setCellValueFactory(
                 new PropertyValueFactory<>("firstLastName"));
-        clmnEmail.setCellValueFactory(
+        colEmail.setCellValueFactory(
                 new PropertyValueFactory<>("email"));
-        clmnPersonalNumber.setCellValueFactory(
+        colPersonalNumber.setCellValueFactory(
                 new PropertyValueFactory<>("personalNumber"));
-        clmnShift.setCellValueFactory(
+        colShift.setCellValueFactory(
                 new PropertyValueFactory<>("shift"));
 
     }
@@ -83,11 +88,13 @@ public class InstructorDeactivationController implements Initializable {
     private void obtainInstructors() {
         try {
             List<InstructorDTO> instructorsList = instructorDAO.obtainAllActiveInstructors();
-            instructorsObservableList = FXCollections.observableArrayList(instructorsList);
+            ObservableList<InstructorDTO> instructorsObservableList =
+                    FXCollections.observableArrayList(instructorsList);
             tblInstructors.setItems(instructorsObservableList);
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener la lista de coordinadores.");
+            StatusLabel.showError(lblStatus, "Error al obtener lista de profesores");
         }
+
     }
 
 }

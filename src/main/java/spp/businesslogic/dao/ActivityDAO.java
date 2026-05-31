@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IActivityDAO;
@@ -11,7 +12,9 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 
+
 public class ActivityDAO implements IActivityDAO {
+
     private static final int NO_ROWS_AFFECTED = 0;
 
     public ActivityDAO() {
@@ -48,12 +51,15 @@ public class ActivityDAO implements IActivityDAO {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar una actividad", e);
+
             } catch (SQLIntegrityConstraintViolationException e) {
                 throw new DAOException("Fallo al insertar la actividad: Restricción de integridad violada", e);
+
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error general al insertar una actividad", e);
+
             } finally {
                 connection.setAutoCommit(true);
                 connection.close();
@@ -65,5 +71,7 @@ public class ActivityDAO implements IActivityDAO {
         }
 
         return true;
+
     }
+
 }

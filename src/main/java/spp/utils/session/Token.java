@@ -1,6 +1,8 @@
 package spp.utils.session;
 
+
 import java.security.SecureRandom;
+
 
 public class Token {
 
@@ -18,5 +20,7 @@ public class Token {
             stringBuilder.append(String.format("%02x", b));
         }
         return stringBuilder.toString();
+
     }
+
 }

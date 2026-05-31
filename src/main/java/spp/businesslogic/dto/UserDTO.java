@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class UserDTO {
 
     private String status;
@@ -87,4 +88,5 @@ public class UserDTO {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }

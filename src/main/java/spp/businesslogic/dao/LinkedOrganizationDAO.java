@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ILinkedOrganizationDAO;
@@ -9,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+
 
 public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     private static final int NO_ROWS_AFFECTED = 0;
@@ -22,6 +24,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         final String INSERT_LINKED_ORGANIZATION = "INSERT INTO Organizaciones_Vinculadas " +
                 "(nombre, rfc, direccion, direccion_fiscal, giro, telefono, correo)" +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        boolean isAddSuccessful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -43,19 +46,23 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
                 }
 
                 connection.commit();
+                isAddSuccessful = true;
 
             } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar la organización vinculada", e);
+
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error. Datos duplicados al insertar la Organización Vinculada", e);
+
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error general al insertar la organización vinculada", e);
+
             } finally {
                 connection.setAutoCommit(true);
                 connection.close();
@@ -65,6 +72,9 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
             AppLogger.logError(e);
             throw new DAOException("Error al acceder a la base de datos", e);
         }
-        return true;
+
+        return isAddSuccessful;
+
     }
+
 }

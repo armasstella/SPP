@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class PresentationTemplateDTO {
 
     private String metadata;
@@ -15,4 +16,5 @@ public class PresentationTemplateDTO {
     public void setMetadata(String metadata) {
         this.metadata = metadata;
     }
+
 }

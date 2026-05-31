@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class InstructorDTO extends UserDTO {
 
     private int id;
@@ -33,4 +34,5 @@ public class InstructorDTO extends UserDTO {
     public void setShift(String shift) {
         this.shift = shift;
     }
+
 }

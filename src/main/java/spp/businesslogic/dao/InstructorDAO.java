@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IInstructorDAO;
@@ -13,10 +14,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InstructorDAO implements IInstructorDAO {
-    private static final int NO_ROWS_AFFECTED = 0;
 
-    private final UserDAO userDAO = new UserDAO();
+public class InstructorDAO implements IInstructorDAO {
+
+    private static final int NO_ROWS_AFFECTED = 0;
 
     public InstructorDAO() {
 
@@ -26,6 +27,7 @@ public class InstructorDAO implements IInstructorDAO {
     public boolean addInstructor(InstructorDTO instructorDTO) throws DAOException {
         final String INSERT_INSTRUCTOR = "INSERT INTO Profesores " +
                 "(id_usuario, num_personal, turno) VALUES (?, ?, ?)";
+        UserDAO userDAO = new UserDAO();
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -50,14 +52,18 @@ public class InstructorDAO implements IInstructorDAO {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar el usuario", e);
+
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new SQLIntegrityConstraintViolationException("Error al insertar el profesor: Datos duplicados", e);
+                throw new SQLIntegrityConstraintViolationException(
+                        "Error al insertar el profesor: Datos duplicados", e);
+
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar el profesor", e);
+
             } finally {
                 connection.setAutoCommit(true);
                 connection.close();
@@ -69,12 +75,14 @@ public class InstructorDAO implements IInstructorDAO {
         }
 
         return true;
+
     }
 
     @Override
     public int obtainId(String personalNumber) throws DAOException {
         final String SELECT_ID = "SELECT U.id_usuario FROM Usuarios U INNER JOIN Profesores P " +
                 "ON U.id_usuario = P.id_usuario AND P.num_personal = ?";
+
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ID);
@@ -85,9 +93,11 @@ public class InstructorDAO implements IInstructorDAO {
                 }
                 throw new DAOException("Usuario no encontrado con número de personal: " + personalNumber);
             }
+
         } catch (SQLException e) {
             throw new DAOException("Error al obtener profesor", e);
         }
+
     }
 
     @Override
@@ -116,6 +126,7 @@ public class InstructorDAO implements IInstructorDAO {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al inactivar el profesor", e);
+
             } finally {
                 connection.setAutoCommit(true);
             }
@@ -126,13 +137,14 @@ public class InstructorDAO implements IInstructorDAO {
         }
 
         return true;
+
     }
 
     @Override
     public List<InstructorDTO> obtainAllActiveInstructors() throws DAOException {
-        List<InstructorDTO> instructorsList = new ArrayList<>();
         final String SELECT_ALL_INSTRUCTORS = "SELECT nombre, apellidos, correo_electronico, num_personal, turno " +
                 "FROM Usuarios u INNER JOIN Profesores p ON u.id_usuario = p.id_usuario AND u.estado = 'Activo'";
+        List<InstructorDTO> instructorsList = new ArrayList<>();
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -153,8 +165,9 @@ public class InstructorDAO implements IInstructorDAO {
             AppLogger.logError(e);
             throw new DAOException("Error al obtener lista de profesores", e);
         }
-        return instructorsList;
-    }
 
+        return instructorsList;
+
+    }
 
 }

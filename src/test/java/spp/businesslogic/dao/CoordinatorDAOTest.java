@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,7 @@ public class CoordinatorDAOTest {
     @BeforeAll
     void setupAll() {
         coordinatorDAO = new CoordinatorDAO();
+
     }
 
     @BeforeEach
@@ -37,6 +39,7 @@ public class CoordinatorDAOTest {
         testCoordinator.setPhoneNumber("8565567890");
         testCoordinator.setPassword("le000ps");
         testCoordinator.setPersonalNumber("00001");
+
     }
 
     @Test
@@ -44,6 +47,7 @@ public class CoordinatorDAOTest {
     void testAddCoordinatorSuccess() throws DAOException {
         boolean result = coordinatorDAO.addCoordinator(testCoordinator);
         assertTrue(result, "El método debería retornar true al insertar exitosamente");
+
     }
 
     @Test
@@ -54,6 +58,7 @@ public class CoordinatorDAOTest {
         assertThrows(DAOException.class, () -> {
             coordinatorDAO.addCoordinator(testCoordinator);
         });
+
     }
 
     @Test
@@ -63,6 +68,7 @@ public class CoordinatorDAOTest {
 
         boolean result = coordinatorDAO.inactivateCoordinator(testCoordinator);
         assertTrue(result);
+
     }
 
     @Test
@@ -72,7 +78,7 @@ public class CoordinatorDAOTest {
 
         boolean result = coordinatorDAO.activateCoordinator(testCoordinator);
         assertTrue(result);
-    }
 
+    }
 
 }

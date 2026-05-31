@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class ProjectManagerDTO {
 
     private int id;
@@ -78,4 +79,5 @@ public class ProjectManagerDTO {
     public String getPhoneNumber() {
         return phoneNumber;
     }
+
 }

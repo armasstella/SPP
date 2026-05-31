@@ -1,5 +1,6 @@
 package spp.presentation.controller;
 
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,10 +20,10 @@ import spp.businesslogic.dao.UserDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
-
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+
 
 public class MessageCenterController implements Initializable {
 
@@ -36,23 +37,22 @@ public class MessageCenterController implements Initializable {
     @FXML private TextField txtRecipient;
     @FXML private TextField txtSubject;
     @FXML private TextArea txtBody;
-
     private final MessageDAO messageDAO = new MessageDAO();
     private final UserDAO userDAO = new UserDAO();
     private ObservableList<MessageDTO> messagesObservableList;
-
     private String previousViewPath;
     private String previosViewTitle;
-
-    public void setPreviousView(String path, String title) {
-        this.previousViewPath = path;
-        this.previosViewTitle = title;
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpColumns();
         obtainMessages();
+    }
+
+    public void setPreviousView(String path, String title) {
+        this.previousViewPath = path;
+        this.previosViewTitle = title;
+
     }
 
     private void setUpColumns() {
@@ -62,6 +62,7 @@ public class MessageCenterController implements Initializable {
                 new PropertyValueFactory<>("subject"));
         clmnDate.setCellValueFactory(
                 new PropertyValueFactory<>("date"));
+
     }
 
     @FXML
@@ -73,26 +74,29 @@ public class MessageCenterController implements Initializable {
         } catch (DAOException e) {
             StatusLabel.showError(lblStatus, "Error al obtener mensajes");
         }
+
     }
 
     @FXML
-    public void showNewMessageForm(ActionEvent event) {
+    private void showNewMessageForm(ActionEvent event) {
         vbOptionAllMessages.setVisible(false);
         vbOptionNewMessage.setVisible(true);
         clearNewMessageFields();
         lblStatus.setText("");
+
     }
 
     @FXML
-    public void showAllMessages(ActionEvent event) {
+    private void showAllMessages(ActionEvent event) {
         vbOptionNewMessage.setVisible(false);
         vbOptionAllMessages.setVisible(true);
         obtainMessages();
         lblStatus.setText("");
+
     }
 
     @FXML
-    public void sendMessage(ActionEvent event) {
+    private void sendMessage(ActionEvent event) {
         if(txtRecipient.getText().trim().isEmpty() ||
             txtSubject.getText().trim().isEmpty() ||
             txtBody.getText().trim().isEmpty()) {
@@ -126,12 +130,14 @@ public class MessageCenterController implements Initializable {
         newMessageDTO.setSubject(txtSubject.getText().trim());
         newMessageDTO.setContent(txtBody.getText().trim());
         return newMessageDTO;
+
     }
 
     private void clearNewMessageFields() {
         txtRecipient.clear();
         txtSubject.clear();
         txtBody.clear();
+
     }
 
     @FXML
@@ -142,5 +148,7 @@ public class MessageCenterController implements Initializable {
         } else {
             StatusLabel.showError(lblStatus, "Error al regresar. Reinicie el programa");
         }
+
     }
+
 }

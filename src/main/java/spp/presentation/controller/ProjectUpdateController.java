@@ -1,5 +1,6 @@
 package spp.presentation.controller;
 
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,6 +29,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+
 public class ProjectUpdateController implements Initializable {
 
     @FXML private Label lblMessageBeforeEdition;
@@ -49,17 +51,15 @@ public class ProjectUpdateController implements Initializable {
     @FXML private TableColumn<ProjectDTO, String> colLinkedOrganization;
     @FXML private TableColumn<ProjectDTO, String> colProjectManager;
     @FXML private Label lblStatus;
-
     private final ProjectDAO projectDAO = new ProjectDAO();
-    private ObservableList<ProjectDTO> projectsObservableList;
     private ProjectDTO projectInEdition;
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpColumns();
         obtainProjects();
         setUpFields();
+
     }
 
     private void setUpFields() {
@@ -68,16 +68,19 @@ public class ProjectUpdateController implements Initializable {
         InputFilter.applyFilter(txtName, textPattern, 100);
         InputFilter.applyFilter(txtDescription, textPattern, 500);
         InputFilter.applyFilter(txtPlacesAvailable, "\\d*", 2);
+
     }
 
     private void obtainProjects() {
         try {
             List<ProjectDTO> projectsList = projectDAO.obtainAllProjects();
-            projectsObservableList = FXCollections.observableArrayList(projectsList);
+            ObservableList<ProjectDTO> projectsObservableList = FXCollections.observableArrayList(projectsList);
             tblProjects.setItems(projectsObservableList);
+
         } catch (DAOException e) {
             StatusLabel.showError(lblStatus, "Error al obtener lista de proyectos.");
         }
+
     }
 
     private void setUpColumns() {
@@ -92,16 +95,19 @@ public class ProjectUpdateController implements Initializable {
         colLinkedOrganization.setCellValueFactory(
                 cellData -> {
                     LinkedOrganizationDTO linkedOrganizationDTO = cellData.getValue().getLinkedOrganizationDTO();
-                    String name = (linkedOrganizationDTO != null) ? linkedOrganizationDTO.getName() : "Sin organización vinculada";
+                    String name = (linkedOrganizationDTO != null) ? linkedOrganizationDTO.getName() :
+                            "Sin organización vinculada";
                     return new SimpleStringProperty(name);
                 });
         colProjectManager.setCellValueFactory(
                 cellData -> {
                     ProjectManagerDTO projectManagerDTO = cellData.getValue().getProjectManagerDTO();
-                    String name = (projectManagerDTO != null) ? projectManagerDTO.getFirstName() : "Sin encargado";
+                    String name = (projectManagerDTO != null) ? projectManagerDTO.getFirstName() :
+                            "Sin encargado";
                     return new SimpleStringProperty(name);
                 }
         );
+
     }
 
     @FXML
@@ -121,6 +127,7 @@ public class ProjectUpdateController implements Initializable {
         txtName.setText(projectInEdition.getName());
         txtDescription.setText(projectInEdition.getDescription());
         txtPlacesAvailable.setText(String.valueOf(projectInEdition.getPlacesAvailable()));
+
     }
 
     @FXML
@@ -150,6 +157,7 @@ public class ProjectUpdateController implements Initializable {
             vbShowAllProjects.setVisible(true);
             hbContinueButtons.setVisible(true);
         }
+
     }
 
     private boolean areRequiredInputFieldsEmpty() {
@@ -161,7 +169,6 @@ public class ProjectUpdateController implements Initializable {
 
     @FXML
     private void updateProject(ActionEvent event) {
-
         if (!validateUpdateInputs()) {
             return;
         }
@@ -182,13 +189,16 @@ public class ProjectUpdateController implements Initializable {
                 StatusLabel.showSuccess(lblStatus, "Proyecto actualizado correctamente.");
                 clearInputFields();
             }
+
         } catch (NumberFormatException e) {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "El ID debe ser un número válido.");
+
         } catch (DAOException e) {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, e.getMessage());
         }
+
     }
 
     private void showAllProjects() {
@@ -200,27 +210,32 @@ public class ProjectUpdateController implements Initializable {
         vbShowAllProjects.setVisible(true);
         hbContinueButtons.setVisible(true);
         obtainProjects();
+
     }
 
     @FXML
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml", "Cancelar", event);
+
     }
 
     private boolean validateUpdateInputs() {
         boolean areInputsValid = true;
+
         if (areRequiredInputFieldsEmpty()) {
             StatusLabel.showError(lblStatus, "Los campos no deben estar vacíos.");
             areInputsValid = false;
         }
+
         return areInputsValid;
+
     }
 
     private void clearInputFields() {
         txtName.setText("");
         txtDescription.setText("");
         txtPlacesAvailable.setText("");
-    }
 
+    }
 
 }

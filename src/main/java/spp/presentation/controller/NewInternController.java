@@ -1,5 +1,6 @@
 package spp.presentation.controller;
 
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,7 +22,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
-public class InternController implements Initializable {
+
+public class NewInternController implements Initializable {
 
     @FXML private TextField txtFirstName;
     @FXML private TextField txtSecondName;
@@ -39,19 +41,20 @@ public class InternController implements Initializable {
     @FXML private Label lblStatus;
     @FXML private DatePicker dpBirthDate;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
     private final InternDAO internDAO = new InternDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configureDatePicker();
         toggleIndigenousLanguageField();
+
     }
 
     @FXML
     private void goToLoginView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/LoginView.fxml",
                 "Inicia sesión", event);
+
     }
 
     @FXML
@@ -69,6 +72,7 @@ public class InternController implements Initializable {
         internDTO.setIndigenousLanguage(txtIndigenousLanguage.getText().trim());
         LocalDate selectedDate = dpBirthDate.getValue();
         internDTO.setBirthDate(selectedDate.atStartOfDay());
+
     }
 
     @FXML
@@ -80,17 +84,18 @@ public class InternController implements Initializable {
         if (!isVisible) {
             txtIndigenousLanguage.clear();
         }
+
     }
 
     @FXML
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml",
                 "Cancelar", event);
+
     }
 
     @FXML
     private void saveIntern(ActionEvent event) {
-
         if (validateRegistrationInputs()) {
             return;
         }
@@ -107,6 +112,7 @@ public class InternController implements Initializable {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, e.getMessage());
         }
+
     }
 
     private boolean validateRegistrationInputs() {
@@ -123,6 +129,7 @@ public class InternController implements Initializable {
             validFields = true;
         }
         return validFields;
+
     }
 
     private void clearInputFields() {
@@ -138,6 +145,7 @@ public class InternController implements Initializable {
         dpBirthDate.setValue(null);
         rbNo.setSelected(true);
         toggleIndigenousLanguageField();
+
     }
 
     private void configureDatePicker() {
@@ -159,5 +167,7 @@ public class InternController implements Initializable {
                 return null;
             }
         });
+
     }
+
 }

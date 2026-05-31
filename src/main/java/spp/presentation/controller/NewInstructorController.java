@@ -1,5 +1,6 @@
 package spp.presentation.controller;
 
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -37,12 +38,15 @@ public class NewInstructorController {
         instructorDTO.setPersonalNumber(txtPersonalNumber.getText().trim());
         instructorDTO.setPassword(txtPassword.getText().trim());
         instructorDTO.setShift(cmbShift.getValue());
+
         return instructorDTO;
+
     }
 
     @FXML
     private void saveInstructor(ActionEvent event) {
         final InstructorDAO instructorDAO = new InstructorDAO();
+
         if (validateRegistrationInputs()) {
             return;
         }
@@ -63,10 +67,12 @@ public class NewInstructorController {
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/AdminMenuView.fxml",
                 "Menú Administrador", event);
+
     }
 
     private boolean validateRegistrationInputs() {
         boolean emptyFields = false;
+
         if (txtFirstName.getText().isBlank() ||
                 txtFirstLastName.getText().isBlank() ||
                 txtEmail.getText().isBlank() ||
@@ -77,7 +83,9 @@ public class NewInstructorController {
             StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             emptyFields = true;
         }
+
         return emptyFields;
+
     }
 
     private void clearInputFields() {
@@ -90,6 +98,7 @@ public class NewInstructorController {
         txtPersonalNumber.clear();
         txtPassword.clear();
         cmbShift.setValue(null);
+
     }
 
 }

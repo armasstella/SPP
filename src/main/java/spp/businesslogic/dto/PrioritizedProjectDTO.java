@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class PrioritizedProjectDTO {
 
     private final int ID_PROJECT;
@@ -28,4 +29,5 @@ public class PrioritizedProjectDTO {
     public String toString() {
         return "[Nivel de Prioridad" + PRIORITY_LEVEL + "] " + PROJECT_NAME + " (" + ID_PROJECT + ")";
     }
+
 }

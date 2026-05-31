@@ -1,8 +1,8 @@
 package spp.presentation.controller;
 
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dto.CoordinatorDTO;
@@ -12,10 +12,8 @@ import spp.utils.logger.AppLogger;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 
-public class NewCoordinatorController implements Initializable {
+public class NewCoordinatorController {
 
     @FXML private TextField txtFirstName;
     @FXML private TextField txtSecondName;
@@ -26,13 +24,7 @@ public class NewCoordinatorController implements Initializable {
     @FXML private TextField txtPersonalNumber;
     @FXML private TextField txtPassword;
     @FXML private Label lblStatus;
-
     private final CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-    }
 
     private CoordinatorDTO buildCoordinatorDTO() {
         CoordinatorDTO coordinatorDTO = new CoordinatorDTO();
@@ -44,11 +36,14 @@ public class NewCoordinatorController implements Initializable {
         coordinatorDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
         coordinatorDTO.setPersonalNumber(txtPersonalNumber.getText().trim());
         coordinatorDTO.setPassword(txtPassword.getText().trim());
+
         return coordinatorDTO;
+
     }
 
     private boolean validateRegistrationInputs() {
         boolean emptyFields = false;
+
         if (txtFirstName.getText().isBlank() ||
                 txtFirstLastName.getText().isBlank() ||
                 txtEmail.getText().isBlank() ||
@@ -58,7 +53,9 @@ public class NewCoordinatorController implements Initializable {
             StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             emptyFields = true;
         }
+
         return emptyFields;
+
     }
 
     @FXML
@@ -76,12 +73,14 @@ public class NewCoordinatorController implements Initializable {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, e.getMessage());
         }
+
     }
 
     @FXML
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/AdminMenuView.fxml",
                 "Menú Administrador", event);
+
     }
 
     private void clearInputFields() {
@@ -93,6 +92,7 @@ public class NewCoordinatorController implements Initializable {
         txtPhoneNumber.clear();
         txtPersonalNumber.clear();
         txtPassword.clear();
+
     }
 
 }

@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.LoginResultDTO;
 import spp.businesslogic.dto.SessionDTO;
@@ -9,7 +10,6 @@ import spp.businesslogic.interfaces.IUserDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
 import spp.utils.password.PasswordHasher;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -19,10 +19,9 @@ import java.sql.ResultSet;
 
 
 public class UserDAO implements IUserDAO {
+
     private static final int NO_ROWS_AFFECTED = 0;
-
     private final PasswordHasher passwordHasher = new PasswordHasher();
-
     private final SessionDAO sessionDAO = new SessionDAO();
 
     public UserDAO() {
@@ -31,7 +30,6 @@ public class UserDAO implements IUserDAO {
 
     @Override
     public int addUser(UserDTO userDTO) throws DAOException {
-
         final String INSERT_USER = "INSERT INTO Usuarios " +
                 "(nombre, apellidos, " +
                 "correo_electronico, telefono, contraseña) " +
@@ -42,7 +40,6 @@ public class UserDAO implements IUserDAO {
 
             PreparedStatement preparedStatement = connection.prepareStatement(
                     INSERT_USER, Statement.RETURN_GENERATED_KEYS);
-
             preparedStatement.setString(1, userDTO.getFirstName() + " " + userDTO.getSecondName());
             preparedStatement.setString(2, userDTO.getFirstLastName() + " " +
                     userDTO.getSecondLastName());
@@ -60,10 +57,12 @@ public class UserDAO implements IUserDAO {
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.logError(e);
             throw new DAOException("Error de integridad de datos al insertar usuario", e);
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("Error general al insertar usuario", e);
         }
+
     }
 
     @Override
@@ -73,15 +72,18 @@ public class UserDAO implements IUserDAO {
                 throw new DAOException("No se generó ninguna llave.");
             }
             return resultSet.getInt(1);
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("Error al obtener llave generada", e);
         }
+
     }
 
     @Override
     public int obtainId(String email) throws DAOException {
         final String SELECT_ID = "SELECT id_usuario FROM Usuarios WHERE correo_electronico = ?";
+
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
 
@@ -93,9 +95,11 @@ public class UserDAO implements IUserDAO {
                 }
                 throw new DAOException("Usuario no encontrado con email: " + email);
             }
+
         } catch (SQLException e) {
             throw new DAOException("Error al obtener ID de usuario", e);
         }
+
     }
 
     @Override
@@ -121,19 +125,21 @@ public class UserDAO implements IUserDAO {
                         return new LoginResultDTO(userType);
                     }
                 }
+
                 throw new DAOException("Credenciales incorrectas");
             }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("Error de conexión al verificar credenciales", e);
         }
+
     }
 
     @Override
     public boolean searchEmailRegister(String email) throws DAOException {
-        boolean isSearchSuccessful = false;
-
         final String SEARCH_EMAIL = "SELECT f_existe_correo_electronico(?)";
+        boolean isSearchSuccessful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -156,5 +162,7 @@ public class UserDAO implements IUserDAO {
         }
 
         return isSearchSuccessful;
+
     }
+
 }

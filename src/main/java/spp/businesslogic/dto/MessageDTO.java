@@ -1,6 +1,8 @@
 package spp.businesslogic.dto;
 
+
 import spp.businesslogic.enums.MesaggeStatus;
+
 
 public class MessageDTO {
     private String subject;
@@ -79,4 +81,5 @@ public class MessageDTO {
     public void setDate(String date) {
         this.date = date;
     }
+
 }

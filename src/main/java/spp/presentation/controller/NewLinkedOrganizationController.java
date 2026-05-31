@@ -1,8 +1,8 @@
 package spp.presentation.controller;
 
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dto.LinkedOrganizationDTO;
@@ -11,11 +11,11 @@ import spp.businesslogic.dao.LinkedOrganizationDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
-import java.net.URL;
-import java.util.ResourceBundle;
 
-public class LinkedOrganizationController implements Initializable {
 
+public class NewLinkedOrganizationController {
+
+    @FXML private Label lblStatus;
     @FXML private TextField txtName;
     @FXML private TextField txtRfc;
     @FXML private TextField txtAddress;
@@ -23,15 +23,7 @@ public class LinkedOrganizationController implements Initializable {
     @FXML private TextField txtBusiness;
     @FXML private TextField txtEmail;
     @FXML private TextField txtPhoneNumber;
-
-    @FXML private Label lblStatus;
-
     private final LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();;
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-    }
 
     @FXML
     private void setAllLinkedOrganization(ActionEvent event, LinkedOrganizationDTO linkedOrganizationDTO) {
@@ -42,11 +34,11 @@ public class LinkedOrganizationController implements Initializable {
         linkedOrganizationDTO.setBusiness(txtBusiness.getText().trim());
         linkedOrganizationDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
         linkedOrganizationDTO.setEmail(txtEmail.getText().trim());
+
     }
 
     @FXML
     private void saveLinkedOrganization(ActionEvent event) {
-
         if (validateRegistrationInputs()) {
             return;
         }
@@ -63,16 +55,19 @@ public class LinkedOrganizationController implements Initializable {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, e.getMessage());
         }
+
     }
 
     @FXML
     private void cancel(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml", "Menú Coordinador", event);
-    }
+        ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml",
+                "Menú Coordinador", event);
 
+    }
 
     private boolean validateRegistrationInputs() {
         boolean validFields = false;
+
         if (txtName.getText().isBlank() ||
                 txtName.getText().isBlank() ||
                 txtRfc.getText().isBlank() ||
@@ -84,7 +79,9 @@ public class LinkedOrganizationController implements Initializable {
             StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             validFields = true;
         }
+
         return validFields;
+
     }
 
     private void clearInputFields() {
@@ -95,6 +92,7 @@ public class LinkedOrganizationController implements Initializable {
         txtBusiness.clear();
         txtPhoneNumber.clear();
         txtEmail.clear();
+
     }
 
 }

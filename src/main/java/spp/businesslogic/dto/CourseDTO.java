@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class CourseDTO {
 
     private int idCourse;
@@ -68,4 +69,5 @@ public class CourseDTO {
     public void setNumberOfInterns(int numberOfInterns) {
         this.numberOfInterns = numberOfInterns;
     }
+
 }

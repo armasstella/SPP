@@ -1,25 +1,27 @@
 package spp.businesslogic.dao;
 
+
 import spp.businesslogic.dto.SessionDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ISessionDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
 import spp.utils.session.Token;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 public class SessionDAO implements ISessionDAO {
+
     private static final int NO_ROWS_AFFECTED = 0;
 
     @Override
     public String createSession(int idUser) throws DAOException {
-        String token = Token.generate();
         final String GENERATE_SESSION = "INSERT INTO sesiones(token, id_usuario, expiracion)" +
                 "VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))";
+        String token = Token.generate();
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -40,6 +42,7 @@ public class SessionDAO implements ISessionDAO {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al crear sesión de usuario");
+
             } finally {
                 connection.setAutoCommit(true);
             }
@@ -50,6 +53,7 @@ public class SessionDAO implements ISessionDAO {
         }
 
         return token;
+
     }
 
     @Override
@@ -74,18 +78,22 @@ public class SessionDAO implements ISessionDAO {
             } catch (SQLException e) {
                 AppLogger.logError(e);
                 throw new DAOException("Error al buscar sesión");
+
             } finally {
                 connection.setAutoCommit(true);
             }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("Error al acceder a la base de datos");
         }
+
     }
 
     @Override
     public void deleteSession(String token) throws DAOException {
         final String DELETE_SESSION = "DELETE FROM sesiones WHERE token = ?";
+
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
 
@@ -102,5 +110,7 @@ public class SessionDAO implements ISessionDAO {
             AppLogger.logError(e);
             throw new DAOException("Error al acceder a la base de datos.");
         }
+
     }
+
 }

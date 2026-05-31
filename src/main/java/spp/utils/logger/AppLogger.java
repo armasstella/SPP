@@ -1,5 +1,6 @@
 package spp.utils.logger;
 
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 
 public class AppLogger {
 
@@ -27,11 +29,14 @@ public class AppLogger {
         } catch (IOException e) {
             AppLogger.logError(e);
         }
+
     }
 
     private static String buildLogEntry(Exception exception) {
         return "[" + LocalDateTime.now() + "] " +
                 exception.getClass().getSimpleName() + ": " +
                 exception.getMessage() + "\n";
+
     }
+
 }

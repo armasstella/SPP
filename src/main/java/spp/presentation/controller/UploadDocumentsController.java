@@ -1,5 +1,6 @@
 package spp.presentation.controller;
 
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -21,15 +22,15 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+
 public class UploadDocumentsController {
 
     @FXML private Label lblStatus;
     @FXML private TextField txtStudentNumber;
     @FXML private Button btnUploadClassSchedule;
     @FXML private Label lblSelectedDocument;
-
     private File selectedDocument;
-    private InitialDocumentDTO initialDocumentDTO = new InitialDocumentDTO();
+    private final InitialDocumentDTO initialDocumentDTO = new InitialDocumentDTO();
     private final InitialDocumentDAO initialDocumentDAO = new InitialDocumentDAO();
     private InternDAO internDAO = new InternDAO();
 
@@ -37,6 +38,7 @@ public class UploadDocumentsController {
     private void cancel(ActionEvent event){
         ViewNavigator.loadView("/spp/presentation/view/InternMenuView.fxml",
                 "Menú Practicante", event);
+
     }
 
     @FXML
@@ -49,16 +51,20 @@ public class UploadDocumentsController {
                 selectFile(event);
             }
         }
+
     }
 
     private boolean searchClassSchedule() {
         boolean existsClassSchedule = false;
+
         try {
             existsClassSchedule = initialDocumentDAO.searchClassScheduleForIntern(txtStudentNumber.getText().trim());
         } catch (DAOException e) {
             StatusLabel.showError(lblStatus, "Error al buscar horario.");
         }
+
         return existsClassSchedule;
+
     }
 
     @FXML
@@ -71,18 +77,22 @@ public class UploadDocumentsController {
                 initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.ACTIVITIES_SCHEDULE));
                 selectFile(event);
             }
-
         }
+
     }
 
     private boolean searchActivitiesSchedule() {
         boolean existsActivitiesSchedule = false;
+
         try {
-            existsActivitiesSchedule = initialDocumentDAO.searchActivitiesScheduleForIntern(txtStudentNumber.getText().trim());
+            existsActivitiesSchedule = initialDocumentDAO.searchActivitiesScheduleForIntern(
+                    txtStudentNumber.getText().trim());
         } catch (DAOException e) {
             StatusLabel.showError(lblStatus, "Error al buscar calendarización de actividades.");
         }
+
         return existsActivitiesSchedule;
+
     }
 
 
@@ -106,16 +116,20 @@ public class UploadDocumentsController {
             txtStudentNumber.clear();
             selectedDocument = null;
         }
+
     }
 
     private boolean searchStudent() {
         boolean existsStudentNumber = false;
+
         try {
             existsStudentNumber = internDAO.searchStudentNumberRegister(txtStudentNumber.getText().trim());
         } catch (DAOException e) {
             StatusLabel.showError(lblStatus, "La matricula ingresada no es correcta");
         }
+
         return existsStudentNumber;
+
     }
 
     private boolean validateEmptyInputs() {
@@ -167,13 +181,17 @@ public class UploadDocumentsController {
             AppLogger.logError(e);
             lblStatus.setText("No se puede guardar el archivo. Intente de nuevo.");
         }
+
         return saveStatus;
+
     }
 
     private boolean saveDataDocument() {
         boolean success = false;
+
         try {
             success = initialDocumentDAO.saveDocument(txtStudentNumber.getText().trim(), initialDocumentDTO);
+
         } catch (DAOException e) {
             lblStatus.setText("Error al guardar documento: 1.");
         }
@@ -183,6 +201,7 @@ public class UploadDocumentsController {
         }
 
         return success;
+
     }
 
     private void selectFile(ActionEvent event) {
@@ -199,5 +218,7 @@ public class UploadDocumentsController {
         if (selectedDocument != null) {
             lblSelectedDocument.setText("Archivo seleccionado: " + selectedDocument.getName());
         }
+
     }
+
 }

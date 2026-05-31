@@ -1,5 +1,6 @@
 package spp.presentation.controller;
 
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -11,17 +12,17 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import spp.businesslogic.dao.CourseDAO;
 import spp.businesslogic.dto.CourseDTO;
+import spp.businesslogic.exceptions.DAOException;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
-
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+
 public class CourseInformationController implements Initializable {
 
-    @FXML
-    private Label lblStatus;
-
+    @FXML private Label lblStatus;
     @FXML private TableView<CourseDTO> tblCourses;
     @FXML private TableColumn<CourseDTO, Integer> colCourseCode;
     @FXML private TableColumn<CourseDTO, String> colTerm;
@@ -29,15 +30,14 @@ public class CourseInformationController implements Initializable {
     @FXML private TableColumn<CourseDTO, Integer> colSection;
     @FXML private TableColumn<CourseDTO, String> colInstructor;
     @FXML private TableColumn<CourseDTO, Integer> colNumberOfInterns;
-
     private final CourseDAO courseDAO = new CourseDAO();
-
-    private ObservableList<CourseDTO> courses = FXCollections.observableArrayList();
+    private final ObservableList<CourseDTO> courses = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpColumns();
         obtainCourses();
+
     }
 
     private void setUpColumns() {
@@ -47,31 +47,33 @@ public class CourseInformationController implements Initializable {
         colSection.setCellValueFactory(new PropertyValueFactory<>("section"));
         colInstructor.setCellValueFactory(new PropertyValueFactory<>("instructor"));
         colNumberOfInterns.setCellValueFactory(new PropertyValueFactory<>("numberOfInterns"));
+
     }
 
     @FXML
     private void obtainCourses() {
         try {
             List<CourseDTO> courseDTOList = courseDAO.obtainAllActiveCourses();
-            courses.clear();
             courses.addAll(courseDTOList);
             tblCourses.setItems(courses);
-        } catch (Exception e) {
-            e.printStackTrace();
-            lblStatus.setText("Error al cargar los cursos de la base de datos.");
-            lblStatus.getStyleClass().setAll("lbl-status", "error");
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, "Error al obtener lista de cursos");
         }
+
     }
 
     @FXML
     private void goToNewCourseView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/NewCourseView.fxml",
                 "Registrar Curso", event);
+
     }
 
     @FXML
     private void goBackToMenu(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml",
                 "Menú Principal", event);
+
     }
+
 }

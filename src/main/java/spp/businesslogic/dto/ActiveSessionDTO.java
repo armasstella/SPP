@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class ActiveSessionDTO {
 
     private static SessionDTO sessionDTO = null;
