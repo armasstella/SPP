@@ -1,9 +1,11 @@
 package spp.presentation;
 
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 
 public class MainApp extends Application {
 
@@ -19,9 +21,12 @@ public class MainApp extends Application {
         stage.setMinWidth(400);
         stage.setMinHeight(480);
         stage.show();
+
     }
 
     public static void main(String[] args) {
         launch(args);
+
     }
+
 }

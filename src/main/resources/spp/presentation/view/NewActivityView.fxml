@@ -42,7 +42,8 @@
                             <TextField fx:id="txtTitle" promptText="Título de la actividad" styleClass="field-input"/>
 
                             <Label text="Descripción *" styleClass="field-label"/>
-                            <TextArea fx:id="taDescription" promptText="Descripción de la actividad" styleClass="field-input"/>
+                            <TextArea fx:id="taDescription" promptText="Descripción de la actividad"
+                                      styleClass="field-input"/>
 
                             <Label text="Fecha de entrega *" styleClass="field-label"/>
                             <DatePicker fx:id="dpSubmissionDate" promptText="dd/mm/aaaa"

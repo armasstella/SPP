@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class ProjectDTO {
 
     private int id;
@@ -69,4 +70,5 @@ public class ProjectDTO {
     public void setName(String name) {
         this.name = name;
     }
+
 }

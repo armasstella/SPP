@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class EvidenceDTO {
 
     private String metadata;
@@ -25,4 +26,5 @@ public class EvidenceDTO {
     public void setGrade(int grade) {
         this.grade = grade;
     }
+
 }

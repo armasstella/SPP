@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class ProfessionalPracticeEnrollmentDTO {
 
     private String nrc;
@@ -70,4 +71,5 @@ public class ProfessionalPracticeEnrollmentDTO {
     public int getCoveredHours() {
         return coveredHours;
     }
+
 }

@@ -1,7 +1,8 @@
 package spp.businesslogic.dto;
 
-import java.sql.Timestamp;
+
 import java.time.LocalDateTime;
+
 
 public class InitialDocumentDTO {
 
@@ -68,4 +69,5 @@ public class InitialDocumentDTO {
     public void setDocumentType(String documentType) {
         this.documentType = documentType;
     }
+
 }

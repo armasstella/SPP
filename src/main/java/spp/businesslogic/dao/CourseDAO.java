@@ -1,18 +1,19 @@
 package spp.businesslogic.dao;
 
+
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ICourseDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class CourseDAO implements ICourseDAO {
 
@@ -96,6 +97,9 @@ public class CourseDAO implements ICourseDAO {
             AppLogger.logError(e);
             throw new DAOException("Error al obtener lista de cursos", e);
         }
+
         return coursesList;
+
     }
+
 }

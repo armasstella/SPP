@@ -1,17 +1,19 @@
 package spp.businesslogic.dao;
 
+
 import spp.businesslogic.dto.ProfessionalPracticeEnrollmentDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IProfessionalPracticeEnrollmentDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
+
 public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeEnrollmentDAO {
+
     private static final int NO_ROWS_AFFECTED = 0;
 
     public ProfessionalPracticeEnrollmentDAO() {
@@ -24,6 +26,8 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
         final String INSERT_PROFESSIONAL_PRACTICE_ENROLLMENT = "INSERT INTO Inscripciones_Practicas_Profesionales " +
                 "(nrc, periodo, id_usuario_practicante, matricula, id_usuario_profesor, num_personal, " +
                 "calificacion_final, id_proyecto, horas_cubiertas) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        boolean isAddSuccesful = false;
+
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             connection.setAutoCommit(false);
@@ -44,27 +48,35 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
                 }
 
                 connection.commit();
+                isAddSuccesful = true;
 
             } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar la inscripción",e);
+
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar la inscripción. Se viola la integridad de los datos", e);
+
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error general al insertar la inscripción", e);
+
             } finally {
                 connection.setAutoCommit(true);
                 connection.close();
             }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("Error al acceder a la base de datos", e);
         }
-        return true;
+
+        return isAddSuccesful;
+
     }
+
 }

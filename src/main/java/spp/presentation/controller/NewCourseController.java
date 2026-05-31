@@ -1,20 +1,19 @@
 package spp.presentation.controller;
 
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dao.CourseDAO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
+import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 
-public class NewCourseController implements Initializable {
+public class NewCourseController {
 
     @FXML TextField txtCourseCode;
     @FXML ComboBox<String> cmbTerm;
@@ -23,13 +22,7 @@ public class NewCourseController implements Initializable {
     @FXML TextField txtSection;
     @FXML ComboBox<InstructorDTO> cmbInstructor;
     @FXML Label lblStatus;
-
     private final CourseDAO courseDAO = new CourseDAO();
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-    }
 
     private CourseDTO buildCourseDTO() {
         CourseDTO courseDTO = new CourseDTO();
@@ -40,6 +33,7 @@ public class NewCourseController implements Initializable {
         courseDTO.setInstructor(cmbInstructor.getSelectionModel().getSelectedItem());
 
         return courseDTO;
+
     }
 
     @FXML
@@ -66,8 +60,8 @@ public class NewCourseController implements Initializable {
         cmbSection.getItems().clear();
         cmbSchoolBlock.getItems().clear();
         cmbInstructor.getItems().clear();
-    }
 
+    }
 
     private boolean validateEmptyFields() {
         boolean thereAreEmptyFields = false;
@@ -77,27 +71,19 @@ public class NewCourseController implements Initializable {
                 cmbSchoolBlock.getItems().isEmpty() ||
                 txtSection.getText().isBlank() ||
                 cmbInstructor.getItems().isEmpty()) {
-            showError("Completa todos los campos obligatorios.");
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             thereAreEmptyFields = true;
         }
+
         return thereAreEmptyFields;
-    }
 
-    private void showSuccess(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("success");
-    }
-
-    private void showError(String message) {
-        lblStatus.setText(message);
-        lblStatus.getStyleClass().removeAll("error", "success");
-        lblStatus.getStyleClass().add("error");
     }
 
     @FXML
     private void goBackToCourseInformationView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/CourseInformationView.fxml",
                 "Cursos", event);
+
     }
+
 }

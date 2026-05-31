@@ -1,8 +1,8 @@
 package spp.presentation.controller;
 
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dto.ProjectManagerDTO;
@@ -11,10 +11,11 @@ import spp.businesslogic.dao.ProjectManagerDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
-import java.net.URL;
-import java.util.ResourceBundle;
 
-public class ProjectManagerController implements Initializable {
+
+public class ProjectManagerController {
+
+    @FXML private Label lblStatus;
     @FXML private TextField txtFirstName;
     @FXML private TextField txtSecondName;
     @FXML private TextField txtFirstLastName;
@@ -22,17 +23,11 @@ public class ProjectManagerController implements Initializable {
     @FXML private TextField txtResponsability;
     @FXML private TextField txtRole;
     @FXML private TextField txtPhoneNumber;
-
-    @FXML private Label lblStatus;
-
     private final ProjectManagerDAO projectManagerDAO  = new ProjectManagerDAO();
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-    }
-
     @FXML
-    private void setAllProjectManagerDTO(ActionEvent event, ProjectManagerDTO projectManagerDTO) {
+    private ProjectManagerDTO buildProjectManagerDTO() {
+        ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
         projectManagerDTO.setFirstName(txtFirstName.getText().trim());
         projectManagerDTO.setSecondName(txtSecondName.getText().trim());
         projectManagerDTO.setFirstLastName(txtFirstLastName.getText().trim());
@@ -40,20 +35,19 @@ public class ProjectManagerController implements Initializable {
         projectManagerDTO.setRole(txtRole.getText().trim());
         projectManagerDTO.setResponsability(txtResponsability.getText().trim());
         projectManagerDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
+
+        return projectManagerDTO;
+
     }
 
     @FXML
     private void saveProjectManager(ActionEvent event) {
-
         if (validateRegistrationInputs()) {
             return;
         }
 
-        ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
-        setAllProjectManagerDTO(event, projectManagerDTO);
-
         try {
-            if (projectManagerDAO.addProjectManagerDAO(projectManagerDTO)) {
+            if (projectManagerDAO.addProjectManagerDAO(buildProjectManagerDTO())) {
                 StatusLabel.showSuccess(lblStatus, "Encargado de proyecto registrado correctamente.");
                 clearInputFields();
             }
@@ -61,16 +55,19 @@ public class ProjectManagerController implements Initializable {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, e.getMessage());
         }
+
     }
 
     @FXML
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml",
                 "Menú Coordinador", event);
+
     }
 
     private boolean validateRegistrationInputs() {
         boolean validFields = false;
+
         if (txtFirstName.getText().isBlank() ||
                 txtFirstLastName.getText().isBlank() ||
                 txtResponsability.getText().isBlank() ||
@@ -79,7 +76,9 @@ public class ProjectManagerController implements Initializable {
             StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             validFields = true;
         }
+
         return validFields;
+
     }
 
     private void clearInputFields() {
@@ -90,6 +89,7 @@ public class ProjectManagerController implements Initializable {
         txtResponsability.clear();
         txtRole.clear();
         txtPhoneNumber.clear();
+
     }
 
 }

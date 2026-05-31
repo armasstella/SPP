@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import spp.businesslogic.dto.InitialDocumentDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IInitialDocumentDAO;
@@ -13,17 +14,17 @@ import java.sql.ResultSet;
 
 
 public class InitialDocumentDAO implements IInitialDocumentDAO {
-    private static final int NO_ROWS_AFFECTED = 0;
 
-    InternDAO internDAO = new InternDAO();
+    private static final int NO_ROWS_AFFECTED = 0;
 
     @Override
     public boolean saveDocument(String studentNumber, InitialDocumentDTO initialDocumentDTO) throws DAOException {
-        boolean isSaveSuccessful = false;
         final String INSERT_DOCUMENT = " INSERT INTO documentos_iniciales (nombre_original, " +
                 "nombre_almacenado, ruta_archivo, tamaño_mb, extension, fecha_subida," +
                 "tipo, id_usuario_practicante," +
                 "matricula) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        boolean isSaveSuccessful = false;
+        InternDAO internDAO = new InternDAO();
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -52,13 +53,15 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             AppLogger.logError(e);
             throw new DAOException("Error al guardar documento", e);
         }
+
         return isSaveSuccessful;
+
     }
 
     @Override
     public boolean searchClassScheduleForIntern(String studentNumber) throws DAOException {
-        boolean isSearchSuccessful = false;
         final String SEARCH_SCHEDULE = "SELECT f_existe_horario_estudiante(?)";
+        boolean isSearchSuccessful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -70,18 +73,20 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
                     isSearchSuccessful = resultSet.getBoolean(1);
                 }
             }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("Error al buscar horario del practicante.", e);
         }
 
         return isSearchSuccessful;
+
     }
 
     @Override
     public boolean searchActivitiesScheduleForIntern(String studentNumber) throws DAOException {
-        boolean isSearchSuccessful = false;
         final String SEARCH_SCHEDULE = "SELECT f_existe_calendarizacion_actividades_estudiante(?)";
+        boolean isSearchSuccessful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -93,14 +98,14 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
                     isSearchSuccessful = resultSet.getBoolean(1);
                 }
             }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("Error al buscar calendarización de actividades.", e);
         }
 
         return isSearchSuccessful;
+
     }
-
-
 
 }

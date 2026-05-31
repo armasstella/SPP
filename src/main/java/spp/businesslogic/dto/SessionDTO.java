@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class SessionDTO {
 
     private final String email;
@@ -11,4 +12,5 @@ public class SessionDTO {
     public String getEmail() {
         return email;
     }
+
 }

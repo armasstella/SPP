@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.dto.ProjectManagerDTO;
@@ -16,7 +17,9 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ProjectDAO implements IProjectDAO {
+
     private static final int NO_ROWS_AFFECTED = 0;
 
     public ProjectDAO() {
@@ -29,6 +32,7 @@ public class ProjectDAO implements IProjectDAO {
                 "(descripcion, " +
                 "id_organizacion_vinculada, id_encargado_proyecto, cupo, nombre) " +
                 "VALUES (?, ?, ?, ?, ?)";
+        boolean isAddSuccesful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -48,33 +52,41 @@ public class ProjectDAO implements IProjectDAO {
                 }
 
                 connection.commit();
+                isAddSuccesful = true;
 
             } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar el proyecto", e);
+
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar el proyecto. Se viola la integridad de los datos", e);
+
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error general al insertar el proyecto", e);
+
             } finally {
                connection.setAutoCommit(true);
                connection.close();
             }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("Error al acceder a la base de datos", e);
         }
-        return true;
+
+        return isAddSuccesful;
+
     }
 
     @Override
     public boolean deleteProject(ProjectDTO projectDTO) throws DAOException {
         final String DELETE_PROJECT = "DELETE FROM Proyectos WHERE id_proyecto = ?";
+        boolean isDeletionSuccesful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -90,34 +102,42 @@ public class ProjectDAO implements IProjectDAO {
                 }
 
                 connection.commit();
+                isDeletionSuccesful = true;
 
             } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al eliminar el proyecto", e);
+
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al eliminar el proyecto. Se viola la integridad de los datos", e);
+
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error general al eliminar el proyecto", e);
+
             } finally {
                 connection.setAutoCommit(true);
                 connection.close();
             }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("Error al acceder a la base de datos", e);
         }
-        return true;
+
+        return isDeletionSuccesful;
+
     }
 
     @Override
     public boolean updateProject(ProjectDTO projectDTO) throws DAOException {
         final String UPDATE_PROJECT = "UPDATE Proyectos SET descripcion = ?, " +
                 "nombre = ?, cupo = ?  WHERE id_proyecto = ?";
+        boolean isUpdateSuccesful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -136,28 +156,35 @@ public class ProjectDAO implements IProjectDAO {
                 }
 
                 connection.commit();
+                isUpdateSuccesful = true;
 
             } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al actualizar el proyecto", e);
+
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al actualizar el proyecto. Se viola la integridad de los datos", e);
+
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error general al actualizar el proyecto", e);
+
             } finally {
                 connection.setAutoCommit(true);
                 connection.close();
             }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("Error al acceder a la base de datos", e);
         }
-        return true;
+
+        return isUpdateSuccesful;
+
     }
 
     @Override
@@ -205,5 +232,7 @@ public class ProjectDAO implements IProjectDAO {
         }
 
         return projectsList;
+
     }
+
 }

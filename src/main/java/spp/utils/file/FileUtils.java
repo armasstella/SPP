@@ -1,5 +1,6 @@
 package spp.utils.file;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
 
 public class FileUtils {
 
@@ -20,11 +22,13 @@ public class FileUtils {
     public static String getExtension(String fileName) {
         int lastIndex = fileName.lastIndexOf('.');
         return (lastIndex > 0) ? fileName.substring(lastIndex + 1).toLowerCase() : "";
+
     }
 
     public static String generateUniqueName(String studentNumber, String extension) {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         return "schedule_" + studentNumber + "_" + timestamp + "." + extension;
+
     }
 
     public static String copyFile(File source, String destinationName) throws IOException {
@@ -32,5 +36,7 @@ public class FileUtils {
         Path destination = Paths.get(SCHEDULES_FOLDER + destinationName);
         Files.copy(source.toPath(), destination, StandardCopyOption.REPLACE_EXISTING);
         return destination.toString();
+
     }
+
 }

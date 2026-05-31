@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class LinkedOrganizationDTO {
 
     private int id;
@@ -77,4 +78,5 @@ public class LinkedOrganizationDTO {
     public void setEmail(String email) {
         this.email = email;
     }
+
 }

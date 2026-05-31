@@ -1,7 +1,9 @@
 package spp.utils.password;
 
+
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
+
 
 public class PasswordHasher {
 
@@ -13,11 +15,13 @@ public class PasswordHasher {
         } finally {
             argon2.wipeArray(passwordChars);
         }
+
     }
 
     public boolean verifyPassword(String hash, String password) {
         Argon2 argon2 = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id);
         return argon2.verify(hash, password.toCharArray());
+
     }
 
 }

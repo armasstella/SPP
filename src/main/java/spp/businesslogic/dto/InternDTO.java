@@ -1,6 +1,8 @@
 package spp.businesslogic.dto;
 
+
 import java.time.LocalDateTime;
+
 
 public class InternDTO extends UserDTO {
 
@@ -62,4 +64,5 @@ public class InternDTO extends UserDTO {
     public LocalDateTime getBirthDate() {
         return birthDate;
     }
+
 }

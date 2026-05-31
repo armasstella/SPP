@@ -1,17 +1,19 @@
 package spp.businesslogic.dao;
 
+
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IProjectManagerDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
+
 public class ProjectManagerDAO implements IProjectManagerDAO {
+
     private static final int NO_ROWS_AFFECTED = 0;
 
     public ProjectManagerDAO() {
@@ -22,6 +24,7 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
     public boolean addProjectManagerDAO(ProjectManagerDTO projectManagerDTO) throws DAOException {
         final String INSERT_PROJECT_MANAGER = "INSERT INTO Encargados_Proyectos " + "(nombres, apellidos, " +
             "responsabilidad, rol, telefono)" + "VALUES (?, ?, ?, ?, ?)";
+        boolean isAddSuccesful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -43,33 +46,41 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                 }
 
                 connection.commit();
+                isAddSuccesful = true;
 
             } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar el encargado del proyecto", e);
+
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error al insertar el encargado del proyecto. Se viola la integridad de " +
                         "los datos", e);
+
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new DAOException("Error general al insertar el encargado del proyecto", e);
+
             } finally {
                 connection.setAutoCommit(true);
                 connection.close();
             }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("Error al acceder a la base de datos", e);
         }
-        return true;
+
+        return isAddSuccesful;
+
     }
 
     @Override
     public boolean updateProjectManagerDAO(ProjectManagerDTO projectManagerDTO) throws DAOException {
         return true;
     }
+
 }

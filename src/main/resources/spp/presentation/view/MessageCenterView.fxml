@@ -39,14 +39,17 @@
 
             <HBox spacing="30" VBox.vgrow="ALWAYS">
                 <VBox fx:id="vbOptions" spacing="15" prefWidth="270">
-                    <Button text="+ Nuevo mensaje" styleClass="option-btn, btn-primary" maxWidth="Infinity" onAction="#showNewMessageForm"/>
-                    <Button text="Todos los mensajes" styleClass="option-btn, btn-activate" maxWidth="Infinity" onAction="#showAllMessages"/>
+                    <Button text="+ Nuevo mensaje" styleClass="option-btn, btn-primary" maxWidth="Infinity"
+                            onAction="#showNewMessageForm"/>
+                    <Button text="Todos los mensajes" styleClass="option-btn, btn-activate" maxWidth="Infinity"
+                            onAction="#showAllMessages"/>
                     <Button text="No leídos" styleClass="option-btn, btn-activate" maxWidth="Infinity"/>
                     <Button text="Enviados" styleClass="option-btn, btn-activate" maxWidth="Infinity"/>
                 </VBox>
 
                 <VBox fx:id="vbOptionSelected" HBox.hgrow="ALWAYS">
-                    <VBox fx:id="vbOptionAllMessages" visible="true" VBox.vgrow="ALWAYS" managed="${vbOptionAllMessages.visible}">
+                    <VBox fx:id="vbOptionAllMessages" visible="true" VBox.vgrow="ALWAYS"
+                          managed="${vbOptionAllMessages.visible}">
                         <TableView fx:id="tblMessages" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="clmnSender" text="Correo remitente" prefWidth="200"
@@ -62,22 +65,26 @@
                         </TableView>
                     </VBox>
 
-                    <VBox fx:id="vbOptionNewMessage" visible="false" managed="${vbOptionNewMessage.visible}" spacing="20">
+                    <VBox fx:id="vbOptionNewMessage" visible="false" managed="${vbOptionNewMessage.visible}"
+                          spacing="20">
                         <Label text="REDACTAR NUEVO MENSAJE" styleClass="field-label"/>
 
                         <VBox spacing="5">
                             <Label text="Destinatario (Correo):" styleClass="field-description"/>
-                            <TextField fx:id="txtRecipient" promptText="ejemplo@correo.com" styleClass="field-input" maxWidth="Infinity"/>
+                            <TextField fx:id="txtRecipient" promptText="ejemplo@correo.com" styleClass="field-input"
+                                       maxWidth="Infinity"/>
                         </VBox>
 
                         <VBox spacing="5">
                             <Label text="Asunto:" styleClass="field-description"/>
-                            <TextField fx:id="txtSubject" promptText="Ingrese el asunto" styleClass="field-input" maxWidth="Infinity"/>
+                            <TextField fx:id="txtSubject" promptText="Ingrese el asunto" styleClass="field-input"
+                                       maxWidth="Infinity"/>
                         </VBox>
 
                         <VBox spacing="5" VBox.vgrow="ALWAYS">
                             <Label text="Mensaje:" styleClass="field-description"/>
-                            <TextArea fx:id="txtBody" promptText="Escriba su mensaje aquí..." styleClass="field-input" VBox.vgrow="ALWAYS" wrapText="true"/>
+                            <TextArea fx:id="txtBody" promptText="Escriba su mensaje aquí..." styleClass="field-input"
+                                      VBox.vgrow="ALWAYS" wrapText="true"/>
                         </VBox>
 
                         <HBox alignment="BOTTOM_RIGHT" spacing="15">

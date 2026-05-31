@@ -1,5 +1,6 @@
 package spp.presentation.controller;
 
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -11,12 +12,12 @@ import spp.utils.logger.AppLogger;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
+
 public class LoginController {
 
     @FXML private TextField txtEmail;
     @FXML private TextField txtPassword;
     @FXML private Label lblStatus;
-
     private final UserDAO userDAO = new UserDAO();
 
     @FXML
@@ -44,6 +45,7 @@ public class LoginController {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, e.getMessage());
         }
+
     }
 
     private void goToView(String userType, ActionEvent event) {
@@ -67,15 +69,19 @@ public class LoginController {
             default:
                 StatusLabel.showError(lblStatus, "Tipo de usuario no reconocido.");
         }
+
     }
 
     private boolean validateEmptyDataFields() {
         boolean emptyFields = false;
+
         if (txtEmail.getText().isBlank() || txtPassword.getText().isBlank()) {
             StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             emptyFields = true;
         }
+
         return emptyFields;
+
     }
 
 }

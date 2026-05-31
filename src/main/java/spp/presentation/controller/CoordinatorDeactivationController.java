@@ -1,11 +1,14 @@
 package spp.presentation.controller;
 
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
@@ -14,37 +17,36 @@ import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
-
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+
 public class CoordinatorDeactivationController implements Initializable {
+
     @FXML private Label lblStatus;
     @FXML private TableView<CoordinatorDTO> tblCoordinators;
-    @FXML private TableColumn<CoordinatorDTO, String> clmnNames;
-    @FXML private TableColumn<CoordinatorDTO, String> clmnSurnames;
-    @FXML private TableColumn<CoordinatorDTO, String> clmnEmail;
-    @FXML private TableColumn<CoordinatorDTO, String> clmnPersonalNumber;
-
+    @FXML private TableColumn<CoordinatorDTO, String> colNames;
+    @FXML private TableColumn<CoordinatorDTO, String> colSurnames;
+    @FXML private TableColumn<CoordinatorDTO, String> colEmail;
+    @FXML private TableColumn<CoordinatorDTO, String> colPersonalNumber;
     private final CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
-    private ObservableList<CoordinatorDTO> coordinatorsObservableList;
-    private CoordinatorDTO coordinatorInEdition;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpColumns();
         obtainCoordinators();
+
     }
 
     private void setUpColumns() {
-        clmnNames.setCellValueFactory(
+        colNames.setCellValueFactory(
                 new PropertyValueFactory<>("firstName"));
-        clmnSurnames.setCellValueFactory(
+        colSurnames.setCellValueFactory(
                 new PropertyValueFactory<>("firstLastName"));
-        clmnEmail.setCellValueFactory(
+        colEmail.setCellValueFactory(
                 new PropertyValueFactory<>("email"));
-        clmnPersonalNumber.setCellValueFactory(
+        colPersonalNumber.setCellValueFactory(
                 new PropertyValueFactory<>("personalNumber"));
 
     }
@@ -53,10 +55,11 @@ public class CoordinatorDeactivationController implements Initializable {
     private void obtainCoordinators() {
         try {
             List<CoordinatorDTO> coordinatorsList = coordinatorDAO.obtainAllActiveCoordinators();
-            coordinatorsObservableList = FXCollections.observableArrayList(coordinatorsList);
+            ObservableList<CoordinatorDTO> coordinatorsObservableList =
+                    FXCollections.observableArrayList(coordinatorsList);
             tblCoordinators.setItems(coordinatorsObservableList);
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener la lista de coordinadores.");
+            StatusLabel.showError(lblStatus, "Error al obtener lista de coordinadores");
         }
 
     }
@@ -79,15 +82,15 @@ public class CoordinatorDeactivationController implements Initializable {
                 AppLogger.logError(e);
                 StatusLabel.showError(lblStatus, "Error al inactivar coordinador.");
             }
-
         }
-    }
 
+    }
 
     @FXML
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/AdminMenuView.fxml",
                 "Menú Administrador", event);
+
     }
 
 }

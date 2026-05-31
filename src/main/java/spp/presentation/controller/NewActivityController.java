@@ -1,5 +1,6 @@
 package spp.presentation.controller;
 
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
+
 public class NewActivityController implements Initializable {
 
     @FXML TextField txtTitle;
@@ -29,7 +31,6 @@ public class NewActivityController implements Initializable {
     @FXML DatePicker dpSubmissionDate;
     @FXML Label lblStatus;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
     private final ActivityDAO activityDAO = new ActivityDAO();
 
     @Override
@@ -43,11 +44,8 @@ public class NewActivityController implements Initializable {
             return;
         }
 
-        ActivityDTO activityDTO = new ActivityDTO();
-        setAllActivity(activityDTO);
-
         try {
-            if (activityDAO.addActivity(activityDTO)) {
+            if (activityDAO.addActivity(buildActivityDTO())) {
                 StatusLabel.showSuccess(lblStatus, "Actividad añadida correctamente");
                 clearInputFields();
             }
@@ -62,27 +60,40 @@ public class NewActivityController implements Initializable {
         txtTitle.clear();
         taDescription.clear();
         dpSubmissionDate.setValue(null);
+
     }
 
-    private void setAllActivity(ActivityDTO activityDTO) {
-        InstructorDTO instructorDTO = new InstructorDTO();
-        InstructorDAO instructorDAO = new InstructorDAO();
-        try {
-            instructorDTO.setId(instructorDAO.obtainId("12720"));
-            instructorDTO.setPersonalNumber("12720");
-        } catch (DAOException e) {
-            throw new RuntimeException(e);
-        }
+    private ActivityDTO buildActivityDTO() {
+        ActivityDTO activityDTO = new ActivityDTO();
         activityDTO.setTitle(txtTitle.getText().trim());
         activityDTO.setDescription(taDescription.getText().trim());
         activityDTO.setSubmissionDate(dpSubmissionDate.getValue().atStartOfDay());
-        activityDTO.setInstructorDTO(instructorDTO);
+        activityDTO.setInstructorDTO(buildInstructorDTO());
+
+        return activityDTO;
+
+    }
+
+    private InstructorDTO buildInstructorDTO() {
+        InstructorDTO instructorDTO = new InstructorDTO();
+        InstructorDAO instructorDAO = new InstructorDAO();
+
+        try {
+            instructorDTO.setId(instructorDAO.obtainId(""));
+            instructorDTO.setPersonalNumber("");
+        } catch (DAOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return instructorDTO;
+
     }
 
     @FXML
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/InstructorMenuView.fxml",
-                "Cancelar", event);
+                "Menú principal", event);
+
     }
 
     private boolean validateEmptyFields() {
@@ -95,8 +106,8 @@ public class NewActivityController implements Initializable {
             thereAreEmptyFields = true;
         }
 
-
         return thereAreEmptyFields;
+
     }
 
     private void configureDatePicker() {
@@ -118,5 +129,7 @@ public class NewActivityController implements Initializable {
                 return null;
             }
         });
+
     }
+
 }

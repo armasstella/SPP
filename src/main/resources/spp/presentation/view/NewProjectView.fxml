@@ -12,7 +12,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="spp.presentation.controller.ProjectController"
+            fx:controller="spp.presentation.controller.NewProjectController"
             prefWidth="480" prefHeight="520"
             styleClass="root-pane"
             stylesheets="@/spp/presentation/css/MainStyle.css">
@@ -53,7 +53,8 @@
                                                styleClass="field-input"/>
 
                                     <Label text="Organización Responsable *" styleClass="field-label"/>
-                                    <TextField fx:id="txtLinkedOrganization" promptText="Ingrese el id de la organización"
+                                    <TextField fx:id="txtLinkedOrganization"
+                                               promptText="Ingrese el id de la organización"
                                                styleClass="field-input"/>
                             </VBox>
                         </content>
