@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,9 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Assertions;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class InstructorDAOTest {
@@ -21,6 +22,7 @@ public class InstructorDAOTest {
     @BeforeAll
     void setupAll() {
         instructorDAO = new InstructorDAO();
+
     }
 
     @BeforeEach
@@ -37,6 +39,7 @@ public class InstructorDAOTest {
         testInstructor.setPassword(".eliile.");
         testInstructor.setPersonalNumber("00002");
         testInstructor.setShift("Matutino");
+
     }
 
     @Test
@@ -44,6 +47,7 @@ public class InstructorDAOTest {
     void testAddInstructorSuccess() throws DAOException {
         boolean result = instructorDAO.addInstructor(testInstructor);
         assertTrue(result, "El método debería retornar true al insertar exitosamente");
+
     }
 
     @Test
@@ -54,6 +58,7 @@ public class InstructorDAOTest {
         assertThrows(DAOException.class, () -> {
             instructorDAO.addInstructor(testInstructor);
         });
+
     }
 
     @Test
@@ -62,6 +67,7 @@ public class InstructorDAOTest {
         int result = instructorDAO.obtainId(testInstructor.getPersonalNumber());
         Assertions.assertTrue(result > 0,
                 "No se obtuvo un id válido para el número de personal dado");
+
     }
 
 }

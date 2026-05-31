@@ -1,10 +1,15 @@
 package spp.businesslogic.dao;
 
-import org.junit.jupiter.api.*;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import spp.businesslogic.dto.SessionDTO;
 import spp.businesslogic.exceptions.DAOException;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SessionDAOTest {
@@ -17,11 +22,13 @@ public class SessionDAOTest {
     void setupAll() {
         sessionDAO = new SessionDAO();
         userDAO = new UserDAO();
+
     }
 
     @BeforeEach
     void setUp() {
         String email = "zS24013314@estudiantes.uv.mx";
+
     }
 
     @Test
@@ -36,6 +43,7 @@ public class SessionDAOTest {
             System.out.println("Error");
         }
         assertTrue(result, "El método debería retornar true al crear la conexión");
+
     }
 
     @Test
@@ -43,6 +51,5 @@ public class SessionDAOTest {
     void testSearchSessionSuccess() {
 
     }
-
 
 }

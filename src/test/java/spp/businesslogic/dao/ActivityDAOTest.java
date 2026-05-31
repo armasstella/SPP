@@ -1,19 +1,18 @@
 package spp.businesslogic.dao;
 
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.DisplayName;
-
 import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-
 import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ActivityDAOTest {
@@ -24,6 +23,7 @@ public class ActivityDAOTest {
     @BeforeAll
     void setupAll() {
         activityDAO = new ActivityDAO();
+
     }
 
     @BeforeEach
@@ -37,6 +37,7 @@ public class ActivityDAOTest {
         testActivity.setDescription("Descripción detallada de la actividad de prueba.");
         testActivity.setSubmissionDate(LocalDateTime.now().plusDays(7));
         testActivity.setInstructorDTO(instructor);
+
     }
 
     @Test
@@ -44,6 +45,7 @@ public class ActivityDAOTest {
     void testAddActivitySuccess() throws DAOException {
         boolean result = activityDAO.addActivity(testActivity);
         assertTrue(result, "El método debería retornar true al insertar exitosamente");
+
     }
 
     @Test
@@ -54,6 +56,7 @@ public class ActivityDAOTest {
         assertThrows(DAOException.class, () -> {
             activityDAO.addActivity(testActivity);
         }, "Debería lanzar DAOException por restricción de llave foránea");
+
     }
 
     @Test
@@ -64,6 +67,7 @@ public class ActivityDAOTest {
         assertThrows(DAOException.class, () -> {
             activityDAO.addActivity(testActivity);
         }, "La base de datos debería rechazar un título nulo");
+
     }
 
     @Test
@@ -74,5 +78,7 @@ public class ActivityDAOTest {
         assertThrows(Exception.class, () -> {
             activityDAO.addActivity(testActivity);
         });
+
     }
+
 }
