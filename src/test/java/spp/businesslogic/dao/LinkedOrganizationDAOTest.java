@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
 
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class LinkedOrganizationDAOTest {
 
@@ -20,6 +22,7 @@ public class LinkedOrganizationDAOTest {
     @BeforeAll
     void setUpAll() {
         linkedOrganizationDAO = new LinkedOrganizationDAO();
+
     }
 
     @BeforeEach
@@ -32,6 +35,7 @@ public class LinkedOrganizationDAOTest {
         testLinkedOrganization.setBusiness("Giro");
         testLinkedOrganization.setPhoneNumber("9241564162");
         testLinkedOrganization.setEmail("linkedo@gmail.com");
+
     }
 
     @Test
@@ -39,6 +43,7 @@ public class LinkedOrganizationDAOTest {
     void testAddLinkedOrganizationSuccess() throws DAOException {
         boolean result = linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
         assertTrue(result, "El método debería retornar true al insertar exitosamente");
+
     }
 
     @Test
@@ -47,5 +52,7 @@ public class LinkedOrganizationDAOTest {
         linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
         assertThrows(DAOException.class, () ->
             linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization));
+
     }
+
 }

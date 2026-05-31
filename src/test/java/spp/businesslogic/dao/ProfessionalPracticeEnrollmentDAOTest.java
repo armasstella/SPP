@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -15,8 +16,8 @@ import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.exceptions.DAOException;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ProfessionalPracticeEnrollmentDAOTest {
 
     private ProfessionalPracticeEnrollmentDAO professionalPracticeEnrollmentDAO;
@@ -25,6 +26,7 @@ public class ProfessionalPracticeEnrollmentDAOTest {
     @BeforeAll
     void setUpAll() {
         professionalPracticeEnrollmentDAO = new ProfessionalPracticeEnrollmentDAO();
+
     }
 
     @BeforeEach
@@ -46,6 +48,7 @@ public class ProfessionalPracticeEnrollmentDAOTest {
         testProfessionalPracticeEnrollment.setFinalGrade(10);
         testProfessionalPracticeEnrollment.setProjectDTO(project);
         testProfessionalPracticeEnrollment.setCoveredHours(480);
+
     }
 
     @Test
@@ -54,6 +57,7 @@ public class ProfessionalPracticeEnrollmentDAOTest {
         boolean result = professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
             testProfessionalPracticeEnrollment);
         assertTrue(result, "El método debería retornar true al insertar exitosamente");
+
     }
 
     @Test
@@ -64,6 +68,7 @@ public class ProfessionalPracticeEnrollmentDAOTest {
             professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
                 testProfessionalPracticeEnrollment);
         }, "Debería lanzar DAOException al insertar un profesor que no existe");
+
     }
 
     @Test
@@ -74,6 +79,7 @@ public class ProfessionalPracticeEnrollmentDAOTest {
             professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
                 testProfessionalPracticeEnrollment);
         }, "Debería lanzar DAOException al insertar un proyecto que no existe");
+
     }
 
     @Test
@@ -84,6 +90,7 @@ public class ProfessionalPracticeEnrollmentDAOTest {
             professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
                 testProfessionalPracticeEnrollment);
         }, "Debería lanzar DAOException al insertar un practicante que no existe");
+
     }
 
     @Test
@@ -95,6 +102,7 @@ public class ProfessionalPracticeEnrollmentDAOTest {
             professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
                 testProfessionalPracticeEnrollment);
         }, "Debería lanzar DAOException cuando no se le asigna un profesor a la inscripción");
+
     }
 
     @Test
@@ -106,6 +114,7 @@ public class ProfessionalPracticeEnrollmentDAOTest {
             professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
                 testProfessionalPracticeEnrollment);
         }, "Debe lanzar DAOException cuando no se le asigna un practicante a la inscripción");
+
     }
 
     @Test
@@ -117,6 +126,7 @@ public class ProfessionalPracticeEnrollmentDAOTest {
             professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
                 testProfessionalPracticeEnrollment);
         }, "Debe lanzar DAOException cuando no se le asigna un proyecto a la inscripción");
+
     }
 
     @Test
@@ -128,5 +138,7 @@ public class ProfessionalPracticeEnrollmentDAOTest {
             professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
                 testProfessionalPracticeEnrollment);
         }, "Debe lanzar DAOException cuando no se le asigna un periodo a la inscripción");
+
     }
+
 }

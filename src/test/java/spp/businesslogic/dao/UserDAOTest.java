@@ -14,6 +14,7 @@ import spp.businesslogic.dto.LoginResultDTO;
 import spp.businesslogic.dto.UserDTO;
 import spp.businesslogic.exceptions.DAOException;
 
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserDAOTest {
@@ -25,6 +26,7 @@ public class UserDAOTest {
     @BeforeAll
     void setupAll() {
         userDAO = new UserDAO();
+
     }
 
     @BeforeEach
@@ -37,6 +39,7 @@ public class UserDAOTest {
         testUser.setEmail("admin.test@uv.mx");
         testUser.setPhoneNumber("2281000000");
         testUser.setPassword("AdminTest123!");
+
     }
 
     @Test
@@ -46,6 +49,7 @@ public class UserDAOTest {
         generatedId = userDAO.addUser(testUser);
         Assertions.assertTrue(generatedId > 0,
                 "El id generado debe ser mayor a 0");
+
     }
 
     @Test
@@ -55,6 +59,7 @@ public class UserDAOTest {
         int result = userDAO.obtainId(testUser.getEmail());
         Assertions.assertTrue(result > 0,
                 "No se obtuvo un id válido para el email dado");
+
     }
 
     @Test
@@ -65,6 +70,7 @@ public class UserDAOTest {
         Assertions.assertNotNull(result, "El login no debe devolver null");
         Assertions.assertEquals("Administrador", result.getUserType(),
                 "El tipo de usuario debe ser Administrador");
+
     }
 
     @Test
@@ -73,6 +79,7 @@ public class UserDAOTest {
     void testLoginWrongPassword() throws DAOException {
         LoginResultDTO result = userDAO.login(testUser.getEmail(), "ContraseñaWrong123!");
         Assertions.assertNull(result, "El login debe devolver null con contraseña incorrecta");
+
     }
 
     @Test
@@ -81,5 +88,7 @@ public class UserDAOTest {
     void testAddAdminDuplicateEmail() {
         Assertions.assertThrows(DAOException.class, () -> userDAO.addUser(testUser),
                 "Debe lanzar DAOException por email duplicado");
+
     }
+
 }

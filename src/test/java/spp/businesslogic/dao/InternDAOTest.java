@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +16,8 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class InternDAOTest {
     private InternDAO internDAO;
     private InternDTO testIntern;
@@ -24,6 +25,7 @@ public class InternDAOTest {
     @BeforeAll
     void setUpAll() {
         internDAO = new InternDAO();
+
     }
 
     @BeforeEach
@@ -42,6 +44,7 @@ public class InternDAOTest {
         testIntern.setGender("M");
         testIntern.setSpeaksIndigenousLanguage(true);
         testIntern.setBirthDate(LocalDateTime.parse("2006-07-07T00:00:00"));
+
     }
 
     @Test
@@ -49,6 +52,7 @@ public class InternDAOTest {
     void testInsertInternSuccess() throws DAOException {
         boolean result = internDAO.addIntern(testIntern);
         assertTrue(result, "El practicante se ha insertado correctamente");
+
     }
 
     @Test
@@ -56,6 +60,7 @@ public class InternDAOTest {
     void testInsertInternFailedDuplicated() throws DAOException {
         internDAO.addIntern(testIntern);
         assertThrows(DAOException.class,() -> internDAO.addIntern(testIntern));
+
     }
 
     @Test
@@ -64,8 +69,7 @@ public class InternDAOTest {
         int result = internDAO.obtainId(testIntern.getStudentNumber());
         Assertions.assertTrue(result > 0,
                 "No se obtuvo un id válido para la matricula dada");
+
     }
-
-
 
 }
