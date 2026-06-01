@@ -15,9 +15,9 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InstructorDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
-
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -36,6 +36,13 @@ public class NewActivityController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configureDatePicker();
+        setUpFields();
+    }
+
+    private void setUpFields() {
+        InputFilter.applyFilter(txtTitle, InputFilter.NAME_PATTERN, 20);
+        InputFilter.applyFilter(taDescription, InputFilter.ALPHANUMERIC_PATTERN, 250);
+
     }
 
     @FXML

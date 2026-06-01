@@ -18,6 +18,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.MessageDAO;
 import spp.businesslogic.dao.UserDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
@@ -32,7 +33,7 @@ public class MessageCenterController implements Initializable {
     @FXML private TableView<MessageDTO> tblMessages;
     @FXML private TableColumn<MessageDTO, String> colSender;
     @FXML private TableColumn<MessageDTO, String> colSubject;
-    @FXML private TableColumn<MessageDTO, String> colnDate;
+    @FXML private TableColumn<MessageDTO, String> colDate;
     @FXML private VBox vbOptionNewMessage;
     @FXML private TextField txtRecipient;
     @FXML private TextField txtSubject;
@@ -52,12 +53,26 @@ public class MessageCenterController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpColumns();
         obtainMessages();
+        setUpFields();
+        setUpDoubleClickOnMessage();
+
+    }
+
+    private void setUpFields() {
+        InputFilter.applyFilter(txtRecipient, InputFilter.EMAIL_CHARS_PATTERN, 20);
+        InputFilter.applyFilter(txtSubject, InputFilter.NAME_PATTERN, 20);
+        InputFilter.applyFilter(txtBody, InputFilter.NAME_PATTERN, 250);
+
+    }
+
+    private void setUpDoubleClickOnMessage() {
         tblMessages.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && tblMessages.getSelectionModel().getSelectedItem() != null) {
                 MessageDTO selectedMessage = tblMessages.getSelectionModel().getSelectedItem();
                 displayMessageDetail(selectedMessage);
             }
         });
+
     }
 
     public void setPreviousView(String path, String title) {
@@ -71,7 +86,7 @@ public class MessageCenterController implements Initializable {
                 new PropertyValueFactory<>("emailSender"));
         colSubject.setCellValueFactory(
                 new PropertyValueFactory<>("subject"));
-        colnDate.setCellValueFactory(
+        colDate.setCellValueFactory(
                 new PropertyValueFactory<>("date"));
 
     }

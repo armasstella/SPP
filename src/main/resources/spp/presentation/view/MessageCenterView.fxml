@@ -54,7 +54,7 @@
                             <columns>
                                 <TableColumn fx:id="colSender" text="Correo remitente" prefWidth="200"
                                              sortable="false" reorderable="false"/>
-                                <TableColumn fx:id="colnSubject" text="Asunto" prefWidth="250"
+                                <TableColumn fx:id="colSubject" text="Asunto" prefWidth="250"
                                              sortable="false" reorderable="false"/>
                                 <TableColumn fx:id="colDate" text="Fecha" prefWidth="150"
                                              sortable="false" reorderable="false"/>

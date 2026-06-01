@@ -32,6 +32,7 @@ import java.util.ResourceBundle;
 
 public class ProjectUpdateController implements Initializable {
 
+    @FXML private Label lblStatus;
     @FXML private Label lblMessageBeforeEdition;
     @FXML private Label lblMessageInEdition;
     @FXML private VBox vbShowAllProjects;
@@ -50,7 +51,6 @@ public class ProjectUpdateController implements Initializable {
     @FXML private TableColumn<ProjectDTO, String> colPlacesAvailable;
     @FXML private TableColumn<ProjectDTO, String> colLinkedOrganization;
     @FXML private TableColumn<ProjectDTO, String> colProjectManager;
-    @FXML private Label lblStatus;
     private final ProjectDAO projectDAO = new ProjectDAO();
     private ProjectDTO projectInEdition;
 
@@ -63,11 +63,9 @@ public class ProjectUpdateController implements Initializable {
     }
 
     private void setUpFields() {
-        String textPattern = "[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ¿?¡!'\"()/$#=%+\\-\\[\\]{}.,_ ]*";
-
-        InputFilter.applyFilter(txtName, textPattern, 100);
-        InputFilter.applyFilter(txtDescription, textPattern, 500);
-        InputFilter.applyFilter(txtPlacesAvailable, "\\d*", 2);
+        InputFilter.applyFilter(txtName, InputFilter.NAME_PATTERN, 100);
+        InputFilter.applyFilter(txtDescription, InputFilter.ALPHANUMERIC_PATTERN, 500);
+        InputFilter.applyFilter(txtPlacesAvailable, InputFilter.NUMERIC_PATTERN, 2);
 
     }
 

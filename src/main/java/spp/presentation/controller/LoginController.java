@@ -3,22 +3,38 @@ package spp.presentation.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dto.LoginResultDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.UserDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
-public class LoginController {
+public class LoginController implements Initializable {
 
     @FXML private TextField txtEmail;
     @FXML private TextField txtPassword;
     @FXML private Label lblStatus;
     private final UserDAO userDAO = new UserDAO();
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        setUpFields();
+
+    }
+
+    private void setUpFields() {
+        InputFilter.applyFilter(txtEmail, InputFilter.EMAIL_CHARS_PATTERN, 30);
+        InputFilter.applyFilter(txtPassword, InputFilter.PASSWORD_PATTERN, 12);
+
+    }
 
     @FXML
     private void login(ActionEvent event) {

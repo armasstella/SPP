@@ -16,7 +16,7 @@ import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.utils.logger.AppLogger;
-import spp.utils.view.AlertHelper;
+import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 
 public class NewCourseController implements Initializable {
 
+    @FXML Label lblStatus;
     @FXML TextField txtCourseCode;
     @FXML TextField txtTerm;
     @FXML ComboBox<String> cmbSchoolBlock;
@@ -33,12 +34,21 @@ public class NewCourseController implements Initializable {
     @FXML ComboBox<InstructorDTO> cmbInstructor;
     @FXML TextField txtCapacity;
     @FXML TextArea taCourseDetails;
-    @FXML Label lblStatus;
     private final CourseDAO courseDAO = new CourseDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadActiveInstructors();
+        setUpFields();
+
+    }
+
+    private void setUpFields() {
+        InputFilter.applyFilter(txtCourseCode, InputFilter.NUMERIC_PATTERN, 6);
+        InputFilter.applyFilter(txtTerm, InputFilter.ALPHANUMERIC_PATTERN, 10);
+        InputFilter.applyFilter(txtCapacity, InputFilter.NUMERIC_PATTERN, 2);
+        InputFilter.applyFilter(taCourseDetails, InputFilter.ALPHANUMERIC_PATTERN, 40);
+
     }
 
     private CourseDTO buildCourseDTO() {
