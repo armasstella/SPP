@@ -33,13 +33,13 @@
             <Label text="De clic sobre el coordinador que desea inactivar" styleClass="lbl-status"/>
             <TableView fx:id="tblCoordinators" prefHeight="400">
                 <columns>
-                    <TableColumn fx:id="clmnNames" text="Nombre(s)" prefWidth="120"
+                    <TableColumn fx:id="colNames" text="Nombre(s)" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnSurnames" text="Apellido(s)" prefWidth="120"
+                    <TableColumn fx:id="colSurnames" text="Apellido(s)" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnEmail" text="Correo electrónico" prefWidth="180"
+                    <TableColumn fx:id="colEmail" text="Correo electrónico" prefWidth="180"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnPersonalNumber"  text="Número personal" prefWidth="100"
+                    <TableColumn fx:id="colPersonalNumber"  text="Número personal" prefWidth="100"
                                  sortable="false" reorderable="false"/>
                 </columns>
                 <columnResizePolicy>

@@ -11,14 +11,79 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class CourseDAO implements ICourseDAO {
 
+    private static final int NO_ROWS_AFFECTED = 0;
+
     public CourseDAO() {
 
+    }
+
+    @Override
+    public boolean addCourse(CourseDTO courseDTO) throws DAOException {
+        final String INSERT_COURSE = "INSERT INTO experienciaseducativas(nrc, bloque, seccion, periodo, " +
+                "cupo, detalles, id_usuario_profesor, num_personal) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        boolean isAddSuccesful = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            connection.setAutoCommit(false);
+
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_COURSE);
+                preparedStatement.setInt(1, courseDTO.getCourseCode());
+                preparedStatement.setInt(2, courseDTO.getSection());
+                preparedStatement.setInt(3, courseDTO.getSchoolBlock());
+                preparedStatement.setString(4, courseDTO.getTerm());
+                preparedStatement.setInt(5, courseDTO.getCapacity());
+                preparedStatement.setString(6, courseDTO.getCourseDetails());
+                if (courseDTO.getInstructorDTO() != null) {
+                    preparedStatement.setInt(7, courseDTO.getInstructorDTO().getId());
+                    preparedStatement.setString(8, courseDTO.getInstructorDTO().getPersonalNumber());
+                } else {
+                    preparedStatement.setNull(7, java.sql.Types.INTEGER);
+                    preparedStatement.setNull(8, java.sql.Types.VARCHAR);
+                }
+
+                int affectedRows = preparedStatement.executeUpdate();
+                if (affectedRows == NO_ROWS_AFFECTED) {
+                    throw new DAOException("Fallo al insertar el curso. No se afectaron filas.");
+                }
+
+                connection.commit();
+                isAddSuccesful = true;
+
+            } catch (DAOException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw new DAOException("Error al insertar el curso", e);
+
+            } catch (SQLIntegrityConstraintViolationException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw new DAOException("Error. Datos duplicados al insertar el curso", e);
+
+            } catch (SQLException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw new DAOException("Error general al insertar el curso", e);
+
+            } finally {
+                connection.setAutoCommit(true);
+                connection.close();
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error de conexión al insertar curso", e);
+        }
+
+        return isAddSuccesful;
     }
 
     @Override
@@ -53,26 +118,26 @@ public class CourseDAO implements ICourseDAO {
     public List<CourseDTO> obtainAllActiveCourses() throws DAOException {
         List<CourseDTO> coursesList = new ArrayList<>();
         final String SELECT_ALL_COURSES = "SELECT " +
-                "ee.id_experiencia_educativa, " +
-                "ee.nrc, " +
-                "ee.periodo, " +
-                "ee.bloque, " +
-                "ee.seccion, " +
-                "CONCAT(u_prof.nombre, ' ', u_prof.apellidos) AS nombreProfesor, " +
-                "COUNT(ipp.id_usuario_practicante) AS cantidadPracticantes " +
+                " ee.id_experiencia_educativa, " +
+                " ee.nrc, " +
+                " ee.periodo, " +
+                " ee.bloque, " +
+                " ee.seccion, " +
+                " COALESCE(CONCAT(u_prof.nombre, ' ', u_prof.apellidos), 'Sin profesor asignado') AS nombreProfesor, " +
+                " COUNT(ipp.id_usuario_practicante) AS cantidadPracticantes " +
                 "FROM ExperienciasEducativas ee " +
-                "INNER JOIN usuarios u_prof " +
+                "LEFT JOIN usuarios u_prof " +
                 "    ON ee.id_usuario_profesor = u_prof.id_usuario " +
                 "LEFT JOIN inscripciones_practicas_profesionales ipp " +
                 "    ON ee.id_experiencia_educativa = ipp.id_experiencia_educativa " +
                 "GROUP BY " +
-                "    ee.id_experiencia_educativa, " +
-                "    ee.nrc, " +
-                "    ee.periodo, " +
-                "    ee.bloque, " +
-                "    ee.seccion, " +
-                "    u_prof.nombre, " +
-                "    u_prof.apellidos";
+                " ee.id_experiencia_educativa, " +
+                " ee.nrc, " +
+                " ee.periodo, " +
+                " ee.bloque, " +
+                " ee.seccion, " +
+                " u_prof.nombre, " +
+                " u_prof.apellidos";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -88,7 +153,7 @@ public class CourseDAO implements ICourseDAO {
                 courseDTO.setSection(resultSet.getInt("seccion"));
                 InstructorDTO instructorDTO = new InstructorDTO();
                 instructorDTO.setFirstName(resultSet.getString("nombreProfesor"));
-                courseDTO.setInstructor(instructorDTO);
+                courseDTO.setInstructorDTO(instructorDTO);
                 courseDTO.setNumberOfInterns(resultSet.getInt("cantidadPracticantes"));
                 coursesList.add(courseDTO);
             }
@@ -100,6 +165,35 @@ public class CourseDAO implements ICourseDAO {
 
         return coursesList;
 
+    }
+
+    @Override
+    public boolean assignInstructorToCourse(CourseDTO courseDTO) throws DAOException {
+        final String UPDATE_COURSE_INSTRUCTOR =
+                "UPDATE experienciaseducativas SET id_usuario_profesor = ?, num_personal = ? WHERE id_experiencia_educativa = ?";
+        boolean isUpdateSuccessful = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_COURSE_INSTRUCTOR);
+            preparedStatement.setInt(1, courseDTO.getInstructorDTO().getId());
+            preparedStatement.setString(2, courseDTO.getInstructorDTO().getPersonalNumber());
+            preparedStatement.setInt(3, courseDTO.getIdCourse());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == NO_ROWS_AFFECTED) {
+                throw new DAOException("Fallo al asignar el profesor. No se afectaron filas en la base de datos.");
+            }
+
+            isUpdateSuccessful = true;
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error en la base de datos al asignar profesor al curso", e);
+        }
+
+        return isUpdateSuccessful;
     }
 
 }

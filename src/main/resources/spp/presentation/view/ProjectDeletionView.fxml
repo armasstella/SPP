@@ -36,17 +36,17 @@
             <Label text="De clic sobre el proyecto que desea eliminar." styleClass="lbl-status"/>
             <TableView fx:id="tblProjects" prefHeight="400">
                 <columns>
-                    <TableColumn fx:id="clmnName" text="Nombre" prefWidth="120"
+                    <TableColumn fx:id="colName" text="Nombre" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnDescription" text="Descripción" prefWidth="120"
+                    <TableColumn fx:id="colDescription" text="Descripción" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnAvailability" text="Disponibilidad" prefWidth="120"
+                    <TableColumn fx:id="colAvailability" text="Disponibilidad" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnPlacesAvailable" text="Cupo" prefWidth="120"
+                    <TableColumn fx:id="colPlacesAvailable" text="Cupo" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnLinkedOrganization" text="Organización Vinculada" prefWidth="120"
+                    <TableColumn fx:id="colLinkedOrganization" text="Organización Vinculada" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnProjectManager" text="Encargado de Proyecto" prefWidth="120"
+                    <TableColumn fx:id="colProjectManager" text="Encargado de Proyecto" prefWidth="120"
                                  sortable="false" reorderable="false"/>
                 </columns>
                 <columnResizePolicy>

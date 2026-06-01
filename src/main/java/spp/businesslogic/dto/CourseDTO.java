@@ -8,7 +8,9 @@ public class CourseDTO {
     private String term;
     private int schoolBlock;
     private int section;
-    private InstructorDTO instructor;
+    private int capacity;
+    private String courseDetails;
+    private InstructorDTO instructorDTO;
     private int numberOfInterns;
 
     public CourseDTO() {
@@ -54,12 +56,28 @@ public class CourseDTO {
         this.section = section;
     }
 
-    public InstructorDTO getInstructor() {
-        return instructor;
+    public InstructorDTO getInstructorDTO() {
+        return instructorDTO;
     }
 
-    public void setInstructor(InstructorDTO instructor) {
-        this.instructor = instructor;
+    public void setInstructorDTO(InstructorDTO instructorDTO) {
+        this.instructorDTO = instructorDTO;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public String getCourseDetails() {
+        return courseDetails;
+    }
+
+    public void setCourseDetails(String courseDetails) {
+        this.courseDetails = courseDetails;
     }
 
     public int getNumberOfInterns() {
@@ -69,5 +87,4 @@ public class CourseDTO {
     public void setNumberOfInterns(int numberOfInterns) {
         this.numberOfInterns = numberOfInterns;
     }
-
 }

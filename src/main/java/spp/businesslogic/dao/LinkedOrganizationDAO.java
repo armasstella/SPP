@@ -13,6 +13,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 
 public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
+
     private static final int NO_ROWS_AFFECTED = 0;
 
     public LinkedOrganizationDAO() {

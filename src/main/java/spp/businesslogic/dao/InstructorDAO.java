@@ -170,4 +170,33 @@ public class InstructorDAO implements IInstructorDAO {
 
     }
 
+    @Override
+    public List<InstructorDTO> getListActiveInstructors() throws DAOException {
+        String query = "SELECT u.id_usuario, p.num_personal, CONCAT(u.nombre, ' ', u.apellidos) AS nombre_completo " +
+                "FROM Profesores p " +
+                "INNER JOIN Usuarios u ON p.id_usuario = u.id_usuario " +
+                "WHERE u.estado = 'Activo'";
+        List<InstructorDTO> instructorsList = new ArrayList<>();
+
+        try (Connection connection = MySQLConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                InstructorDTO instructor = new InstructorDTO();
+                instructor.setId(resultSet.getInt("id_usuario"));
+                instructor.setPersonalNumber(resultSet.getString("num_personal"));
+                instructor.setFirstName(resultSet.getString("nombre_completo"));
+                instructorsList.add(instructor);
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error al obtener la lista de profesores activos", e);
+        }
+
+        return instructorsList;
+    }
+
+
 }
