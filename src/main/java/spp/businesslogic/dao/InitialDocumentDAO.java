@@ -43,15 +43,16 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == NO_ROWS_AFFECTED) {
-                throw new DAOException("Fallo al guardar documento. No se afectaron filas.");
+                throw new DAOException("WARN: Fallo al guardar documento. No se afectaron filas.");
             }
 
             connection.commit();
             isSaveSuccessful = true;
+            connection.setAutoCommit(true);
 
-        } catch (SQLException | DAOException e) {
+        } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al guardar documento", e);
+            throw new DAOException("FATAL: Error de conexión al guardar documento", e);
         }
 
         return isSaveSuccessful;
@@ -76,7 +77,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al buscar horario del practicante.", e);
+            throw new DAOException("FATAL: Error de conexión al buscar horario.", e);
         }
 
         return isSearchSuccessful;
@@ -101,7 +102,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al buscar calendarización de actividades.", e);
+            throw new DAOException("FATAL: Error de conexión al buscar calendarización.", e);
         }
 
         return isSearchSuccessful;

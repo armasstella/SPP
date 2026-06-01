@@ -48,35 +48,29 @@ public class ProjectDAO implements IProjectDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Fallo al insertar el proyecto. No se afectaron filas.");
+                    throw new DAOException("WARN: Fallo al insertar proyecto. No se afectaron filas");
                 }
 
                 connection.commit();
                 isAddSuccesful = true;
 
-            } catch (DAOException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("Error al insertar el proyecto", e);
-
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al insertar el proyecto. Se viola la integridad de los datos", e);
+                throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
 
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error general al insertar el proyecto", e);
+                throw new DAOException("ERROR: Error general al insertar proyecto", e);
 
             } finally {
                connection.setAutoCommit(true);
-               connection.close();
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("FATAL: Error de conexión al insertar proyecto", e);
         }
 
         return isAddSuccesful;
@@ -98,35 +92,24 @@ public class ProjectDAO implements IProjectDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new DAOException("Fallo al eliminar el proyecto. No se afectaron filas.");
+                    throw new DAOException("WARN: Fallo al eliminar proyecto. No se afectaron filas");
                 }
 
                 connection.commit();
                 isDeletionSuccesful = true;
 
-            } catch (DAOException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("Error al eliminar el proyecto", e);
-
-            } catch (SQLIntegrityConstraintViolationException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("Error al eliminar el proyecto. Se viola la integridad de los datos", e);
-
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error general al eliminar el proyecto", e);
+                throw new DAOException("ERROR: Error general al eliminar proyecto", e);
 
             } finally {
                 connection.setAutoCommit(true);
-                connection.close();
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("FATAL: Error de conexión al eliminar proyecto", e);
         }
 
         return isDeletionSuccesful;
@@ -152,35 +135,29 @@ public class ProjectDAO implements IProjectDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == 0) {
-                    throw new DAOException("Fallo al actualizar el proyecto. No se afectaron filas.");
+                    throw new DAOException("WARN: Fallo al actualizar proyecto. No se afectaron filas");
                 }
 
                 connection.commit();
                 isUpdateSuccesful = true;
 
-            } catch (DAOException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("Error al actualizar el proyecto", e);
-
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al actualizar el proyecto. Se viola la integridad de los datos", e);
+                throw new DAOException("WARN: Violación de integridad de datos al actualizar", e);
 
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error general al actualizar el proyecto", e);
+                throw new DAOException("ERROR: Error general al actualizar proyecto", e);
 
             } finally {
                 connection.setAutoCommit(true);
-                connection.close();
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("FATAL: Error de conexión al actualizar proyecto", e);
         }
 
         return isUpdateSuccesful;
@@ -228,7 +205,7 @@ public class ProjectDAO implements IProjectDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al obtener lista de proyectos.");
+            throw new DAOException("FATAL: Error de conexión al obtener proyectos.");
         }
 
         return projectsList;

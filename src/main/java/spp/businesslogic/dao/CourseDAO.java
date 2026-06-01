@@ -52,35 +52,29 @@ public class CourseDAO implements ICourseDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Fallo al insertar el curso. No se afectaron filas.");
+                    throw new DAOException("WARN: Fallo al insertar curso. No se afectaron filas");
                 }
 
                 connection.commit();
                 isAddSuccesful = true;
 
-            } catch (DAOException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("Error al insertar el curso", e);
-
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error. Datos duplicados al insertar el curso", e);
+                throw new DAOException("WARN: Violación a integridad de datos al insertar", e);
 
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error general al insertar el curso", e);
+                throw new DAOException("ERROR: Error general al insertar curso", e);
 
             } finally {
                 connection.setAutoCommit(true);
-                connection.close();
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error de conexión al insertar curso", e);
+            throw new DAOException("FATAL: Error de conexión al insertar curso", e);
         }
 
         return isAddSuccesful;
@@ -100,14 +94,14 @@ public class CourseDAO implements ICourseDAO {
                 if (resultSet.next()) {
                     isSearchSuccessful = resultSet.getBoolean(1);
                     if (!isSearchSuccessful) {
-                        throw new DAOException("No se encontraron experiencias educativas registradas");
+                        throw new DAOException("WARN: No se encontraron registros");
                     }
                 }
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error de conexión al buscar cursos");
+            throw new DAOException("FATAL: Error de conexión al buscar cursos");
         }
 
         return isSearchSuccessful;
@@ -160,7 +154,7 @@ public class CourseDAO implements ICourseDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al obtener lista de cursos", e);
+            throw new DAOException("FATAL: Error de conexión al obtener cursos", e);
         }
 
         return coursesList;
@@ -183,14 +177,14 @@ public class CourseDAO implements ICourseDAO {
             int affectedRows = preparedStatement.executeUpdate();
 
             if (affectedRows == NO_ROWS_AFFECTED) {
-                throw new DAOException("Fallo al asignar el profesor. No se afectaron filas en la base de datos.");
+                throw new DAOException("WARN: Fallo al asignar profesor. No se afectaron filas");
             }
 
             isUpdateSuccessful = true;
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error en la base de datos al asignar profesor al curso", e);
+            throw new DAOException("FATAL: Error de conexión al asignar profesor", e);
         }
 
         return isUpdateSuccessful;

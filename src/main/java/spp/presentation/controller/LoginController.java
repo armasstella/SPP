@@ -59,7 +59,7 @@ public class LoginController implements Initializable {
 
         } catch (DAOException e) {
             AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, e.getMessage());
+            StatusLabel.showError(lblStatus, "Credenciales ingresadas incorrectas");
         }
 
     }

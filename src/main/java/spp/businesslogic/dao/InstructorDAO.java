@@ -27,6 +27,7 @@ public class InstructorDAO implements IInstructorDAO {
     public boolean addInstructor(InstructorDTO instructorDTO) throws DAOException {
         final String INSERT_INSTRUCTOR = "INSERT INTO Profesores " +
                 "(id_usuario, num_personal, turno) VALUES (?, ?, ?)";
+        boolean isAddSuccessful = false;
         UserDAO userDAO = new UserDAO();
 
         try {
@@ -43,38 +44,38 @@ public class InstructorDAO implements IInstructorDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Fallo al insertar al profesor. No se afectaron filas.");
+                    throw new DAOException("WARN: Fallo al insertar profesor. No se afectaron filas");
                 }
 
                 connection.commit();
+                isAddSuccessful = true;
 
             } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al insertar el usuario", e);
+                throw new DAOException("ERROR: Error al insertar profesor", e);
 
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new SQLIntegrityConstraintViolationException(
-                        "Error al insertar el profesor: Datos duplicados", e);
+                        "WARN: Violación de integridad de datos al insertar", e);
 
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al insertar el profesor", e);
+                throw new DAOException("ERROR: Error general al insertar profesor", e);
 
             } finally {
                 connection.setAutoCommit(true);
-                connection.close();
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("FATAL: Error de conexión al insertar profesor", e);
         }
 
-        return true;
+        return isAddSuccessful;
 
     }
 
@@ -91,11 +92,11 @@ public class InstructorDAO implements IInstructorDAO {
                 if (resultSet.next()) {
                     return resultSet.getInt("id_usuario");
                 }
-                throw new DAOException("Usuario no encontrado con número de personal: " + personalNumber);
+                throw new DAOException("WARN: Usuario no encontrado con número de personal: " + personalNumber);
             }
 
         } catch (SQLException e) {
-            throw new DAOException("Error al obtener profesor", e);
+            throw new DAOException("FATAL: Error de conexión al obtener id profesor", e);
         }
 
     }
@@ -106,6 +107,7 @@ public class InstructorDAO implements IInstructorDAO {
                 "INNER JOIN Profesores ON Usuarios.id_usuario = Profesores.id_usuario " +
                 "SET Usuarios.estado = 'Inactivo' " +
                 "WHERE Profesores.num_personal = ?;";
+        boolean isDeactivationSuccesful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -117,15 +119,16 @@ public class InstructorDAO implements IInstructorDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Error. No se afectaron filas al inactivar el profesor.");
+                    throw new DAOException("WARN: Fallo al desactivar coordinador. No se afectaron filas");
                 }
 
                 connection.commit();
+                isDeactivationSuccesful = true;
 
-            } catch (SQLException | DAOException e) {
+            } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al inactivar el profesor", e);
+                throw new DAOException("Error general al desactivar profesor", e);
 
             } finally {
                 connection.setAutoCommit(true);
@@ -133,10 +136,10 @@ public class InstructorDAO implements IInstructorDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("Error de conexión al desactivar profesor", e);
         }
 
-        return true;
+        return isDeactivationSuccesful;
 
     }
 
@@ -145,6 +148,7 @@ public class InstructorDAO implements IInstructorDAO {
         final String SELECT_ALL_INSTRUCTORS = "SELECT nombre, apellidos, correo_electronico, num_personal, turno " +
                 "FROM Usuarios u INNER JOIN Profesores p ON u.id_usuario = p.id_usuario AND u.estado = 'Activo'";
         List<InstructorDTO> instructorsList = new ArrayList<>();
+
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -163,7 +167,7 @@ public class InstructorDAO implements IInstructorDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al obtener lista de profesores", e);
+            throw new DAOException("FATAL: Error de conexión al buscar profesores", e);
         }
 
         return instructorsList;
@@ -178,9 +182,10 @@ public class InstructorDAO implements IInstructorDAO {
                 "WHERE u.estado = 'Activo'";
         List<InstructorDTO> instructorsList = new ArrayList<>();
 
-        try (Connection connection = MySQLConnection.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 InstructorDTO instructor = new InstructorDTO();
@@ -192,7 +197,7 @@ public class InstructorDAO implements IInstructorDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al obtener la lista de profesores activos", e);
+            throw new DAOException("FATAL: Error de conexión al buscar profesores", e);
         }
 
         return instructorsList;

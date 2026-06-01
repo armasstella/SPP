@@ -26,13 +26,13 @@ public class ActivityDAO implements IActivityDAO {
         final String INSERT_ACTIVITY = "INSERT INTO Actividades " +
                 "(titulo, descripcion, fecha_limite, id_profesor_usuario, id_profesor_num_personal) VALUES " +
                 "(?, ?, ?, ?, ?)";
+        boolean isAddSuccessful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             connection.setAutoCommit(false);
 
             try {
-
                 PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ACTIVITY);
                 preparedStatement.setString(1, activityDTO.getTitle());
                 preparedStatement.setString(2, activityDTO.getDescription());
@@ -42,35 +42,32 @@ public class ActivityDAO implements IActivityDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Fallo al insertar la actividad. No se afectaron filas.");
+                    throw new DAOException("WARN: Fallo al insertar actividad. No se afectaron filas");
                 }
 
                 connection.commit();
-
-            } catch (DAOException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("Error al insertar una actividad", e);
+                isAddSuccessful = true;
 
             } catch (SQLIntegrityConstraintViolationException e) {
-                throw new DAOException("Fallo al insertar la actividad: Restricción de integridad violada", e);
+                connection.rollback();
+                AppLogger.logError(e);
+                throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
 
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error general al insertar una actividad", e);
+                throw new DAOException("ERROR: Error general al insertar actividad", e);
 
             } finally {
                 connection.setAutoCommit(true);
-                connection.close();
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("FATAL: Error de conexión al insertar actividad", e);
         }
 
-        return true;
+        return isAddSuccessful;
 
     }
 

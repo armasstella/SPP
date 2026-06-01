@@ -42,36 +42,29 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Fallo al insertar el encargado del proyecto. No se afectaron filas.");
+                    throw new DAOException("WARN: Fallo al insertar encargado de proyecto. No se afectaron filas");
                 }
 
                 connection.commit();
                 isAddSuccesful = true;
 
-            } catch (DAOException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("Error al insertar el encargado del proyecto", e);
-
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al insertar el encargado del proyecto. Se viola la integridad de " +
-                        "los datos", e);
+                throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
 
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error general al insertar el encargado del proyecto", e);
+                throw new DAOException("ERROR: Error general al insertar encargado de proyecto", e);
 
             } finally {
                 connection.setAutoCommit(true);
-                connection.close();
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("FATAL: Error de conexión al insertar encargado de proyecto", e);
         }
 
         return isAddSuccesful;

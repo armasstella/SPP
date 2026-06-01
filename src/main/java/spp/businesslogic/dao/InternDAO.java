@@ -49,7 +49,7 @@ public class InternDAO implements IInternDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Fallo al insertar al practicante. No se afectaron filas.");
+                    throw new DAOException("WARN: Fallo al insertar practicante. No se afectaron filas");
                 }
 
                 connection.commit();
@@ -58,27 +58,26 @@ public class InternDAO implements IInternDAO {
             } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al insertar el usuario", e);
+                throw new DAOException("ERROR: Error al insertar practicante", e);
 
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new SQLIntegrityConstraintViolationException(
-                        "Error al insertar el usuario: Datos duplicados", e);
+                        "WARN: Violación de integridad de datos al insertar", e);
 
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al insertar el practicante", e);
+                throw new DAOException("ERROR: Error general al insertar practicante", e);
 
             } finally {
                 connection.setAutoCommit(true);
-                connection.close();
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("FATAL: Error de conexión al insertar practicante", e);
         }
 
         return isAddSuccessful;
@@ -98,11 +97,11 @@ public class InternDAO implements IInternDAO {
                 if (resultSet.next()) {
                     return resultSet.getInt("id_usuario");
                 }
-                throw new DAOException("Usuario no encontrado con matricula: " + studentNumber);
+                throw new DAOException("WARN: Usuario no encontrado con matricula: " + studentNumber);
             }
 
         } catch (SQLException e) {
-            throw new DAOException("Error al obtener practicante", e);
+            throw new DAOException("FATAL: Error de conexión al obtener id practicante", e);
         }
 
     }
@@ -121,14 +120,14 @@ public class InternDAO implements IInternDAO {
                 if (resultSet.next()) {
                     isSearchSuccessful = resultSet.getBoolean(1);
                     if (!isSearchSuccessful) {
-                        throw new DAOException("Esta matrícula no es valida");
+                        throw new DAOException("WARN: La matrícula no es valida");
                     }
                 }
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al buscar matricula", e);
+            throw new DAOException("FATAL: Error de conexión al buscar matrícula", e);
         }
 
         return isSearchSuccessful;
@@ -159,7 +158,7 @@ public class InternDAO implements IInternDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al obtener lista de practicantes", e);
+            throw new DAOException("FATAL: Error de conexión al obtener practicantes", e);
         }
 
         return internsList;
@@ -184,17 +183,17 @@ public class InternDAO implements IInternDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Error. No se afectaron filas al inactivar el practicante.");
+                    throw new DAOException("WARN: Fallo al desactivar practicante. No se afectaron filas");
                 }
 
                 isDeactivationSuccess = true;
 
                 connection.commit();
 
-            } catch (SQLException | DAOException e) {
+            } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al inactivar el practicante", e);
+                throw new DAOException("ERROR: Error al desactivar practicante", e);
 
             } finally {
                 connection.setAutoCommit(true);
@@ -202,7 +201,7 @@ public class InternDAO implements IInternDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("FATAL: Error de conexión al desactivar practicante", e);
         }
 
         return isDeactivationSuccess;
