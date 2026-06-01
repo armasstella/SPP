@@ -35,4 +35,9 @@ public class InstructorDTO extends UserDTO {
         this.shift = shift;
     }
 
+    @Override
+    public String toString() {
+        return personalNumber + " | " + getFirstName();
+    }
+
 }

@@ -3,17 +3,21 @@ package spp.presentation.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.LinkedOrganizationDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
-public class NewLinkedOrganizationController {
+public class NewLinkedOrganizationController implements Initializable {
 
     @FXML private Label lblStatus;
     @FXML private TextField txtName;
@@ -23,7 +27,23 @@ public class NewLinkedOrganizationController {
     @FXML private TextField txtBusiness;
     @FXML private TextField txtEmail;
     @FXML private TextField txtPhoneNumber;
-    private final LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();;
+    private final LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        setUpFields();
+    }
+
+    private void setUpFields() {
+        InputFilter.applyFilter(txtName, InputFilter.NAME_PATTERN, 40);
+        InputFilter.applyFilter(txtRfc, InputFilter.NAME_PATTERN, 13);
+        InputFilter.applyFilter(txtAddress, InputFilter.ALPHANUMERIC_PATTERN, 40);
+        InputFilter.applyFilter(txtFiscalAddress, InputFilter.ALPHANUMERIC_PATTERN, 40);
+        InputFilter.applyFilter(txtBusiness, InputFilter.ALPHANUMERIC_PATTERN, 100);
+        InputFilter.applyFilter(txtEmail, InputFilter.EMAIL_CHARS_PATTERN, 100);
+        InputFilter.applyFilter(txtPhoneNumber, InputFilter.NUMERIC_PATTERN, 10);
+
+    }
 
     @FXML
     private void setAllLinkedOrganization(ActionEvent event, LinkedOrganizationDTO linkedOrganizationDTO) {

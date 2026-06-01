@@ -3,17 +3,21 @@ package spp.presentation.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectManagerDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
-public class ProjectManagerController {
+public class NewProjectManagerController implements Initializable {
 
     @FXML private Label lblStatus;
     @FXML private TextField txtFirstName;
@@ -24,6 +28,22 @@ public class ProjectManagerController {
     @FXML private TextField txtRole;
     @FXML private TextField txtPhoneNumber;
     private final ProjectManagerDAO projectManagerDAO  = new ProjectManagerDAO();
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        setUpFields();
+    }
+
+    private void setUpFields() {
+        InputFilter.applyFilter(txtFirstName, InputFilter.NAME_PATTERN, 40);
+        InputFilter.applyFilter(txtSecondName, InputFilter.NAME_PATTERN, 40);
+        InputFilter.applyFilter(txtFirstLastName, InputFilter.NAME_PATTERN, 40);
+        InputFilter.applyFilter(txtSecondLastName, InputFilter.NAME_PATTERN, 40);
+        InputFilter.applyFilter(txtResponsability, InputFilter.ALPHANUMERIC_PATTERN, 100);
+        InputFilter.applyFilter(txtRole, InputFilter.ALPHANUMERIC_PATTERN, 100);
+        InputFilter.applyFilter(txtPhoneNumber, InputFilter.NUMERIC_PATTERN, 10);
+
+    }
 
     @FXML
     private ProjectManagerDTO buildProjectManagerDTO() {

@@ -3,6 +3,7 @@ package spp.presentation.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dto.LinkedOrganizationDTO;
@@ -11,11 +12,14 @@ import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
-public class NewProjectController {
+public class NewProjectController implements Initializable {
 
     @FXML private Label lblStatus;
     @FXML private TextField txtName;
@@ -25,6 +29,22 @@ public class NewProjectController {
     @FXML private TextField txtLinkedOrganization;
 
     private final ProjectDAO projectDAO = new ProjectDAO();
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        setUpFields();
+    }
+
+    private void setUpFields() {
+        final String TEXT_PATTERN = "[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]*";
+
+        InputFilter.applyFilter(txtName, InputFilter.NAME_PATTERN, 40);
+        InputFilter.applyFilter(txtDescription, InputFilter.ALPHANUMERIC_PATTERN, 40);
+        InputFilter.applyFilter(txtPlacesAvailable, InputFilter.NUMERIC_PATTERN, 2);
+        InputFilter.applyFilter(txtProjectManager, InputFilter.NUMERIC_PATTERN, 2);
+        InputFilter.applyFilter(txtLinkedOrganization, InputFilter.NUMERIC_PATTERN, 2);
+
+    }
 
     private ProjectDTO buildProjectDTO() {
         ProjectDTO projectDTO = new ProjectDTO();

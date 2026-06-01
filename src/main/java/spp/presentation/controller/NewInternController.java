@@ -15,6 +15,7 @@ import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.InternDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
@@ -25,6 +26,7 @@ import java.util.ResourceBundle;
 
 public class NewInternController implements Initializable {
 
+    @FXML private Label lblStatus;
     @FXML private TextField txtFirstName;
     @FXML private TextField txtSecondName;
     @FXML private TextField txtFirstLastName;
@@ -38,7 +40,6 @@ public class NewInternController implements Initializable {
     @FXML private RadioButton rbNo;
     @FXML private VBox vbLanguageDetail;
     @FXML private TextField txtIndigenousLanguage;
-    @FXML private Label lblStatus;
     @FXML private DatePicker dpBirthDate;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final InternDAO internDAO = new InternDAO();
@@ -47,6 +48,17 @@ public class NewInternController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         configureDatePicker();
         toggleIndigenousLanguageField();
+        setUpFields();
+
+    }
+
+    private void setUpFields() {
+        InputFilter.applyFilter(txtFirstName, InputFilter.NAME_PATTERN, 40);
+        InputFilter.applyFilter(txtSecondName, InputFilter.NAME_PATTERN, 40);
+        InputFilter.applyFilter(txtFirstLastName, InputFilter.NAME_PATTERN, 40);
+        InputFilter.applyFilter(txtSecondLastName, InputFilter.NAME_PATTERN, 40);
+        InputFilter.applyFilter(txtEmail, InputFilter.EMAIL_CHARS_PATTERN, 40);
+        InputFilter.applyFilter(txtPhoneNumber, InputFilter.NUMERIC_PATTERN, 10);
 
     }
 

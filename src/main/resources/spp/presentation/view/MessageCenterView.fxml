@@ -52,17 +52,45 @@
                           managed="${vbOptionAllMessages.visible}">
                         <TableView fx:id="tblMessages" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn fx:id="clmnSender" text="Correo remitente" prefWidth="200"
+                                <TableColumn fx:id="colSender" text="Correo remitente" prefWidth="200"
                                              sortable="false" reorderable="false"/>
-                                <TableColumn fx:id="clmnSubject" text="Asunto" prefWidth="250"
+                                <TableColumn fx:id="colSubject" text="Asunto" prefWidth="250"
                                              sortable="false" reorderable="false"/>
-                                <TableColumn fx:id="clmnDate" text="Fecha" prefWidth="150"
+                                <TableColumn fx:id="colDate" text="Fecha" prefWidth="150"
                                              sortable="false" reorderable="false"/>
                             </columns>
                             <columnResizePolicy>
                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                             </columnResizePolicy>
                         </TableView>
+                    </VBox>
+
+                    <VBox fx:id="vbMessageDetail" visible="false" managed="${vbMessageDetail.visible}" spacing="15">
+                        <Label text="DETALLE DEL MENSAJE" styleClass="field-label"/>
+
+                        <VBox spacing="5">
+                            <Label text="Remitente:" styleClass="field-description" style="-fx-font-weight: bold;"/>
+                            <Label fx:id="lblDetailSender" text="" styleClass="field-description"/>
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="Fecha:" styleClass="field-description" style="-fx-font-weight: bold;"/>
+                            <Label fx:id="lblDetailDate" text="" styleClass="field-description"/>
+                        </VBox>
+
+                        <VBox spacing="5">
+                            <Label text="Asunto:" styleClass="field-description" style="-fx-font-weight: bold;"/>
+                            <Label fx:id="lblDetailSubject" text="" styleClass="field-description"/>
+                        </VBox>
+
+                        <VBox spacing="5" VBox.vgrow="ALWAYS">
+                            <Label text="Mensaje:" styleClass="field-description" style="-fx-font-weight: bold;"/>
+                            <TextArea fx:id="txtDetailContent" editable="false" wrapText="true" styleClass="field-input" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+
+                        <HBox alignment="BOTTOM_RIGHT">
+                            <Button text="Volver a la lista" styleClass="btn-primary" onAction="#showAllMessages"/>
+                        </HBox>
                     </VBox>
 
                     <VBox fx:id="vbOptionNewMessage" visible="false" managed="${vbOptionNewMessage.visible}"

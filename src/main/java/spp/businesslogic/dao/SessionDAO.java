@@ -34,14 +34,14 @@ public class SessionDAO implements ISessionDAO {
                 int affectedRows = preparedStatement.executeUpdate();
 
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Error. No se afectaron filas al generar la sesión.");
+                    throw new DAOException("WARN: Fallo al insertar sesión. No se afectaron filas.");
                 }
                 connection.commit();
 
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al crear sesión de usuario");
+                throw new DAOException("ERROR: Error general al insertar sesión");
 
             } finally {
                 connection.setAutoCommit(true);
@@ -49,7 +49,7 @@ public class SessionDAO implements ISessionDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos");
+            throw new DAOException("FATAL: Error de conexión al insertar sesión");
         }
 
         return token;
@@ -77,7 +77,7 @@ public class SessionDAO implements ISessionDAO {
 
             } catch (SQLException e) {
                 AppLogger.logError(e);
-                throw new DAOException("Error al buscar sesión");
+                throw new DAOException("ERROR: Error al buscar sesión");
 
             } finally {
                 connection.setAutoCommit(true);
@@ -85,7 +85,7 @@ public class SessionDAO implements ISessionDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos");
+            throw new DAOException("FATAL: Error de conexión al buscar sesión");
         }
 
     }
@@ -103,12 +103,12 @@ public class SessionDAO implements ISessionDAO {
                 preparedStatement.executeUpdate();
             } catch (SQLException e) {
                 AppLogger.logError(e);
-                throw new DAOException("Error al eliminar sesión");
+                throw new DAOException("ERROR: Error al eliminar sesión");
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos.");
+            throw new DAOException("FATAL: Error de conexión al eliminar sesión");
         }
 
     }

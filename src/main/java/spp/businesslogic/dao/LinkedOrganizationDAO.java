@@ -13,6 +13,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 
 public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
+
     private static final int NO_ROWS_AFFECTED = 0;
 
     public LinkedOrganizationDAO() {
@@ -42,35 +43,29 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Fallo al insertar la organización vinculada. No se afectaron filas.");
+                    throw new DAOException("WARN: Fallo al insertar organización vinculada. No se afectaron filas");
                 }
 
                 connection.commit();
                 isAddSuccessful = true;
 
-            } catch (DAOException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("Error al insertar la organización vinculada", e);
-
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error. Datos duplicados al insertar la Organización Vinculada", e);
+                throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
 
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error general al insertar la organización vinculada", e);
+                throw new DAOException("ERROR: Error general al insertar organización vinculada", e);
 
             } finally {
                 connection.setAutoCommit(true);
-                connection.close();
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("FATAL: Error de conexión al insertar organización vinculada", e);
         }
 
         return isAddSuccessful;

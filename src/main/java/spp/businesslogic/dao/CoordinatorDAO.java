@@ -28,6 +28,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
     public boolean addCoordinator(CoordinatorDTO coordinatorDTO) throws DAOException {
         final String INSERT_COORDINATOR = "INSERT INTO Coordinadores " +
                 "(id_usuario, num_personal) VALUES (?, ?)";
+        boolean isAddSuccesful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -42,25 +43,26 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Error. No se afectaron filas al insertar coordinador.");
+                    throw new DAOException("WARN: Fallo al insertar coordinador. No se afectaron filas");
                 }
 
                 connection.commit();
+                isAddSuccesful = true;
 
             } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al insertar el usuario", e);
+                throw new DAOException("ERROR: Error al insertar coordinador", e);
 
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error. Datos duplicados al insertar.", e);
+                throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
 
             } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al insertar el coordinador", e);
+                throw new DAOException("ERROR: Error general al insertar coordinador", e);
 
             } finally {
                 connection.setAutoCommit(true);
@@ -68,10 +70,10 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("FATAL: Error de conexión al insertar coordinador", e);
         }
 
-        return true;
+        return isAddSuccesful;
 
     }
 
@@ -81,6 +83,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
                 "INNER JOIN Coordinadores ON Usuarios.id_usuario = Coordinadores.id_usuario " +
                 "SET Usuarios.estado = 'Inactivo' " +
                 "WHERE Coordinadores.num_personal = ?;";
+        boolean isDeactivationSuccesful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -92,15 +95,16 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Error. No se afectaron filas al inactivar el coordinador.");
+                    throw new DAOException("WARN: Fallo al inactivar coordinador. No se afectaron filas");
                 }
 
                 connection.commit();
+                isDeactivationSuccesful = true;
 
-            } catch (SQLException | DAOException e) {
+            } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al inactivar el coordinador", e);
+                throw new DAOException("ERROR: Error general al inactivar coordinador", e);
 
             } finally {
                 connection.setAutoCommit(true);
@@ -108,10 +112,10 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("FATAL: Error de conexión al inactivar coordinador", e);
         }
 
-        return true;
+        return isDeactivationSuccesful;
 
     }
 
@@ -121,6 +125,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
                 "INNER JOIN Coordinadores ON Usuarios.id_usuario = Coordinadores.id_usuario " +
                 "SET Usuarios.estado = 'Activo' " +
                 "WHERE Coordinadores.num_personal = ?;";
+        boolean isActivationSuccesful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
@@ -132,15 +137,16 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("Error. No se afectaron filas al activar el coordinador.");
+                    throw new DAOException("WARN: Fallo al activar coordinador. No se afectaron filas");
                 }
 
                 connection.commit();
+                isActivationSuccesful = true;
 
-            } catch (SQLException | DAOException e) {
+            } catch (SQLException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("Error al activar el coordinador", e);
+                throw new DAOException("ERROR: Error general al activar coordinador", e);
 
             } finally {
                 connection.setAutoCommit(true);
@@ -148,10 +154,10 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al acceder a la base de datos", e);
+            throw new DAOException("FATAL: Error de conexión al activar coordinador", e);
         }
 
-        return true;
+        return isActivationSuccesful;
 
     }
 
@@ -173,7 +179,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al verificar existencia de coordinador", e);
+            throw new DAOException("FATAL: Error de conexión al buscar coordinadores", e);
         }
 
     }
@@ -200,7 +206,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al obtener lista de coordinadores", e);
+            throw new DAOException("FATAL: Error de conexión al buscar coordinadores", e);
         }
 
         return coordinatorsList;

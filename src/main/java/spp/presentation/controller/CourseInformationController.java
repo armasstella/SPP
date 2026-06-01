@@ -1,6 +1,7 @@
 package spp.presentation.controller;
 
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +13,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import spp.businesslogic.dao.CourseDAO;
 import spp.businesslogic.dto.CourseDTO;
+import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
@@ -31,7 +33,6 @@ public class CourseInformationController implements Initializable {
     @FXML private TableColumn<CourseDTO, String> colInstructor;
     @FXML private TableColumn<CourseDTO, Integer> colNumberOfInterns;
     private final CourseDAO courseDAO = new CourseDAO();
-    private final ObservableList<CourseDTO> courses = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -41,12 +42,23 @@ public class CourseInformationController implements Initializable {
     }
 
     private void setUpColumns() {
-        colCourseCode.setCellValueFactory(new PropertyValueFactory<>("courseCode"));
-        colTerm.setCellValueFactory(new PropertyValueFactory<>("term"));
-        colSchoolBlock.setCellValueFactory(new PropertyValueFactory<>("schoolBlock"));
-        colSection.setCellValueFactory(new PropertyValueFactory<>("section"));
-        colInstructor.setCellValueFactory(new PropertyValueFactory<>("instructor"));
-        colNumberOfInterns.setCellValueFactory(new PropertyValueFactory<>("numberOfInterns"));
+        colCourseCode.setCellValueFactory(
+                new PropertyValueFactory<>("courseCode"));
+        colTerm.setCellValueFactory(
+                new PropertyValueFactory<>("term"));
+        colSchoolBlock.setCellValueFactory(
+                new PropertyValueFactory<>("schoolBlock"));
+        colSection.setCellValueFactory(
+                new PropertyValueFactory<>("section"));
+        colInstructor.setCellValueFactory(
+                cellData -> {
+                    InstructorDTO instructorDTO = cellData.getValue().getInstructorDTO();
+                    String name = (instructorDTO != null) ? instructorDTO.getFirstName() :
+                            "Sin profesor";
+                    return new SimpleStringProperty(name);
+                });
+        colNumberOfInterns.setCellValueFactory(
+                new PropertyValueFactory<>("numberOfInterns"));
 
     }
 
@@ -54,8 +66,9 @@ public class CourseInformationController implements Initializable {
     private void obtainCourses() {
         try {
             List<CourseDTO> courseDTOList = courseDAO.obtainAllActiveCourses();
-            courses.addAll(courseDTOList);
-            tblCourses.setItems(courses);
+            ObservableList<CourseDTO> coursesObservableList = FXCollections.observableArrayList(courseDTOList);
+            tblCourses.setItems(coursesObservableList);
+
         } catch (DAOException e) {
             StatusLabel.showError(lblStatus, "Error al obtener lista de cursos");
         }
@@ -66,6 +79,25 @@ public class CourseInformationController implements Initializable {
     private void goToNewCourseView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/NewCourseView.fxml",
                 "Registrar Curso", event);
+
+    }
+
+    @FXML
+    private void goToAssignInstructor(ActionEvent event) {
+        CourseDTO courseSelected = tblCourses.getSelectionModel().getSelectedItem();
+
+        if (courseSelected == null) {
+            StatusLabel.showError(lblStatus, "Debe seleccionar un curso primero");
+            return;
+        }
+
+        GroupAssignationToInstructorController groupAssignationToInstructorController = ViewNavigator.loadView(
+                "/spp/presentation/view/GroupAssignationToInstructorView.fxml",
+                "Asignar Profesor", event);
+
+        if (groupAssignationToInstructorController != null) {
+            groupAssignationToInstructorController.setCourseInEdition(courseSelected);
+        }
 
     }
 

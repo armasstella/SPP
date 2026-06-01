@@ -49,18 +49,18 @@ public class UserDAO implements IUserDAO {
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == NO_ROWS_AFFECTED) {
-                throw new DAOException("Fallo al insertar el usuario. No se afectaron filas.");
+                throw new DAOException("WARN: Fallo al insertar usuario. No se afectaron filas.");
             }
 
             return getGeneratedKey(preparedStatement);
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error de integridad de datos al insertar usuario", e);
+            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error general al insertar usuario", e);
+            throw new DAOException("FATAL: Error de conexión al insertar usuario", e);
         }
 
     }
@@ -69,13 +69,13 @@ public class UserDAO implements IUserDAO {
     public int getGeneratedKey(PreparedStatement preparedStatement) throws DAOException {
         try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
             if (!resultSet.next()) {
-                throw new DAOException("No se generó ninguna llave.");
+                throw new DAOException("WARN: No se generó ninguna Primary Key");
             }
             return resultSet.getInt(1);
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al obtener llave generada", e);
+            throw new DAOException("ERROR: Error al obtener llave generada", e);
         }
 
     }
@@ -89,15 +89,16 @@ public class UserDAO implements IUserDAO {
 
             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ID);
             preparedStatement.setString(1, email);
+
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getInt("id_usuario");
                 }
-                throw new DAOException("Usuario no encontrado con email: " + email);
+                throw new DAOException("ERROR: Usuario no encontrado con email: " + email);
             }
 
         } catch (SQLException e) {
-            throw new DAOException("Error al obtener ID de usuario", e);
+            throw new DAOException("FATAL: Error de conexión al obtener id usuario", e);
         }
 
     }
@@ -126,12 +127,12 @@ public class UserDAO implements IUserDAO {
                     }
                 }
 
-                throw new DAOException("Credenciales incorrectas");
+                throw new DAOException("ERROR: Credenciales incorrectas");
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error de conexión al verificar credenciales", e);
+            throw new DAOException("FATAL: Error de conexión al verificar credenciales", e);
         }
 
     }
@@ -150,7 +151,7 @@ public class UserDAO implements IUserDAO {
                 if (resultSet.next()) {
                     isSearchSuccessful = resultSet.getBoolean(1);
                     if (!isSearchSuccessful) {
-                        throw new DAOException("El correo no está registrado");
+                        throw new DAOException("ERROR: Correo no encontrado en el sistema");
                     }
                 }
 

@@ -28,7 +28,7 @@
             <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
 
             <Label text="Correo" styleClass="field-label"/>
-            <TextField fx:id="txtEmail" promptText="Ingrese usuario" styleClass="field-input"/>
+            <TextField fx:id="txtEmail" promptText="Ingrese correo electrónico" styleClass="field-input"/>
 
             <Label text="Contraseña" styleClass="field-label"/>
             <TextField fx:id="txtPassword" promptText="Ingrese contraseña" styleClass="field-input"/>

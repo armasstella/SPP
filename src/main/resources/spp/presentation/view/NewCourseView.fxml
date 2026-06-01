@@ -5,14 +5,14 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
-
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
-<?import javafx.scene.control.ComboBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -44,7 +44,7 @@
                             <TextField fx:id="txtCourseCode" promptText="Ej. 13213" styleClass="field-input"/>
 
                             <Label text="Período *" styleClass="field-label"/>
-                            <TextField fx:id="" promptText="" styleClass="field-input"/>
+                            <TextField fx:id="txtTerm" promptText="" styleClass="field-input"/>
 
                             <Label text="Bloque *" styleClass="field-label"/>
                             <ComboBox fx:id="cmbSchoolBlock" promptText="Seleccione una opción"
@@ -71,12 +71,18 @@
                                 </items>
                             </ComboBox>
 
-                            <Label text="Profesor *" styleClass="field-label"/>
-                            <TextField fx:id="" promptText="" styleClass="field-input"/>
-
-                            <Label text="Cantidad de Practicantes *" styleClass="field-label"/>
-                            <TextField fx:id="txt" promptText=""
+                            <Label text="Cupo *" styleClass="field-label"/>
+                            <TextField fx:id="txtCapacity" promptText=""
                                        styleClass="field-input"/>
+
+                            <Label text="Detalles de curso *" styleClass="field-label"/>
+                            <TextArea fx:id="taCourseDetails" promptText="Detalles de horario" styleClass="field-input"
+                                      VBox.vgrow="ALWAYS" wrapText="true" />
+
+                            <Label text="Profesor *" styleClass="field-label"/>
+                            <ComboBox fx:id="cmbInstructor" promptText="Seleccione una opción"
+                                      styleClass="field-input, combo-box-custom" maxWidth="Infinity"/>
+
                         </VBox>
                     </content>
                 </ScrollPane>
@@ -91,7 +97,7 @@
                 <Insets top="12" bottom="16" left="48" right="48"/>
             </padding>
             <Button text="Cancelar" styleClass="btn-back" onAction="#goBackToCourseInformationView"/>
-            <Button text="Guardar" styleClass="btn-add" />
+            <Button text="Guardar" styleClass="btn-add" onAction="#saveCourse"/>
         </HBox>
     </bottom>
 

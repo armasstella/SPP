@@ -18,6 +18,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.MessageDAO;
 import spp.businesslogic.dao.UserDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
@@ -30,13 +31,18 @@ public class MessageCenterController implements Initializable {
     @FXML private Label lblStatus;
     @FXML private VBox vbOptionAllMessages;
     @FXML private TableView<MessageDTO> tblMessages;
-    @FXML private TableColumn<MessageDTO, String> clmnSender;
-    @FXML private TableColumn<MessageDTO, String> clmnSubject;
-    @FXML private TableColumn<MessageDTO, String> clmnDate;
+    @FXML private TableColumn<MessageDTO, String> colSender;
+    @FXML private TableColumn<MessageDTO, String> colSubject;
+    @FXML private TableColumn<MessageDTO, String> colDate;
     @FXML private VBox vbOptionNewMessage;
     @FXML private TextField txtRecipient;
     @FXML private TextField txtSubject;
     @FXML private TextArea txtBody;
+    @FXML private VBox vbMessageDetail;
+    @FXML private Label lblDetailSender;
+    @FXML private Label lblDetailDate;
+    @FXML private Label lblDetailSubject;
+    @FXML private TextArea txtDetailContent;
     private final MessageDAO messageDAO = new MessageDAO();
     private final UserDAO userDAO = new UserDAO();
     private ObservableList<MessageDTO> messagesObservableList;
@@ -47,6 +53,26 @@ public class MessageCenterController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpColumns();
         obtainMessages();
+        setUpFields();
+        setUpDoubleClickOnMessage();
+
+    }
+
+    private void setUpFields() {
+        InputFilter.applyFilter(txtRecipient, InputFilter.EMAIL_CHARS_PATTERN, 20);
+        InputFilter.applyFilter(txtSubject, InputFilter.NAME_PATTERN, 20);
+        InputFilter.applyFilter(txtBody, InputFilter.NAME_PATTERN, 250);
+
+    }
+
+    private void setUpDoubleClickOnMessage() {
+        tblMessages.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2 && tblMessages.getSelectionModel().getSelectedItem() != null) {
+                MessageDTO selectedMessage = tblMessages.getSelectionModel().getSelectedItem();
+                displayMessageDetail(selectedMessage);
+            }
+        });
+
     }
 
     public void setPreviousView(String path, String title) {
@@ -56,11 +82,11 @@ public class MessageCenterController implements Initializable {
     }
 
     private void setUpColumns() {
-        clmnSender.setCellValueFactory(
+        colSender.setCellValueFactory(
                 new PropertyValueFactory<>("emailSender"));
-        clmnSubject.setCellValueFactory(
+        colSubject.setCellValueFactory(
                 new PropertyValueFactory<>("subject"));
-        clmnDate.setCellValueFactory(
+        colDate.setCellValueFactory(
                 new PropertyValueFactory<>("date"));
 
     }
@@ -80,6 +106,7 @@ public class MessageCenterController implements Initializable {
     @FXML
     private void showNewMessageForm(ActionEvent event) {
         vbOptionAllMessages.setVisible(false);
+        vbMessageDetail.setVisible(false);
         vbOptionNewMessage.setVisible(true);
         clearNewMessageFields();
         lblStatus.setText("");
@@ -89,6 +116,7 @@ public class MessageCenterController implements Initializable {
     @FXML
     private void showAllMessages(ActionEvent event) {
         vbOptionNewMessage.setVisible(false);
+        vbMessageDetail.setVisible(false);
         vbOptionAllMessages.setVisible(true);
         obtainMessages();
         lblStatus.setText("");
@@ -121,6 +149,18 @@ public class MessageCenterController implements Initializable {
             StatusLabel.showError(lblStatus, "El correo ingresado no está registrado en el sistema" +
                     "\nNo es posible enviarle mensaje.");
         }
+
+    }
+
+    private void displayMessageDetail(MessageDTO message) {
+        vbOptionAllMessages.setVisible(false);
+        vbOptionNewMessage.setVisible(false);
+        vbMessageDetail.setVisible(true);
+
+        lblDetailSender.setText(message.getEmailSender());
+        lblDetailDate.setText(message.getDate());
+        lblDetailSubject.setText(message.getSubject());
+        txtDetailContent.setText(message.getContent());
 
     }
 

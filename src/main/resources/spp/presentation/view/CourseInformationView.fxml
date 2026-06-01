@@ -22,8 +22,8 @@
 
     <top>
         <VBox styleClass="header">
-            <Label text="INFORMACIÓN DE CURSOS" styleClass="header-title-module"/>
-            <Label text="Catálago y búsqueda de cursos registrados" styleClass="header-subtitle"/>
+            <Label text="INFORMACIÓN DE CURSOS" styleClass="header-title"/>
+            <Label text="Catálogo y búsqueda de cursos registrados" styleClass="header-subtitle"/>
         </VBox>
     </top>
 
@@ -36,6 +36,7 @@
                 <HBox spacing="15" alignment="CENTER_LEFT">
                     <TextField fx:id="txtSearch" promptText="Buscar curso" styleClass="field-input" prefWidth="300"/>
                     <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Asignar Profesor a Curso" styleClass="btn-add" onAction="#goToAssignInstructor"/>
                     <Button text="Registrar Curso" styleClass="btn-add" onAction="#goToNewCourseView"/>
                 </HBox>
 

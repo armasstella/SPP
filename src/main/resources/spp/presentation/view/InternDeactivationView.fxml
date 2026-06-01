@@ -31,13 +31,13 @@
 
             <TableView fx:id="tblInterns" prefHeight="400">
                 <columns>
-                    <TableColumn fx:id="clmnStudentNumber" text="Matricula" prefWidth="120"
+                    <TableColumn fx:id="colStudentNumber" text="Matricula" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnNames" text="Nombre(s)" prefWidth="120"
+                    <TableColumn fx:id="colNames" text="Nombre(s)" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnSurnames" text="Apellido(s)" prefWidth="120"
+                    <TableColumn fx:id="colSurnames" text="Apellido(s)" prefWidth="120"
                                  sortable="false" reorderable="false"/>
-                    <TableColumn fx:id="clmnEmail" text="Correo electrónico" prefWidth="180"
+                    <TableColumn fx:id="colEmail" text="Correo electrónico" prefWidth="180"
                                  sortable="false" reorderable="false"/>
                 </columns>
                 <columnResizePolicy>
