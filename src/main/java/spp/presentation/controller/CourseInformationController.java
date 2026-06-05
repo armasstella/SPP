@@ -1,7 +1,6 @@
 package spp.presentation.controller;
 
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,11 +9,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import spp.businesslogic.dao.CourseDAO;
 import spp.businesslogic.dto.CourseDTO;
-import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
+import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
@@ -26,12 +24,12 @@ public class CourseInformationController implements Initializable {
 
     @FXML private Label lblStatus;
     @FXML private TableView<CourseDTO> tblCourses;
-    @FXML private TableColumn<CourseDTO, Integer> colCourseCode;
+    @FXML private TableColumn<CourseDTO, String> colCourseCode;
     @FXML private TableColumn<CourseDTO, String> colTerm;
-    @FXML private TableColumn<CourseDTO, Integer> colSchoolBlock;
-    @FXML private TableColumn<CourseDTO, Integer> colSection;
+    @FXML private TableColumn<CourseDTO, String> colSchoolBlock;
+    @FXML private TableColumn<CourseDTO, String> colSection;
     @FXML private TableColumn<CourseDTO, String> colInstructor;
-    @FXML private TableColumn<CourseDTO, Integer> colNumberOfInterns;
+    @FXML private TableColumn<CourseDTO, String> colNumberOfInterns;
     private final CourseDAO courseDAO = new CourseDAO();
 
     @Override
@@ -43,22 +41,17 @@ public class CourseInformationController implements Initializable {
 
     private void setUpColumns() {
         colCourseCode.setCellValueFactory(
-                new PropertyValueFactory<>("courseCode"));
+                new GenericNestedSelector<>("courseCode", "Sin NRC"));
         colTerm.setCellValueFactory(
-                new PropertyValueFactory<>("term"));
+                new GenericNestedSelector<>("term", "Sin periodo"));
         colSchoolBlock.setCellValueFactory(
-                new PropertyValueFactory<>("schoolBlock"));
+                new GenericNestedSelector<>("schoolBlock", "Sin bloque"));
         colSection.setCellValueFactory(
-                new PropertyValueFactory<>("section"));
+                new GenericNestedSelector<>("section", "Sin sección"));
         colInstructor.setCellValueFactory(
-                cellData -> {
-                    InstructorDTO instructorDTO = cellData.getValue().getInstructorDTO();
-                    String name = (instructorDTO != null) ? instructorDTO.getFirstName() :
-                            "Sin profesor";
-                    return new SimpleStringProperty(name);
-                });
+                new GenericNestedSelector<>("instructorDTO.firstName", "Sin profesor"));
         colNumberOfInterns.setCellValueFactory(
-                new PropertyValueFactory<>("numberOfInterns"));
+                new GenericNestedSelector<>("numberOfInterns", "0"));
 
     }
 

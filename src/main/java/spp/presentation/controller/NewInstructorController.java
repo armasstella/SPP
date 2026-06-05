@@ -45,7 +45,7 @@ public class NewInstructorController implements Initializable {
         InputFilter.applyFilter(txtEmail, InputFilter.EMAIL_CHARS_PATTERN, 40);
         InputFilter.applyFilter(txtPhoneNumber, InputFilter.NUMERIC_PATTERN, 10);
         InputFilter.applyFilter(txtPersonalNumber, InputFilter.NUMERIC_PATTERN, 5);
-        InputFilter.applyFilter(txtPassword, InputFilter.PASSWORD_PATTERN, 12);
+        InputFilter.applyFilter(txtPassword, InputFilter.PASSWORD_PATTERN, 15);
 
     }
 

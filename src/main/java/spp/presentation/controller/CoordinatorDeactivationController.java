@@ -9,12 +9,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.CoordinatorDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
+import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
@@ -41,13 +41,13 @@ public class CoordinatorDeactivationController implements Initializable {
 
     private void setUpColumns() {
         colNames.setCellValueFactory(
-                new PropertyValueFactory<>("firstName"));
+                new GenericNestedSelector<>("firstName", "Sin nombre"));
         colSurnames.setCellValueFactory(
-                new PropertyValueFactory<>("firstLastName"));
+                new GenericNestedSelector<>("firstLastName", "Sin apellidos"));
         colEmail.setCellValueFactory(
-                new PropertyValueFactory<>("email"));
+                new GenericNestedSelector<>("email", "Sin correo electrónico"));
         colPersonalNumber.setCellValueFactory(
-                new PropertyValueFactory<>("personalNumber"));
+                new GenericNestedSelector<>("personalNumber", "Sin número de personal"));
 
     }
 

@@ -18,17 +18,22 @@ public class ViewNavigator {
             FXMLLoader loader = new FXMLLoader(ViewNavigator.class.getResource(fxmlPath));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
+            Scene currentScene = stage.getScene();
+
+            if (currentScene != null) {
+                currentScene.setRoot(root);
+            } else {
+                stage.setScene(new Scene(root));
+            }
+
             stage.setTitle(title);
             stage.show();
 
             return loader.getController();
-
         } catch (IOException e) {
             AppLogger.logError(e);
             return null;
         }
-
     }
 
 }

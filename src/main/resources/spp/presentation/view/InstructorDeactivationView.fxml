@@ -14,7 +14,7 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="spp.presentation.controller.InstructorDeactivationController"
             prefWidth="440" prefHeight="340"
-            styleClass="root-pane"
+            minWidth="720" minHeight="520"
             stylesheets="@/spp/presentation/css/MainStyle.css">
 
     <top>

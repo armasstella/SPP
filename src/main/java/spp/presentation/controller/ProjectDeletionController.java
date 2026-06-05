@@ -1,7 +1,6 @@
 package spp.presentation.controller;
 
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,14 +9,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.dto.ProjectDTO;
-import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
+import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
@@ -80,29 +77,17 @@ public class ProjectDeletionController implements Initializable {
 
     private void setUpColumns() {
         colName.setCellValueFactory(
-                new PropertyValueFactory<>("name"));
+                new GenericNestedSelector<>("name", "Sin nombre"));
         colDescription.setCellValueFactory(
-                new PropertyValueFactory<>("description"));
+                new GenericNestedSelector<>("description", "Sin descripción"));
         colPlacesAvailable.setCellValueFactory(
-                new PropertyValueFactory<>("placesAvailable"));
+                new GenericNestedSelector<>("placesAvailable", "0"));
         colAvailability.setCellValueFactory(
-                new PropertyValueFactory<>("availability"));
+                new GenericNestedSelector<>("availability", "No definido"));
         colLinkedOrganization.setCellValueFactory(
-                cellData -> {
-                    LinkedOrganizationDTO linkedOrganizationDTO = cellData.getValue().getLinkedOrganizationDTO();;
-                    String name = (linkedOrganizationDTO != null) ? linkedOrganizationDTO.getName() :
-                            "Sin organización vinculada";
-                    return new SimpleStringProperty(name);
-                });
+                new GenericNestedSelector<>("linkedOrganizationDTO.name", "Sin organización vinculada"));
         colProjectManager.setCellValueFactory(
-                cellData -> {
-                    ProjectManagerDTO projectManagerDTO = cellData.getValue().getProjectManagerDTO();
-                    String name = (projectManagerDTO != null) ? projectManagerDTO.getFirstName() :
-                            "Sin encargado";
-                    return new SimpleStringProperty(name);
-                }
-        );
-
+                new GenericNestedSelector<>("projectManagerDTO.firstName", "Sin encargado"));
     }
 
     @FXML
