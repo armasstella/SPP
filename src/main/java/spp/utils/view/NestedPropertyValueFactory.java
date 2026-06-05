@@ -41,7 +41,6 @@ public class NestedPropertyValueFactory<S, T> implements Callback<CellDataFeatur
             return (ObservableValue<T>) new SimpleStringProperty(result);
 
         } catch (Exception e) {
-            // Si ocurre un error de reflexión (ej. el método no existe), muestra el valor por defecto
             return (ObservableValue<T>) new SimpleStringProperty(defaultValue);
         }
     }
