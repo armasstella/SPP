@@ -32,7 +32,7 @@ public class LoginController implements Initializable {
 
     private void setUpFields() {
         InputFilter.applyFilter(txtEmail, InputFilter.EMAIL_CHARS_PATTERN, 30);
-        InputFilter.applyFilter(txtPassword, InputFilter.PASSWORD_PATTERN, 12);
+        InputFilter.applyFilter(txtPassword, InputFilter.PASSWORD_PATTERN, 15);
 
     }
 

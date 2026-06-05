@@ -11,13 +11,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import spp.businesslogic.dto.MessageDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.MessageDAO;
 import spp.businesslogic.dao.UserDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
@@ -83,11 +83,11 @@ public class MessageCenterController implements Initializable {
 
     private void setUpColumns() {
         colSender.setCellValueFactory(
-                new PropertyValueFactory<>("emailSender"));
+                new GenericNestedSelector<>("emailSender", "Sin remitente"));
         colSubject.setCellValueFactory(
-                new PropertyValueFactory<>("subject"));
+                new GenericNestedSelector<>("subject", "Sin asunto"));
         colDate.setCellValueFactory(
-                new PropertyValueFactory<>("date"));
+                new GenericNestedSelector<>("date", "Sin fecha"));
 
     }
 

@@ -5,6 +5,7 @@ import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ICoordinatorDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.dataaccess.connection.MySQLConnectionManager;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,45 +33,38 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            connection.setAutoCommit(false);
+            MySQLConnectionManager.getInstance().disableAutoCommitConnection();
 
-            try {
-                int generatedId = userDAO.addUser(coordinatorDTO);
+            int generatedId = userDAO.addUser(coordinatorDTO);
 
-                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_COORDINATOR);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_COORDINATOR)) {
                 preparedStatement.setInt(1, generatedId);
                 preparedStatement.setString(2, coordinatorDTO.getPersonalNumber());
 
-                int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("WARN: Fallo al insertar coordinador. No se afectaron filas");
+                if (preparedStatement.executeUpdate() != NO_ROWS_AFFECTED) {
+                    isAddSuccesful = true;
                 }
-
-                connection.commit();
-                isAddSuccesful = true;
-
-            } catch (DAOException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("ERROR: Error al insertar coordinador", e);
-
-            } catch (SQLIntegrityConstraintViolationException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
-
-            } catch (SQLException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("ERROR: Error general al insertar coordinador", e);
-
-            } finally {
-                connection.setAutoCommit(true);
             }
 
+            connection.commit();
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            MySQLConnectionManager.getInstance().rollbackSafe();
+            AppLogger.logError(e);
+            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
+
+        } catch (DAOException e) {
+            MySQLConnectionManager.getInstance().rollbackSafe();
+            AppLogger.logError(e);
+            throw new DAOException("ERROR: Error al insertar coordinador mientras se insertaba como usuario", e);
+
         } catch (SQLException e) {
+            MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(e);
             throw new DAOException("FATAL: Error de conexión al insertar coordinador", e);
+
+        } finally {
+            MySQLConnectionManager.getInstance().enableAutoCommitConnection();
         }
 
         return isAddSuccesful;
