@@ -59,7 +59,7 @@ public class MessageCenterController implements Initializable {
     }
 
     private void setUpFields() {
-        InputFilter.applyFilter(txtRecipient, InputFilter.EMAIL_CHARS_PATTERN, 20);
+        InputFilter.applyFilter(txtRecipient, InputFilter.EMAIL_CHARS_PATTERN, 30);
         InputFilter.applyFilter(txtSubject, InputFilter.NAME_PATTERN, 20);
         InputFilter.applyFilter(txtBody, InputFilter.NAME_PATTERN, 250);
 

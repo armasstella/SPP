@@ -4,7 +4,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.TableView?>
@@ -30,7 +29,7 @@
                 <Insets top="36" bottom="20" left="48" right="48"/>
             </padding>
 
-            <Label text="De clic sobre el profesor que desea inactivar" styleClass="lbl-status"/>
+            <Label text="Dé clic sobre el profesor que desea inactivar" styleClass="lbl-status"/>
             <TableView fx:id="tblInstructors" prefHeight="400">
                 <columns>
                     <TableColumn fx:id="colNames" text="Nombre(s)" prefWidth="120"
