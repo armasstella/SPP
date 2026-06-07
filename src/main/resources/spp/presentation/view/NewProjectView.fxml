@@ -7,6 +7,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.StackPane?>
 
@@ -49,12 +50,12 @@
                                                styleClass="field-input"/>
 
                                     <Label text="Encargado del Proyecto *" styleClass="field-label"/>
-                                    <TextField fx:id="txtProjectManager" promptText="Ingrese el id del encargado"
+                                    <ComboBox fx:id="cmbProjectManager" promptText="Seleccione una opción"
                                                styleClass="field-input"/>
 
                                     <Label text="Organización Responsable *" styleClass="field-label"/>
-                                    <TextField fx:id="txtLinkedOrganization"
-                                               promptText="Ingrese el id de la organización"
+                                    <ComboBox fx:id="cmbLinkedOrganization"
+                                               promptText="Seleccione una opción"
                                                styleClass="field-input"/>
                             </VBox>
                         </content>

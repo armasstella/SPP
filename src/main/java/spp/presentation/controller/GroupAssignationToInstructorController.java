@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dao.CourseDAO;
 import spp.businesslogic.dao.InstructorDAO;
@@ -37,7 +36,7 @@ public class GroupAssignationToInstructorController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        loadActiveInstructors();
+        loadActiveInstructorsInComboBox();
     }
 
     public void setCourseInEdition(CourseDTO courseInEdition) {
@@ -87,10 +86,10 @@ public class GroupAssignationToInstructorController implements Initializable {
                 "/spp/presentation/view/CourseInformationView.fxml", "Información de Cursos", event);
     }
 
-    private void loadActiveInstructors() {
+    private void loadActiveInstructorsInComboBox() {
         try {
             InstructorDAO instructorDAO = new InstructorDAO();
-            List<InstructorDTO> activeInstructors = instructorDAO.getListActiveInstructors();
+            List<InstructorDTO> activeInstructors = instructorDAO.obtainActiveInstructorForComboBox();
             ObservableList<InstructorDTO> instructorObservableList =
                     FXCollections.observableArrayList(activeInstructors);
             cmbInstructor.setItems(instructorObservableList);

@@ -119,9 +119,6 @@ public class InternDAO implements IInternDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     isSearchSuccessful = resultSet.getBoolean(1);
-                    if (!isSearchSuccessful) {
-                        throw new DAOException("WARN: La matrícula no es valida");
-                    }
                 }
             }
 

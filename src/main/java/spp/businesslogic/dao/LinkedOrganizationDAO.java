@@ -8,8 +8,11 @@ import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
@@ -69,6 +72,58 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         }
 
         return isAddSuccessful;
+
+    }
+
+    @Override
+    public List<LinkedOrganizationDTO> obtainActiveLinkedOrganizations() throws DAOException {
+        final String SELECT_LINKED_ORGANIZATION = "SELECT id_organizacion_vinculada, rfc, nombre " +
+                "FROM Organizaciones_Vinculadas";
+        List<LinkedOrganizationDTO> linkedOrganizationsList = new ArrayList<>();
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LINKED_ORGANIZATION);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                LinkedOrganizationDTO linkedOrganization = new LinkedOrganizationDTO();
+                linkedOrganization.setId(resultSet.getInt("id_organizacion_vinculada"));
+                linkedOrganization.setRfc(resultSet.getString("rfc"));
+                linkedOrganization.setName(resultSet.getString("nombre"));
+                linkedOrganizationsList.add(linkedOrganization);
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Error de conexión al buscar organizaciones vinculadas");
+        }
+
+        return linkedOrganizationsList;
+
+    }
+
+    @Override
+    public boolean searchLinkedOrganizationRegisters() throws DAOException {
+        final String SEARCH_REGISTERS = "SELECT f_hay_organizaciones_vinculadas()";
+        boolean isSearchSuccesful = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_REGISTERS);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    isSearchSuccesful = resultSet.getBoolean(1);
+                }
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Error de conexión al buscar organizaciones vinculadas");
+        }
+
+        return isSearchSuccesful;
 
     }
 

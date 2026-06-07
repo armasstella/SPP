@@ -4,7 +4,10 @@ package spp.presentation.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import spp.businesslogic.dao.CourseDAO;
+import spp.businesslogic.dao.LinkedOrganizationDAO;
+import spp.businesslogic.dao.ProjectManagerDAO;
 import spp.businesslogic.exceptions.DAOException;
+import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.ViewNavigator;
 
@@ -36,8 +39,13 @@ public class CoordinatorMenuController {
 
     @FXML
     private void goToNewProjectManagerView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/NewProjectManagerView.fxml",
-                "Registrar Encargado de Proyecto", event);
+        if (searchProjectManager() && searchLinkedOrganization()) {
+            ViewNavigator.loadView("/spp/presentation/view/NewProjectManagerView.fxml",
+                    "Registrar Encargado de Proyecto", event);
+        } else {
+            AlertHelper.showErrorMessage("No puede realizar la operación",
+                    "No hay información registrada de Organizaciones Vinculadas\no de Encargados de Proyectos.");
+        }
 
     }
 
@@ -85,6 +93,7 @@ public class CoordinatorMenuController {
                         "Generar Reporte", event);
             }
         } catch (DAOException e) {
+            AppLogger.logError(e);
             AlertHelper.showErrorMessage("No puede realizar la operación",
                     "No hay información de cursos para extraer información.\nRegistre cursos primero.");
         }
@@ -115,6 +124,34 @@ public class CoordinatorMenuController {
             messageCenterController.setPreviousView("/spp/presentation/view/CoordinatorMenuView.fxml",
                     "Menú Coordinador");
         }
+
+    }
+
+    private boolean searchLinkedOrganization() {
+        boolean exists = false;
+
+        try {
+            LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
+            exists = linkedOrganizationDAO.searchLinkedOrganizationRegisters();
+        } catch (DAOException e) {
+            AppLogger.logError(e);
+        }
+
+        return exists;
+
+    }
+
+    private boolean searchProjectManager() {
+        boolean exists = false;
+
+        try {
+            ProjectManagerDAO projectManagerDAO = new ProjectManagerDAO();
+            exists = projectManagerDAO.searchProjectManagerRegisters();
+        } catch (DAOException e) {
+            AppLogger.logError(e);
+        }
+
+        return exists;
 
     }
 

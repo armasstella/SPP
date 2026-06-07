@@ -12,6 +12,6 @@ public interface IInstructorDAO {
     int obtainId(String personalNumber) throws DAOException;
     boolean deactivateInstructor(InstructorDTO instructorDTO) throws DAOException;
     List<InstructorDTO> obtainAllActiveInstructors() throws DAOException;
-    List<InstructorDTO> getListActiveInstructors() throws DAOException;
+    List<InstructorDTO> obtainActiveInstructorForComboBox() throws DAOException;
 
 }
