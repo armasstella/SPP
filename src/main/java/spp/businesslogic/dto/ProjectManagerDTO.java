@@ -1,6 +1,5 @@
 package spp.businesslogic.dto;
 
-import spp.dataaccess.dao.ProjectManagerDAO;
 
 public class ProjectManagerDTO {
 
@@ -80,4 +79,5 @@ public class ProjectManagerDTO {
     public String getPhoneNumber() {
         return phoneNumber;
     }
+
 }

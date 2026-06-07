@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Rectangle?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.LoginController"
+            minWidth="720" minHeight="520"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <top>
+        <VBox styleClass="header">
+            <Label text="Inicio de sesión" styleClass="header-title"/>
+            <Label text="Identifíquese con sus credenciales" styleClass="header-subtitle"/>
+            <Rectangle height="2" styleClass="header-divider" VBox.vgrow="NEVER"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox styleClass="options-container" alignment="CENTER" spacing="16">
+            <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
+
+            <Label text="Correo" styleClass="field-label"/>
+            <TextField fx:id="txtEmail" promptText="Ingrese correo electrónico" styleClass="field-input"/>
+
+            <Label text="Contraseña" styleClass="field-label"/>
+            <TextField fx:id="txtPassword" promptText="Ingrese contraseña" styleClass="field-input"/>
+
+            <Button text="Ingresar"
+                    styleClass="option-btn, btn-primary"
+                    prefWidth="260"
+                    onAction="#login"/>
+
+            <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true"/>
+        </VBox>
+    </center>
+</BorderPane>

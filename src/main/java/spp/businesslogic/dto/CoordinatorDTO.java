@@ -1,5 +1,6 @@
 package spp.businesslogic.dto;
 
+
 public class CoordinatorDTO extends UserDTO {
     private String personalNumber;
 
@@ -14,5 +15,6 @@ public class CoordinatorDTO extends UserDTO {
     public void setPersonalNumber(String personalNumber) {
         this.personalNumber = personalNumber;
     }
+
 }
 

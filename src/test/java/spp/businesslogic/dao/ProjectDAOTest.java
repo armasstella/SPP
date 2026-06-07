@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,8 +10,8 @@ import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.dto.LinkedOrganizationDTO;
-import spp.dataaccess.dao.ProjectDAO;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ProjectDAOTest {
@@ -21,6 +22,7 @@ public class ProjectDAOTest {
     @BeforeAll
     void setUpAll() {
         projectDAO = new ProjectDAO();
+
     }
 
     @BeforeEach
@@ -32,16 +34,18 @@ public class ProjectDAOTest {
 
         testProject = new ProjectDTO();
         testProject.setDescription(" ");
-        testProject.setDisponibility(true);
+        testProject.setAvailability("Disponible");
         testProject.setProjectManagerDTO(projectManager);
         testProject.setLinkedOrganizationDTO(linkedOrganization);
+
     }
 
     @Test
     @DisplayName("Debe insertar un proyecto exitosamente")
-    void testProjectSuccess() throws DAOException {
+    void testAddProjectSuccess() throws DAOException {
         boolean result = projectDAO.addProject(testProject);
         assertTrue(result, "El método debería retornar true al insertar exitosamente");
+
     }
 
 }

@@ -1,14 +1,26 @@
 package spp.businesslogic.dto;
 
+
 public class ProjectDTO {
 
+    private int id;
     private String description;
-    private boolean disponibility;
+    private String availability;
     private ProjectManagerDTO projectManagerDTO;
     private LinkedOrganizationDTO linkedOrganizationDTO;
+    private int placesAvailable;
+    private String name;
 
     public ProjectDTO() {
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setDescription(String description) {
@@ -19,12 +31,12 @@ public class ProjectDTO {
         return description;
     }
 
-    public void setDisponibility(boolean disponibility) {
-        this.disponibility = disponibility;
+    public void setAvailability(String availability) {
+        this.availability = availability;
     }
 
-    public boolean getDisponibility() {
-        return disponibility;
+    public String getAvailability() {
+        return availability;
     }
 
     public void setProjectManagerDTO(ProjectManagerDTO projectManagerDTO) {
@@ -42,4 +54,21 @@ public class ProjectDTO {
     public LinkedOrganizationDTO getLinkedOrganizationDTO() {
         return linkedOrganizationDTO;
     }
+
+    public void setPlacesAvailable(int placesAvailable) {
+        this.placesAvailable = placesAvailable;
+    }
+
+    public int getPlacesAvailable() {
+        return placesAvailable;
+    }
+
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }

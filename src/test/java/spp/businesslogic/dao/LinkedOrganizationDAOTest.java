@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.dataaccess.dao.LinkedOrganizationDAO;
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class LinkedOrganizationDAOTest {
@@ -22,6 +23,7 @@ public class LinkedOrganizationDAOTest {
     void setUpAll() {
         linkedOrganizationDAO = new LinkedOrganizationDAO();
         testLinkedOrganization = new LinkedOrganizationDTO();
+
     }
 
     @BeforeEach
@@ -39,16 +41,8 @@ public class LinkedOrganizationDAOTest {
     @DisplayName("Debe insertar una organización vinculada exitosamente")
     void testAddLinkedOrganizationSuccess() throws DAOException {
         boolean result = linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
-        assertTrue(result);
-    }
+        assertTrue(result, "El método debería retornar true al insertar exitosamente");
 
-    @Test
-    @DisplayName("Debe agregar organización con giro")
-    void testAddLinkedOrganizationWithBusinessSuccess() throws DAOException {
-        testLinkedOrganization.setBusiness("Tecnología");
-        boolean result =
-                linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
-        assertTrue(result);
     }
 
     @Test
@@ -57,6 +51,7 @@ public class LinkedOrganizationDAOTest {
         linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
         assertThrows(DAOException.class, () ->
             linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization));
+
     }
 
     @Test

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.NewInternController"
+            minWidth="720" minHeight="520"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <top>
+        <HBox styleClass="header">
+            <VBox>
+                <Label text="REGISTRAR PRACTICANTE" styleClass="header-title"/>
+                <Label text="Nuevo Practicante" styleClass="header-subtitle"/>
+                <Rectangle height="2" styleClass="header-divider" VBox.vgrow="NEVER"/>
+            </VBox>
+            <javafx.scene.layout.Pane HBox.hgrow="ALWAYS" />
+
+            <VBox styleClass="right-element">
+                <Button text="Salir" styleClass="btn-label" onAction="#goToLoginView"/>
+            </VBox>
+        </HBox>
+    </top>
+
+    <center>
+        <StackPane>
+            <VBox spacing="14" maxWidth="400" alignment="TOP_CENTER">
+                <padding>
+                    <Insets top="24" bottom="20" left="48" right="48"/>
+                </padding>
+                    <ScrollPane>
+                        <content>
+                            <VBox spacing="14">
+                                <padding>
+                                    <Insets left="5" right="5" top="5" bottom="5"/>
+                                </padding>
+                                <Label text="Primer nombre *" styleClass="field-label"/>
+                                <TextField fx:id="txtFirstName" promptText="Ej. Juan" styleClass="field-input"/>
+
+                                <Label text="Segundo nombre " styleClass="field-label"/>
+                                <TextField fx:id="txtSecondName" promptText="Ej. Carlos" styleClass="field-input"/>
+
+                                <Label text="Primer apellido *" styleClass="field-label"/>
+                                <TextField fx:id="txtFirstLastName" promptText="Ej. Antonio" styleClass="field-input"/>
+
+                                <Label text="Segundo apellido " styleClass="field-label"/>
+                                <TextField fx:id="txtSecondLastName" promptText="Ej. Pérez" styleClass="field-input"/>
+
+                                <Label text="Correo electrónico *" styleClass="field-label"/>
+                                <TextField fx:id="txtEmail" promptText="Ej. jeancarlo@estudiantes.uv.mx"
+                                           styleClass="field-input"/>
+
+                                <Label text="Teléfono *" styleClass="field-label"/>
+                                <TextField fx:id="txtPhoneNumber" promptText="228 111 2222" styleClass="field-input"/>
+
+                                <Label text="Sexo *" styleClass="field-label"/>
+                                <ComboBox fx:id="cmbGender" promptText="Seleccione una opción"
+                                          styleClass="field-input, combo-box-custom" maxWidth="Infinity">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="Masculino" />
+                                            <String fx:value="Femenino" />
+                                            <String fx:value="Otro" />
+                                        </FXCollections>
+                                    </items>
+                                </ComboBox>
+
+                                <Label text="¿Habla lengua indígena? *" styleClass="field-label"/>
+                                <HBox spacing="20" alignment="CENTER_LEFT">
+                                    <fx:define>
+                                        <ToggleGroup fx:id="tgIndigenousLanguage"/>
+                                    </fx:define>
+                                    <RadioButton fx:id="rbYes" text="Sí" toggleGroup="$tgIndigenousLanguage"
+                                                 styleClass="radio-button-custom"
+                                                 onAction="#toggleIndigenousLanguageField"/>
+                                    <RadioButton fx:id="rbNo" text="No" toggleGroup="$tgIndigenousLanguage"
+                                                 styleClass="radio-button-custom" selected="true"
+                                                 onAction="#toggleIndigenousLanguageField"/>
+                                </HBox>
+                                <VBox fx:id="vbLanguageDetail" visible="false" managed="false" spacing="8">
+                                    <Label text="¿Cuál? *" styleClass="field-label"/>
+                                    <TextField fx:id="txtIndigenousLanguage" promptText="Especifique la lengua"
+                                               styleClass="field-input"/>
+                                </VBox>
+
+                                <Label text="Fecha de nacimiento *" styleClass="field-label"/>
+                                <DatePicker fx:id="dpBirthDate" promptText="dd/mm/aaaa"
+                                            styleClass="field-input, date-picker-custom" maxWidth="Infinity"/>
+
+                                <Label text="Matrícula *" styleClass="field-label"/>
+                                <TextField fx:id="txtStudentNumber" promptText="S24013315" styleClass="field-input"/>
+
+                                <Label text="Contraseña *" styleClass="field-label"/>
+                                <TextField fx:id="txtPassword" promptText="Mínimo 8 carácteres"
+                                           styleClass="field-input"/>
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                    <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
+            </VBox>
+        </StackPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding>
+                <Insets top="12" bottom="16" left="48" right="48"/>
+            </padding>
+            <Button text="Cancelar" styleClass="btn-back" onAction="#cancel"/>
+            <Button text="Registrar" styleClass="btn-primary" onAction="#saveIntern"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

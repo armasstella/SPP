@@ -1,12 +1,18 @@
 package spp.businesslogic.dto;
 
+
 import spp.businesslogic.enums.MesaggeStatus;
 
+
 public class MessageDTO {
+    private String subject;
     private String content;
     private MesaggeStatus messageStatus;
     private int sender;
     private int receiver;
+    private String emailSender;
+    private String emailReceiver;
+    private String date;
 
     public MessageDTO() {
 
@@ -43,4 +49,37 @@ public class MessageDTO {
     public int getReceiver() {
         return receiver;
     }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getEmailSender() {
+        return emailSender;
+    }
+
+    public void setEmailSender(String emailSender) {
+        this.emailSender = emailSender;
+    }
+
+    public String getEmailReceiver() {
+        return emailReceiver;
+    }
+
+    public void setEmailReceiver(String emailReceiver) {
+        this.emailReceiver = emailReceiver;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
 }

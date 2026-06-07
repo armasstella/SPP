@@ -1,12 +1,15 @@
 package spp.businesslogic.dto;
 
+
 import java.time.LocalDateTime;
+
 
 public class ActivityDTO {
 
     private String title;
     private String description;
-    private LocalDateTime deadline;
+    private LocalDateTime submissionDate;
+    private InstructorDTO instructorDTO;
 
     public ActivityDTO() {
 
@@ -28,13 +31,20 @@ public class ActivityDTO {
         return description;
     }
 
-    public void setDeadline(LocalDateTime deadline) {
-        this.deadline = deadline;
+    public void setSubmissionDate(LocalDateTime submissionDate) {
+        this.submissionDate = submissionDate;
     }
 
-    public LocalDateTime getDeadline() {
-        return deadline;
+    public LocalDateTime getSubmissionDate() {
+        return submissionDate;
     }
 
+    public InstructorDTO getInstructorDTO() {
+        return instructorDTO;
+    }
+
+    public void setInstructorDTO(InstructorDTO instructorDTO) {
+        this.instructorDTO = instructorDTO;
+    }
 
 }
