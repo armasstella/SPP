@@ -36,7 +36,7 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                     projectManagerDTO.getSecondName());
                 preparedStatement.setString(2, projectManagerDTO.getFirstLastName() + " " +
                     projectManagerDTO.getSecondLastName());
-                preparedStatement.setString(3, projectManagerDTO.getResponsability());
+                preparedStatement.setString(3, projectManagerDTO.getResponsibility());
                 preparedStatement.setString(4, projectManagerDTO.getRole());
                 preparedStatement.setString(5, projectManagerDTO.getPhoneNumber());
 
