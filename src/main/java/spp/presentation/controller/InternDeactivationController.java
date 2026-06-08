@@ -27,8 +27,7 @@ public class InternDeactivationController implements Initializable {
     @FXML private Label lblStatus;
     @FXML private TableView<InternDTO> tblInterns;
     @FXML private TableColumn<InternDTO, String> colStudentNumber;
-    @FXML private TableColumn<InternDTO, String> colNames;
-    @FXML private TableColumn<InternDTO, String> colSurnames;
+    @FXML private TableColumn<InternDTO, String> colFullNames;
     @FXML private TableColumn<InternDTO, String> colEmail;
     private final InternDAO internDAO = new InternDAO();
 
@@ -53,10 +52,8 @@ public class InternDeactivationController implements Initializable {
     private void setUpColumns() {
         colStudentNumber.setCellValueFactory(
                 new GenericNestedSelector<>("studentNumber", "Sin matricula"));
-        colNames.setCellValueFactory(
-                new GenericNestedSelector<>("firstName", "Sin nombres"));
-        colSurnames.setCellValueFactory(
-                new GenericNestedSelector<>("firstLastName", "Sin apellidos"));
+        colFullNames.setCellValueFactory(
+                new GenericNestedSelector<>("fullName", "Sin nombres"));
         colEmail.setCellValueFactory(
                 new GenericNestedSelector<>("email", "Sin correo electrónico"));
 

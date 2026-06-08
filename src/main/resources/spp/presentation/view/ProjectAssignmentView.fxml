@@ -1,63 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="spp.presentation.controller.ProjectAssignmentController"
-            minWidth="720" minHeight="520"
+            prefWidth="940" prefHeight="620"
             styleClass="root-pane"
             stylesheets="@/spp/presentation/css/MainStyle.css">
 
     <top>
         <VBox styleClass="header">
-            <Label text="ASIGNAR PROYECTO" styleClass="header-title"/>
-            <Label text="Nueva Asignación de Proyecto a un Practicante" styleClass="header-subtitle"/>
+            <Label text="Asignar Proyecto" styleClass="header-title"/>
+            <Label text="Nueva Asignación de Proyecto a Practicante" styleClass="header-subtitle"/>
         </VBox>
     </top>
 
     <center>
-        <StackPane>
-            <VBox spacing="14" maxWidth="400" alignment="TOP_CENTER">
-                <padding>
-                    <Insets top="24" bottom="20" left="48" right="48"/>
-                </padding>
-                <ScrollPane>
-                    <content>
-                        <VBox spacing="14">
-                            <padding>
-                                <Insets left="5" right="5" top="5" bottom="5"/>
-                            </padding>
-                            <Label text="Matrícula del Practicante *" styleClass="field-label"/>
-                            <TextField fx:id="txtStudentNumber" promptText="Ej. S24013314"
-                                       styleClass="field-input"/>
+        <HBox styleClass="content-container" spacing="20">
+            <padding><Insets top="24" right="32" bottom="16" left="32"/></padding>
 
-                            <Label text="Proyecto *" styleClass="field-label"/>
-                            <TextField fx:id="txt" promptText="Ingresa el número de Proyecto "
-                                       styleClass="field-input"/>
-                        </VBox>
-                    </content>
-                </ScrollPane>
-                <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
+            <VBox styleClass="panel" spacing="10" HBox.hgrow="ALWAYS">
+                <Label text="Practicantes" styleClass="section-title"/>
+                <TableView fx:id="tblInterns" styleClass="data-table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colStudentNumber" text="Matrícula" prefWidth="140"/>
+                        <TableColumn fx:id="colName" text="Nombre completo" prefWidth="240"/>
+                    </columns>
+                </TableView>
             </VBox>
-        </StackPane>
+
+            <VBox styleClass="panel" spacing="14" HBox.hgrow="ALWAYS">
+                <Label text="Proyectos seleccionados" styleClass="section-title"/>
+
+                <VBox fx:id="vbxSelectedProjects" styleClass="project-list" spacing="14" VBox.vgrow="ALWAYS">
+
+                    <fx:define>
+                        <ToggleGroup fx:id="projectToggleGroup"/>
+                    </fx:define>
+
+                    <Label fx:id="lblNoSelection"
+                           text="Selecciona un practicante para ver sus proyectos"
+                           styleClass="placeholder-text" wrapText="true"/>
+
+                    <ToggleButton fx:id="tglFirstSelectedProject"
+                                  styleClass="project-card"
+                                  toggleGroup="$projectToggleGroup"
+                                  maxWidth="Infinity"
+                                  visible="false" managed="false"/>
+
+                    <ToggleButton fx:id="tglSecondSelectedProject"
+                                  styleClass="project-card"
+                                  toggleGroup="$projectToggleGroup"
+                                  maxWidth="Infinity"
+                                  visible="false" managed="false"/>
+
+                    <ToggleButton fx:id="tglThirdSelectedProject"
+                                  styleClass="project-card"
+                                  toggleGroup="$projectToggleGroup"
+                                  maxWidth="Infinity"
+                                  visible="false" managed="false"/>
+                </VBox>
+            </VBox>
+        </HBox>
     </center>
 
     <bottom>
         <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
-            <padding>
-                <Insets top="12" bottom="16" left="48" right="48"/>
-            </padding>
-            <Button text="Cancelar" styleClass="btn-back" onAction="#cancel"/>
-            <Button text="Asignar" styleClass="btn-primary" onAction="#assignProject"/>
+            <padding><Insets top="12" right="32" bottom="16" left="32"/></padding>
+            <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" HBox.hgrow="ALWAYS"/>
+            <Button text="Cancelar" styleClass="btn-back" onAction="#goToCoordinatorMenuView"/>
+            <Button text="Asignar Proyecto" styleClass="btn-add" onAction="#assignProject"/>
         </HBox>
     </bottom>
 

@@ -60,14 +60,15 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
     }
 
     @Override
-    public boolean searchClassScheduleForIntern(String studentNumber) throws DAOException {
+    public boolean searchClassScheduleForIntern(String email) throws DAOException {
         final String SEARCH_SCHEDULE = "SELECT f_existe_horario_estudiante(?)";
         boolean isSearchSuccessful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_SCHEDULE);
-            preparedStatement.setString(1, studentNumber);
+            UserDAO userDAO = new UserDAO();
+            preparedStatement.setInt(1, userDAO.obtainId(email));
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -85,14 +86,15 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
     }
 
     @Override
-    public boolean searchActivitiesScheduleForIntern(String studentNumber) throws DAOException {
+    public boolean searchActivitiesScheduleForIntern(String email) throws DAOException {
         final String SEARCH_SCHEDULE = "SELECT f_existe_calendarizacion_actividades_estudiante(?)";
         boolean isSearchSuccessful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_SCHEDULE);
-            preparedStatement.setString(1, studentNumber);
+            UserDAO userDAO = new UserDAO();
+            preparedStatement.setInt(1, userDAO.obtainId(email));
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
@@ -107,6 +109,31 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
 
         return isSearchSuccessful;
 
+    }
+
+    @Override
+    public boolean searchPSPForIntern(String studentNumber) throws DAOException {
+        return false;
+    }
+
+    @Override
+    public boolean searchPartialReportForIntern(String studentNumber) throws DAOException {
+        return false;
+    }
+
+    @Override
+    public boolean searchSelfEvaluationForIntern(String studentNumber) throws DAOException {
+        return false;
+    }
+
+    @Override
+    public boolean searchEvaluationLinkedOrganizationForIntern(String studentNumber) throws DAOException {
+        return false;
+    }
+
+    @Override
+    public boolean searchFinalReportForIntern(String studentNumber) throws DAOException {
+        return false;
     }
 
 }

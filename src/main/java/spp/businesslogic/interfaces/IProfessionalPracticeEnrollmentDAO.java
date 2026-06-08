@@ -9,5 +9,6 @@ public interface IProfessionalPracticeEnrollmentDAO {
 
     boolean addProfessionalPracticeEnrollment(ProfessionalPracticeEnrollmentDTO professionalPracticeEnrollmentDTO)
             throws DAOException;
+    boolean assignProjectToInscription(String studentNumber, int idProject) throws DAOException;
 
 }

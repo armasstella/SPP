@@ -73,4 +73,27 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
 
     }
 
+    @Override
+    public boolean assignProjectToInscription(String studentNumber, int idProject) throws DAOException {
+        boolean isProjectAssigned = false;
+        final String ASSIGN_PROJECT =
+                "UPDATE inscripciones_practicas_profesionales " +
+                        "SET id_proyecto = ? " +
+                        "WHERE matricula = ?";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(ASSIGN_PROJECT);
+            preparedStatement.setInt(1, idProject);
+            preparedStatement.setString(2, studentNumber);
+            isProjectAssigned = preparedStatement.executeUpdate() > NO_ROWS_AFFECTED;
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("Error al asignar el proyecto al practicante");
+        }
+
+        return isProjectAssigned;
+    }
+
 }

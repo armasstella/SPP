@@ -17,7 +17,6 @@ public class FileUtils {
     public static final long MAX_BYTES = 50L * 1024 * 1024;
     public static final double BYTES_PER_MB = 1024.0 * 1024.0;
     public static final List<String> ALLOWED_EXTENSIONS = List.of("pdf", "docx");
-    public static final String SCHEDULES_FOLDER = "./documents/schedules/";
 
     public static String getExtension(String fileName) {
         int lastIndex = fileName.lastIndexOf('.');
@@ -25,18 +24,17 @@ public class FileUtils {
 
     }
 
-    public static String generateUniqueName(String studentNumber, String extension) {
+    public static String generateUniqueName(String studentNumber, String extension, String prefix) {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        return "schedule_" + studentNumber + "_" + timestamp + "." + extension;
+        return prefix + "_" + studentNumber + "_" + timestamp + "." + extension;
 
     }
 
-    public static String copyFile(File source, String destinationName) throws IOException {
-        new File(SCHEDULES_FOLDER).mkdirs();
-        Path destination = Paths.get(SCHEDULES_FOLDER + destinationName);
+    public static String copyFile(File source, String destinationFolder, String destinationName) throws IOException {
+        new File(destinationFolder).mkdirs();
+        Path destination = Paths.get(destinationFolder + destinationName);
         Files.copy(source.toPath(), destination, StandardCopyOption.REPLACE_EXISTING);
         return destination.toString();
 
     }
-
 }

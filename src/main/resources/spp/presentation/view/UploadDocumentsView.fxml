@@ -36,21 +36,48 @@
                             <padding>
                                 <Insets left="5" right="5" top="5" bottom="5"/>
                             </padding>
-                            <Label text="Matricula" styleClass="field-label"/>
-                            <TextField fx:id="txtStudentNumber"
-                                       promptText="Ingrese su matrícula para confirmar"
-                                       styleClass="field-input"/>
 
-                                <Button fx:id="btnUploadClassSchedule"
-                                        text="Subir Horario"
-                                        styleClass="option-btn, btn-add"
-                                        onAction="#uploadClassSchedule"
-                                />
+                            <Button fx:id="btnUploadClassSchedule"
+                                    text="Subir Horario"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadClassSchedule"
+                            />
 
-                                <Button text="Subir Cronograma de actividad"
-                                        styleClass="option-btn, btn-add"
-                                        onAction="#uploadActivitiesSchedule"
-                                />
+                            <Button fx:id="btnUploadActivitiesSchedule"
+                                    text="Subir Cronograma de actividad"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadActivitiesSchedule"
+                            />
+
+                            <Button fx:id="btnUploadPSP"
+                                    text="Subir Bitácora PSP"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadPSP"
+                            />
+
+                            <Button fx:id="btnUploadPartialReport"
+                                    text="Subir Reporte Final"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadPartialReport"
+                            />
+
+                            <Button fx:id="btnUploadSelfEvaluation"
+                                    text="Subir Autoevaluación"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadSelfEvaluation"
+                            />
+
+                            <Button fx:id="btnUploadEvaluationLinkedOrganization"
+                                    text="Subir Evaluación Organización Vinculada"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadEvaluationLinkedOrganization"
+                            />
+
+                            <Button fx:id="btnUploadFinalReport"
+                                    text="Subir Reporte Final"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadFinalReport"
+                            />
 
                         </VBox>
                     </content>

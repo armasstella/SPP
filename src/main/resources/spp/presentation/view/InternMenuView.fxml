@@ -46,8 +46,9 @@
                     <padding>
                         <Insets top="28" bottom="28" left="48" right="48"/>
                     </padding>
-                    <Button text="Subir Actividad"
+                    <Button text="Registrar Actividad"
                             styleClass="option-btn, btn-add"
+                            onAction="#goToMonthlyActivityRegistrationView"
                     />
 
                     <Button text="Generar y Subir Reporte"
@@ -63,6 +64,7 @@
                     />
                     <Button text="Solicitar Proyecto"
                             styleClass="option-btn, btn-add"
+                            onAction="#goToAvailableProjectsView"
                     />
                 </VBox>
             </HBox>
