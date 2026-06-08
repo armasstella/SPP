@@ -53,7 +53,7 @@ public class NewProjectManagerController implements Initializable {
         projectManagerDTO.setFirstLastName(txtFirstLastName.getText().trim());
         projectManagerDTO.setSecondLastName(txtSecondLastName.getText().trim());
         projectManagerDTO.setRole(txtRole.getText().trim());
-        projectManagerDTO.setResponsability(txtResponsability.getText().trim());
+        projectManagerDTO.setResponsibility(txtResponsability.getText().trim());
         projectManagerDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
 
         return projectManagerDTO;

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public class ActivityDTO {
 
+    private int id;
     private String title;
     private String description;
     private LocalDateTime submissionDate;
@@ -13,6 +14,14 @@ public class ActivityDTO {
 
     public ActivityDTO() {
 
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void setTitle(String title) {

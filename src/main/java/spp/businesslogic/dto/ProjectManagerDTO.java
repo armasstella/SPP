@@ -8,7 +8,7 @@ public class ProjectManagerDTO {
     private String secondName;
     private String firstLastName;
     private String secondLastName;
-    private String responsability;
+    private String responsibility;
     private String role;
     private String phoneNumber;
 
@@ -56,12 +56,12 @@ public class ProjectManagerDTO {
         return secondLastName;
     }
 
-    public void setResponsability(String responsability) {
-        this.responsability = responsability;
+    public void setResponsibility(String responsibility) {
+        this.responsibility = responsibility;
     }
 
-    public String getResponsability() {
-        return responsability;
+    public String getResponsibility() {
+        return responsibility;
     }
 
     public void setRole(String role) {

@@ -3,9 +3,7 @@ package spp.businesslogic.dto;
 
 public class ProfessionalPracticeEnrollmentDTO {
 
-    private String nrc;
-    private String term;
-    private InstructorDTO instructorDTO;
+    private CourseDTO courseDTO;
     private InternDTO internDTO;
     private int finalGrade;
     private ProjectDTO projectDTO;
@@ -14,30 +12,6 @@ public class ProfessionalPracticeEnrollmentDTO {
 
     public ProfessionalPracticeEnrollmentDTO() {
 
-    }
-
-    public String getNrc() {
-        return nrc;
-    }
-
-    public void setNrc(String nrc) {
-        this.nrc = nrc;
-    }
-
-    public String getTerm() {
-        return term;
-    }
-
-    public void setTerm(String term) {
-        this.term = term;
-    }
-
-    public void setInstructorDTO(InstructorDTO instructorDTO) {
-        this.instructorDTO = instructorDTO;
-    }
-
-    public InstructorDTO getInstructorDTO() {
-        return instructorDTO;
     }
 
     public void setInternDTO(InternDTO internDTO) {
@@ -72,4 +46,11 @@ public class ProfessionalPracticeEnrollmentDTO {
         return coveredHours;
     }
 
+    public void setCourseDTO(CourseDTO courseDTO) {
+        this.courseDTO = courseDTO;
+    }
+
+    public CourseDTO getCourseDTO() {
+        return courseDTO;
+    }
 }
