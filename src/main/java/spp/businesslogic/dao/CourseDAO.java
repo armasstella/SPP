@@ -26,7 +26,7 @@ public class CourseDAO implements ICourseDAO {
 
     @Override
     public boolean addCourse(CourseDTO courseDTO) throws DAOException {
-        final String INSERT_COURSE = "INSERT INTO experienciaseducativas(nrc, bloque, seccion, periodo, " +
+        final String INSERT_COURSE = "INSERT INTO experiencias_educativas(nrc, bloque, seccion, periodo, " +
                 "cupo, detalles, id_usuario_profesor, num_personal) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         boolean isAddSuccesful = false;
 
@@ -119,7 +119,7 @@ public class CourseDAO implements ICourseDAO {
                 " ee.seccion, " +
                 " COALESCE(CONCAT(u_prof.nombre, ' ', u_prof.apellidos), 'Sin profesor asignado') AS nombreProfesor, " +
                 " COUNT(ipp.id_usuario_practicante) AS cantidadPracticantes " +
-                "FROM ExperienciasEducativas ee " +
+                "FROM experiencias_educativas ee " +
                 "LEFT JOIN usuarios u_prof " +
                 "    ON ee.id_usuario_profesor = u_prof.id_usuario " +
                 "LEFT JOIN inscripciones_practicas_profesionales ipp " +
@@ -164,7 +164,7 @@ public class CourseDAO implements ICourseDAO {
     @Override
     public boolean assignInstructorToCourse(CourseDTO courseDTO) throws DAOException {
         final String UPDATE_COURSE_INSTRUCTOR =
-                "UPDATE experienciaseducativas SET id_usuario_profesor = ?, num_personal = ? WHERE id_experiencia_educativa = ?";
+                "UPDATE experiencias_educativas SET id_usuario_profesor = ?, num_personal = ? WHERE id_experiencia_educativa = ?";
         boolean isUpdateSuccessful = false;
 
         try {
