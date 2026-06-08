@@ -3,11 +3,11 @@ package spp.presentation.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import javafx.stage.Window;
+import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.InitialDocumentDTO;
 import spp.businesslogic.enums.DocumentType;
 import spp.businesslogic.exceptions.DAOException;
@@ -15,9 +15,9 @@ import spp.businesslogic.dao.InitialDocumentDAO;
 import spp.businesslogic.dao.InternDAO;
 import spp.utils.file.FileUtils;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.FileChooserUtil;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
-
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -26,16 +26,24 @@ import java.time.LocalDateTime;
 public class UploadDocumentsController {
 
     @FXML private Label lblStatus;
-    @FXML private TextField txtStudentNumber;
-    @FXML private Button btnUploadClassSchedule;
     @FXML private Label lblSelectedDocument;
+
+    @FXML private Button btnUploadClassSchedule;
+    @FXML private Button btnUploadActivitiesSchedule;
+    @FXML private Button btnUploadPSP;
+    @FXML private Button btnUploadPartialReport;
+    @FXML private Button btnUploadSelfEvaluation;
+    @FXML private Button btnUploadEvaluationLinkedOrganization;
+    @FXML private Button btnUploadFinalReport;
     private File selectedDocument;
+    private String currentFolder;
+    private String currentPrefix;
     private final InitialDocumentDTO initialDocumentDTO = new InitialDocumentDTO();
     private final InitialDocumentDAO initialDocumentDAO = new InitialDocumentDAO();
-    private InternDAO internDAO = new InternDAO();
+    private final InternDAO internDAO = new InternDAO();
 
     @FXML
-    private void cancel(ActionEvent event){
+    private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/InternMenuView.fxml",
                 "Menú Practicante", event);
 
@@ -43,58 +51,205 @@ public class UploadDocumentsController {
 
     @FXML
     private void uploadClassSchedule(ActionEvent event) {
-        if (validateEmptyInputs() && searchStudent()) {
-            if (searchClassSchedule()) {
-                StatusLabel.showError(lblStatus, "Ya ha subido el horario.\nComuníquese con el coordinador.");
-            } else {
-                initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.CLASS_SCHEDULE));
-                selectFile(event);
-            }
+        if (existsClassSchedule()) {
+            StatusLabel.showError(lblStatus, "Ya ha subido el horario.\nComuníquese con el coordinador.");
+            return;
         }
 
-    }
-
-    private boolean searchClassSchedule() {
-        boolean existsClassSchedule = false;
-
-        try {
-            existsClassSchedule = initialDocumentDAO.searchClassScheduleForIntern(txtStudentNumber.getText().trim());
-        } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al buscar horario.");
+        if (selectFile(event, "Seleccionar horario")) {
+            initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.CLASS_SCHEDULE));
+            currentFolder = "./documents/schedules/";
+            currentPrefix = "schedule";
         }
-
-        return existsClassSchedule;
 
     }
 
     @FXML
     private void uploadActivitiesSchedule(ActionEvent event) {
-        if (validateEmptyInputs() && searchStudent()) {
-            if (searchActivitiesSchedule()) {
-                StatusLabel.showError(lblStatus, "Ya ha subido la calendarización de actividades." +
-                        "\nComuníquese con el coordinador.");
-            } else {
-                initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.ACTIVITIES_SCHEDULE));
-                selectFile(event);
-            }
+        if (existsActivitiesSchedule()) {
+            StatusLabel.showError(lblStatus, "Ya ha subido la calendarización de actividades.\nComuníquese con el coordinador.");
+            return;
+        }
+
+        if (selectFile(event, "Seleccionar calendarización de actividades")) {
+            initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.ACTIVITIES_SCHEDULE));
+            currentFolder = "./documents/activities/";
+            currentPrefix = "activity";
         }
 
     }
 
-    private boolean searchActivitiesSchedule() {
-        boolean existsActivitiesSchedule = false;
+    @FXML
+    private void uploadPSP(ActionEvent event) {
+        if (existsPSP()) {
+            StatusLabel.showError(lblStatus, "Ya ha subido la bitácora PSP.\nComuníquese con el coordinador.");
+            return;
+        }
 
+        if (selectFile(event, "Seleccionar bitácora PSP")) {
+            initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.PSP));
+            currentFolder = "./documents/psp/";
+            currentPrefix = "psp";
+        }
+
+    }
+
+    @FXML
+    private void uploadPartialReport(ActionEvent event) {
+        if (existsPartialReport()) {
+            StatusLabel.showError(lblStatus, "Ya ha subido el reporte parcial.\nComuníquese con el coordinador.");
+            return;
+        }
+
+        if (selectFile(event, "Seleccionar reporte parcial")) {
+            initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.PARTIAL_REPORT));
+            currentFolder = "./documents/reports/partial/";
+            currentPrefix = "partial";
+        }
+
+    }
+
+    @FXML
+    private void uploadSelfEvaluation(ActionEvent event) {
+        if (existsSelfEvaluation()) {
+            StatusLabel.showError(lblStatus, "Ya ha subido la autoevaluación.\nComuníquese con el coordinador.");
+            return;
+        }
+
+        if (selectFile(event, "Seleccionar autoevaluación")) {
+            initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.SELF_EVALUATION));
+            currentFolder = "./documents/evaluations/self/";
+            currentPrefix = "self_evaluation";
+        }
+
+    }
+
+    @FXML
+    private void uploadEvaluationLinkedOrganization(ActionEvent event) {
+        if (existsEvaluationLinkedOrganization()) {
+            StatusLabel.showError(lblStatus, "Ya ha subido la evaluación de la organización.\nComuníquese con el coordinador.");
+            return;
+        }
+
+        if (selectFile(event, "Seleccionar evaluación de organización vinculada")) {
+            initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.EVALUATION_LINKED_ORGANIZATION));
+            currentFolder = "./documents/evaluations/organization/";
+            currentPrefix = "organization_evaluation";
+        }
+
+    }
+
+    @FXML
+    private void uploadFinalReport(ActionEvent event) {
+        if (existsFinalReport()) {
+            StatusLabel.showError(lblStatus, "Ya ha subido el reporte final.\nComuníquese con el coordinador.");
+            return;
+        }
+
+        if (selectFile(event, "Seleccionar reporte final")) {
+            initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.FINAL_REPORT));
+            currentFolder = "./documents/reports/final/";
+            currentPrefix = "final";
+        }
+
+    }
+
+    private boolean existsClassSchedule() {
+        boolean exists = false;
         try {
-            existsActivitiesSchedule = initialDocumentDAO.searchActivitiesScheduleForIntern(
-                    txtStudentNumber.getText().trim());
+            exists = initialDocumentDAO.searchClassScheduleForIntern(ActiveSessionDTO.get().getEmail());
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al buscar calendarización de actividades.");
+            AppLogger.logError(e);
+            StatusLabel.showError(lblStatus, "Error al buscar el horario.");
         }
-
-        return existsActivitiesSchedule;
+        return exists;
 
     }
 
+    private boolean existsActivitiesSchedule() {
+        boolean exists = false;
+        try {
+            exists = initialDocumentDAO.searchActivitiesScheduleForIntern(ActiveSessionDTO.get().getEmail());
+        } catch (DAOException e) {
+            AppLogger.logError(e);
+            StatusLabel.showError(lblStatus, "Error al buscar la calendarización.");
+        }
+        return exists;
+
+    }
+
+    private boolean existsPSP() {
+        boolean exists = false;
+        try {
+            exists = initialDocumentDAO.searchPSPForIntern(ActiveSessionDTO.get().getEmail());
+        } catch (DAOException e) {
+            AppLogger.logError(e);
+            StatusLabel.showError(lblStatus, "Error al buscar la bitácora PSP.");
+        }
+        return exists;
+
+    }
+
+    private boolean existsPartialReport() {
+        boolean exists = false;
+        try {
+            exists = initialDocumentDAO.searchPartialReportForIntern(ActiveSessionDTO.get().getEmail());
+        } catch (DAOException e) {
+            AppLogger.logError(e);
+            StatusLabel.showError(lblStatus, "Error al buscar el reporte parcial.");
+        }
+        return exists;
+
+    }
+
+    private boolean existsSelfEvaluation() {
+        boolean exists = false;
+        try {
+            exists = initialDocumentDAO.searchSelfEvaluationForIntern(ActiveSessionDTO.get().getEmail());
+        } catch (DAOException e) {
+            AppLogger.logError(e);
+            StatusLabel.showError(lblStatus, "Error al buscar la autoevaluación.");
+        }
+        return exists;
+
+    }
+
+    private boolean existsEvaluationLinkedOrganization() {
+        boolean exists = false;
+        try {
+            exists = initialDocumentDAO.searchEvaluationLinkedOrganizationForIntern(ActiveSessionDTO.get().getEmail());
+        } catch (DAOException e) {
+            AppLogger.logError(e);
+            StatusLabel.showError(lblStatus, "Error al buscar la evaluación de la organización.");
+        }
+        return exists;
+
+    }
+
+    private boolean existsFinalReport() {
+        boolean exists = false;
+        try {
+            exists = initialDocumentDAO.searchFinalReportForIntern(ActiveSessionDTO.get().getEmail());
+        } catch (DAOException e) {
+            AppLogger.logError(e);
+            StatusLabel.showError(lblStatus, "Error al buscar el reporte final.");
+        }
+        return exists;
+
+    }
+
+    private boolean selectFile(ActionEvent event, String dialogTitle) {
+        Window window = ((Node) event.getSource()).getScene().getWindow();
+        File file = FileChooserUtil.selectSingleFile(window, dialogTitle);
+
+        if (file != null) {
+            selectedDocument = file;
+            lblSelectedDocument.setText("Archivo seleccionado: " + selectedDocument.getName());
+            StatusLabel.showSuccess(lblStatus, "Archivo listo para subir.");
+            return true;
+        }
+        return false;
+    }
 
     @FXML
     private void confirm() {
@@ -102,44 +257,24 @@ public class UploadDocumentsController {
             return;
         }
 
-        if (searchStudent()) {
-            if (saveFile()) {
-                if (!saveDataDocument()) {
-                    return;
-                }
-            } else {
+        if (setFileMetadata()) {
+            if (!saveDataDocument()) {
                 return;
             }
-
-            StatusLabel.showSuccess(lblStatus, "Archivo cargado exitosamente");
-            lblSelectedDocument.setText("No hay archivo seleccionado");
-            txtStudentNumber.clear();
-            selectedDocument = null;
+        } else {
+            return;
         }
 
-    }
-
-    private boolean searchStudent() {
-        boolean existsStudentNumber = false;
-
-        try {
-            existsStudentNumber = internDAO.searchStudentNumberRegister(txtStudentNumber.getText().trim());
-        } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "La matricula ingresada no es correcta");
-        }
-
-        return existsStudentNumber;
-
+        StatusLabel.showSuccess(lblStatus, "Archivo cargado exitosamente");
+        lblSelectedDocument.setText("Ningún archivo seleccionado");
+        selectedDocument = null;
+        currentFolder = null;
+        currentPrefix = null;
     }
 
     private boolean validateEmptyInputs() {
         if (selectedDocument == null) {
             StatusLabel.showError(lblStatus, "No se ha elegido un archivo.");
-            return true;
-        }
-
-        if (txtStudentNumber.getText().isBlank()) {
-            StatusLabel.showError(lblStatus, "Completa el campo de matrícula.");
             return true;
         }
 
@@ -161,13 +296,14 @@ public class UploadDocumentsController {
         return false;
     }
 
-    private boolean saveFile() {
+    private boolean setFileMetadata() {
         boolean saveStatus = false;
-        String extension  = FileUtils.getExtension(selectedDocument.getName());
-        String uniqueName = FileUtils.generateUniqueName(txtStudentNumber.getText().trim(), extension);
+        String extension = FileUtils.getExtension(selectedDocument.getName());
 
         try {
-            String finalPath = FileUtils.copyFile(selectedDocument, uniqueName);
+            String studentNumber = internDAO.obtainStudentNumber(ActiveSessionDTO.get().getEmail());
+            String uniqueName = FileUtils.generateUniqueName(studentNumber, extension, currentPrefix);
+            String finalPath = FileUtils.copyFile(selectedDocument, currentFolder, uniqueName);
 
             initialDocumentDTO.setOriginalName(selectedDocument.getName());
             initialDocumentDTO.setSavedName(uniqueName);
@@ -177,48 +313,27 @@ public class UploadDocumentsController {
             initialDocumentDTO.setUploadDate(LocalDateTime.now());
             saveStatus = true;
 
-        } catch (IOException e) {
+        } catch (IOException | DAOException e) {
             AppLogger.logError(e);
-            lblStatus.setText("No se puede guardar el archivo. Intente de nuevo.");
+            StatusLabel.showError(lblStatus, "No se puede guardar el archivo. Intente de nuevo.");
         }
 
         return saveStatus;
-
     }
 
     private boolean saveDataDocument() {
         boolean success = false;
-
         try {
-            success = initialDocumentDAO.saveDocument(txtStudentNumber.getText().trim(), initialDocumentDTO);
-
+            success = initialDocumentDAO.saveDocument(ActiveSessionDTO.get().getEmail(), initialDocumentDTO);
         } catch (DAOException e) {
-            lblStatus.setText("Error al guardar documento: 1.");
+            AppLogger.logError(e);
+            StatusLabel.showError(lblStatus, "Error al guardar documento");
         }
 
         if (!success) {
-            lblStatus.setText("Error al guardar documento. Intenta de nuevo.");
+            StatusLabel.showError(lblStatus, "Error al guardar documento. Intenta de nuevo.");
         }
 
         return success;
-
     }
-
-    private void selectFile(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Seleccionar horario");
-
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Documentos permitidos", "*.pdf", "*.docx")
-        );
-
-        Stage stage = (Stage) btnUploadClassSchedule.getScene().getWindow();
-        selectedDocument = fileChooser.showOpenDialog(stage);
-
-        if (selectedDocument != null) {
-            lblSelectedDocument.setText("Archivo seleccionado: " + selectedDocument.getName());
-        }
-
-    }
-
 }

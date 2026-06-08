@@ -13,5 +13,6 @@ public interface IInternDAO{
     boolean searchStudentNumberRegister(String studentNumber) throws DAOException;
     boolean inactivateIntern(InternDTO internDTO) throws DAOException;
     List<InternDTO> obtainAllActiveInterns() throws DAOException;
+    String obtainStudentNumber(String email) throws DAOException;
 
 }

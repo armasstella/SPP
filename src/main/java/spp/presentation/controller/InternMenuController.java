@@ -3,6 +3,11 @@ package spp.presentation.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import spp.businesslogic.dao.PrioritizedProjectDAO;
+import spp.businesslogic.dao.ProjectDAO;
+import spp.businesslogic.dto.ActiveSessionDTO;
+import spp.utils.logger.AppLogger;
+import spp.utils.view.AlertHelper;
 import spp.utils.view.ViewNavigator;
 
 
@@ -16,9 +21,75 @@ public class InternMenuController {
     }
 
     @FXML
+    private void goToMonthlyActivityRegistrationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/MonthlyActivityRegistersView.fxml",
+                "Registro de actividad", event);
+    }
+
+    @FXML
     private void goToUploadDocumentsView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/UploadDocumentsView.fxml",
                 "Subir documentos", event);
+
+    }
+
+    @FXML
+    private void goToAvailableProjectsView(ActionEvent event) {
+
+        if (searchPrioritizedProjects()) {
+            AlertHelper.showMessage("Operación no permitida", "Ya has seleccionado tres proyectos");
+        } else {
+            if (searchMinimumProjects()) {
+                ViewNavigator.loadView("/spp/presentation/view/AvailableProjectsView.fxml",
+                        "Proyectos disponibles", event);
+            } else {
+                AlertHelper.showErrorMessage("Operación no disponible",
+                        "No hay proyectos suficientes para elección del practicante");
+            }
+        }
+
+    }
+
+    private boolean searchPrioritizedProjects() {
+        boolean hasPrioritizedProjects = false;
+
+        try {
+            PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
+            if (prioritizedProjectDAO.searchPrioritizedProjectsRegister(ActiveSessionDTO.get().getEmail())) {
+                hasPrioritizedProjects = true;
+            }
+
+        } catch (Exception e) {
+            AppLogger.logError(e);
+            AlertHelper.showErrorMessage("Error", "Error al realizar operación.\n" +
+                    "Intente más tarde.");
+
+        }
+
+        return hasPrioritizedProjects;
+
+    }
+
+    private boolean searchMinimumProjects() {
+        boolean isThisOptionAllowed = false;
+        try {
+            ProjectDAO projectDAO = new ProjectDAO();
+            if (projectDAO.verifyMinimumProjects()) {
+                isThisOptionAllowed = true;
+            } else {
+                AlertHelper.showErrorMessage("Operación no disponible",
+                        "No hay proyectos suficientes para elección del practicante");
+            }
+
+            //TODO: Validar si el practicante ya seleccionó 3 proyectos.
+
+        } catch (Exception e) {
+            AppLogger.logError(e);
+            AlertHelper.showErrorMessage("Error", "Error al realizar operación.\n" +
+                    "Intente más tarde.");
+        }
+
+        return isThisOptionAllowed;
 
     }
 

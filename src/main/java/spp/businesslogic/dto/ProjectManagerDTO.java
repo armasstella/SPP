@@ -80,4 +80,9 @@ public class ProjectManagerDTO {
         return phoneNumber;
     }
 
+    @Override
+    public String toString() {
+        return firstName;
+    }
+
 }

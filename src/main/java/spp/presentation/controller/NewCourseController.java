@@ -127,7 +127,7 @@ public class NewCourseController implements Initializable {
     private void loadActiveInstructors() {
         try {
             InstructorDAO instructorDAO = new InstructorDAO();
-            List<InstructorDTO> activeInstructors = instructorDAO.getListActiveInstructors();
+            List<InstructorDTO> activeInstructors = instructorDAO.obtainActiveInstructorForComboBox();
             ObservableList<InstructorDTO> instructorObservableList =
                     FXCollections.observableArrayList(activeInstructors);
             cmbInstructor.setItems(instructorObservableList);

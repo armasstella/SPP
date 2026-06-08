@@ -79,4 +79,9 @@ public class LinkedOrganizationDTO {
         this.email = email;
     }
 
+    @Override
+    public String toString() {
+        return rfc + " | " + getName();
+    }
+
 }
