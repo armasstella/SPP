@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="spp.presentation.controller.ProjectDetailController"
+      prefWidth="460" spacing="14"
+      styleClass="detail-pane"
+      stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <padding><Insets top="24" right="28" bottom="24" left="28"/></padding>
+
+    <Label text="Detalle del Proyecto" styleClass="header-title"/>
+
+    <VBox spacing="3">
+        <Label text="Nombre" styleClass="field-caption"/>
+        <Label fx:id="lblName" styleClass="field-value" wrapText="true"/>
+    </VBox>
+
+    <VBox spacing="3">
+        <Label text="Descripción" styleClass="field-caption"/>
+        <Label fx:id="lblDescription" styleClass="field-value" wrapText="true"/>
+    </VBox>
+
+    <VBox spacing="3">
+        <Label text="Disponibilidad" styleClass="field-caption"/>
+        <Label fx:id="lblAvailability" styleClass="field-value"/>
+    </VBox>
+
+    <VBox spacing="3">
+        <Label text="Cupo" styleClass="field-caption"/>
+        <Label fx:id="lblPlacesAvailable" styleClass="field-value"/>
+    </VBox>
+
+    <VBox spacing="3">
+        <Label text="Organización vinculada" styleClass="field-caption"/>
+        <Label fx:id="lblLinkedOrganization" styleClass="field-value" wrapText="true"/>
+    </VBox>
+
+    <VBox spacing="3">
+        <Label text="Encargado del proyecto" styleClass="field-caption"/>
+        <Label fx:id="lblProjectManager" styleClass="field-value" wrapText="true"/>
+    </VBox>
+
+    <HBox alignment="CENTER_RIGHT" spacing="12">
+        <Button text="Seleccionar proyecto" styleClass="btn-add" onAction="#selectProject"/>
+        <Button text="Cerrar" styleClass="btn-back" onAction="#closeWindow"/>
+    </HBox>
+
+</VBox>
