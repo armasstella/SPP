@@ -5,12 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Assertions;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,16 +26,20 @@ public class InstructorDAOTest {
 
     @BeforeEach
     void setUp() {
+        String uniqueSuffix = String.valueOf(System.currentTimeMillis());
+        String uniquePersonalNumber = uniqueSuffix.substring(uniqueSuffix.length() - 5);
+
         testInstructor.setStatus("Activo");
         testInstructor.setLastConnection("2025-03-17 07:00:00");
         testInstructor.setFirstName("Eliel");
         testInstructor.setSecondName("Gustavo");
         testInstructor.setFirstLastName("Masin");
         testInstructor.setSecondLastName("Campechano");
-        testInstructor.setEmail("eleliel@uv.mx");
-        testInstructor.setPhoneNumber("2293962454");
+
+        testInstructor.setEmail("eli" + uniqueSuffix + "@uv.mx");
+        testInstructor.setPhoneNumber("22939" + uniqueSuffix);
         testInstructor.setPassword(".eliile.");
-        testInstructor.setPersonalNumber("90982");
+        testInstructor.setPersonalNumber(uniquePersonalNumber);
         testInstructor.setShift("Matutino");
     }
 
@@ -58,22 +60,15 @@ public class InstructorDAOTest {
     }
 
     @Test
-    @DisplayName("Debe obtener el id del profesor recién insertado")
-    void testObtainIdSuccess() throws DAOException {
-        int result = instructorDAO.obtainId(testInstructor.getPersonalNumber());
-        Assertions.assertTrue(result > 0);
-    }
-
-    @Test
     @DisplayName("Debe obtener el id de un profesor recién registrado")
     void testObtainIdAfterInsertSuccess() throws DAOException {
         instructorDAO.addInstructor(testInstructor);
-        int idObtainedAfterInsertInstructor = instructorDAO.obtainId(testInstructor.getPersonalNumber());
-        assertNotEquals(0, idObtainedAfterInsertInstructor);
+        int idObtained = instructorDAO.obtainId(testInstructor.getPersonalNumber());
+        assertTrue(idObtained > 0);
     }
 
     @Test
-    @DisplayName("Debe lanzar un error al insertar profesor sin número de personal")
+    @DisplayName("Debe lanzar DAOException al insertar profesor sin número de personal")
     void testAddInstructorFailedNullPersonalNumber() throws DAOException {
         testInstructor.setPersonalNumber(null);
         assertThrows(DAOException.class, () -> {
@@ -82,7 +77,7 @@ public class InstructorDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar un error al insertar profesor sin contraseña")
+    @DisplayName("Debe lanzar DAOException al insertar profesor sin contraseña")
     void testAddInstructorFailedNullPassword() throws DAOException {
         testInstructor.setPassword(null);
         assertThrows(DAOException.class, () -> {
@@ -91,7 +86,7 @@ public class InstructorDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar error al insertar profesor sin nombre")
+    @DisplayName("Debe lanzar DAOException al insertar profesor sin nombre")
     void testAddInstructorFailedNullFirstName() throws DAOException {
         testInstructor.setFirstName(null);
         assertThrows(DAOException.class, () -> {
@@ -122,5 +117,13 @@ public class InstructorDAOTest {
         assertThrows(DAOException.class, () -> {
             instructorDAO.obtainId("999999");
         });
+    }
+
+    @Test
+    @DisplayName("Debe desactivar un profesor existente exitosamente")
+    void testDeactivateInstructorSuccess() throws DAOException {
+        instructorDAO.addInstructor(testInstructor);
+        boolean result = instructorDAO.deactivateInstructor(testInstructor);
+        assertTrue(result);
     }
 }

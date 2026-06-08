@@ -34,18 +34,20 @@ public class UserDAOTest {
 
     @BeforeEach
     void setUp() {
-        testUser = new UserDTO();
+        String uniqueSuffix = String.valueOf(System.currentTimeMillis());
+        String uniqueEmail = "stella" + uniqueSuffix.substring(
+                uniqueSuffix.length() - 8) + "@uv.mx";
+
         testUser.setFirstName("Nicole");
         testUser.setSecondName("Stella");
         testUser.setFirstLastName("Armas");
         testUser.setSecondLastName("Mendoza");
-        testUser.setEmail("zs24013315@estudiantes.uv.mx");
+        testUser.setEmail(uniqueEmail);
         testUser.setPhoneNumber("2284457188");
         testUser.setPassword("100LQ0612b!c");
     }
 
     @Test
-    @Order(1)
     @DisplayName("Debe insertar un administrador y devolver un id generado mayor a 0")
     void testAddAdminSuccess() throws DAOException {
         int generatedId = userDAO.addUser(testUser);
@@ -53,41 +55,45 @@ public class UserDAOTest {
     }
 
     @Test
-    @Order(2)
     @DisplayName("Debe obtener el id del administrador recién insertado")
     void testObtainIdSuccess() throws DAOException {
+        userDAO.addUser(testUser);
         int result = userDAO.obtainId(testUser.getEmail());
         Assertions.assertTrue(result > 0);
     }
 
     @Test
-    @Order(3)
     @DisplayName("Debe autenticar correctamente al administrador")
     void testLoginSuccess() throws DAOException {
+        userDAO.addUser(testUser);
         LoginResultDTO result = userDAO.login(testUser.getEmail(), testUser.getPassword());
         Assertions.assertNotNull(result);
         Assertions.assertEquals("Administrador", result.getUserType());
     }
 
     @Test
-    @Order(4)
-    @DisplayName("Debe fallar el login con contraseña incorrecta")
+    @DisplayName("Debe lanzar DAOException con contraseña incorrecta")
     void testLoginWrongPassword() throws DAOException {
-        LoginResultDTO result = userDAO.login(testUser.getEmail(), "ContraseñaWrong123!");
-        assertNull(result);
+        userDAO.addUser(testUser);
+        assertThrows(DAOException.class, () -> {
+            userDAO.login(testUser.getEmail(), "ContraseñaWrong123!");
+        });
     }
 
     @Test
     @Order(5)
     @DisplayName("Debe lanzar DAOException al insertar un email duplicado")
-    void testAddAdminDuplicateEmail() {
-        assertThrows(DAOException.class, () -> userDAO.addUser(testUser));
+    void testAddAdminDuplicateEmail() throws  DAOException {
+        userDAO.addUser(testUser);
+        assertThrows(DAOException.class, () ->
+                userDAO.addUser(testUser));
     }
 
     @Test
     @DisplayName("Debe devolver null al iniciar sesión con correo inexistente")
     void testLoginNonExistentEmail() throws DAOException {
-        LoginResultDTO result = userDAO.login("zs21123423@estudiantes.uv.mx", "qAmNAO91A.A");
+        LoginResultDTO result = userDAO.login("zs21123423@estudiantes.uv.mx",
+                "qAmNAO91A.A");
         assertNull(result);
     }
 
@@ -113,7 +119,7 @@ public class UserDAOTest {
     @DisplayName("Debe lanzar error al obtener id de un correo inexistente")
     void testObtainIdNonExistentEmail() {
         assertThrows(DAOException.class, () -> {
-            userDAO.obtainId("inexistente@uv.mx");
+            userDAO.obtainId("inexistente121@uv.mx");
         });
     }
 

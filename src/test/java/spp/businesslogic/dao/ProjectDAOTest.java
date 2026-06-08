@@ -34,7 +34,9 @@ public class ProjectDAOTest {
         projectManagerDTO.setId(1);
         linkedOrganizationDTO.setId(1);
 
-        testProject.setName("Test Project");
+        String uniqueSuffix = String.valueOf(System.currentTimeMillis());
+
+        testProject.setName("Bolsa de Trabajo" + uniqueSuffix);
         testProject.setDescription("Desarrollo de un sistema web de la Universidad Mexicana " +
                 "para la bolsa de trabajo");
         testProject.setAvailability("Disponible");
@@ -50,15 +52,6 @@ public class ProjectDAOTest {
         assertTrue(result);
     }
 
-
-    @Test
-    @DisplayName("Debe insertar un proyecto con nombre")
-    void testAddProjectWithNameSuccess() throws DAOException {
-        testProject.setName("Sistema de Gestión de Prácticas");
-        boolean result = projectDAO.addProject(testProject);
-        assertTrue(result);
-    }
-
     @Test
     @DisplayName("Debe lanzar DAOException cuando no hay una organización vinculada asignada")
     void testAddProjectFailedMissingLinkedOrganization() throws DAOException {
@@ -66,15 +59,6 @@ public class ProjectDAOTest {
         assertThrows(DAOException.class, () -> {
             projectDAO.addProject(testProject);
         });
-    }
-
-    @Test
-    @DisplayName("Debe insertar proyecto con descripción")
-    void testAddProjectWithDescriptionSuccess() throws DAOException {
-        testProject.setDescription(
-                "Proyecto enfocado al desarrollo de aplicaciones empresariales");
-        boolean result = projectDAO.addProject(testProject);
-        assertTrue(result);
     }
 
     @Test
@@ -126,7 +110,6 @@ public class ProjectDAOTest {
     @DisplayName("Debe lanzar DAOException cuando el nombre del proyecto ya existe")
     void testAddProjectFailedDuplicateName() throws DAOException {
         projectDAO.addProject(testProject);
-        testProject.setName("Sistema de Gestión de Prácticas");
         assertThrows(DAOException.class, () -> {
             projectDAO.addProject(testProject);
         });

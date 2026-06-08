@@ -21,18 +21,21 @@ public class LinkedOrganizationDAOTest {
     void setUpAll() {
         linkedOrganizationDAO = new LinkedOrganizationDAO();
         testLinkedOrganization = new LinkedOrganizationDTO();
-
     }
 
     @BeforeEach
     void setUp() {
-        testLinkedOrganization.setName("Aceites de Palma A.C., de C.V");
-        testLinkedOrganization.setRfc("RFC131A98WTAB12");
-        testLinkedOrganization.setAddress("Guadalupe Victoria 111");
-        testLinkedOrganization.setFiscalAddress("Guadalupe Victoria 311");
-        testLinkedOrganization.setBusiness("Industrial");
-        testLinkedOrganization.setPhoneNumber("9241564162");
-        testLinkedOrganization.setEmail("aceitespalma@aceites.mx");
+        String uniqueSuffix = String.valueOf(System.currentTimeMillis());
+        String shortSuffix = uniqueSuffix.substring(uniqueSuffix.length() - 5);
+        String uniqueRfc = "DEV" + shortSuffix + "XYZ";
+
+        testLinkedOrganization.setName("TechSolutions " + shortSuffix);
+        testLinkedOrganization.setRfc(uniqueRfc);
+        testLinkedOrganization.setAddress("Av. Mártires 28 de Agosto 111");
+        testLinkedOrganization.setFiscalAddress("Av. Mártires 28 de Agosto 111");
+        testLinkedOrganization.setBusiness("Desarrollo de Software");
+        testLinkedOrganization.setPhoneNumber("228123" + shortSuffix.substring(0, 4));
+        testLinkedOrganization.setEmail("tech" + shortSuffix + "@techsolutions.mx");
     }
 
     @Test
@@ -43,44 +46,33 @@ public class LinkedOrganizationDAOTest {
     }
 
     @Test
-    @DisplayName("Debe agregar organización con giro")
+    @DisplayName("Debe agregar organización con giro modificado")
     void testAddLinkedOrganizationWithBusinessSuccess() throws DAOException {
-        testLinkedOrganization.setBusiness("Tecnología");
-        boolean result =
-                linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
+        testLinkedOrganization.setBusiness("Consultoría de TI");
+        boolean result = linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
         assertTrue(result);
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException al insertar un dato duplicado")
+    @DisplayName("Debe lanzar DAOException al insertar exactamente la misma organización dos veces")
     void testAddLinkedOrganizationFailedDuplicatedData() throws DAOException {
         linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
-        assertThrows(DAOException.class, () ->
-            linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization));
+        assertThrows(DAOException.class, () -> {
+            linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
+        });
     }
 
     @Test
-    @DisplayName("Debe agregar organización con dirección fiscal igual a la dirección")
-    void testAddLinkedOrganizationWithSameAddressesSuccess() throws DAOException {
-        testLinkedOrganization.setFiscalAddress(
-                testLinkedOrganization.getAddress());
-        boolean result =
-                linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
-        assertTrue(result);
-    }
-
-    @Test
-    @DisplayName("Debe agregar organización con correo institucional")
-    void testAddLinkedOrganizationWithEmailSuccess() throws DAOException {
-        testLinkedOrganization.setEmail("contacto@palma.com.mx");
-        boolean result =
-                linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
+    @DisplayName("Debe agregar organización con dirección fiscal distinta a la dirección física")
+    void testAddLinkedOrganizationWithDifferentAddressesSuccess() throws DAOException {
+        testLinkedOrganization.setFiscalAddress("Calle Nueva 999, Centro");
+        boolean result = linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
         assertTrue(result);
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException al insertar organización sin nombre")
-    void testAddLinkedOrganizationFailedNullName() throws DAOException {
+    void testAddLinkedOrganizationFailedNullName() {
         testLinkedOrganization.setName(null);
         assertThrows(DAOException.class, () -> {
             linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
@@ -89,7 +81,7 @@ public class LinkedOrganizationDAOTest {
 
     @Test
     @DisplayName("Debe lanzar DAOException al insertar organización sin RFC")
-    void testAddLinkedOrganizationFailedNullRFC() throws DAOException {
+    void testAddLinkedOrganizationFailedNullRFC() {
         testLinkedOrganization.setRfc(null);
         assertThrows(DAOException.class, () -> {
             linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
@@ -98,7 +90,7 @@ public class LinkedOrganizationDAOTest {
 
     @Test
     @DisplayName("Debe lanzar DAOException al insertar organización sin dirección")
-    void testAddLinkedOrganizationFailedNullAddress() throws DAOException {
+    void testAddLinkedOrganizationFailedNullAddress() {
         testLinkedOrganization.setAddress(null);
         assertThrows(DAOException.class, () -> {
             linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
@@ -107,7 +99,7 @@ public class LinkedOrganizationDAOTest {
 
     @Test
     @DisplayName("Debe lanzar DAOException al insertar organización sin correo")
-    void testAddLinkedOrganizationFailedNullEmail() throws DAOException {
+    void testAddLinkedOrganizationFailedNullEmail() {
         testLinkedOrganization.setEmail(null);
         assertThrows(DAOException.class, () -> {
             linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
@@ -116,7 +108,7 @@ public class LinkedOrganizationDAOTest {
 
     @Test
     @DisplayName("Debe lanzar DAOException al insertar organización sin teléfono")
-    void testAddLinkedOrganizationFailedNullPhoneNumber() throws DAOException {
+    void testAddLinkedOrganizationFailedNullPhoneNumber() {
         testLinkedOrganization.setPhoneNumber(null);
         assertThrows(DAOException.class, () -> {
             linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
@@ -124,11 +116,19 @@ public class LinkedOrganizationDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar error al insertar RFC duplicado")
+    @DisplayName("Debe lanzar error al insertar un RFC que ya le pertenece a otra empresa")
     void testAddLinkedOrganizationFailedDuplicateRFC() throws DAOException {
         linkedOrganizationDAO.addLinkedOrganization(testLinkedOrganization);
         LinkedOrganizationDTO duplicateOrganization = new LinkedOrganizationDTO();
+        duplicateOrganization.setName("Consultores de Sistemas Alternos");
+        duplicateOrganization.setAddress("Calle Falsa 123");
+        duplicateOrganization.setFiscalAddress("Calle Falsa 123");
+        duplicateOrganization.setBusiness("Auditoría");
+        duplicateOrganization.setPhoneNumber("2289999999");
+        duplicateOrganization.setEmail("auditoria@sistemas.mx");
+
         duplicateOrganization.setRfc(testLinkedOrganization.getRfc());
+
         assertThrows(DAOException.class, () -> {
             linkedOrganizationDAO.addLinkedOrganization(duplicateOrganization);
         });

@@ -9,6 +9,10 @@ import org.junit.jupiter.api.DisplayName;
 import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,16 +30,20 @@ public class CoordinatorDAOTest {
 
     @BeforeEach
     void setUp() {
+
+        String uniqueSuffix = String.valueOf(System.currentTimeMillis());
+        String uniquePersonalNumber = uniqueSuffix.substring(uniqueSuffix.length() - 5);
+
         testCoordinator.setStatus("Activo");
         testCoordinator.setLastConnection("2025-05-12 12:00:00");
         testCoordinator.setFirstName("Leonardo");
         testCoordinator.setSecondName(null);
         testCoordinator.setFirstLastName("Masin");
         testCoordinator.setSecondLastName(null);
-        testCoordinator.setEmail("leomado@uv.mx");
-        testCoordinator.setPhoneNumber("8565567890");
+        testCoordinator.setEmail("leo" + uniquePersonalNumber + "@uv.mx");
+        testCoordinator.setPhoneNumber("8565" + uniquePersonalNumber);
         testCoordinator.setPassword("le000ps");
-        testCoordinator.setPersonalNumber("14101");
+        testCoordinator.setPersonalNumber(uniquePersonalNumber);
     }
 
     @Test
@@ -57,7 +65,7 @@ public class CoordinatorDAOTest {
     @Test
     @DisplayName("Debe inactivar un coordinador existente")
     void testInactivateCoordinatorSuccess() throws DAOException {
-        coordinatorDAO.inactivateCoordinator(testCoordinator);
+        coordinatorDAO.addCoordinator(testCoordinator);
         boolean result = coordinatorDAO.inactivateCoordinator(testCoordinator);
         assertTrue(result);
     }
@@ -65,13 +73,14 @@ public class CoordinatorDAOTest {
     @Test
     @DisplayName("Debe activar un coordinador existente")
     void testActivateCoordinatorSuccess() throws DAOException {
+        coordinatorDAO.addCoordinator(testCoordinator);
         coordinatorDAO.inactivateCoordinator(testCoordinator);
         boolean result = coordinatorDAO.activateCoordinator(testCoordinator);
         assertTrue(result);
     }
 
     @Test
-    @DisplayName("Debe lanzar error al insertar coordinador sin número de personal")
+    @DisplayName("Debe lanzar DAOException al insertar coordinador sin número de personal")
     void testAddCoordinatorFailedNullPersonalNumber() throws DAOException {
         testCoordinator.setPersonalNumber(null);
         assertThrows(DAOException.class, () -> {
@@ -80,7 +89,7 @@ public class CoordinatorDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar error al insertar coordinador sin contraseña")
+    @DisplayName("Debe lanzar DAOException al insertar coordinador sin contraseña")
     void testAddCoordinatorFailedNullPassword() throws DAOException {
         testCoordinator.setPassword(null);
         assertThrows(DAOException.class, () -> {
@@ -89,7 +98,7 @@ public class CoordinatorDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar error al agregar coordinador con correo nulo")
+    @DisplayName("Debe lanzar DAOException al agregar coordinador con correo nulo")
     void testAddCoordinatorFailedNullEmail() throws DAOException {
         testCoordinator.setEmail(null);
         assertThrows(DAOException.class, () -> {
@@ -98,7 +107,7 @@ public class CoordinatorDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar error al agregar coordinador con teléfono nulo")
+    @DisplayName("Debe lanzar DAOException al agregar coordinador con teléfono nulo")
     void testAddCoordinatorFailedNullPhoneNumber() throws DAOException {
         testCoordinator.setPhoneNumber(null);
         assertThrows(DAOException.class, () -> {
@@ -107,7 +116,7 @@ public class CoordinatorDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar error al agregar coordinador con apellido paterno nulo")
+    @DisplayName("Debe lanzar DAOException al agregar coordinador con apellido paterno nulo")
     void testAddCoordinatorFailedNullFirstLastName() throws DAOException {
         testCoordinator.setFirstLastName(null);
         assertThrows(DAOException.class, () -> {
@@ -116,7 +125,7 @@ public class CoordinatorDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar error al insertar coordinador con nombre nulo")
+    @DisplayName("Debe lanzar DAOException al insertar coordinador con nombre nulo")
     void testAddCoordinatorFailedNullFirstName() throws DAOException {
         testCoordinator.setFirstName(null);
         assertThrows(DAOException.class, () -> {
@@ -125,11 +134,39 @@ public class CoordinatorDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException al intentar inactivar dos veces el mismo coordinador")
-    void testInactivateCoordinatorFailedAlreadyInactive() throws DAOException {
+    @DisplayName("Debe devolver true al verificar existencia de un coordinador activo")
+    void testExistCoordinatorSuccess() throws DAOException {
+        coordinatorDAO.addCoordinator(testCoordinator);
+        boolean exists = coordinatorDAO.existCoordinator(testCoordinator.getPersonalNumber());
+        assertTrue(exists);
+    }
+
+    @Test
+    @DisplayName("Debe devolver false al verificar existencia de un número de personal falso (Flujo Alterno)")
+    void testExistCoordinatorFailedNonExistent() throws DAOException {
+        boolean exists = coordinatorDAO.existCoordinator("00000");
+        assertFalse(exists);
+    }
+
+    @Test
+    @DisplayName("Debe devolver false si el coordinador existe, pero está Inactivo")
+    void testExistCoordinatorFailedWhenInactive() throws DAOException {
+        coordinatorDAO.addCoordinator(testCoordinator);
         coordinatorDAO.inactivateCoordinator(testCoordinator);
-        assertThrows(DAOException.class, () -> {
-            coordinatorDAO.inactivateCoordinator(testCoordinator);
-        });
+        boolean exists = coordinatorDAO.existCoordinator(testCoordinator.getPersonalNumber());
+        assertFalse(exists);
+    }
+
+    @Test
+    @DisplayName("Debe recuperar correctamente la lista de todos los coordinadores activos")
+    void testObtainAllActiveCoordinatorsSuccess() throws DAOException {
+        coordinatorDAO.addCoordinator(testCoordinator);
+        List<CoordinatorDTO> coordinators = coordinatorDAO.obtainAllActiveCoordinators();
+        assertNotNull(coordinators);
+        assertFalse(coordinators.isEmpty(), "La lista de coordinadores no debería estar vacía.");
+
+        CoordinatorDTO firstCoordinator = coordinators.get(0);
+        assertNotNull(firstCoordinator.getFirstName());
+        assertNotNull(firstCoordinator.getEmail());
     }
 }

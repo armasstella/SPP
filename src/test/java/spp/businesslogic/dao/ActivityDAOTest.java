@@ -31,11 +31,11 @@ public class ActivityDAOTest {
 
     @BeforeEach
     void setUp() {
-        instructorDTO.setId(7);
-        instructorDTO.setPersonalNumber("12720");
+        instructorDTO.setId(6);
+        instructorDTO.setPersonalNumber("09876");
 
-        testActivity.setTitle("Actividad de Prueba JUnit");
-        testActivity.setDescription("Descripción detallada de la actividad de prueba.");
+        testActivity.setTitle("Práctica #1: Polimorfismo");
+        testActivity.setDescription("Código y lógica (100%).");
         testActivity.setSubmissionDate(LocalDateTime.now().plusDays(7));
         testActivity.setInstructorDTO(instructorDTO);
     }
@@ -43,6 +43,43 @@ public class ActivityDAOTest {
     @Test
     @DisplayName("Debe insertar una actividad exitosamente")
     void testAddActivitySuccess() throws DAOException {
+        boolean result = activityDAO.addActivity(testActivity);
+        assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("Debe lanzar DAOException al insertar un título que exceda la longitud permitida")
+    void testAddActivityFailedTitleTooLong() {
+        String excessivelyLongTitle = "A".repeat(300);
+        testActivity.setTitle(excessivelyLongTitle);
+        assertThrows(DAOException.class, () -> {
+            activityDAO.addActivity(testActivity);
+        });
+    }
+
+    @Test
+    @DisplayName("Debe lanzar DAOException al insertar una descripción que exceda la longitud permitida")
+    void testAddActivityFailedDescriptionTooLong() {
+        String excessivelyLongDescription = "B".repeat(1000);
+        testActivity.setDescription(excessivelyLongDescription);
+        assertThrows(DAOException.class, () -> {
+            activityDAO.addActivity(testActivity);
+        });
+    }
+
+    @Test
+    @DisplayName("Debe insertar exitosamente y neutralizar un intento de inyección SQL")
+    void testAddActivitySuccessWithSQLInjectionAttempt() throws DAOException {
+        testActivity.setTitle("'; DROP TABLE Actividades;--");
+        boolean result = activityDAO.addActivity(testActivity);
+        assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("Debe insertar exitosamente una actividad con caracteres especiales y acentos")
+    void testAddActivitySuccessWithSpecialCharacters() throws DAOException {
+        testActivity.setTitle("Práctica de Programación #1");
+        testActivity.setDescription("El alumno deberá investigar: 100% enfocado en código");
         boolean result = activityDAO.addActivity(testActivity);
         assertTrue(result);
     }
