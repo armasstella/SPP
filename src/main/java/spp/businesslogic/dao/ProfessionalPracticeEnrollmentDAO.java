@@ -24,8 +24,8 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
     public boolean addProfessionalPracticeEnrollment(ProfessionalPracticeEnrollmentDTO
         professionalPracticeEnrollmentDTO) throws DAOException {
         final String INSERT_PROFESSIONAL_PRACTICE_ENROLLMENT = "INSERT INTO Inscripciones_Practicas_Profesionales " +
-                "(nrc, periodo, id_usuario_practicante, matricula, id_usuario_profesor, num_personal, " +
-                "calificacion_final, id_proyecto, horas_cubiertas) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "(id_experiencia_educativa, id_usuario_practicante, matricula, " +
+                "calificacion_final, id_proyecto, horas_cubiertas) VALUES (?, ?, ?, ?, ?, ?)";
         boolean isAddSuccesful = false;
 
         try {
@@ -35,12 +35,14 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement
                     (INSERT_PROFESSIONAL_PRACTICE_ENROLLMENT);
-                preparedStatement.setString(1, professionalPracticeEnrollmentDTO.getNrc());
-                preparedStatement.setString(2, professionalPracticeEnrollmentDTO.getTerm());
-                preparedStatement.setInt(3, professionalPracticeEnrollmentDTO.getInternDTO().getId());
-                preparedStatement.setString(4, professionalPracticeEnrollmentDTO.getInternDTO().
+                preparedStatement.setInt(1, professionalPracticeEnrollmentDTO.getCourseDTO().
+                        getCourseCode());
+                preparedStatement.setInt(2, professionalPracticeEnrollmentDTO.getInternDTO().getId());
+                preparedStatement.setString(3, professionalPracticeEnrollmentDTO.getInternDTO().
                         getStudentNumber());
-                preparedStatement.setInt(5, professionalPracticeEnrollmentDTO.getInstructorDTO().getId());
+                preparedStatement.setInt(4, professionalPracticeEnrollmentDTO.getFinalGrade());
+                preparedStatement.setInt(5, professionalPracticeEnrollmentDTO.getProjectDTO().getId());
+                preparedStatement.setInt(6, professionalPracticeEnrollmentDTO.getCoveredHours());
 
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows == NO_ROWS_AFFECTED) {
