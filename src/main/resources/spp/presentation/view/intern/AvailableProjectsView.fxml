@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.intern.AvailableProjectsController"
+            prefWidth="680" prefHeight="700"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <top>
+        <VBox styleClass="header">
+            <Label text="Elección de Proyectos" styleClass="header-title"/>
+            <Label text="Selecciona un proyecto para ver su información y elegirlo" styleClass="header-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox styleClass="content-container" spacing="10">
+            <padding><Insets top="20" right="32" bottom="16" left="32"/></padding>
+
+            <Label fx:id="lblCounter" text="0 de 3 proyectos elegidos." styleClass="counter-label"/>
+
+            <Label text="Proyectos elegidos" styleClass="section-title"/>
+            <TableView fx:id="tblChosenProjects" styleClass="data-table" prefHeight="250">
+                <columns>
+                    <TableColumn fx:id="colChosenName" text="Nombre" prefWidth="400"/>
+                    <TableColumn fx:id="colChosenAvailability" text="Disponibilidad" prefWidth="180"/>
+                </columns>
+            </TableView>
+
+            <Label text="Proyectos disponibles" styleClass="section-title"/>
+            <TableView fx:id="tblProjects" styleClass="data-table" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colName" text="Nombre" prefWidth="400"/>
+                    <TableColumn fx:id="colAvailability" text="Disponibilidad" prefWidth="180"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding><Insets top="12" right="32" bottom="16" left="32"/></padding>
+            <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" HBox.hgrow="ALWAYS"/>
+            <Button text="Regresar" styleClass="btn-back" onAction="#goToInternMenuView"/>
+            <Button text="Finalizar elección" styleClass="btn-add" onAction="#finishSelection"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
