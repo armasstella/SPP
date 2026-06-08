@@ -90,7 +90,7 @@ public class MessageDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar error al enviar mensaje sin contenido")
+    @DisplayName("Debe lanzar DAOException al enviar mensaje sin contenido")
     void testSendMessageFailedEmptyContent() throws DAOException {
         testMessage.setContent("");
         assertThrows(DAOException.class, () -> {
@@ -99,7 +99,7 @@ public class MessageDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar error al enviar mensaje sin remitente")
+    @DisplayName("Debe lanzar DAOException al enviar mensaje sin remitente")
     void testSendMessageFailedNullSender() throws DAOException {
         testMessage.setSender(0);
         assertThrows(DAOException.class, () -> {
@@ -108,22 +108,20 @@ public class MessageDAOTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar error al enviar mensaje sin destinatario")
-    void testSendMessageFailedNullRecipient() throws DAOException {
-        testMessage.setReceiver(0);
+    @DisplayName("Debe lanzar DAOException al enviar mensaje sin destinatario")
+    void testSendMessageFailedNullRecipientEmail() throws DAOException {
+        testMessage.setEmailReceiver(null);
         assertThrows(DAOException.class, () -> {
             messageDAO.sendMessage(testMessage);
         });
     }
 
     @Test
-    @DisplayName("Debe enviar mensaje con asunto largo")
-    void testSendMessageLongSubjectSuccess() throws DAOException {
-        testMessage.setSubject(
-                "Mensaje de prueba para validar el manejo de asuntos largos," +
-                        "Mensaje de prueba para validar el manejo de asuntos largos," +
-                        "Mensaje de prueba para validar el manejo de asuntos largos");
-        boolean result = messageDAO.sendMessage(testMessage);
-        assertTrue(result);
+    @DisplayName("Debe lanzar error al intentar enviar un mensaje con asunto demasiado largo")
+    void testSendMessageFailedLongSubject() {
+        testMessage.setSubject("A".repeat(300));
+        assertThrows(DAOException.class, () -> {
+            messageDAO.sendMessage(testMessage);
+        });
     }
 }
