@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.ComboBox?>
+<?import java.lang.String?>
+
+<?import javafx.scene.layout.StackPane?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.admin.NewInstructorController"
+            minWidth="720" minHeight="520"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <top>
+        <VBox styleClass="header">
+            <Label text="REGISTRAR PROFESOR" styleClass="header-title"/>
+            <Label text="Nuevo Profesor" styleClass="header-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <StackPane>
+            <VBox spacing="14" maxWidth="400" alignment="TOP_CENTER">
+                <padding>
+                    <Insets top="24" bottom="20" left="48" right="48"/>
+                </padding>
+                <ScrollPane>
+                    <content>
+                        <VBox spacing="14">
+                            <padding>
+                                <Insets left="5" right="5" top="5" bottom="5"/>
+                            </padding>
+                            <Label text="Primer nombre *" styleClass="field-label"/>
+                            <TextField fx:id="txtFirstName" promptText="Ej. Juan" styleClass="field-input"/>
+
+                            <Label text="Segundo nombre" styleClass="field-label"/>
+                            <TextField fx:id="txtSecondName" promptText="Ej. Carlos" styleClass="field-input"/>
+
+                            <Label text="Primer apellido *" styleClass="field-label"/>
+                            <TextField fx:id="txtFirstLastName" promptText="Ej. García"
+                                       styleClass="field-input"/>
+
+                            <Label text="Segundo apellido" styleClass="field-label"/>
+                            <TextField fx:id="txtSecondLastName" promptText="Ej. López"
+                                       styleClass="field-input"/>
+
+                            <Label text="Correo electrónico *" styleClass="field-label"/>
+                            <TextField fx:id="txtEmail" promptText="correo@uv.mx" styleClass="field-input"/>
+
+                            <Label text="Teléfono *" styleClass="field-label"/>
+                            <TextField fx:id="txtPhoneNumber" promptText="228 111 2222"
+                                       styleClass="field-input"/>
+
+                            <Label text="Número de personal *" styleClass="field-label"/>
+                            <TextField fx:id="txtPersonalNumber" promptText="Ej. 12345"
+                                       styleClass="field-input"/>
+
+                            <Label text="Turno *" styleClass="field-label"/>
+                            <ComboBox fx:id="cmbShift" promptText="Seleccione una opción"
+                                      styleClass="field-input, combo-box-custom" maxWidth="Infinity">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="Matutino" />
+                                        <String fx:value="Vespertino" />
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+
+                            <Label text="Contraseña *" styleClass="field-label"/>
+                            <TextField fx:id="txtPassword" promptText="Mínimo 8 carácteres"
+                                       styleClass="field-input"/>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+                <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
+            </VBox>
+        </StackPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding><Insets top="12" bottom="16" left="48" right="48"/></padding>
+            <Button text="Cancelar" styleClass="btn-back" onAction="#cancel"/>
+            <Button text="Registrar" styleClass="btn-primary" onAction="#saveInstructor"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
