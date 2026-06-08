@@ -12,5 +12,4 @@ public class SessionDTO {
     public String getEmail() {
         return email;
     }
-
 }
