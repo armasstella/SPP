@@ -29,7 +29,7 @@ public class MonthlyActivityRegistersController implements Initializable {
 
     @FXML
     private void goBackToMenu(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/InternenuView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/InternMenuView.fxml",
                 "Menú Practicante", event);
     }
 

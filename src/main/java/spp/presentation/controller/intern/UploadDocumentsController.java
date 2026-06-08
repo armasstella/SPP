@@ -27,7 +27,6 @@ public class UploadDocumentsController {
 
     @FXML private Label lblStatus;
     @FXML private Label lblSelectedDocument;
-
     @FXML private Button btnUploadClassSchedule;
     @FXML private Button btnUploadActivitiesSchedule;
     @FXML private Button btnUploadPSP;
