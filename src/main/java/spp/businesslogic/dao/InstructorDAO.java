@@ -50,6 +50,11 @@ public class InstructorDAO implements IInstructorDAO {
                 connection.commit();
                 isAddSuccessful = true;
 
+            } catch (IllegalArgumentException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw new DAOException("ERROR: Datos de profesor inválidos", e);
+
             } catch (DAOException e) {
                 connection.rollback();
                 AppLogger.logError(e);
@@ -59,7 +64,7 @@ public class InstructorDAO implements IInstructorDAO {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new SQLIntegrityConstraintViolationException(
-                        "WARN: Violación de integridad de datos al insertar", e);
+                        "WARN: El correo o número de personal ya están registrados en el sistema", e);
 
             } catch (SQLException e) {
                 connection.rollback();

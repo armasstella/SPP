@@ -42,7 +42,7 @@ public class InternDAO implements IInternDAO {
                 PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INTERN);
                 preparedStatement.setInt(1, generatedId);
                 preparedStatement.setString(2, internDTO.getStudentNumber());
-                preparedStatement.setString(3, internDTO.getGender());
+                preparedStatement.setString(3, internDTO.getSex());
                 preparedStatement.setString(4, internDTO.getSpeaksIndigenousLanguage() + ": "
                         + internDTO.getIndigenousLanguage());
                 preparedStatement.setTimestamp(5, Timestamp.valueOf(internDTO.getBirthDate()));
@@ -55,16 +55,22 @@ public class InternDAO implements IInternDAO {
                 connection.commit();
                 isAddSuccessful = true;
 
-            } catch (DAOException e) {
+
+            } catch (IllegalArgumentException e) {
                 connection.rollback();
                 AppLogger.logError(e);
-                throw new DAOException("ERROR: Error al insertar practicante", e);
+                throw new DAOException("ERROR: Datos de practicante inválidos", e);
 
             } catch (SQLIntegrityConstraintViolationException e) {
                 connection.rollback();
                 AppLogger.logError(e);
                 throw new SQLIntegrityConstraintViolationException(
-                        "WARN: Violación de integridad de datos al insertar", e);
+                        "WARN: El correo o matrícula ya están registrados en el sistema", e);
+
+            } catch (DAOException e) {
+                connection.rollback();
+                AppLogger.logError(e);
+                throw new DAOException("ERROR: Error al insertar practicante", e);
 
             } catch (SQLException e) {
                 connection.rollback();

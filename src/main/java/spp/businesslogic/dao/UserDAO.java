@@ -54,6 +54,10 @@ public class UserDAO implements IUserDAO {
 
             return getGeneratedKey(preparedStatement);
 
+        } catch (IllegalArgumentException e) {
+            AppLogger.logError(e);
+            throw new DAOException("ERROR: Datos de usuario inválidos", e);
+
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.logError(e);
             throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
