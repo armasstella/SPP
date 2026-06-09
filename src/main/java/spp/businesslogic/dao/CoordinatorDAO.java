@@ -48,10 +48,15 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
             connection.commit();
 
+        } catch (IllegalArgumentException e) {
+            MySQLConnectionManager.getInstance().rollbackSafe();
+            AppLogger.logError(e);
+            throw new DAOException("ERROR: Datos de coordinador inválidos", e);
+
         } catch (SQLIntegrityConstraintViolationException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(e);
-            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
+            throw new DAOException("WARN: El correo o número de personal ya están registrados en el sistema", e);
 
         } catch (DAOException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
