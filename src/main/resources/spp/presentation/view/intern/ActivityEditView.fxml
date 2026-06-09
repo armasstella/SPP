@@ -14,15 +14,15 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="spp.presentation.controller.intern.ActivityRegistrationController"
-            minWidth="720" minHeight="520"
+            fx:controller="spp.presentation.controller.intern.ActivityEditController"
+            prefWidth="460" prefHeight="640"
             styleClass="root-pane"
             stylesheets="@/spp/presentation/css/MainStyle.css">
 
     <top>
         <VBox styleClass="header">
-            <Label text="REGISTRAR NUEVA ACTIVIDAD" styleClass="header-title"/>
-            <Label text="Nueva actividad para Practicantes" styleClass="header-subtitle"/>
+            <Label text="EDITAR ACTIVIDAD" styleClass="header-title"/>
+            <Label text="Modifica los datos de la actividad" styleClass="header-subtitle"/>
         </VBox>
     </top>
 
@@ -30,7 +30,7 @@
         <StackPane>
             <VBox spacing="14" maxWidth="420" alignment="TOP_CENTER">
                 <padding>
-                    <Insets top="24" bottom="20" left="48" right="48"/>
+                    <Insets top="20" bottom="16" left="32" right="32"/>
                 </padding>
                 <ScrollPane>
                     <content>
@@ -39,33 +39,28 @@
                                 <Insets left="5" right="5" top="5" bottom="5"/>
                             </padding>
                             <Label text="Título *" styleClass="field-label"/>
-                            <TextField fx:id="txtTitle" promptText="Título de la actividad" styleClass="field-input"/>
+                            <TextField fx:id="txtTitle" styleClass="field-input"/>
 
                             <Label text="Descripción *" styleClass="field-label"/>
-                            <TextArea fx:id="taDescription" promptText="Descripción de la actividad"
-                                      styleClass="field-input"/>
+                            <TextArea fx:id="taDescription" styleClass="field-input"/>
 
                             <Label text="Fecha inicio *" styleClass="field-label"/>
-                            <DatePicker fx:id="dpStartDate" promptText="dd/mm/aaaa"
-                                        styleClass="field-input, date-picker-custom" maxWidth="Infinity"/>
+                            <DatePicker fx:id="dpStartDate" styleClass="field-input, date-picker-custom" maxWidth="Infinity"/>
 
                             <Label text="Fecha fin *" styleClass="field-label"/>
-                            <DatePicker fx:id="dpEndDate" promptText="dd/mm/aaaa"
-                                        styleClass="field-input, date-picker-custom" maxWidth="Infinity"/>
+                            <DatePicker fx:id="dpEndDate" styleClass="field-input, date-picker-custom" maxWidth="Infinity"/>
 
                             <Label text="Tiempo estimado (horas) *" styleClass="field-label"/>
-                            <TextField fx:id="txtEstimatedTime" promptText="Ej. 8" styleClass="field-input"/>
+                            <TextField fx:id="txtEstimatedTime" styleClass="field-input"/>
 
                             <Label text="Tiempo efectivo (horas) *" styleClass="field-label"/>
-                            <TextField fx:id="txtEffectiveTime" promptText="Ej. 6" styleClass="field-input"/>
+                            <TextField fx:id="txtEffectiveTime" styleClass="field-input"/>
 
                             <Label text="Avance (%) *" styleClass="field-label"/>
-                            <TextField fx:id="txtProgress" promptText="0 - 100" styleClass="field-input"/>
+                            <TextField fx:id="txtProgress" styleClass="field-input"/>
 
                             <Label text="Observaciones del trabajo realizado *" styleClass="field-label"/>
-                            <TextArea fx:id="taObservations" promptText="Observaciones de la actividad"
-                                      styleClass="field-input"/>
-
+                            <TextArea fx:id="taObservations" styleClass="field-input"/>
                         </VBox>
                     </content>
                 </ScrollPane>
@@ -78,10 +73,10 @@
     <bottom>
         <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
             <padding>
-                <Insets top="12" bottom="16" left="48" right="48"/>
+                <Insets top="12" bottom="16" left="32" right="32"/>
             </padding>
-            <Button text="Cancelar" styleClass="btn-back" onAction="#cancel"/>
-            <Button text="Añadir" styleClass="btn-primary" onAction="#saveActivity"/>
+            <Button text="Cancelar" styleClass="btn-back" onAction="#cancelEdit"/>
+            <Button text="Guardar" styleClass="btn-primary" onAction="#saveChanges"/>
         </HBox>
     </bottom>
 

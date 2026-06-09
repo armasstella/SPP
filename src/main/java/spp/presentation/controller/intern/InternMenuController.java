@@ -23,6 +23,7 @@ public class InternMenuController {
 
     @FXML
     private void goToMonthlyActivityRegistrationView(ActionEvent event) {
+        //TODO: Validar que el practicante en su inscripción tenga asignada una ee
         ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyActivityRegistersView.fxml",
                 "Registro de actividad", event);
     }
@@ -91,6 +92,13 @@ public class InternMenuController {
         }
 
         return isThisOptionAllowed;
+
+    }
+
+    @FXML
+    private void goToSelfEvaluationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/intern/SelfEvaluationGenerationView.fxml",
+                "Subir documentos", event);
 
     }
 

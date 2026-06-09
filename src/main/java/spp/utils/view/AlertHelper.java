@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public class AlertHelper {
 
+    public enum Option { FIRST, SECOND, NONE }
+
     public static boolean showConfirmation(String title, String message) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle(title);
@@ -100,6 +102,48 @@ public class AlertHelper {
 
         confirm.showAndWait();
 
+    }
+
+    public static Option showTwoOptions(String title, String message, String firstLabel, String secondLabel) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        ButtonType firstButton = new ButtonType(firstLabel);
+        ButtonType secondButton = new ButtonType(secondLabel);
+        alert.getButtonTypes().setAll(firstButton, secondButton);
+        DialogPane dialogPane = alert.getDialogPane();
+
+        try {
+            String cssPath = AlertHelper.class.getResource("/spp/presentation/css/MainStyle.css").toExternalForm();
+            dialogPane.getStylesheets().add(cssPath);
+            dialogPane.getStyleClass().add("custom-alert");
+        } catch (Exception e) {
+            AppLogger.logError(e);
+        }
+
+        Button firstStyledButton = (Button) dialogPane.lookupButton(firstButton);
+        if (firstStyledButton != null) {
+            firstStyledButton.getStyleClass().clear();
+            firstStyledButton.getStyleClass().addAll("button", "btn-primary");
+        }
+        Button secondStyledButton = (Button) dialogPane.lookupButton(secondButton);
+        if (secondStyledButton != null) {
+            secondStyledButton.getStyleClass().clear();
+            secondStyledButton.getStyleClass().addAll("button", "btn-back");
+        }
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isEmpty()) {
+            return Option.NONE;
+        }
+        if (result.get() == firstButton) {
+            return Option.FIRST;
+        }
+        if (result.get() == secondButton) {
+            return Option.SECOND;
+        }
+        return Option.NONE;
     }
 
 }

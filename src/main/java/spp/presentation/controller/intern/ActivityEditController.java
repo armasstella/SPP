@@ -7,19 +7,16 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import spp.businesslogic.dto.ActiveSessionDTO;
+import javafx.stage.Stage;
 import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
-import spp.businesslogic.dao.InternDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.StatusLabel;
-import spp.utils.view.ViewNavigator;
 
 
-public class ActivityRegistrationController {
+public class ActivityEditController {
 
-    @FXML private Label lblStatus;
     @FXML private TextField txtTitle;
     @FXML private TextArea taDescription;
     @FXML private DatePicker dpStartDate;
@@ -28,25 +25,46 @@ public class ActivityRegistrationController {
     @FXML private TextField txtEffectiveTime;
     @FXML private TextField txtProgress;
     @FXML private TextArea taObservations;
+    @FXML private Label lblStatus;
     private final ActivityDAO activityDAO = new ActivityDAO();
-    private final InternDAO internDAO = new InternDAO();
+    private ActivityDTO activity;
+    private boolean updated = false;
     private static final int MAX_PROGRESS = 100;
 
+    public void setActivity(ActivityDTO activity) {
+        this.activity = activity;
+        txtTitle.setText(activity.getTitle());
+        taDescription.setText(activity.getDescription());
+        dpStartDate.setValue(activity.getStartDate());
+        dpEndDate.setValue(activity.getEndDate());
+        txtEstimatedTime.setText(String.valueOf(activity.getEstimatedTime()));
+        txtEffectiveTime.setText(String.valueOf(activity.getEffectiveTime()));
+        txtProgress.setText(String.valueOf(activity.getProgress()));
+        taObservations.setText(activity.getObservations());
+
+    }
+
+    public boolean isUpdated() {
+        return updated;
+
+    }
+
     @FXML
-    private void saveActivity(ActionEvent event) {
+    private void saveChanges(ActionEvent event) {
         if (validateInputs()) {
             return;
         }
 
+        ActivityDTO editedActivity = readForm();
         try {
-            String studentNumber = internDAO.obtainStudentNumber(ActiveSessionDTO.get().getEmail());
-            if (activityDAO.saveActivity(studentNumber, buildActivityDTO())) {
-                StatusLabel.showSuccess(lblStatus, "Actividad registrada correctamente.");
-                clearFields();
+            if (activityDAO.updateActivity(editedActivity)) {
+                copyInto(activity, editedActivity);
+                updated = true;
+                closeWindow(event);
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al registrar la actividad");
+            StatusLabel.showError(lblStatus, "Error al actualizar la actividad");
         }
 
     }
@@ -96,36 +114,42 @@ public class ActivityRegistrationController {
 
     }
 
-    private ActivityDTO buildActivityDTO() {
-        ActivityDTO activityDTO = new ActivityDTO();
-        activityDTO.setTitle(txtTitle.getText().trim());
-        activityDTO.setDescription(taDescription.getText().trim());
-        activityDTO.setStartDate(dpStartDate.getValue());
-        activityDTO.setEndDate(dpEndDate.getValue());
-        activityDTO.setEstimatedTime(Integer.parseInt(txtEstimatedTime.getText().trim()));
-        activityDTO.setEffectiveTime(Integer.parseInt(txtEffectiveTime.getText().trim()));
-        activityDTO.setProgress(Integer.parseInt(txtProgress.getText().trim()));
-        activityDTO.setObservations(taObservations.getText().trim());
-        return activityDTO;
+    private ActivityDTO readForm() {
+        ActivityDTO editedActivity = new ActivityDTO();
+        editedActivity.setId(activity.getId());
+        editedActivity.setTitle(txtTitle.getText().trim());
+        editedActivity.setDescription(taDescription.getText().trim());
+        editedActivity.setStartDate(dpStartDate.getValue());
+        editedActivity.setEndDate(dpEndDate.getValue());
+        editedActivity.setEstimatedTime(Integer.parseInt(txtEstimatedTime.getText().trim()));
+        editedActivity.setEffectiveTime(Integer.parseInt(txtEffectiveTime.getText().trim()));
+        editedActivity.setProgress(Integer.parseInt(txtProgress.getText().trim()));
+        editedActivity.setObservations(taObservations.getText().trim());
+        return editedActivity;
 
     }
 
-    private void clearFields() {
-        txtTitle.clear();
-        taDescription.clear();
-        dpStartDate.setValue(null);
-        dpEndDate.setValue(null);
-        txtEstimatedTime.clear();
-        txtEffectiveTime.clear();
-        txtProgress.clear();
-        taObservations.clear();
+    private void copyInto(ActivityDTO target, ActivityDTO source) {
+        target.setTitle(source.getTitle());
+        target.setDescription(source.getDescription());
+        target.setStartDate(source.getStartDate());
+        target.setEndDate(source.getEndDate());
+        target.setEstimatedTime(source.getEstimatedTime());
+        target.setEffectiveTime(source.getEffectiveTime());
+        target.setProgress(source.getProgress());
+        target.setObservations(source.getObservations());
 
     }
 
     @FXML
-    private void cancel(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyActivityRegistersView.fxml",
-                "Menú Practicante", event);
+    private void cancelEdit(ActionEvent event) {
+        closeWindow(event);
+
+    }
+
+    private void closeWindow(ActionEvent event) {
+        Stage currentStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        currentStage.close();
 
     }
 
