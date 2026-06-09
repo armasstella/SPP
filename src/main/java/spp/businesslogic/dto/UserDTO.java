@@ -30,6 +30,7 @@ public class UserDTO {
     private String secondName;
     private String firstLastName;
     private String secondLastName;
+    private String fullName;
     private String email;
     private String phoneNumber;
     private String password;
@@ -149,5 +150,13 @@ public class UserDTO {
         if (value == null || !Pattern.matches(regex, value)) {
             throw new IllegalArgumentException(errorMessage);
         }
+    }
+}
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 }

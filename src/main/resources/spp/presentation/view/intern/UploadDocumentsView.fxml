@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.TextField?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.intern.UploadDocumentsController"
+            minWidth="720" minHeight="520"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <top>
+        <VBox styleClass="header">
+            <Label text="SUBIR DOCUMENTOS" styleClass="header-title"/>
+            <Label text="Subir documentos iniciales" styleClass="header-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <StackPane>
+            <VBox spacing="14" maxWidth="400" alignment="TOP_CENTER">
+                <padding>
+                    <Insets top="24" bottom="20" left="48" right="48"/>
+                </padding>
+                <ScrollPane>
+                    <content>
+                        <VBox styleClass="options-container" spacing="14">
+                            <padding>
+                                <Insets left="5" right="5" top="5" bottom="5"/>
+                            </padding>
+
+                            <Button fx:id="btnUploadClassSchedule"
+                                    text="Subir Horario"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadClassSchedule"
+                            />
+
+                            <Button fx:id="btnUploadActivitiesSchedule"
+                                    text="Subir Cronograma de actividad"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadActivitiesSchedule"
+                            />
+
+                            <Button fx:id="btnUploadPSP"
+                                    text="Subir Bitácora PSP"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadPSP"
+                            />
+
+                            <Button fx:id="btnUploadPartialReport"
+                                    text="Subir Reporte Final"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadPartialReport"
+                            />
+
+                            <Button fx:id="btnUploadSelfEvaluation"
+                                    text="Subir Autoevaluación"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadSelfEvaluation"
+                            />
+
+                            <Button fx:id="btnUploadEvaluationLinkedOrganization"
+                                    text="Subir Evaluación Organización Vinculada"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadEvaluationLinkedOrganization"
+                            />
+
+                            <Button fx:id="btnUploadFinalReport"
+                                    text="Subir Reporte Final"
+                                    styleClass="option-btn, btn-add"
+                                    onAction="#uploadFinalReport"
+                            />
+
+                        </VBox>
+                    </content>
+                </ScrollPane>
+                <Label fx:id="lblSelectedDocument" text="Ningún archivo seleccionado" styleClass="lbl-status"
+                       wrapText="true" alignment="CENTER"/>
+                <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
+            </VBox>
+        </StackPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding>
+                <Insets top="12" bottom="16" left="48" right="48"/>
+            </padding>
+            <Button text="Cancelar" styleClass="btn-back" onAction="#cancel"/>
+            <Button text="Subir Documento" styleClass="btn-primary" onAction="#confirm"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

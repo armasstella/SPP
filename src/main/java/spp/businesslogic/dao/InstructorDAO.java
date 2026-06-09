@@ -180,8 +180,8 @@ public class InstructorDAO implements IInstructorDAO {
     }
 
     @Override
-    public List<InstructorDTO> getListActiveInstructors() throws DAOException {
-        String query = "SELECT u.id_usuario, p.num_personal, CONCAT(u.nombre, ' ', u.apellidos) AS nombre_completo " +
+    public List<InstructorDTO> obtainActiveInstructorForComboBox() throws DAOException {
+        final String SELECT_INSTRUCTOR = "SELECT u.id_usuario, p.num_personal, CONCAT(u.nombre, ' ', u.apellidos) AS nombre_completo " +
                 "FROM Profesores p " +
                 "INNER JOIN Usuarios u ON p.id_usuario = u.id_usuario " +
                 "WHERE u.estado = 'Activo'";
@@ -189,7 +189,7 @@ public class InstructorDAO implements IInstructorDAO {
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_INSTRUCTOR);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -206,7 +206,7 @@ public class InstructorDAO implements IInstructorDAO {
         }
 
         return instructorsList;
-    }
 
+    }
 
 }

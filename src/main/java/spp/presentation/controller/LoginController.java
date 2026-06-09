@@ -67,19 +67,19 @@ public class LoginController implements Initializable {
     private void goToView(String userType, ActionEvent event) {
         switch (userType) {
             case "Coordinador":
-                ViewNavigator.loadView("/spp/presentation/view/CoordinatorMenuView.fxml",
+                ViewNavigator.loadView("/spp/presentation/view/coordinator/CoordinatorMenuView.fxml",
                         "Menú Coordinador", event);
                 break;
             case "Practicante":
-                ViewNavigator.loadView("/spp/presentation/view/InternMenuView.fxml",
+                ViewNavigator.loadView("/spp/presentation/view/intern/InternMenuView.fxml",
                         "Menú Practicante", event);
                 break;
             case "Profesor":
-                ViewNavigator.loadView("/spp/presentation/view/InstructorMenuView.fxml",
+                ViewNavigator.loadView("/spp/presentation/view/instructor/InstructorMenuView.fxml",
                         "Menú Profesor", event);
                 break;
             case "Administrador":
-                ViewNavigator.loadView("/spp/presentation/view/AdminMenuView.fxml",
+                ViewNavigator.loadView("/spp/presentation/view/admin/AdminMenuView.fxml",
                         "Menú Administrador", event);
                 break;
             default:

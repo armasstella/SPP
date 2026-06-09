@@ -1,33 +1,41 @@
 package spp.businesslogic.dto;
 
-
 public class PrioritizedProjectDTO {
 
-    private final int ID_PROJECT;
-    private final String PROJECT_NAME;
-    private final int PRIORITY_LEVEL;
-
-    public PrioritizedProjectDTO(int ID_PROJECT, String PROJECT_NAME, int PRIORITY_LEVEL) {
-        this.ID_PROJECT = ID_PROJECT;
-        this.PROJECT_NAME = PROJECT_NAME;
-        this.PRIORITY_LEVEL = PRIORITY_LEVEL;
-    }
+    private int idProject;
+    private int idIntern;
+    private String studentNumber;
+    private int priorityLevel;
 
     public int getIdProject() {
-        return ID_PROJECT;
+        return idProject;
     }
 
-    public String getProjectName() {
-        return PROJECT_NAME;
+    public void setIdProject(int idProject) {
+        this.idProject = idProject;
+    }
+
+    public int getIdIntern() {
+        return idIntern;
+    }
+
+    public void setIdIntern(int idIntern) {
+        this.idIntern = idIntern;
+    }
+
+    public String getStudentNumber() {
+        return studentNumber;
+    }
+
+    public void setStudentNumber(String studentNumber) {
+        this.studentNumber = studentNumber;
     }
 
     public int getPriorityLevel() {
-        return PRIORITY_LEVEL;
+        return priorityLevel;
     }
 
-    @Override
-    public String toString() {
-        return "[Nivel de Prioridad" + PRIORITY_LEVEL + "] " + PROJECT_NAME + " (" + ID_PROJECT + ")";
+    public void setPriorityLevel(int priorityLevel) {
+        this.priorityLevel = priorityLevel;
     }
-
 }

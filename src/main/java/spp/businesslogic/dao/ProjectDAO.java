@@ -212,4 +212,59 @@ public class ProjectDAO implements IProjectDAO {
 
     }
 
+    @Override
+    public boolean verifyMinimumProjects() throws DAOException {
+        final String SELECT = "SELECT f_hay_cantidad_minima_proyectos()";
+        boolean isMinimumProjects = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    isMinimumProjects = resultSet.getBoolean(1);
+                }
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Error de conexión al contar proyectos");
+        }
+
+        return isMinimumProjects;
+
+    }
+
+    @Override
+    public List<ProjectDTO> obtainSelectedProjectsByIntern(String studentNumber) throws DAOException {
+        List<ProjectDTO> selectedProjectList = new ArrayList<>();
+        final String SELECT_SELECTED_PROJECTS = "SELECT pr.id_proyecto, pr.nombre " +
+                "FROM proyectos_priorizados pp " +
+                "INNER JOIN proyectos pr ON pp.id_proyecto = pr.id_proyecto " +
+                "WHERE pp.matricula = ? " +
+                "ORDER BY pp.nivel_prioridad ASC";
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_SELECTED_PROJECTS);
+            preparedStatement.setString(1, studentNumber);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    ProjectDTO projectDTO = new ProjectDTO();
+                    projectDTO.setId(resultSet.getInt("id_proyecto"));
+                    projectDTO.setName(resultSet.getString("nombre"));
+                    selectedProjectList.add(projectDTO);
+                }
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Error al obtener proyectos del practicante");
+        }
+        return selectedProjectList;
+    }
+
+
+
 }

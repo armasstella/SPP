@@ -3,6 +3,12 @@ package spp.businesslogic.enums;
 
 public enum DocumentType {
     CLASS_SCHEDULE,
-    ACTIVITIES_SCHEDULE
+    ACTIVITIES_SCHEDULE,
+    PARTIAL_REPORT,
+    MONTHLY_REPORT,
+    SELF_EVALUATION,
+    EVALUATION_LINKED_ORGANIZATION,
+    FINAL_REPORT,
+    PSP
 
 }

@@ -125,9 +125,6 @@ public class InternDAO implements IInternDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     isSearchSuccessful = resultSet.getBoolean(1);
-                    if (!isSearchSuccessful) {
-                        throw new DAOException("WARN: La matrícula no es valida");
-                    }
                 }
             }
 
@@ -143,7 +140,8 @@ public class InternDAO implements IInternDAO {
     @Override
     public List<InternDTO> obtainAllActiveInterns() throws DAOException {
         List<InternDTO> internsList = new ArrayList<>();
-        final String SELECT_ALL_INTERNS = "SELECT p.matricula, u.nombre, u.apellidos, u.correo_electronico " +
+        final String SELECT_ALL_INTERNS = "SELECT p.matricula, CONCAT(u.nombre, ' ', u.apellidos) " +
+                "AS 'nombre_completo', u.correo_electronico " +
                 "FROM Usuarios u INNER JOIN Practicantes p on u.id_usuario = p.id_usuario AND u.estado = 'Activo' " +
                 "ORDER BY p.matricula";
 
@@ -155,8 +153,7 @@ public class InternDAO implements IInternDAO {
             while (resultSet.next()) {
                 InternDTO internDTO = new InternDTO();
                 internDTO.setStudentNumber(resultSet.getString("matricula"));
-                internDTO.setFirstName(resultSet.getString("nombre"));
-                internDTO.setFirstLastName(resultSet.getString("apellidos"));
+                internDTO.setFullName(resultSet.getString("nombre_completo"));
                 internDTO.setEmail(resultSet.getString("correo_electronico"));
 
                 internsList.add(internDTO);
@@ -169,6 +166,30 @@ public class InternDAO implements IInternDAO {
 
         return internsList;
 
+    }
+
+    @Override
+    public String obtainStudentNumber(String email) throws DAOException {
+        final String SELECT_STUDENT_NUMBER = "SELECT matricula FROM practicantes WHERE id_usuario = ?";
+        String matricula = "";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_STUDENT_NUMBER);
+            UserDAO userDAO = new UserDAO();
+            preparedStatement.setInt(1, userDAO.obtainId(email));
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                matricula = resultSet.getString(1);
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Error de conexión al obtener matricula");
+        }
+
+        return matricula;
     }
 
     @Override
@@ -212,6 +233,38 @@ public class InternDAO implements IInternDAO {
 
         return isDeactivationSuccess;
 
+    }
+
+    public List<InternDTO> obtainInternsWithoutAssignedProject() throws DAOException {
+        List<InternDTO> internList = new ArrayList<>();
+        final String SELECT_INTERNS_WITHOUT_PROJECT =
+                "SELECT p.matricula, CONCAT(u.nombre, ' ', u.apellidos) AS" +
+                        " 'nombre_completo' " +
+                        "FROM practicantes p " +
+                        "INNER JOIN usuarios u ON p.id_usuario = u.id_usuario " +
+                        "INNER JOIN inscripciones_practicas_profesionales i " +
+                        "    ON i.id_usuario_practicante = p.id_usuario AND i.matricula = p.matricula " +
+                        "WHERE i.id_proyecto IS NULL";
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_INTERNS_WITHOUT_PROJECT);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    InternDTO internDTO = new InternDTO();
+                    internDTO.setStudentNumber(resultSet.getString("matricula"));
+                    internDTO.setFullName(resultSet.getString("nombre_completo"));
+                    internList.add(internDTO);
+                }
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Error al obtener practicantes sin proyecto asignado");
+        }
+
+        return internList;
     }
 
 }

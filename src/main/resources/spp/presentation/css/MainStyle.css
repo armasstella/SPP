@@ -481,11 +481,107 @@
     -fx-padding: 20 10 10 10;
 }
 
-.custom-alert:header +.button-bar {
+.custom-alert:header .button-bar {
     -fx-background-color: #FFFFFF;
     -fx-padding: 10 24 16 24;
 }
 
 .custom-alert .button-bar .button {
     -fx-cursor: hand;
+}
+
+.content-container {
+    -fx-background-color: #FFFFFF;
+}
+
+.panel {
+    -fx-padding: 4;
+}
+
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #114B5F;
+}
+
+.data-table {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #114B5F;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.data-table .column-header-background {
+    -fx-background-color: #114B5F;
+    -fx-background-radius: 4 4 0 0;
+}
+
+.data-table .column-header .label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.data-table .table-row-cell:hover {
+    -fx-background-color: derive(#AFFFC5, 35%);
+}
+
+.data-table .table-row-cell:selected {
+    -fx-background-color: #AFFFC5;
+    -fx-text-fill: #114B5F;
+}
+
+.project-list {
+    -fx-padding: 4 0 0 0;
+}
+
+.placeholder-text {
+    -fx-text-fill: #666666;
+    -fx-font-size: 13px;
+    -fx-font-style: italic;
+}
+
+.project-card {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #005BAA;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: #114B5F;
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 18 22 18 22;
+    -fx-cursor: hand;
+}
+
+.project-card:hover {
+    -fx-background-color: derive(#005BAA, 90%);
+}
+
+.project-card:selected {
+    -fx-background-color: #005BAA;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: #004480;
+}
+
+.detail-pane {
+    -fx-background-color: #FFFFFF;
+}
+
+.field-caption {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666666;
+}
+
+.field-value {
+    -fx-font-size: 14px;
+    -fx-text-fill: #114B5F;
+}
+
+.counter-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #114B5F;
+    -fx-padding: 0 0 4 0;
 }

@@ -12,5 +12,7 @@ public interface IProjectDAO {
     boolean deleteProject(ProjectDTO projectDTO) throws DAOException;
     boolean updateProject(ProjectDTO projectDTO) throws DAOException;
     List<ProjectDTO> obtainAllProjects() throws DAOException;
+    boolean verifyMinimumProjects() throws DAOException;
+    List<ProjectDTO> obtainSelectedProjectsByIntern(String studentNumber) throws DAOException;
 
 }

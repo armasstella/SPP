@@ -62,6 +62,17 @@ public class ProjectDAOTest {
     }
 
     @Test
+    @DisplayName("Debe obtener la cantidad de proyectos y retornar un valor booleano")
+    void testGetNumberOfProjectsSuccess() {
+        try {
+            boolean totalProjects = projectDAO.verifyMinimumProjects();
+            assertTrue(totalProjects);
+
+        } catch (DAOException e) {
+            org.junit.jupiter.api.Assertions.fail("El método lanzó una DAOException inesperada: " + e.getMessage());
+        }
+    }
+
     @DisplayName("Debe lanzar DAOException cuando no hay un encargado de proyecto asignado")
     void testAddProjectFailedMissingProjectManager() throws DAOException {
         testProject.setProjectManagerDTO(null);
