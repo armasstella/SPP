@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.intern.SelfEvaluationGenerationController"
+            prefWidth="750" prefHeight="700"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <fx:define>
+        <ToggleGroup fx:id="tgQ1"/>
+        <ToggleGroup fx:id="tgQ2"/>
+        <ToggleGroup fx:id="tgQ3"/>
+        <ToggleGroup fx:id="tgQ4"/>
+        <ToggleGroup fx:id="tgQ5"/>
+        <ToggleGroup fx:id="tgQ6"/>
+        <ToggleGroup fx:id="tgQ7"/>
+        <ToggleGroup fx:id="tgQ8"/>
+        <ToggleGroup fx:id="tgQ9"/>
+        <ToggleGroup fx:id="tgQ10"/>
+    </fx:define>
+
+    <top>
+        <VBox styleClass="header">
+            <Label text="Autoevaluación del Alumno" styleClass="header-title"/>
+            <Label text="Responde marcando la casilla correspondiente a cada afirmación" styleClass="header-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="edge-to-edge">
+            <VBox spacing="20">
+                <padding><Insets top="20" right="32" bottom="20" left="32"/></padding>
+
+                <HBox spacing="20">
+                    <Label text="Alumno:"/>
+                    <Label fx:id="lblStudentName" style="-fx-font-weight: bold;" text="Nombre del Alumno"/>
+                    <Label text="Matrícula:"/>
+                    <Label fx:id="lblStudentNumber" style="-fx-font-weight: bold;" text="Matrícula"/>
+                </HBox>
+
+                <fx:define>
+                    <ToggleGroup fx:id="tgQuestionFirst"/>
+                    <ToggleGroup fx:id="tgQuestionSecond"/>
+                    <ToggleGroup fx:id="tgQuestionThird"/>
+                    <ToggleGroup fx:id="tgQuestionFourth"/>
+                    <ToggleGroup fx:id="tgQuestionFifth"/>
+                    <ToggleGroup fx:id="tgQuestionSixth"/>
+                    <ToggleGroup fx:id="tgQuestionSeventh"/>
+                    <ToggleGroup fx:id="tgQuestionEighth"/>
+                    <ToggleGroup fx:id="tgQuestionNinth"/>
+                    <ToggleGroup fx:id="tgQuestionTenth"/>
+                </fx:define>
+
+                <GridPane hgap="15" vgap="16">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="60"/>
+                        <ColumnConstraints percentWidth="8" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="8" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="8" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="8" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="8" halignment="CENTER"/>
+                    </columnConstraints>
+
+                    <Label text="AFIRMACIONES" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-label"/>
+                    <Label text="1" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="field-label"/>
+                    <Label text="2" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="field-label"/>
+                    <Label text="3" GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="field-label"/>
+                    <Label text="4" GridPane.columnIndex="4" GridPane.rowIndex="0" styleClass="field-label"/>
+                    <Label text="5" GridPane.columnIndex="5" GridPane.rowIndex="0" styleClass="field-label"/>
+
+                    <Label text="1. Mi participación en la Organización Vinculada fue productiva."
+                           wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-value"/>
+                    <RadioButton userData="1" toggleGroup="$tgQuestionFirst"
+                                 GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="radio-button-custom"/>
+                    <RadioButton userData="2" toggleGroup="$tgQuestionFirst"
+                                 GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="radio-button-custom"/>
+                    <RadioButton userData="3" toggleGroup="$tgQuestionFirst"
+                                 GridPane.columnIndex="3" GridPane.rowIndex="1" styleClass="radio-button-custom"/>
+                    <RadioButton userData="4" toggleGroup="$tgQuestionFirst"
+                                 GridPane.columnIndex="4" GridPane.rowIndex="1" styleClass="radio-button-custom"/>
+                    <RadioButton userData="5" toggleGroup="$tgQuestionFirst"
+                                 GridPane.columnIndex="5" GridPane.rowIndex="1" styleClass="radio-button-custom"/>
+
+                    <Label text="2. Logré la aplicación de los conocimientos teórico-prácticos adquiridos en la
+                    Licenciatura en Ingeniería de Software."
+                           wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="field-value"/>
+                    <RadioButton userData="1" toggleGroup="$tgQuestionSecond"
+                                 GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="radio-button-custom"/>
+                    <RadioButton userData="2" toggleGroup="$tgQuestionSecond"
+                                 GridPane.columnIndex="2" GridPane.rowIndex="2" styleClass="radio-button-custom"/>
+                    <RadioButton userData="3" toggleGroup="$tgQuestionSecond"
+                                 GridPane.columnIndex="3" GridPane.rowIndex="2" styleClass="radio-button-custom"/>
+                    <RadioButton userData="4" toggleGroup="$tgQuestionSecond"
+                                 GridPane.columnIndex="4" GridPane.rowIndex="2" styleClass="radio-button-custom"/>
+                    <RadioButton userData="5" toggleGroup="$tgQuestionSecond"
+                                 GridPane.columnIndex="5" GridPane.rowIndex="2" styleClass="radio-button-custom"/>
+
+                    <Label text="3. Me sentí seguro al realizar las actividades encomendadas."
+                           wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="field-value"/>
+                    <RadioButton userData="1" toggleGroup="$tgQuestionThird"
+                                 GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="radio-button-custom"/>
+                    <RadioButton userData="2" toggleGroup="$tgQuestionThird"
+                                 GridPane.columnIndex="2" GridPane.rowIndex="3" styleClass="radio-button-custom"/>
+                    <RadioButton userData="3" toggleGroup="$tgQuestionThird"
+                                 GridPane.columnIndex="3" GridPane.rowIndex="3" styleClass="radio-button-custom"/>
+                    <RadioButton userData="4" toggleGroup="$tgQuestionThird"
+                                 GridPane.columnIndex="4" GridPane.rowIndex="3" styleClass="radio-button-custom"/>
+                    <RadioButton userData="5" toggleGroup="$tgQuestionThird"
+                                 GridPane.columnIndex="5" GridPane.rowIndex="3" styleClass="radio-button-custom"/>
+
+                    <Label text="4. Las actividades encomendadas despertaron mi interés."
+                           wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="field-value"/>
+                    <RadioButton userData="1" toggleGroup="$tgQuestionFourth"
+                                 GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="radio-button-custom"/>
+                    <RadioButton userData="2" toggleGroup="$tgQuestionFourth"
+                                 GridPane.columnIndex="2" GridPane.rowIndex="4" styleClass="radio-button-custom"/>
+                    <RadioButton userData="3" toggleGroup="$tgQuestionFourth"
+                                 GridPane.columnIndex="3" GridPane.rowIndex="4" styleClass="radio-button-custom"/>
+                    <RadioButton userData="4" toggleGroup="$tgQuestionFourth"
+                                 GridPane.columnIndex="4" GridPane.rowIndex="4" styleClass="radio-button-custom"/>
+                    <RadioButton userData="5" toggleGroup="$tgQuestionFourth"
+                                 GridPane.columnIndex="5" GridPane.rowIndex="4" styleClass="radio-button-custom"/>
+
+                    <Label text="5. La Organización Vinculada me proporcionó la información y facilidades adecuados
+                    durante el desarrollo de las prácticas."
+                           wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="field-value"/>
+                    <RadioButton userData="1" toggleGroup="$tgQuestionFifth"
+                                 GridPane.columnIndex="1" GridPane.rowIndex="5" styleClass="radio-button-custom"/>
+                    <RadioButton userData="2" toggleGroup="$tgQuestionFifth"
+                                 GridPane.columnIndex="2" GridPane.rowIndex="5" styleClass="radio-button-custom"/>
+                    <RadioButton userData="3" toggleGroup="$tgQuestionFifth"
+                                 GridPane.columnIndex="3" GridPane.rowIndex="5" styleClass="radio-button-custom"/>
+                    <RadioButton userData="4" toggleGroup="$tgQuestionFifth"
+                                 GridPane.columnIndex="4" GridPane.rowIndex="5" styleClass="radio-button-custom"/>
+                    <RadioButton userData="5" toggleGroup="$tgQuestionFifth"
+                                 GridPane.columnIndex="5" GridPane.rowIndex="5" styleClass="radio-button-custom"/>
+
+                    <Label text="6. La Organización Vinculada me dio a conocer las reglas internas que debía seguir al conducirme durante el desarrollo de las prácticas."
+                           wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="6" styleClass="field-value"/>
+                    <RadioButton userData="1" toggleGroup="$tgQuestionSixth"
+                                 GridPane.columnIndex="1" GridPane.rowIndex="6" styleClass="radio-button-custom"/>
+                    <RadioButton userData="2" toggleGroup="$tgQuestionSixth"
+                                 GridPane.columnIndex="2" GridPane.rowIndex="6" styleClass="radio-button-custom"/>
+                    <RadioButton userData="3" toggleGroup="$tgQuestionSixth"
+                                 GridPane.columnIndex="3" GridPane.rowIndex="6" styleClass="radio-button-custom"/>
+                    <RadioButton userData="4" toggleGroup="$tgQuestionSixth"
+                                 GridPane.columnIndex="4" GridPane.rowIndex="6" styleClass="radio-button-custom"/>
+                    <RadioButton userData="5" toggleGroup="$tgQuestionSixth"
+                                 GridPane.columnIndex="5" GridPane.rowIndex="6" styleClass="radio-button-custom"/>
+
+                    <Label text="7. El Responsable del Proyecto me orientó correctamente para el desarrollo de mis actividades."
+                           wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="7" styleClass="field-value"/>
+                    <RadioButton userData="1" toggleGroup="$tgQuestionSeventh"
+                                 GridPane.columnIndex="1" GridPane.rowIndex="7" styleClass="radio-button-custom"/>
+                    <RadioButton userData="2" toggleGroup="$tgQuestionSeventh"
+                                 GridPane.columnIndex="2" GridPane.rowIndex="7" styleClass="radio-button-custom"/>
+                    <RadioButton userData="3" toggleGroup="$tgQuestionSeventh"
+                                 GridPane.columnIndex="3" GridPane.rowIndex="7" styleClass="radio-button-custom"/>
+                    <RadioButton userData="4" toggleGroup="$tgQuestionSeventh"
+                                 GridPane.columnIndex="4" GridPane.rowIndex="7" styleClass="radio-button-custom"/>
+                    <RadioButton userData="5" toggleGroup="$tgQuestionSeventh"
+                                 GridPane.columnIndex="5" GridPane.rowIndex="7" styleClass="radio-button-custom"/>
+
+                    <Label text="8. El Responsable del Proyecto realizó un seguimiento efectivo de mis actividades."
+                           wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="8" styleClass="field-value"/>
+                    <RadioButton userData="1" toggleGroup="$tgQuestionEighth"
+                                 GridPane.columnIndex="1" GridPane.rowIndex="8" styleClass="radio-button-custom"/>
+                    <RadioButton userData="2" toggleGroup="$tgQuestionEighth"
+                                 GridPane.columnIndex="2" GridPane.rowIndex="8" styleClass="radio-button-custom"/>
+                    <RadioButton userData="3" toggleGroup="$tgQuestionEighth"
+                                 GridPane.columnIndex="3" GridPane.rowIndex="8" styleClass="radio-button-custom"/>
+                    <RadioButton userData="4" toggleGroup="$tgQuestionEighth"
+                                 GridPane.columnIndex="4" GridPane.rowIndex="8" styleClass="radio-button-custom"/>
+                    <RadioButton userData="5" toggleGroup="$tgQuestionEighth"
+                                 GridPane.columnIndex="5" GridPane.rowIndex="8" styleClass="radio-button-custom"/>
+
+                    <Label text="9. El proyecto es congruente con la formación de mi carrera."
+                           wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="9" styleClass="field-value"/>
+                    <RadioButton userData="1" toggleGroup="$tgQuestionNinth"
+                                 GridPane.columnIndex="1" GridPane.rowIndex="9" styleClass="radio-button-custom"/>
+                    <RadioButton userData="2" toggleGroup="$tgQuestionNinth"
+                                 GridPane.columnIndex="2" GridPane.rowIndex="9" styleClass="radio-button-custom"/>
+                    <RadioButton userData="3" toggleGroup="$tgQuestionNinth"
+                                 GridPane.columnIndex="3" GridPane.rowIndex="9" styleClass="radio-button-custom"/>
+                    <RadioButton userData="4" toggleGroup="$tgQuestionNinth"
+                                 GridPane.columnIndex="4" GridPane.rowIndex="9" styleClass="radio-button-custom"/>
+                    <RadioButton userData="5" toggleGroup="$tgQuestionNinth"
+                                 GridPane.columnIndex="5" GridPane.rowIndex="9" styleClass="radio-button-custom"/>
+
+                    <Label text="10. Considero que las prácticas son importantes para mi formación profesional."
+                           wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="10" styleClass="field-value"/>
+                    <RadioButton userData="1" toggleGroup="$tgQuestionTenth"
+                                 GridPane.columnIndex="1" GridPane.rowIndex="10" styleClass="radio-button-custom"/>
+                    <RadioButton userData="2" toggleGroup="$tgQuestionTenth"
+                                 GridPane.columnIndex="2" GridPane.rowIndex="10" styleClass="radio-button-custom"/>
+                    <RadioButton userData="3" toggleGroup="$tgQuestionTenth"
+                                 GridPane.columnIndex="3" GridPane.rowIndex="10" styleClass="radio-button-custom"/>
+                    <RadioButton userData="4" toggleGroup="$tgQuestionTenth"
+                                 GridPane.columnIndex="4" GridPane.rowIndex="10" styleClass="radio-button-custom"/>
+                    <RadioButton userData="5" toggleGroup="$tgQuestionTenth"
+                                 GridPane.columnIndex="5" GridPane.rowIndex="10" styleClass="radio-button-custom"/>
+                </GridPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding><Insets top="12" right="32" bottom="16" left="32"/></padding>
+            <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" HBox.hgrow="ALWAYS"/>
+            <Button text="Regresar" styleClass="btn-back" onAction="#goToInternMenuView"/>
+            <Button fx:id="btnGenerate" text="Guardar y Generar PDF" styleClass="btn-add" onAction="#generateEvaluation"/>
+        </HBox>
+    </bottom>
+</BorderPane>

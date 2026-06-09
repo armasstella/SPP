@@ -59,9 +59,15 @@
                             onAction="#goToUploadDocumentsView"
                     />
 
-                    <Button text="Generar y Subir Evaluación"
+                    <Button text="Generar Autoevaluación"
+                            styleClass="option-btn, btn-activate"
+                            onAction="#goToSelfEvaluationView"
+                    />
+
+                    <Button text="Evaluar Organización Vinculada"
                             styleClass="option-btn, btn-activate"
                     />
+
                     <Button text="Solicitar Proyecto"
                             styleClass="option-btn, btn-add"
                             onAction="#goToAvailableProjectsView"

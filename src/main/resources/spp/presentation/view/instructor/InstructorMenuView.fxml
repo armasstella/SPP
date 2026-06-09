@@ -41,10 +41,6 @@
             <HBox styleClass="options-container" alignment="CENTER" spacing="16">
                 <VBox alignment="CENTER" spacing="16">
                     <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
-                    <Button text="Añadir Actividad"
-                            styleClass="option-btn, btn-activate"
-                            onAction="#goToNewActivityView"
-                    />
                     <Button text="Añadir Formato Presentación"
                             styleClass="option-btn, btn-add"
                     />

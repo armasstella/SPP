@@ -17,13 +17,6 @@ public class InstructorMenuController {
     }
 
     @FXML
-    private void goToNewActivityView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/instructor/NewActivityView.fxml",
-                "Nueva actividad" , event);
-
-    }
-
-    @FXML
     private void goToMessageCenter(ActionEvent event) {
         MessageCenterController messageCenterController = ViewNavigator.loadView(
                 "/spp/presentation/view/user/MessageCenterView.fxml",
