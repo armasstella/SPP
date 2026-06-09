@@ -30,10 +30,11 @@ public class UserDTO {
     private String secondName;
     private String firstLastName;
     private String secondLastName;
-    private String fullName;
     private String email;
     private String phoneNumber;
     private String password;
+
+    private String fullName;
 
     public UserDTO() {
     }
@@ -119,6 +120,14 @@ public class UserDTO {
         return password;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     private String validateRequiredString(String value, String fieldName) {
         validateNotNullOrEmpty(value, fieldName);
         validateMaxLength(value, MAX_LENGTH_NAME, fieldName);
@@ -150,13 +159,5 @@ public class UserDTO {
         if (value == null || !Pattern.matches(regex, value)) {
             throw new IllegalArgumentException(errorMessage);
         }
-    }
-}
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 }

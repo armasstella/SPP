@@ -125,16 +125,16 @@ public class InternDAO implements IInternDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     isSearchSuccessful = resultSet.getBoolean(1);
+                    if (!isSearchSuccessful) {
+                        throw new DAOException("ERROR: La matrícula no existe en el sistema");
+                    }
                 }
             }
-
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("FATAL: Error de conexión al buscar matrícula", e);
         }
-
         return isSearchSuccessful;
-
     }
 
     @Override
