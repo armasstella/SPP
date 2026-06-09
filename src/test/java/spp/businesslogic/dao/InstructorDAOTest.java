@@ -164,16 +164,16 @@ public class InstructorDAOTest {
 
     @Test
     @DisplayName("Debe obtener lista resumida de profesores activos")
-    void testGetListActiveInstructors() throws DAOException {
-        var list = instructorDAO.getListActiveInstructors();
+    void testObtainActiveInstructorForComboBox() throws DAOException {
+        var list = instructorDAO.obtainActiveInstructorForComboBox();
         assertNotNull(list);
     }
 
     @Test
     @DisplayName("Después de insertar un profesor, debe aparecer en la lista resumida")
-    void testGetListActiveInstructorsIncludesNew() throws DAOException {
+    void testObtainActiveInstructorForComboBoxIncludesNew() throws DAOException {
         instructorDAO.addInstructor(testInstructor);
-        var list = instructorDAO.getListActiveInstructors();
+        var list = instructorDAO.obtainActiveInstructorForComboBox();
         boolean found = list.stream().anyMatch(i ->
                 i.getPersonalNumber().equals(testInstructor.getPersonalNumber()));
         assertTrue(found);

@@ -79,7 +79,7 @@ public class NewInternController implements Initializable {
         internDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
         internDTO.setStudentNumber(txtStudentNumber.getText().trim());
         internDTO.setPassword(txtPassword.getText().trim());
-        internDTO.setGender(cmbGender.getValue());
+        internDTO.setSex(cmbGender.getValue());
         internDTO.setSpeaksIndigenousLanguage(rbYes.isSelected());
         internDTO.setIndigenousLanguage(txtIndigenousLanguage.getText().trim());
         LocalDate selectedDate = dpBirthDate.getValue();

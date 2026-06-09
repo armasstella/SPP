@@ -133,7 +133,7 @@ public class UserDAOTest {
     @DisplayName("Debe lanzar IllegalArgumentException al insertar usuario con email inválido (sin @)")
     void testAddUserInvalidEmailFormat() {
         assertThrows(IllegalArgumentException.class, () -> {
-            testUser.setEmail("correo-sin-arroba");
+            testUser.setEmail("correosinarroba");
             userDAO.addUser(testUser);
         });
     }
@@ -173,7 +173,7 @@ public class UserDAOTest {
         testUser.setSecondLastName("");
         testUser.setFirstName(longName);
         testUser.setFirstLastName(longName);
-        testUser.setEmail("max" + uniqueSuffix + "@uv.mx");
+        testUser.setEmail("max" + uniqueSuffix + "@gmail.com");
         testUser.setPhoneNumber("1234567890");
         int id = userDAO.addUser(testUser);
         assertTrue(id > 0);
