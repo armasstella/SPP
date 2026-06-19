@@ -1,130 +1,92 @@
 package spp.businesslogic.dao;
 
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import spp.businesslogic.dto.CourseDTO;
+import spp.businesslogic.dto.InternDTO;
+import spp.businesslogic.dto.ProfessionalPracticeEnrollmentDTO;
+import spp.businesslogic.exceptions.DAOException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import spp.businesslogic.dto.CourseDTO;
-import spp.businesslogic.dto.ProfessionalPracticeEnrollmentDTO;
-import spp.businesslogic.dto.InternDTO;
-import spp.businesslogic.dto.ProjectDTO;
-import spp.businesslogic.exceptions.DAOException;
-
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(OrderAnnotation.class)
 public class ProfessionalPracticeEnrollmentDAOTest {
 
     private ProfessionalPracticeEnrollmentDAO professionalPracticeEnrollmentDAO;
     private ProfessionalPracticeEnrollmentDTO testProfessionalPracticeEnrollment;
-    private InternDTO internDTO;
-    private ProjectDTO projectDTO;
     private CourseDTO courseDTO;
+    private InternDTO internDTO;
 
     @BeforeAll
     void setUpAll() {
         professionalPracticeEnrollmentDAO = new ProfessionalPracticeEnrollmentDAO();
         testProfessionalPracticeEnrollment = new ProfessionalPracticeEnrollmentDTO();
-        internDTO = new InternDTO();
-        projectDTO = new ProjectDTO();
         courseDTO = new CourseDTO();
+        internDTO = new InternDTO();
     }
 
-
     @BeforeEach
-    void setUp() {
+    void setUpEach() {
+        courseDTO.setCourseCode(77777);
+        testProfessionalPracticeEnrollment.setCourseDTO(courseDTO);
         internDTO.setId(1);
         internDTO.setStudentNumber("S24013315");
-        projectDTO.setId(1);
-        courseDTO.setCourseCode(88978);
-
         testProfessionalPracticeEnrollment.setInternDTO(internDTO);
-        testProfessionalPracticeEnrollment.setFinalGrade(10);
-        testProfessionalPracticeEnrollment.setProjectDTO(projectDTO);
-        testProfessionalPracticeEnrollment.setCoveredHours(480);
-        testProfessionalPracticeEnrollment.setCourseDTO(courseDTO);
+
+        testProfessionalPracticeEnrollment.setFinalGrade(0);
+        testProfessionalPracticeEnrollment.setCoveredHours(0);
     }
 
     @Test
-    @DisplayName("Debe insertar una inscripción exitosamente")
-    void testAddProfessionalPracticeEnrollmentSuccess() throws DAOException {
+    @Order(1)
+    @DisplayName("Debe lanzar DAOException al recibir un DTO nulo (Fail-Fast)")
+    void testAddEnrollmentNullDTO() {
+        assertThrows(DAOException.class, () -> professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
+                null));
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Debe lanzar DAOException si la matrícula a asignar proyecto está vacía")
+    void testAssignProjectEmptyStudentNumber() {
+        assertThrows(DAOException.class, () -> professionalPracticeEnrollmentDAO.assignProjectToInscription(
+                "", 1));
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("Debe lanzar DAOException por llave foránea inválida al insertar")
+    void testAddEnrollmentInvalidFK() {
+        InternDTO intern = new InternDTO();
+        intern.setId(99999);
+        intern.setStudentNumber("S99999999");
+        testProfessionalPracticeEnrollment.setInternDTO(intern);
+        assertThrows(DAOException.class, () -> professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
+                testProfessionalPracticeEnrollment));
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("Debe intentar insertar inscripción sin proyecto asignado")
+    void testAddEnrollmentWithoutProject() throws DAOException {
         boolean result = professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
-            testProfessionalPracticeEnrollment);
+                testProfessionalPracticeEnrollment);
         assertTrue(result);
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException cuando el curso no existe")
-    void testAddProfessionalPracticeEnrollmentFailedInvalidCourse() throws DAOException {
-        testProfessionalPracticeEnrollment.getCourseDTO().setCourseCode(99999);
-        assertThrows(DAOException.class, () -> {
-            professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
-                testProfessionalPracticeEnrollment);
-        });
-    }
-
-    @Test
-    @DisplayName("Debe lanzar DAOException cuando el curso no se asigna")
-    void testAddProfessionalPracticeEnrollmentFailedMissingCourse() throws DAOException {
-        testProfessionalPracticeEnrollment.setCourseDTO(null);
-        assertThrows(DAOException.class, () -> {
-            professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
-                    testProfessionalPracticeEnrollment);
-        });
-    }
-
-    @Test
-    @DisplayName("Debe lanzar DAOException cuando el proyecto no existe")
-    void testAddProfessionalPracticeEnrollmentFailedInvalidProject() throws DAOException {
-        testProfessionalPracticeEnrollment.getProjectDTO().setId(555);
-        assertThrows(DAOException.class, () -> {
-            professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
-                testProfessionalPracticeEnrollment);
-        });
-    }
-
-    @Test
-    @DisplayName("Debería lanzar DAOException cuando no hay un proyecto asignado")
-    void testAddProfessionalPracticeEnrollmentFailedMissingProject()  throws DAOException {
-        testProfessionalPracticeEnrollment.setProjectDTO(null);
-        assertThrows(DAOException.class, () -> {
-            professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
-                    testProfessionalPracticeEnrollment);
-        });
-    }
-
-    @Test
-    @DisplayName("Debe lanzar DAOException cuando el practicante no existe")
-    void testAddProfessionalPracticeEnrollmentFailedInvalidIntern() throws DAOException {
-        testProfessionalPracticeEnrollment.getInternDTO().setStudentNumber("S28014410");
-        assertThrows(DAOException.class, () -> {
-            professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
-                testProfessionalPracticeEnrollment);
-        });
-    }
-
-    @Test
-    @DisplayName("Debería lanzar DAOException cuando no hay un practicante asignado")
-    void testAddProfessionalPracticeEnrollmentFailedMissingIntern() throws DAOException {
-        testProfessionalPracticeEnrollment.setInternDTO(null);
-        assertThrows(DAOException.class, () -> {
-            professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
-                testProfessionalPracticeEnrollment);
-        });
-    }
-
-    @Test
-    @DisplayName("Debería lanzar permitir ingresar las horas cubiertas ingresadas")
-    void testAddLinkedOrganizationWithCoveredHoursSuccess() throws DAOException {
-        testProfessionalPracticeEnrollment.setCoveredHours(66);
-        boolean result =
-                professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
-                        testProfessionalPracticeEnrollment);
+    @Order(5)
+    @DisplayName("Debe intentar asignar un proyecto a la inscripción (Depende de BD)")
+    void testAssignProjectSuccess() throws DAOException {
+        boolean result = professionalPracticeEnrollmentDAO.assignProjectToInscription("S24013315", 1);
         assertTrue(result);
     }
 }

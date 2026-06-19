@@ -1,10 +1,14 @@
 package spp.businesslogic.dto;
 
-
 import spp.businesslogic.enums.MesaggeStatus;
-
+import java.util.regex.Pattern;
 
 public class MessageDTO {
+
+    private static final int MAX_LENGTH_SUBJECT = 100;
+    private static final int MAX_LENGTH_CONTENT = 1000;
+    private static final String EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+
     private String subject;
     private String content;
     private MesaggeStatus messageStatus;
@@ -15,10 +19,21 @@ public class MessageDTO {
     private String date;
 
     public MessageDTO() {
+    }
 
+    public void setSubject(String subject) {
+        validateNotEmpty(subject, "Asunto");
+        validateStringLength(subject, MAX_LENGTH_SUBJECT, "Asunto");
+        this.subject = subject;
+    }
+
+    public String getSubject() {
+        return subject;
     }
 
     public void setContent(String content) {
+        validateNotEmpty(content, "Contenido");
+        validateStringLength(content, MAX_LENGTH_CONTENT, "Contenido");
         this.content = content;
     }
 
@@ -50,36 +65,47 @@ public class MessageDTO {
         return receiver;
     }
 
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setEmailSender(String emailSender) {
+        validateRegex(emailSender, "El correo del remitente no tiene un formato válido.");
+        this.emailSender = emailSender;
     }
 
     public String getEmailSender() {
         return emailSender;
     }
 
-    public void setEmailSender(String emailSender) {
-        this.emailSender = emailSender;
+    public void setEmailReceiver(String emailReceiver) {
+        validateRegex(emailReceiver, "El correo del destinatario no tiene un formato válido.");
+        this.emailReceiver = emailReceiver;
     }
 
     public String getEmailReceiver() {
         return emailReceiver;
     }
 
-    public void setEmailReceiver(String emailReceiver) {
-        this.emailReceiver = emailReceiver;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getDate() {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    protected void validateNotEmpty(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("El campo " + fieldName + " no debe estar vacío.");
+        }
     }
 
+    protected void validateStringLength(String value, int maxLength, String fieldName) {
+        if (value != null && value.length() > maxLength) {
+            throw new IllegalArgumentException("El campo " + fieldName + " no debe exceder " + maxLength + " caracteres.");
+        }
+    }
+
+    protected void validateRegex(String value, String errorMessage) {
+        if (value == null || !Pattern.matches(MessageDTO.EMAIL_REGEX, value)) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+    }
 }

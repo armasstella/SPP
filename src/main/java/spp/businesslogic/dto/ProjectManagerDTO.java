@@ -1,7 +1,13 @@
 package spp.businesslogic.dto;
 
+import java.util.regex.Pattern;
 
 public class ProjectManagerDTO {
+
+    private static final int MAX_LENGTH_NAME = 50;
+    private static final int MAX_LENGTH_ROLE = 50;
+    private static final int MAX_LENGTH_RESPONSIBILITY = 100;
+    private static final String PHONE_REGEX = "\\d{10}";
 
     private int id;
     private String firstName;
@@ -13,67 +19,96 @@ public class ProjectManagerDTO {
     private String phoneNumber;
 
     public ProjectManagerDTO() {
-
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public int getId() {
-        return id;
+    public void setFirstName(String firstName) {
+        validateNotEmpty(firstName, "Primer nombre");
+        validateStringLength(firstName, MAX_LENGTH_NAME, "Primer nombre");
+        this.firstName = firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setSecondName(String secondName) {
+        validateStringLength(secondName, MAX_LENGTH_NAME, "Segundo nombre");
+        this.secondName = secondName;
+    }
+
+    public void setFirstLastName(String firstLastName) {
+        validateNotEmpty(firstLastName, "Apellido paterno");
+        validateStringLength(firstLastName, MAX_LENGTH_NAME, "Apellido paterno");
+        this.firstLastName = firstLastName;
+    }
+
+    public void setSecondLastName(String secondLastName) {
+        validateStringLength(secondLastName, MAX_LENGTH_NAME, "Apellido materno");
+        this.secondLastName = secondLastName;
+    }
+
+    public void setResponsibility(String responsibility) {
+        validateNotEmpty(responsibility, "Responsabilidad");
+        validateStringLength(responsibility, MAX_LENGTH_RESPONSIBILITY, "Responsabilidad");
+        this.responsibility = responsibility;
+    }
+
+    public void setRole(String role) {
+        validateNotEmpty(role, "Rol");
+        validateStringLength(role, MAX_LENGTH_ROLE, "Rol");
+        this.role = role;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        validateNotEmpty(phoneNumber, "Teléfono");
+        validateRegex(phoneNumber);
+        this.phoneNumber = phoneNumber;
+    }
+
+    protected void validateNotEmpty(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("El campo " + fieldName + " no debe estar vacío.");
+        }
+    }
+
+    protected void validateStringLength(String value, int maxLength, String fieldName) {
+        if (value != null && value.length() > maxLength) {
+            throw new IllegalArgumentException("El campo " + fieldName + " no debe exceder " + maxLength + " caracteres.");
+        }
+    }
+
+    protected void validateRegex(String value) {
+        if (value == null || !Pattern.matches(ProjectManagerDTO.PHONE_REGEX, value)) {
+            throw new IllegalArgumentException("El número de teléfono debe contener exactamente 10 dígitos numéricos.");
+        }
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
-    }
-
     public String getSecondName() {
         return secondName;
-    }
-
-    public void setFirstLastName(String firstLastName) {
-        this.firstLastName = firstLastName;
     }
 
     public String getFirstLastName() {
         return firstLastName;
     }
 
-    public void setSecondLastName(String secondLastName) {
-        this.secondLastName = secondLastName;
-    }
-
     public String getSecondLastName() {
         return secondLastName;
-    }
-
-    public void setResponsibility(String responsibility) {
-        this.responsibility = responsibility;
     }
 
     public String getResponsibility() {
         return responsibility;
     }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public String getRole() {
         return role;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
     }
 
     public String getPhoneNumber() {
@@ -84,5 +119,4 @@ public class ProjectManagerDTO {
     public String toString() {
         return firstName;
     }
-
 }

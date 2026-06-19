@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,12 +26,12 @@ public class ActivityDAOTest {
     @BeforeAll
     void setupAll() {
         activityDAO = new ActivityDAO();
-        testActivity = new ActivityDTO();
-        instructorDTO = new InstructorDTO();
     }
 
     @BeforeEach
     void setUp() {
+        testActivity = new ActivityDTO();
+        instructorDTO = new InstructorDTO();
         instructorDTO.setId(6);
         instructorDTO.setPersonalNumber("09876");
 
@@ -113,7 +114,7 @@ public class ActivityDAOTest {
     @DisplayName("Debe lanzar DAOException cuando no hay Instructor asignado")
     void testAddActivityFailedMissingInstructorDTO() throws  DAOException {
         testActivity.setInstructorDTO(null);
-        assertThrows(Exception.class, () -> {
+        assertThrows(DAOException.class, () -> {
             activityDAO.addActivity(testActivity);
         });
     }
@@ -137,7 +138,7 @@ public class ActivityDAOTest {
     }
 
     @Test
-    @DisplayName("Debe marcar error al insertar intructor sin identificación oficial")
+    @DisplayName("Debe marcar error al insertar profesor sin identificación oficial")
     void testAddActivityFailedInstructorWithoutId() throws DAOException {
         instructorDTO.setPersonalNumber(null);
         assertThrows(DAOException.class, () -> {
