@@ -110,6 +110,11 @@
                                 <Label text="Contraseña *" styleClass="field-label"/>
                                 <TextField fx:id="txtPassword" promptText="Mínimo 8 carácteres"
                                            styleClass="field-input"/>
+
+                                <Label text="NRC *" styleClass="field-label"/>
+                                <ComboBox fx:id="cmbCourseCode" promptText="Seleccione una opción"
+                                          styleClass="field-input, combo-box-custom" maxWidth="Infinity"/>
+
                             </VBox>
                         </content>
                     </ScrollPane>

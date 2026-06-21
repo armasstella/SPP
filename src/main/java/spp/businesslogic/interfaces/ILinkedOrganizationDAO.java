@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface ILinkedOrganizationDAO {
 
-    boolean addLinkedOrganization(LinkedOrganizationDTO linkedOrganization) throws DAOException;
-    List<LinkedOrganizationDTO> obtainActiveLinkedOrganizations() throws DAOException;
-    boolean searchLinkedOrganizationRegisters() throws DAOException;
+    boolean registerLinkedOrganization(LinkedOrganizationDTO linkedOrganization) throws DAOException;
+    List<LinkedOrganizationDTO> findActiveLinkedOrganizationsIdentifiers() throws DAOException;
+    boolean existsLinkedOrganizations() throws DAOException;
 
 }

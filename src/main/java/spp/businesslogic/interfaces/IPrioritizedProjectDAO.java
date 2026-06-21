@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface IPrioritizedProjectDAO {
 
-    boolean savePrioritizedProjects(String email, List<ProjectDTO> chosenProjects) throws DAOException;
-    boolean searchPrioritizedProjectsRegister(String email) throws DAOException;
+    boolean savePrioritizedProjects(String email, List<ProjectDTO> priotitizedProjectsList) throws DAOException;
+    boolean findPrioritizedProjectsByInternEmail(String email) throws DAOException;
+    List<ProjectDTO> findPrioritizedProjectsIdentifiersByStudentNumber(String studentNumber) throws DAOException;
 
 }

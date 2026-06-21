@@ -65,4 +65,9 @@ public class InternDTO extends UserDTO {
         return birthDate;
     }
 
+    @Override
+    public String toString() {
+        return studentNumber + " | " + super.getFullName();
+    }
+
 }

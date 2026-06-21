@@ -23,7 +23,6 @@ public class InternMenuController {
 
     @FXML
     private void goToMonthlyActivityRegistrationView(ActionEvent event) {
-        //TODO: Validar que el practicante en su inscripción tenga asignada una ee
         ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyActivityRegistersView.fxml",
                 "Registro de actividad", event);
     }
@@ -57,7 +56,7 @@ public class InternMenuController {
 
         try {
             PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
-            if (prioritizedProjectDAO.searchPrioritizedProjectsRegister(ActiveSessionDTO.get().getEmail())) {
+            if (prioritizedProjectDAO.findPrioritizedProjectsByInternEmail(ActiveSessionDTO.get().getEmail())) {
                 hasPrioritizedProjects = true;
             }
 
@@ -76,14 +75,12 @@ public class InternMenuController {
         boolean isThisOptionAllowed = false;
         try {
             ProjectDAO projectDAO = new ProjectDAO();
-            if (projectDAO.verifyMinimumProjects()) {
+            if (projectDAO.hasMinimumProjectsForActiveTerm()) {
                 isThisOptionAllowed = true;
             } else {
                 AlertHelper.showErrorMessage("Operación no disponible",
                         "No hay proyectos suficientes para elección del practicante");
             }
-
-            //TODO: Validar si el practicante ya seleccionó 3 proyectos.
 
         } catch (Exception e) {
             AppLogger.logError(e);

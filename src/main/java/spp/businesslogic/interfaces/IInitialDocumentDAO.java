@@ -7,14 +7,13 @@ import spp.businesslogic.exceptions.DAOException;
 
 public interface IInitialDocumentDAO {
 
-    boolean saveDocument(String email, InitialDocumentDTO initialDocumentDTO) throws DAOException;
-    boolean searchClassScheduleForIntern(String email) throws DAOException;
-    boolean searchActivitiesScheduleForIntern(String email) throws DAOException;
-    boolean searchPSPForIntern(String email) throws DAOException;
-    boolean searchPartialReportForIntern(String email) throws DAOException;
-    boolean searchMonthlyReportForIntern(String email) throws DAOException;
-    boolean searchSelfEvaluationForIntern(String email) throws DAOException;
-    boolean searchEvaluationLinkedOrganizationForIntern(String email) throws DAOException;
-    boolean searchFinalReportForIntern(String email) throws DAOException;
+    boolean saveDocument(String studentNumber, InitialDocumentDTO initialDocumentDTO) throws DAOException;
+    boolean hasClassScheduleByInternEmail(String email) throws DAOException;
+    boolean hasActivitiesScheduleByInternEmail(String email) throws DAOException;
+    boolean hasPSPByInternEmail(String email) throws DAOException;
+    boolean hasPartialReportByInternEmail(String email) throws DAOException;
+    boolean hasMonthlyReportByInternEmail(String email) throws DAOException;
+    boolean hasSelfEvaluationByInternEmail(String email) throws DAOException;
+    boolean hasEvaluationLinkedOrganizationByInternEmail(String email) throws DAOException;
 
 }

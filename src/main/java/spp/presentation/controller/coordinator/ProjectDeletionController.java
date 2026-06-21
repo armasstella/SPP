@@ -66,7 +66,7 @@ public class ProjectDeletionController implements Initializable {
 
     private void obtainProjects() {
         try {
-            List<ProjectDTO> projectsList = projectDAO.obtainAllProjects();
+            List<ProjectDTO> projectsList = projectDAO.findProjectsDetailsForActiveTerm();
             ObservableList<ProjectDTO> projectsObservableList = FXCollections.observableArrayList(projectsList);
             tblProjects.setItems(projectsObservableList);
         } catch (DAOException e) {

@@ -48,7 +48,7 @@ public class InternDAOTest {
     @Test
     @DisplayName("Debe insertar un practicante exitosamente")
     void testInsertInternSuccess() throws DAOException {
-        boolean result = internDAO.addIntern(testIntern);
+        boolean result = internDAO.registerIntern(testIntern);
         assertTrue(result);
     }
 
@@ -57,23 +57,23 @@ public class InternDAOTest {
     void testInsertInternWithoutIndigenousLanguageSuccess() throws DAOException {
         testIntern.setSpeaksIndigenousLanguage(false);
         testIntern.setIndigenousLanguage(null);
-        boolean result = internDAO.addIntern(testIntern);
+        boolean result = internDAO.registerIntern(testIntern);
         assertTrue(result);
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException al insertar un Practicante por duplicación de matrícula")
     void testInsertInternFailedDuplicated() throws DAOException {
-        internDAO.addIntern(testIntern);
+        internDAO.registerIntern(testIntern);
         assertThrows(DAOException.class, () -> {
-            internDAO.addIntern(testIntern);
+            internDAO.registerIntern(testIntern);
         });
     }
 
     @Test
     @DisplayName("Debe obtener el id del practicante recién insertado")
     void testObtainIdSuccess() throws DAOException {
-        internDAO.addIntern(testIntern);
+        internDAO.registerIntern(testIntern);
         int result = internDAO.obtainId(testIntern.getStudentNumber());
         Assertions.assertTrue(result > 0);
     }
@@ -88,25 +88,25 @@ public class InternDAOTest {
 
     @Test
     @DisplayName("Debe devolver true si la función SQL determina que el estudiante existe")
-    void testSearchStudentNumberRegisterSuccess() throws DAOException {
-        internDAO.addIntern(testIntern);
-        boolean exists = internDAO.searchStudentNumberRegister(testIntern.getStudentNumber());
+    void testExistsStudentByStudentNumberSuccess() throws DAOException {
+        internDAO.registerIntern(testIntern);
+        boolean exists = internDAO.existsStudentByStudentNumber(testIntern.getStudentNumber());
         assertTrue(exists);
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException si la función SQL determina que la matrícula es inválida")
-    void testSearchStudentNumberRegisterFailed() {
+    void testExistsStudentByStudentNumberFailed() {
         assertThrows(DAOException.class, () -> {
-            internDAO.searchStudentNumberRegister("S00000000");
+            internDAO.existsStudentByStudentNumber("S00000000");
         });
     }
 
     @Test
     @DisplayName("Debe inactivar un practicante exitosamente")
-    void testInactivateInternSuccess() throws DAOException {
-        internDAO.addIntern(testIntern);
-        boolean isDeactivated = internDAO.inactivateIntern(testIntern);
+    void testDeactivateInternSuccess() throws DAOException {
+        internDAO.registerIntern(testIntern);
+        boolean isDeactivated = internDAO.deactivateIntern(testIntern);
         assertTrue(isDeactivated);
     }
 
@@ -115,7 +115,7 @@ public class InternDAOTest {
     void testInsertInternFailedNullStudentNumber() throws DAOException {
         testIntern.setStudentNumber(null);
         assertThrows(DAOException.class, () -> {
-            internDAO.addIntern(testIntern);
+            internDAO.registerIntern(testIntern);
         });
     }
 
@@ -124,7 +124,7 @@ public class InternDAOTest {
     void testInsertInternFailedNullEmail() throws DAOException {
         testIntern.setEmail(null);
         assertThrows(DAOException.class, () -> {
-            internDAO.addIntern(testIntern);
+            internDAO.registerIntern(testIntern);
         });
     }
 
@@ -133,7 +133,7 @@ public class InternDAOTest {
     void testInsertInternFailedNullBirthDate() throws DAOException {
         testIntern.setBirthDate(null);
         assertThrows(DAOException.class, () -> {
-            internDAO.addIntern(testIntern);
+            internDAO.registerIntern(testIntern);
         });
     }
 }

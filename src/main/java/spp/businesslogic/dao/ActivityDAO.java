@@ -24,60 +24,67 @@ public class ActivityDAO implements IActivityDAO {
     }
 
     @Override
-    public boolean saveActivity(String studentNumber, ActivityDTO activity) throws DAOException {
-        boolean isActivitySaved = false;
-        final String SAVE_ACTIVITY =
-                "INSERT INTO actividades_practicante " +
+    public boolean saveActivityForIntern(String studentNumber, ActivityDTO activityDTO) throws DAOException {
+        final String INSERT_ACTIVITY = "INSERT INTO actividades_practicante " +
                         "(titulo, descripcion, fecha_inicio, fecha_fin, tiempo_estimado, tiempo_efectivo, " +
-                        " avance, observaciones, id_usuario_practicante, matricula) " +
+                        "avance, observaciones, id_usuario_practicante, matricula) " +
                         "SELECT ?, ?, ?, ?, ?, ?, ?, ?, p.id_usuario, p.matricula " +
                         "FROM practicantes p WHERE p.matricula = ?";
+        boolean isInsertSuccessful = false;
+
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SAVE_ACTIVITY);
-            preparedStatement.setString(1, activity.getTitle());
-            preparedStatement.setString(2, activity.getDescription());
-            preparedStatement.setDate(3, Date.valueOf(activity.getStartDate()));
-            preparedStatement.setDate(4, Date.valueOf(activity.getEndDate()));
-            preparedStatement.setInt(5, activity.getEstimatedTime());
-            preparedStatement.setInt(6, activity.getEffectiveTime());
-            preparedStatement.setInt(7, activity.getProgress());
-            preparedStatement.setString(8, activity.getObservations());
-            preparedStatement.setString(9, studentNumber);
-            isActivitySaved = preparedStatement.executeUpdate() > NO_ROWS_AFFECTED;
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ACTIVITY)) {
+                preparedStatement.setString(1, activityDTO.getTitle());
+                preparedStatement.setString(2, activityDTO.getDescription());
+                preparedStatement.setDate(3, Date.valueOf(activityDTO.getStartDate()));
+                preparedStatement.setDate(4, Date.valueOf(activityDTO.getEndDate()));
+                preparedStatement.setInt(5, activityDTO.getEstimatedTime());
+                preparedStatement.setInt(6, activityDTO.getEffectiveTime());
+                preparedStatement.setInt(7, activityDTO.getProgress());
+                preparedStatement.setString(8, activityDTO.getObservations());
+                preparedStatement.setString(9, studentNumber);
+
+                isInsertSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+
+            }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al registrar la actividad");
+            throw new DAOException("FATAL: Error de conexión al registrar la actividad", e);
         }
-        return isActivitySaved;
+
+        return isInsertSuccessful;
 
     }
 
     @Override
-    public List<ActivityDTO> obtainActivitiesByIntern(String studentNumber) throws DAOException {
-        List<ActivityDTO> activityList = new ArrayList<>();
+    public List<ActivityDTO> findActivitiesByStudentNumber(String studentNumber) throws DAOException {
         final String SELECT_ACTIVITIES =
                 "SELECT id_actividad_practicante, titulo, descripcion, fecha_inicio, fecha_fin, " +
                         "tiempo_estimado, tiempo_efectivo, avance, observaciones " +
                         "FROM actividades_practicante WHERE matricula = ? ORDER BY fecha_inicio ASC";
+        List<ActivityDTO> activityList = new ArrayList<>();
+
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ACTIVITIES);
-            preparedStatement.setString(1, studentNumber);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    activityList.add(buildActivityFromResultSet(resultSet));
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ACTIVITIES)) {
+                preparedStatement.setString(1, studentNumber);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        activityList.add(buildActivityDTOFromResultSet(resultSet));
+                    }
                 }
             }
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al obtener actividades de practicante");
+            throw new DAOException("FATAL: Error de conexión al obtener actividades de practicante", e);
         }
         return activityList;
 
     }
 
-    private ActivityDTO buildActivityFromResultSet(ResultSet resultSet) throws SQLException {
+    private ActivityDTO buildActivityDTOFromResultSet(ResultSet resultSet) throws SQLException {
         ActivityDTO activityDTO = new ActivityDTO();
         activityDTO.setId(resultSet.getInt("id_actividad_practicante"));
         activityDTO.setTitle(resultSet.getString("titulo"));
@@ -99,23 +106,27 @@ public class ActivityDAO implements IActivityDAO {
                 "UPDATE actividades_practicante SET titulo = ?, descripcion = ?, fecha_inicio = ?, " +
                         "fecha_fin = ?, tiempo_estimado = ?, tiempo_efectivo = ?, avance = ?, observaciones = ? " +
                         "WHERE id_actividad_practicante = ?";
+
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_ACTIVITY);
-            preparedStatement.setString(1, activity.getTitle());
-            preparedStatement.setString(2, activity.getDescription());
-            preparedStatement.setDate(3, Date.valueOf(activity.getStartDate()));
-            preparedStatement.setDate(4, Date.valueOf(activity.getEndDate()));
-            preparedStatement.setInt(5, activity.getEstimatedTime());
-            preparedStatement.setInt(6, activity.getEffectiveTime());
-            preparedStatement.setInt(7, activity.getProgress());
-            preparedStatement.setString(8, activity.getObservations());
-            preparedStatement.setInt(9, activity.getId());
-            isActivityUpdated = preparedStatement.executeUpdate() > NO_ROWS_AFFECTED;
+            try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_ACTIVITY)) {
+                preparedStatement.setString(1, activity.getTitle());
+                preparedStatement.setString(2, activity.getDescription());
+                preparedStatement.setDate(3, Date.valueOf(activity.getStartDate()));
+                preparedStatement.setDate(4, Date.valueOf(activity.getEndDate()));
+                preparedStatement.setInt(5, activity.getEstimatedTime());
+                preparedStatement.setInt(6, activity.getEffectiveTime());
+                preparedStatement.setInt(7, activity.getProgress());
+                preparedStatement.setString(8, activity.getObservations());
+                preparedStatement.setInt(9, activity.getId());
+                isActivityUpdated = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+            }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("FATAL: Error de conexión actualizar la actividad");
         }
+
         return isActivityUpdated;
 
     }
@@ -127,13 +138,16 @@ public class ActivityDAO implements IActivityDAO {
                 "DELETE FROM actividades_practicante WHERE id_actividad_practicante = ?";
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ACTIVITY);
-            preparedStatement.setInt(1, idActivity);
-            isActivityDeleted = preparedStatement.executeUpdate() > NO_ROWS_AFFECTED;
+            try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ACTIVITY)) {
+                preparedStatement.setInt(1, idActivity);
+                isActivityDeleted = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+            }
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("FATAL: Error de conexión eliminar la actividad");
         }
+
         return isActivityDeleted;
 
     }

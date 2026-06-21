@@ -58,7 +58,7 @@ public class CourseInformationController implements Initializable {
     @FXML
     private void obtainCourses() {
         try {
-            List<CourseDTO> courseDTOList = courseDAO.obtainAllActiveCourses();
+            List<CourseDTO> courseDTOList = courseDAO.getActiveCoursesStatistics();
             ObservableList<CourseDTO> coursesObservableList = FXCollections.observableArrayList(courseDTOList);
             tblCourses.setItems(coursesObservableList);
 

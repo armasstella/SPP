@@ -21,78 +21,66 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
     }
 
     @Override
-    public boolean addProfessionalPracticeEnrollment(ProfessionalPracticeEnrollmentDTO
+    public boolean registerProfessionalPracticeEnrollment(ProfessionalPracticeEnrollmentDTO
         professionalPracticeEnrollmentDTO) throws DAOException {
-        final String INSERT_PROFESSIONAL_PRACTICE_ENROLLMENT = "INSERT INTO Inscripciones_Practicas_Profesionales " +
+        final String INSERT_PROFESSIONAL_PRACTICE_ENROLLMENT = "INSERT INTO inscripciones_practicas_profesionales " +
                 "(id_experiencia_educativa, id_usuario_practicante, matricula, " +
                 "calificacion_final, id_proyecto, horas_cubiertas) VALUES (?, ?, ?, ?, ?, ?)";
-        boolean isAddSuccesful = false;
+        boolean isInsertSuccessful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            connection.setAutoCommit(false);
+            try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PROFESSIONAL_PRACTICE_ENROLLMENT)) {
+                preparedStatement.setInt(1,
+                        professionalPracticeEnrollmentDTO.getCourseDTO().getCourseCode());
+                preparedStatement.setInt(2,
+                        professionalPracticeEnrollmentDTO.getInternDTO().getId());
+                preparedStatement.setString(3,
+                        professionalPracticeEnrollmentDTO.getInternDTO().getStudentNumber());
+                preparedStatement.setInt(4,
+                        professionalPracticeEnrollmentDTO.getFinalGrade());
+                preparedStatement.setInt(5,
+                        professionalPracticeEnrollmentDTO.getProjectDTO().getId());
+                preparedStatement.setInt(6,
+                        professionalPracticeEnrollmentDTO.getCoveredHours());
 
-            try {
-                PreparedStatement preparedStatement = connection.prepareStatement
-                    (INSERT_PROFESSIONAL_PRACTICE_ENROLLMENT);
-                preparedStatement.setInt(1, professionalPracticeEnrollmentDTO.getCourseDTO().
-                        getCourseCode());
-                preparedStatement.setInt(2, professionalPracticeEnrollmentDTO.getInternDTO().getId());
-                preparedStatement.setString(3, professionalPracticeEnrollmentDTO.getInternDTO().
-                        getStudentNumber());
-                preparedStatement.setInt(4, professionalPracticeEnrollmentDTO.getFinalGrade());
-                preparedStatement.setInt(5, professionalPracticeEnrollmentDTO.getProjectDTO().getId());
-                preparedStatement.setInt(6, professionalPracticeEnrollmentDTO.getCoveredHours());
+                isInsertSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
 
-                int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("WARN: Fallo al insertar la inscripción. No se afectaron filas");
-                }
-
-                connection.commit();
-                isAddSuccesful = true;
-
-            } catch (SQLIntegrityConstraintViolationException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
-
-            } catch (SQLException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("ERROR: Error general al insertar inscripción", e);
-
-            } finally {
-                connection.setAutoCommit(true);
             }
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            AppLogger.logError(e);
+            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
 
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("FATAL: Error de conexión al insertar inscripción", e);
         }
 
-        return isAddSuccesful;
+        return isInsertSuccessful;
 
     }
 
     @Override
-    public boolean assignProjectToInscription(String studentNumber, int idProject) throws DAOException {
+    public boolean assignProjectByStudentNumber(String studentNumber, int idProject) throws DAOException {
         boolean isProjectAssigned = false;
-        final String ASSIGN_PROJECT =
-                "UPDATE inscripciones_practicas_profesionales " +
-                        "SET id_proyecto = ? " +
-                        "WHERE matricula = ?";
+        final String ASSIGN_PROJECT = "UPDATE inscripciones_practicas_profesionales ipp " +
+                "INNER JOIN experiencias_educativas ee ON ipp.id_experiencia_educativa = ee.id_experiencia_educativa " +
+                "INNER JOIN periodos p ON ee.id_periodo = p.id_periodo " +
+                "SET ipp.id_proyecto = ? " +
+                "WHERE ipp.matricula = ? AND p.periodoActual = 1";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(ASSIGN_PROJECT);
-            preparedStatement.setInt(1, idProject);
-            preparedStatement.setString(2, studentNumber);
-            isProjectAssigned = preparedStatement.executeUpdate() > NO_ROWS_AFFECTED;
+            try(PreparedStatement preparedStatement = connection.prepareStatement(ASSIGN_PROJECT)) {
+                preparedStatement.setInt(1, idProject);
+                preparedStatement.setString(2, studentNumber);
+                isProjectAssigned = preparedStatement.executeUpdate() > NO_ROWS_AFFECTED;
+            }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("Error al asignar el proyecto al practicante");
+            throw new DAOException("Error al asignar el proyecto al practicante", e);
         }
 
         return isProjectAssigned;

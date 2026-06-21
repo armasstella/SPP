@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 13px; color: #333; }
+        .header { text-align: center; border-bottom: 2px solid #114B5F; padding-bottom: 10px; margin-bottom: 20px; }
+        .header h1 { color: #114B5F; margin: 0; font-size: 20px; text-transform: uppercase; }
+        .header p { margin: 5px 0 0 0; color: #666; font-size: 12px; }
+
+        .section-title { font-size: 15px; color: #114B5F; border-bottom: 1px solid #ccc; padding-bottom: 4px; margin-top: 25px; margin-bottom: 15px; font-weight: bold; }
+
+        .filter-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .filter-table td { padding: 6px; border: 1px solid #ddd; }
+        .filter-table .bg-gray { background-color: #f5f5f5; font-weight: bold; width: 25%; color: #114B5F; }
+
+        .stat-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .stat-table th, .stat-table td { border: 1px solid #114B5F; padding: 10px; text-align: center; }
+        .stat-table th { background-color: #114B5F; color: #ffffff; text-transform: uppercase; font-size: 12px; }
+        .stat-table td { font-size: 16px; font-weight: bold; }
+        .stat-table .metric-name { text-align: left; font-weight: normal; font-size: 14px; background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>Reporte de Indicadores de Practicantes</h1>
+    <p>Sistema para Prácticas Profesionales (SPP)</p>
+    <p>Fecha de generación: ${generationDate}</p>
+</div>
+
+<div class="section-title">Filtros Aplicados</div>
+<table class="filter-table">
+    <tr>
+        <td class="bg-gray">Período Escolar</td><td>${filterPeriod}</td>
+        <td class="bg-gray">Género</td><td>${filterGender}</td>
+    </tr>
+    <tr>
+        <td class="bg-gray">Rango de Edad</td><td>${filterAge}</td>
+        <td class="bg-gray">Lengua Indígena</td><td>${filterLanguage}</td>
+    </tr>
+</table>
+
+<div class="section-title">Resultados Estadísticos</div>
+<table class="stat-table">
+    <thead>
+    <tr>
+        <th>Métrica de Indicador</th>
+        <th>Total Registrado</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="metric-name">Total de Practicantes que cumplen el criterio</td>
+        <td>${totalStudents}</td>
+    </tr>
+    <tr>
+        <td class="metric-name">Población Masculina</td>
+        <td>${totalMale}</td>
+    </tr>
+    <tr>
+        <td class="metric-name">Población Femenina</td>
+        <td>${totalFemale}</td>
+    </tr>
+    <tr>
+        <td class="metric-name">Hablantes de alguna Lengua Indígena</td>
+        <td>${totalIndigenous}</td>
+    </tr>
+    <tr>
+        <td class="metric-name">No hablantes de Lengua Indígena</td>
+        <td>${totalNonIndigenous}</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

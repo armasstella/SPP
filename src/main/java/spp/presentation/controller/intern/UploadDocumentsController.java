@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Window;
+import spp.businesslogic.dao.FinalReportDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.InitialDocumentDTO;
 import spp.businesslogic.enums.DocumentType;
@@ -39,6 +40,7 @@ public class UploadDocumentsController {
     private String currentPrefix;
     private final InitialDocumentDTO initialDocumentDTO = new InitialDocumentDTO();
     private final InitialDocumentDAO initialDocumentDAO = new InitialDocumentDAO();
+    private final FinalReportDAO finalReportDAO = new FinalReportDAO();
     private final InternDAO internDAO = new InternDAO();
 
     @FXML
@@ -101,7 +103,7 @@ public class UploadDocumentsController {
         }
 
         if (selectFile(event, "Seleccionar reporte parcial")) {
-            initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.PARTIAL_REPORT));
+            initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.INDICATOR_REPORT));
             currentFolder = "./documents/reports/partial/";
             currentPrefix = "partial";
         }
@@ -156,7 +158,7 @@ public class UploadDocumentsController {
     private boolean existsClassSchedule() {
         boolean exists = false;
         try {
-            exists = initialDocumentDAO.searchClassScheduleForIntern(ActiveSessionDTO.get().getEmail());
+            exists = initialDocumentDAO.hasClassScheduleByInternEmail(ActiveSessionDTO.get().getEmail());
         } catch (DAOException e) {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al buscar el horario.");
@@ -168,7 +170,7 @@ public class UploadDocumentsController {
     private boolean existsActivitiesSchedule() {
         boolean exists = false;
         try {
-            exists = initialDocumentDAO.searchActivitiesScheduleForIntern(ActiveSessionDTO.get().getEmail());
+            exists = initialDocumentDAO.hasActivitiesScheduleByInternEmail(ActiveSessionDTO.get().getEmail());
         } catch (DAOException e) {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al buscar la calendarización.");
@@ -180,7 +182,7 @@ public class UploadDocumentsController {
     private boolean existsPSP() {
         boolean exists = false;
         try {
-            exists = initialDocumentDAO.searchPSPForIntern(ActiveSessionDTO.get().getEmail());
+            exists = initialDocumentDAO.hasPSPByInternEmail(ActiveSessionDTO.get().getEmail());
         } catch (DAOException e) {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al buscar la bitácora PSP.");
@@ -192,7 +194,7 @@ public class UploadDocumentsController {
     private boolean existsPartialReport() {
         boolean exists = false;
         try {
-            exists = initialDocumentDAO.searchPartialReportForIntern(ActiveSessionDTO.get().getEmail());
+            exists = initialDocumentDAO.hasPartialReportByInternEmail(ActiveSessionDTO.get().getEmail());
         } catch (DAOException e) {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al buscar el reporte parcial.");
@@ -204,7 +206,7 @@ public class UploadDocumentsController {
     private boolean existsSelfEvaluation() {
         boolean exists = false;
         try {
-            exists = initialDocumentDAO.searchSelfEvaluationForIntern(ActiveSessionDTO.get().getEmail());
+            exists = initialDocumentDAO.hasSelfEvaluationByInternEmail(ActiveSessionDTO.get().getEmail());
         } catch (DAOException e) {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al buscar la autoevaluación.");
@@ -216,7 +218,7 @@ public class UploadDocumentsController {
     private boolean existsEvaluationLinkedOrganization() {
         boolean exists = false;
         try {
-            exists = initialDocumentDAO.searchEvaluationLinkedOrganizationForIntern(ActiveSessionDTO.get().getEmail());
+            exists = initialDocumentDAO.hasEvaluationLinkedOrganizationByInternEmail(ActiveSessionDTO.get().getEmail());
         } catch (DAOException e) {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al buscar la evaluación de la organización.");
@@ -226,14 +228,14 @@ public class UploadDocumentsController {
     }
 
     private boolean existsFinalReport() {
-        boolean exists = false;
+        boolean exist = false;
         try {
-            exists = initialDocumentDAO.searchFinalReportForIntern(ActiveSessionDTO.get().getEmail());
+            exist = finalReportDAO.hasFinalReportByInternEmail(ActiveSessionDTO.get().getEmail());
         } catch (DAOException e) {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al buscar el reporte final.");
         }
-        return exists;
+        return exist;
 
     }
 
@@ -300,7 +302,7 @@ public class UploadDocumentsController {
         String extension = FileUtils.getExtension(selectedDocument.getName());
 
         try {
-            String studentNumber = internDAO.obtainStudentNumber(ActiveSessionDTO.get().getEmail());
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
             String uniqueName = FileUtils.generateUniqueName(studentNumber, extension, currentPrefix);
             String finalPath = FileUtils.copyFile(selectedDocument, currentFolder, uniqueName);
 
@@ -323,7 +325,8 @@ public class UploadDocumentsController {
     private boolean saveDataDocument() {
         boolean success = false;
         try {
-            success = initialDocumentDAO.saveDocument(ActiveSessionDTO.get().getEmail(), initialDocumentDTO);
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
+            success = initialDocumentDAO.saveDocument(studentNumber, initialDocumentDTO);
         } catch (DAOException e) {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al guardar documento");

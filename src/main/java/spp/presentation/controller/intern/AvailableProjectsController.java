@@ -89,7 +89,7 @@ public class AvailableProjectsController implements Initializable {
     @FXML
     private void obtainProjects() {
         try {
-            List<ProjectDTO> projectList = projectDAO.obtainAllProjects();
+            List<ProjectDTO> projectList = projectDAO.findProjectsDetailsForActiveTerm();
             availableProjectsObservableList = FXCollections.observableArrayList(projectList);
             tblProjects.setItems(availableProjectsObservableList);
         } catch (DAOException e) {

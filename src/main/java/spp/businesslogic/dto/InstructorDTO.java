@@ -37,7 +37,7 @@ public class InstructorDTO extends UserDTO {
 
     @Override
     public String toString() {
-        return personalNumber + " | " + getFirstName();
+        return personalNumber + " | " + getFullName();
     }
 
 }

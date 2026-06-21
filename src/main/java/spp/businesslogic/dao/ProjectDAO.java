@@ -27,7 +27,7 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     @Override
-    public boolean addProject(ProjectDTO projectDTO) throws DAOException {
+    public boolean registerProject(ProjectDTO projectDTO) throws DAOException {
         final String INSERT_PROJECT = "INSERT INTO Proyectos " +
                 "(descripcion, " +
                 "id_organizacion_vinculada, id_encargado_proyecto, cupo, nombre) " +
@@ -165,47 +165,40 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     @Override
-    public List<ProjectDTO> obtainAllProjects() throws DAOException {
-        List<ProjectDTO> projectsList = new ArrayList<>();
-        final String SELECT_ALL_PROJECTS = "SELECT " +
-                "p.id_proyecto, " +
-                "p.nombre, " +
-                "p.descripcion, " +
-                "p.disponibilidad, " +
-                "p.cupo, " +
-                "ov.nombre as 'nombre_ov', " +
-                "CONCAT(ep.nombres, ' ', ep.apellidos) as 'nombre_rp' " +
-                "FROM proyectos p " +
-                "INNER JOIN organizaciones_vinculadas ov " +
-                " ON p.id_organizacion_vinculada = ov.id_organizacion_vinculada " +
+    public List<ProjectDTO> findProjectsDetailsForActiveTerm() throws DAOException {
+        final String SELECT_ALL_PROJECTS = "SELECT  p.id_proyecto, p.nombre, p.descripcion, p.disponibilidad, " +
+                "p.cupo, ov.nombre as 'nombre_ov', CONCAT(ep.nombres, ' ', ep.apellidos) as 'nombre_rp' " +
+                "FROM proyectos p INNER JOIN organizaciones_vinculadas ov ON " +
+                "p.id_organizacion_vinculada = ov.id_organizacion_vinculada " +
                 "INNER JOIN encargados_proyectos ep " +
-                " ON ep.id_encargado_proyecto = p.id_encargado_proyecto";
+                "ON ep.id_encargado_proyecto = p.id_encargado_proyecto";
+        List<ProjectDTO> projectsList = new ArrayList<>();
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PROJECTS);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PROJECTS);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    ProjectDTO projectDTO = new ProjectDTO();
+                    LinkedOrganizationDTO linkedOrganizationDTO = new LinkedOrganizationDTO();
+                    ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
 
-            while (resultSet.next()) {
-                ProjectDTO projectDTO = new ProjectDTO();
-                LinkedOrganizationDTO linkedOrganizationDTO = new LinkedOrganizationDTO();
-                ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
-
-                projectDTO.setId(resultSet.getInt("id_proyecto"));
-                projectDTO.setName(resultSet.getString("nombre"));
-                projectDTO.setDescription(resultSet.getString("descripcion"));
-                projectDTO.setAvailability(resultSet.getString("disponibilidad"));
-                projectDTO.setPlacesAvailable(resultSet.getInt("cupo"));
-                linkedOrganizationDTO.setName(resultSet.getString("nombre_ov"));
-                projectDTO.setLinkedOrganizationDTO(linkedOrganizationDTO);
-                projectManagerDTO.setFirstName(resultSet.getString("nombre_rp"));
-                projectDTO.setProjectManagerDTO(projectManagerDTO);
-                projectsList.add(projectDTO);
+                    projectDTO.setId(resultSet.getInt("id_proyecto"));
+                    projectDTO.setName(resultSet.getString("nombre"));
+                    projectDTO.setDescription(resultSet.getString("descripcion"));
+                    projectDTO.setAvailability(resultSet.getString("disponibilidad"));
+                    projectDTO.setPlacesAvailable(resultSet.getInt("cupo"));
+                    linkedOrganizationDTO.setName(resultSet.getString("nombre_ov"));
+                    projectDTO.setLinkedOrganizationDTO(linkedOrganizationDTO);
+                    projectManagerDTO.setFirstName(resultSet.getString("nombre_rp"));
+                    projectDTO.setProjectManagerDTO(projectManagerDTO);
+                    projectsList.add(projectDTO);
+                }
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al obtener proyectos.");
+            throw new DAOException("FATAL: Error de conexión al obtener proyectos.", e);
         }
 
         return projectsList;
@@ -213,56 +206,26 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     @Override
-    public boolean verifyMinimumProjects() throws DAOException {
-        final String SELECT = "SELECT f_hay_cantidad_minima_proyectos()";
-        boolean isMinimumProjects = false;
+    public boolean hasMinimumProjectsForActiveTerm() throws DAOException {
+        final String CHECK_MINIMUM_PROJECT = "SELECT f_hay_cantidad_minima_proyectos()";
+        boolean hasMinimum = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_MINIMUM_PROJECT);
+                 ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    isMinimumProjects = resultSet.getBoolean(1);
+                    hasMinimum = resultSet.getBoolean(1);
                 }
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al contar proyectos");
+            throw new DAOException("FATAL: Error de conexión al contar proyectos", e);
         }
 
-        return isMinimumProjects;
+        return hasMinimum;
 
-    }
-
-    @Override
-    public List<ProjectDTO> obtainSelectedProjectsByIntern(String studentNumber) throws DAOException {
-        List<ProjectDTO> selectedProjectList = new ArrayList<>();
-        final String SELECT_SELECTED_PROJECTS = "SELECT pr.id_proyecto, pr.nombre " +
-                "FROM proyectos_priorizados pp " +
-                "INNER JOIN proyectos pr ON pp.id_proyecto = pr.id_proyecto " +
-                "WHERE pp.matricula = ? " +
-                "ORDER BY pp.nivel_prioridad ASC";
-        try {
-            Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_SELECTED_PROJECTS);
-            preparedStatement.setString(1, studentNumber);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    ProjectDTO projectDTO = new ProjectDTO();
-                    projectDTO.setId(resultSet.getInt("id_proyecto"));
-                    projectDTO.setName(resultSet.getString("nombre"));
-                    selectedProjectList.add(projectDTO);
-                }
-            }
-
-        } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error al obtener proyectos del practicante");
-        }
-        return selectedProjectList;
     }
 
 

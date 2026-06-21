@@ -29,4 +29,11 @@ public class InstructorMenuController {
 
     }
 
+    @FXML
+    private void goToFinalReportEvaluationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/instructor/FinalReportEvaluationView.fxml",
+                "Calificar reporte", event);
+
+    }
+
 }

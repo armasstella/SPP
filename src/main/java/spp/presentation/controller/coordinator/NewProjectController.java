@@ -47,7 +47,7 @@ public class NewProjectController implements Initializable {
     private void loadProjectManagersInComboBox() {
         try {
             ProjectManagerDAO projectManagerDAO = new ProjectManagerDAO();
-            List<ProjectManagerDTO> projectManagerList = projectManagerDAO.obtainActiveProjectManagers();
+            List<ProjectManagerDTO> projectManagerList = projectManagerDAO.getActiveProjectManagers();
             ObservableList<ProjectManagerDTO> projectManagerObservableList =
                     FXCollections.observableArrayList(projectManagerList);
             cmbProjectManager.setItems(projectManagerObservableList);
@@ -61,7 +61,7 @@ public class NewProjectController implements Initializable {
     private void loadLinkedOrganizationInComboBox() {
         try {
             LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
-            List<LinkedOrganizationDTO> linkedOrganizationList = linkedOrganizationDAO.obtainActiveLinkedOrganizations();
+            List<LinkedOrganizationDTO> linkedOrganizationList = linkedOrganizationDAO.findActiveLinkedOrganizationsIdentifiers();
             ObservableList<LinkedOrganizationDTO> linkedOrganizationObservableList =
                     FXCollections.observableArrayList(linkedOrganizationList);
             cmbLinkedOrganization.setItems(linkedOrganizationObservableList);
@@ -104,7 +104,7 @@ public class NewProjectController implements Initializable {
         }
 
         try {
-            if (projectDAO.addProject(buildProjectDTO())) {
+            if (projectDAO.registerProject(buildProjectDTO())) {
                 StatusLabel.showSuccess(lblStatus, "Proyecto registrado correctamente.");
                 clearInputFields();
             }

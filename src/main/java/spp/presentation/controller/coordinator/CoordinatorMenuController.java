@@ -86,11 +86,11 @@ public class CoordinatorMenuController {
     }
 
     @FXML
-    private void goToReportGenerationView(ActionEvent event) {
+    private void goToIndicatorReportView(ActionEvent event) {
 
         try {
-            if (courseDAO.searchCourses()) {
-                ViewNavigator.loadView("/spp/presentation/view/coordinator/ReportGenerationView.fxml",
+            if (courseDAO.existsRegisteredCourses()) {
+                ViewNavigator.loadView("/spp/presentation/view/coordinator/IndicatorReportView.fxml",
                         "Generar Reporte", event);
             }
         } catch (DAOException e) {
@@ -133,7 +133,7 @@ public class CoordinatorMenuController {
 
         try {
             LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
-            exists = linkedOrganizationDAO.searchLinkedOrganizationRegisters();
+            exists = linkedOrganizationDAO.existsLinkedOrganizations();
         } catch (DAOException e) {
             AppLogger.logError(e);
         }
@@ -147,7 +147,7 @@ public class CoordinatorMenuController {
 
         try {
             ProjectManagerDAO projectManagerDAO = new ProjectManagerDAO();
-            exists = projectManagerDAO.searchProjectManagerRegisters();
+            exists = projectManagerDAO.existsProjectManagers();
         } catch (DAOException e) {
             AppLogger.logError(e);
         }

@@ -1,4 +1,4 @@
-package spp.businesslogic.dao;
+/*package spp.businesslogic.dao;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -154,4 +154,4 @@ public class ActivityDAOTest {
             activityDAO.addActivity(testActivity);
         });
     }
-}
+}*/

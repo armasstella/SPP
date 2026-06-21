@@ -12,6 +12,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.MessageDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.MessageDAO;
@@ -94,7 +95,7 @@ public class MessageCenterController implements Initializable {
     @FXML
     private void obtainMessages() {
         try {
-            List<MessageDTO> messagesList = messageDAO.obtainMessagesForUser();
+            List<MessageDTO> messagesList = messageDAO.findMessagesByReceiverEmail(ActiveSessionDTO.get().getEmail());
             messagesObservableList = FXCollections.observableArrayList(messagesList);
             tblMessages.setItems(messagesObservableList);
         } catch (DAOException e) {
@@ -133,7 +134,7 @@ public class MessageCenterController implements Initializable {
         }
 
         try {
-            if (userDAO.searchEmailRegister(txtRecipient.getText().trim())) {
+            if (userDAO.existsEmailRegister(txtRecipient.getText().trim())) {
                 try {
                     if (messageDAO.sendMessage(buildMessageDTO())) {
                         StatusLabel.showSuccess(lblStatus, "Mensaje enviado correctamente.");
@@ -166,6 +167,7 @@ public class MessageCenterController implements Initializable {
 
     public MessageDTO buildMessageDTO() {
         MessageDTO newMessageDTO = new MessageDTO();
+        newMessageDTO.setEmailSender(ActiveSessionDTO.get().getEmail());
         newMessageDTO.setEmailReceiver(txtRecipient.getText().trim());
         newMessageDTO.setSubject(txtSubject.getText().trim());
         newMessageDTO.setContent(txtBody.getText().trim());

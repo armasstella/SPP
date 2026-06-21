@@ -67,7 +67,7 @@ public class NewLinkedOrganizationController implements Initializable {
         setAllLinkedOrganization(event, linkedOrganizationDTO);
 
         try {
-            if (linkedOrganizationDAO.addLinkedOrganization(linkedOrganizationDTO)) {
+            if (linkedOrganizationDAO.registerLinkedOrganization(linkedOrganizationDTO)) {
                 StatusLabel.showSuccess(lblStatus, "Organización registrada correctamente.");
                 clearInputFields();
             }

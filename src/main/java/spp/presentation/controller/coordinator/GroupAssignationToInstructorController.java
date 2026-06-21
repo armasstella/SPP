@@ -83,13 +83,14 @@ public class GroupAssignationToInstructorController implements Initializable {
     @FXML
     private void cancel (ActionEvent event) {
         ViewNavigator.loadView(
-                "/spp/presentation/view/coordinator/CourseInformationView.fxml", "Información de Cursos", event);
+                "/spp/presentation/view/coordinator/CourseInformationView.fxml",
+                "Información de Cursos", event);
     }
 
     private void loadActiveInstructorsInComboBox() {
         try {
             InstructorDAO instructorDAO = new InstructorDAO();
-            List<InstructorDTO> activeInstructors = instructorDAO.obtainActiveInstructorForComboBox();
+            List<InstructorDTO> activeInstructors = instructorDAO.getActiveInstructorsIdentifiers();
             ObservableList<InstructorDTO> instructorObservableList =
                     FXCollections.observableArrayList(activeInstructors);
             cmbInstructor.setItems(instructorObservableList);

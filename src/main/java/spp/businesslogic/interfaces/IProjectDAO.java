@@ -8,11 +8,10 @@ import java.util.List;
 
 public interface IProjectDAO {
 
-    boolean addProject(ProjectDTO projectDTO) throws DAOException;
+    boolean registerProject(ProjectDTO projectDTO) throws DAOException;
     boolean deleteProject(ProjectDTO projectDTO) throws DAOException;
     boolean updateProject(ProjectDTO projectDTO) throws DAOException;
-    List<ProjectDTO> obtainAllProjects() throws DAOException;
-    boolean verifyMinimumProjects() throws DAOException;
-    List<ProjectDTO> obtainSelectedProjectsByIntern(String studentNumber) throws DAOException;
+    List<ProjectDTO> findProjectsDetailsForActiveTerm() throws DAOException;
+    boolean hasMinimumProjectsForActiveTerm() throws DAOException;
 
 }

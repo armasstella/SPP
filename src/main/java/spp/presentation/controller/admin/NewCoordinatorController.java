@@ -87,7 +87,7 @@ public class NewCoordinatorController implements Initializable {
         }
 
         try {
-            if (coordinatorDAO.addCoordinator(buildCoordinatorDTO())) {
+            if (coordinatorDAO.registerCoordinator(buildCoordinatorDTO())) {
                 StatusLabel.showSuccess(lblStatus, "Coordinador registrado correctamente.");
                 clearInputFields();
             }

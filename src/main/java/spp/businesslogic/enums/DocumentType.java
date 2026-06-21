@@ -9,6 +9,7 @@ public enum DocumentType {
     SELF_EVALUATION,
     EVALUATION_LINKED_ORGANIZATION,
     FINAL_REPORT,
-    PSP
+    PSP,
+    INDICATOR_REPORT
 
 }

@@ -24,18 +24,15 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     }
 
     @Override
-    public boolean addLinkedOrganization(LinkedOrganizationDTO linkedOrganizationDTO) throws DAOException {
+    public boolean registerLinkedOrganization(LinkedOrganizationDTO linkedOrganizationDTO) throws DAOException {
         final String INSERT_LINKED_ORGANIZATION = "INSERT INTO Organizaciones_Vinculadas " +
                 "(nombre, rfc, direccion, direccion_fiscal, giro, telefono, correo)" +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        boolean isAddSuccessful = false;
+        boolean isInsertSuccessful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            connection.setAutoCommit(false);
-
-            try {
-                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_LINKED_ORGANIZATION);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_LINKED_ORGANIZATION)) {
                 preparedStatement.setString(1, linkedOrganizationDTO.getName());
                 preparedStatement.setString(2, linkedOrganizationDTO.getRfc());
                 preparedStatement.setString(3, linkedOrganizationDTO.getAddress());
@@ -43,55 +40,39 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
                 preparedStatement.setString(5, linkedOrganizationDTO.getBusiness());
                 preparedStatement.setString(6, linkedOrganizationDTO.getPhoneNumber());
                 preparedStatement.setString(7, linkedOrganizationDTO.getEmail());
-
-                int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("WARN: Fallo al insertar organización vinculada. No se afectaron filas");
-                }
-
-                connection.commit();
-                isAddSuccessful = true;
-
-            } catch (SQLIntegrityConstraintViolationException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
-
-            } catch (SQLException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("ERROR: Error general al insertar organización vinculada", e);
-
-            } finally {
-                connection.setAutoCommit(true);
+                isInsertSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
             }
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            AppLogger.logError(e);
+            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
 
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("FATAL: Error de conexión al insertar organización vinculada", e);
         }
 
-        return isAddSuccessful;
+        return isInsertSuccessful;
 
     }
 
     @Override
-    public List<LinkedOrganizationDTO> obtainActiveLinkedOrganizations() throws DAOException {
+    public List<LinkedOrganizationDTO> findActiveLinkedOrganizationsIdentifiers() throws DAOException {
         final String SELECT_LINKED_ORGANIZATION = "SELECT id_organizacion_vinculada, rfc, nombre " +
                 "FROM Organizaciones_Vinculadas";
         List<LinkedOrganizationDTO> linkedOrganizationsList = new ArrayList<>();
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LINKED_ORGANIZATION);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                LinkedOrganizationDTO linkedOrganization = new LinkedOrganizationDTO();
-                linkedOrganization.setId(resultSet.getInt("id_organizacion_vinculada"));
-                linkedOrganization.setRfc(resultSet.getString("rfc"));
-                linkedOrganization.setName(resultSet.getString("nombre"));
-                linkedOrganizationsList.add(linkedOrganization);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LINKED_ORGANIZATION);
+                 ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    LinkedOrganizationDTO linkedOrganization = new LinkedOrganizationDTO();
+                    linkedOrganization.setId(resultSet.getInt("id_organizacion_vinculada"));
+                    linkedOrganization.setRfc(resultSet.getString("rfc"));
+                    linkedOrganization.setName(resultSet.getString("nombre"));
+                    linkedOrganizationsList.add(linkedOrganization);
+                }
             }
 
         } catch (SQLException e) {
@@ -104,15 +85,14 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     }
 
     @Override
-    public boolean searchLinkedOrganizationRegisters() throws DAOException {
-        final String SEARCH_REGISTERS = "SELECT f_hay_organizaciones_vinculadas()";
+    public boolean existsLinkedOrganizations() throws DAOException {
+        final String CHECK_LINKED_ORGANIZATIONS = "SELECT f_hay_organizaciones_vinculadas()";
         boolean isSearchSuccesful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_REGISTERS);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_LINKED_ORGANIZATIONS);
+                 ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     isSearchSuccesful = resultSet.getBoolean(1);
                 }

@@ -111,8 +111,8 @@ public class MonthlyReportGenerationController implements Initializable {
 
     private void obtainActivities() {
         try {
-            String studentNumber = internDAO.obtainStudentNumber(ActiveSessionDTO.get().getEmail());
-            List<ActivityDTO> activityList = activityDAO.obtainActivitiesByIntern(studentNumber);
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
+            List<ActivityDTO> activityList = activityDAO.findActivitiesByStudentNumber(studentNumber);
             availableActivitiesObservableList = FXCollections.observableArrayList(activityList);
             tblActivities.setItems(availableActivitiesObservableList);
         } catch (DAOException e) {
@@ -210,14 +210,14 @@ public class MonthlyReportGenerationController implements Initializable {
         }
 
         try {
-            String studentNumber = internDAO.obtainStudentNumber(ActiveSessionDTO.get().getEmail());
-            FinalReportDTO report = reportDAO.obtainReportData(studentNumber);
-            report.setCareer(CAREER);
-            report.setReportType(REPORT_TYPE);
-            report.setReportDate(LocalDate.now().format(DATE_FORMAT));
-            report.setTotalHours(String.valueOf(sumIncludedEffectiveTime()));
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
+            FinalReportDTO finalReportDTO = reportDAO.getFinalReportDetailByStudentNumber(studentNumber);
+            finalReportDTO.setCareer(CAREER);
+            finalReportDTO.setReportType(REPORT_TYPE);
+            finalReportDTO.setReportDate(LocalDate.now().format(DATE_FORMAT));
+            finalReportDTO.setTotalHours(String.valueOf(sumIncludedEffectiveTime()));
 
-            String html = FinalReportHtmlBuilder.build(report,
+            String html = FinalReportHtmlBuilder.build(finalReportDTO,
                     new ArrayList<>(includedActivitiesObservableList));
 
             File outputFile = chooseOutputFile(event, studentNumber);

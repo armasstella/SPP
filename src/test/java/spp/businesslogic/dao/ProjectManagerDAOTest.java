@@ -40,23 +40,23 @@ public class ProjectManagerDAOTest {
     @Test
     @DisplayName("Debe insertar un encargado de proyecto exitosamente")
     void testAddProjectManagerSuccess() throws DAOException {
-        boolean result = projectManagerDAO.addProjectManagerDAO(testProjectManager);
+        boolean result = projectManagerDAO.registerProjectManager(testProjectManager);
         assertTrue(result);
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException al insertar un encargado de proyecto duplicado")
     void testAddProjectManagerFailedDuplicatedProjectManager() throws DAOException {
-        projectManagerDAO.addProjectManagerDAO(testProjectManager);
+        projectManagerDAO.registerProjectManager(testProjectManager);
         assertThrows(DAOException.class, () ->
-            projectManagerDAO.addProjectManagerDAO(testProjectManager));
+            projectManagerDAO.registerProjectManager(testProjectManager));
     }
 
     @Test
     @DisplayName("Debe insertar un encargado con teléfono")
     void testAddProjectManagerWithPhoneSuccess() throws DAOException {
         testProjectManager.setPhoneNumber("2281234567");
-        boolean result = projectManagerDAO.addProjectManagerDAO(testProjectManager);
+        boolean result = projectManagerDAO.registerProjectManager(testProjectManager);
         assertTrue(result);
     }
 
@@ -65,7 +65,7 @@ public class ProjectManagerDAOTest {
     void testAddProjectManagerFailedNullFirstName() throws DAOException {
         testProjectManager.setFirstName(null);
         assertThrows(DAOException.class, () -> {
-            projectManagerDAO.addProjectManagerDAO(testProjectManager);
+            projectManagerDAO.registerProjectManager(testProjectManager);
         });
     }
 
@@ -73,7 +73,7 @@ public class ProjectManagerDAOTest {
     @DisplayName("Debe insertar un encargado con nombre")
     void testAddProjectManagerWithNameSuccess() throws DAOException {
         testProjectManager.setFirstName("Luz");
-        boolean result = projectManagerDAO.addProjectManagerDAO(testProjectManager);
+        boolean result = projectManagerDAO.registerProjectManager(testProjectManager);
         assertTrue(result);
     }
 
@@ -82,7 +82,7 @@ public class ProjectManagerDAOTest {
     void testAddProjectManagerFailedNullPhoneNumber() throws DAOException {
         testProjectManager.setPhoneNumber(null);
         assertThrows(DAOException.class, () -> {
-            projectManagerDAO.addProjectManagerDAO(testProjectManager);
+            projectManagerDAO.registerProjectManager(testProjectManager);
         });
     }
 
@@ -90,7 +90,7 @@ public class ProjectManagerDAOTest {
     @DisplayName("Debe insertar encargado sin segundo nombre")
     void testAddProjectManagerNullSecondNameSuccess() throws DAOException {
         testProjectManager.setSecondName(null);
-        boolean result = projectManagerDAO.addProjectManagerDAO(testProjectManager);
+        boolean result = projectManagerDAO.registerProjectManager(testProjectManager);
         assertTrue(result);
     }
 
@@ -98,7 +98,7 @@ public class ProjectManagerDAOTest {
     @DisplayName("Debe insertar un encargado con segundo nombre")
     void testAddProjectManagerWithSecondNameSuccess() throws DAOException {
         testProjectManager.setSecondName("Fernanda");
-        boolean result = projectManagerDAO.addProjectManagerDAO(testProjectManager);
+        boolean result = projectManagerDAO.registerProjectManager(testProjectManager);
         assertTrue(result);
     }
 
@@ -107,7 +107,7 @@ public class ProjectManagerDAOTest {
     void testAddProjectManagerFailedNullFirstLastName() throws DAOException {
         testProjectManager.setFirstLastName(null);
         assertThrows(DAOException.class, () -> {
-            projectManagerDAO.addProjectManagerDAO(testProjectManager);
+            projectManagerDAO.registerProjectManager(testProjectManager);
         });
     }
 
@@ -115,7 +115,7 @@ public class ProjectManagerDAOTest {
     @DisplayName("Debe insertar un encargado con apellido paterno")
     void testAddProjectManagerWithFirstLastNameSuccess() throws DAOException {
         testProjectManager.setFirstLastName("Herrera");
-        boolean result = projectManagerDAO.addProjectManagerDAO(testProjectManager);
+        boolean result = projectManagerDAO.registerProjectManager(testProjectManager);
         assertTrue(result);
     }
 
@@ -123,7 +123,7 @@ public class ProjectManagerDAOTest {
     @DisplayName("Debe insertar encargado con segundo apellido vacío")
     void testAddProjectManagerNullSecondLastNameSuccess() throws DAOException {
         testProjectManager.setSecondLastName(null);
-        boolean result = projectManagerDAO.addProjectManagerDAO(testProjectManager);
+        boolean result = projectManagerDAO.registerProjectManager(testProjectManager);
         assertTrue(result);
     }
 
@@ -131,7 +131,7 @@ public class ProjectManagerDAOTest {
     @DisplayName("Debe insertar un encargado con segundo apellido")
     void testAddProjectManagerWithSecondLastNameSuccess() throws DAOException {
         testProjectManager.setSecondLastName("Juárez");
-        boolean result = projectManagerDAO.addProjectManagerDAO(testProjectManager);
+        boolean result = projectManagerDAO.registerProjectManager(testProjectManager);
         assertTrue(result);
     }
 
@@ -140,7 +140,7 @@ public class ProjectManagerDAOTest {
     void testAddProjectManagerFailedNullRole() throws DAOException {
         testProjectManager.setRole(null);
         assertThrows(DAOException.class, () -> {
-            projectManagerDAO.addProjectManagerDAO(testProjectManager);
+            projectManagerDAO.registerProjectManager(testProjectManager);
         });
     }
 
@@ -148,7 +148,7 @@ public class ProjectManagerDAOTest {
     @DisplayName("Debe insertar un encargado con rol")
     void testAddProjectManagerWithRoleSuccess() throws DAOException {
             testProjectManager.setRole("Product Manager");
-        boolean result = projectManagerDAO.addProjectManagerDAO(testProjectManager);
+        boolean result = projectManagerDAO.registerProjectManager(testProjectManager);
         assertTrue(result);
     }
 
@@ -157,7 +157,7 @@ public class ProjectManagerDAOTest {
     void testAddProjectManagerFailedNullResponsibility() throws DAOException {
         testProjectManager.setResponsibility(null);
         assertThrows(DAOException.class, () -> {
-            projectManagerDAO.addProjectManagerDAO(testProjectManager);
+            projectManagerDAO.registerProjectManager(testProjectManager);
         });
     }
 
@@ -165,7 +165,7 @@ public class ProjectManagerDAOTest {
     @DisplayName("Debe insertar un encargado con su responsabilidad")
     void testAddProjectManagerWithResponsibilitySuccess() throws DAOException {
         testProjectManager.setResponsibility("Dirigir el Proyecto de Calidad");
-        boolean result = projectManagerDAO.addProjectManagerDAO(testProjectManager);
+        boolean result = projectManagerDAO.registerProjectManager(testProjectManager);
         assertTrue(result);
     }
 }

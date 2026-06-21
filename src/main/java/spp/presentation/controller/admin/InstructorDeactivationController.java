@@ -87,7 +87,7 @@ public class InstructorDeactivationController implements Initializable {
     @FXML
     private void obtainInstructors() {
         try {
-            List<InstructorDTO> instructorsList = instructorDAO.obtainAllActiveInstructors();
+            List<InstructorDTO> instructorsList = instructorDAO.getActiveInstructors();
             ObservableList<InstructorDTO> instructorsObservableList =
                     FXCollections.observableArrayList(instructorsList);
             tblInstructors.setItems(instructorsObservableList);

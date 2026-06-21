@@ -87,4 +87,10 @@ public class CourseDTO {
     public void setNumberOfInterns(int numberOfInterns) {
         this.numberOfInterns = numberOfInterns;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(courseCode);
+    }
+
 }

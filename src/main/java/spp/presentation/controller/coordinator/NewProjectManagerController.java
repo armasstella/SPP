@@ -67,7 +67,7 @@ public class NewProjectManagerController implements Initializable {
         }
 
         try {
-            if (projectManagerDAO.addProjectManagerDAO(buildProjectManagerDTO())) {
+            if (projectManagerDAO.registerProjectManager(buildProjectManagerDTO())) {
                 StatusLabel.showSuccess(lblStatus, "Encargado de proyecto registrado correctamente.");
                 clearInputFields();
             }

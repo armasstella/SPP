@@ -41,11 +41,10 @@
             <HBox styleClass="options-container" alignment="CENTER" spacing="16">
                 <VBox alignment="CENTER" spacing="16">
                     <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
-                    <Button text="Añadir Formato Presentación"
-                            styleClass="option-btn, btn-add"
-                    />
+
                     <Button text="Evaluar Reporte"
                             styleClass="option-btn, btn-inactivate"
+                            onAction="#goToFinalReportEvaluationView"
                     />
                 </VBox>
             </HBox>

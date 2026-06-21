@@ -54,7 +54,7 @@ public class CoordinatorDeactivationController implements Initializable {
     @FXML
     private void obtainCoordinators() {
         try {
-            List<CoordinatorDTO> coordinatorsList = coordinatorDAO.obtainAllActiveCoordinators();
+            List<CoordinatorDTO> coordinatorsList = coordinatorDAO.getActiveCoordinators();
             ObservableList<CoordinatorDTO> coordinatorsObservableList =
                     FXCollections.observableArrayList(coordinatorsList);
             tblCoordinators.setItems(coordinatorsObservableList);
@@ -74,7 +74,7 @@ public class CoordinatorDeactivationController implements Initializable {
         if (AlertHelper.showConfirmation("Confirmar acción",
                 "¿Seguro que desea inactivar \"" + coordinatorSelected.getPersonalNumber() + "\"?")) {
             try {
-                if (coordinatorDAO.inactivateCoordinator(coordinatorSelected)) {
+                if (coordinatorDAO.deactivateCoordinator(coordinatorSelected)) {
                     obtainCoordinators();
                     StatusLabel.showSuccess(lblStatus, "Coordinador inactivado exitosamente.");
                 }

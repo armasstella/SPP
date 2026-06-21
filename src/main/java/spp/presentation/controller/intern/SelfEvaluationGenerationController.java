@@ -11,6 +11,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import spp.businesslogic.dao.InternDAO;
 import spp.businesslogic.dao.SelfEvaluationDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.SelfEvaluationDTO;
@@ -72,22 +73,24 @@ public class SelfEvaluationGenerationController implements Initializable {
 
     private void loadStudentData() {
         try {
-            currentEvaluation = selfEvaluationDAO.obtainEvaluationData(ActiveSessionDTO.get().getEmail());
+            String activeEmail = ActiveSessionDTO.get().getEmail();
+            InternDAO internDAO = new InternDAO();
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(activeEmail);
+
+            currentEvaluation = selfEvaluationDAO.findEvaluationHeaderByStudentNumber(studentNumber);
 
             if (currentEvaluation == null) {
                 StatusLabel.showError(lblStatus, "No cuentas con un proyecto u organización asignada para evaluar.");
                 btnGenerate.setDisable(true);
                 return;
             }
-            System.out.println(currentEvaluation);
-            System.out.println(currentEvaluation.getStudentName());
-            System.out.println(currentEvaluation.getStudentNumber());
+
             lblStudentName.setText(currentEvaluation.getStudentName());
             lblStudentNumber.setText(currentEvaluation.getStudentNumber());
 
         } catch (DAOException e) {
             AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al cargar datos del alumno.");
+            StatusLabel.showError(lblStatus, "Error al cargar los datos del alumno.");
         }
     }
 

@@ -52,68 +52,68 @@ public class ProfessionalPracticeEnrollmentDAOTest {
 
     @Test
     @DisplayName("Debe insertar una inscripción exitosamente")
-    void testAddProfessionalPracticeEnrollmentSuccess() throws DAOException {
-        boolean result = professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
+    void testRegisterProfessionalPracticeEnrollmentSuccess() throws DAOException {
+        boolean result = professionalPracticeEnrollmentDAO.registerProfessionalPracticeEnrollment(
             testProfessionalPracticeEnrollment);
         assertTrue(result);
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException cuando el curso no existe")
-    void testAddProfessionalPracticeEnrollmentFailedInvalidCourse() throws DAOException {
+    void testRegisterProfessionalPracticeEnrollmentFailedInvalidCourse() throws DAOException {
         testProfessionalPracticeEnrollment.getCourseDTO().setCourseCode(99999);
         assertThrows(DAOException.class, () -> {
-            professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
+            professionalPracticeEnrollmentDAO.registerProfessionalPracticeEnrollment(
                 testProfessionalPracticeEnrollment);
         });
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException cuando el curso no se asigna")
-    void testAddProfessionalPracticeEnrollmentFailedMissingCourse() throws DAOException {
+    void testRegisterProfessionalPracticeEnrollmentFailedMissingCourse() throws DAOException {
         testProfessionalPracticeEnrollment.setCourseDTO(null);
         assertThrows(DAOException.class, () -> {
-            professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
+            professionalPracticeEnrollmentDAO.registerProfessionalPracticeEnrollment(
                     testProfessionalPracticeEnrollment);
         });
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException cuando el proyecto no existe")
-    void testAddProfessionalPracticeEnrollmentFailedInvalidProject() throws DAOException {
+    void testRegisterProfessionalPracticeEnrollmentFailedInvalidProject() throws DAOException {
         testProfessionalPracticeEnrollment.getProjectDTO().setId(555);
         assertThrows(DAOException.class, () -> {
-            professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
+            professionalPracticeEnrollmentDAO.registerProfessionalPracticeEnrollment(
                 testProfessionalPracticeEnrollment);
         });
     }
 
     @Test
     @DisplayName("Debería lanzar DAOException cuando no hay un proyecto asignado")
-    void testAddProfessionalPracticeEnrollmentFailedMissingProject()  throws DAOException {
+    void testRegisterProfessionalPracticeEnrollmentFailedMissingProject()  throws DAOException {
         testProfessionalPracticeEnrollment.setProjectDTO(null);
         assertThrows(DAOException.class, () -> {
-            professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
+            professionalPracticeEnrollmentDAO.registerProfessionalPracticeEnrollment(
                     testProfessionalPracticeEnrollment);
         });
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException cuando el practicante no existe")
-    void testAddProfessionalPracticeEnrollmentFailedInvalidIntern() throws DAOException {
+    void testRegisterProfessionalPracticeEnrollmentFailedInvalidIntern() throws DAOException {
         testProfessionalPracticeEnrollment.getInternDTO().setStudentNumber("S28014410");
         assertThrows(DAOException.class, () -> {
-            professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
+            professionalPracticeEnrollmentDAO.registerProfessionalPracticeEnrollment(
                 testProfessionalPracticeEnrollment);
         });
     }
 
     @Test
     @DisplayName("Debería lanzar DAOException cuando no hay un practicante asignado")
-    void testAddProfessionalPracticeEnrollmentFailedMissingIntern() throws DAOException {
+    void testRegisterProfessionalPracticeEnrollmentFailedMissingIntern() throws DAOException {
         testProfessionalPracticeEnrollment.setInternDTO(null);
         assertThrows(DAOException.class, () -> {
-            professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
+            professionalPracticeEnrollmentDAO.registerProfessionalPracticeEnrollment(
                 testProfessionalPracticeEnrollment);
         });
     }
@@ -123,7 +123,7 @@ public class ProfessionalPracticeEnrollmentDAOTest {
     void testAddLinkedOrganizationWithCoveredHoursSuccess() throws DAOException {
         testProfessionalPracticeEnrollment.setCoveredHours(66);
         boolean result =
-                professionalPracticeEnrollmentDAO.addProfessionalPracticeEnrollment(
+                professionalPracticeEnrollmentDAO.registerProfessionalPracticeEnrollment(
                         testProfessionalPracticeEnrollment);
         assertTrue(result);
     }

@@ -40,7 +40,7 @@ public class InternDeactivationController implements Initializable {
 
     private void obtainInterns() {
         try {
-            List<InternDTO> internsList = internDAO.obtainAllActiveInterns();
+            List<InternDTO> internsList = internDAO.getActiveInterns();
             ObservableList<InternDTO> internsObservableList = FXCollections.observableArrayList(internsList);
             tblInterns.setItems(internsObservableList);
         } catch (DAOException e) {
@@ -77,7 +77,7 @@ public class InternDeactivationController implements Initializable {
         if (AlertHelper.showConfirmation("Confirmar acción",
                 "¿Seguro que desea inactivar \"" + internSelected.getStudentNumber() + "\"?")) {
             try {
-                if (internDAO.inactivateIntern(internSelected)) {
+                if (internDAO.deactivateIntern(internSelected)) {
                     obtainInterns();
                     StatusLabel.showSuccess(lblStatus, "Practicante inactivado exitosamente.");
                 }

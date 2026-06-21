@@ -7,6 +7,6 @@ import spp.businesslogic.exceptions.DAOException;
 
 public interface ISelfEvaluationDAO {
 
-    SelfEvaluationDTO obtainEvaluationData(String email) throws DAOException;
+    SelfEvaluationDTO findEvaluationHeaderByStudentNumber(String studentNumber) throws DAOException;
 
 }

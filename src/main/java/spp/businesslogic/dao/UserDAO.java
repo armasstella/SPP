@@ -22,37 +22,37 @@ public class UserDAO implements IUserDAO {
 
     private static final int NO_ROWS_AFFECTED = 0;
     private final PasswordHasher passwordHasher = new PasswordHasher();
-    private final SessionDAO sessionDAO = new SessionDAO();
 
     public UserDAO() {
 
     }
 
     @Override
-    public int addUser(UserDTO userDTO) throws DAOException {
-        final String INSERT_USER = "INSERT INTO Usuarios " +
-                "(nombre, apellidos, " +
-                "correo_electronico, telefono, contraseña) " +
+    public int registerUser(UserDTO userDTO) throws DAOException {
+        final String INSERT_USER = "INSERT INTO Usuarios (nombre, apellidos, correo_electronico, telefono, contraseña) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(
+                    INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1,
+                        userDTO.getFirstName() + " " + userDTO.getSecondName());
+                preparedStatement.setString(2,
+                        userDTO.getFirstLastName() + " " + userDTO.getSecondLastName());
+                preparedStatement.setString(3,
+                        userDTO.getEmail());
+                preparedStatement.setString(4,
+                        userDTO.getPhoneNumber());
+                preparedStatement.setString(5,
+                        passwordHasher.hashPassword(userDTO.getPassword()));
 
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    INSERT_USER, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, userDTO.getFirstName() + " " + userDTO.getSecondName());
-            preparedStatement.setString(2, userDTO.getFirstLastName() + " " +
-                    userDTO.getSecondLastName());
-            preparedStatement.setString(3, userDTO.getEmail());
-            preparedStatement.setString(4, userDTO.getPhoneNumber());
-            preparedStatement.setString(5, passwordHasher.hashPassword(userDTO.getPassword()));
+                if (preparedStatement.executeUpdate() == NO_ROWS_AFFECTED) {
+                    throw new DAOException("WARN: Fallo al insertar usuario. No se afectaron filas.");
+                }
 
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows == NO_ROWS_AFFECTED) {
-                throw new DAOException("WARN: Fallo al insertar usuario. No se afectaron filas.");
+                return getGeneratedKey(preparedStatement);
             }
-
-            return getGeneratedKey(preparedStatement);
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.logError(e);
@@ -65,7 +65,7 @@ public class UserDAO implements IUserDAO {
 
     }
 
-    @Override
+
     public int getGeneratedKey(PreparedStatement preparedStatement) throws DAOException {
         try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
             if (!resultSet.next()) {
@@ -109,21 +109,20 @@ public class UserDAO implements IUserDAO {
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(CALL_SP_OBTAIN_USER);
-            preparedStatement.setString(1, email);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CALL_SP_OBTAIN_USER)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        String storedHash = resultSet.getString("contraseña");
+                        String userType = resultSet.getString("tipo_usuario");
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    String storedHash = resultSet.getString("contraseña");
-                    String userType = resultSet.getString("tipo_usuario");
+                        if (passwordHasher.verifyPassword(storedHash, password)) {
 
-                    if (passwordHasher.verifyPassword(storedHash, password)) {
+                            int idUser = obtainId(email);
+                            ActiveSessionDTO.initialize(new SessionDTO(email));
 
-                        int idUser = obtainId(email);
-                        String token = sessionDAO.createSession(idUser);
-                        ActiveSessionDTO.initialize(new SessionDTO(email), token);
-
-                        return new LoginResultDTO(userType);
+                            return new LoginResultDTO(userType);
+                        }
                     }
                 }
 
@@ -138,31 +137,31 @@ public class UserDAO implements IUserDAO {
     }
 
     @Override
-    public boolean searchEmailRegister(String email) throws DAOException {
+    public boolean existsEmailRegister(String email) throws DAOException {
         final String SEARCH_EMAIL = "SELECT f_existe_correo_electronico(?)";
-        boolean isSearchSuccessful = false;
+        boolean emailExists = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_EMAIL);
-            preparedStatement.setString(1, email);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    isSearchSuccessful = resultSet.getBoolean(1);
-                    if (!isSearchSuccessful) {
-                        throw new DAOException("ERROR: Correo no encontrado en el sistema");
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_EMAIL)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        emailExists = resultSet.getBoolean(1);
+                        if (!emailExists) {
+                            throw new DAOException("ERROR: Correo no encontrado en el sistema");
+                        }
                     }
-                }
 
+                }
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-
+            throw new DAOException("FATAL: Error en conexión al buscar email", e);
         }
 
-        return isSearchSuccessful;
+        return emailExists;
 
     }
 

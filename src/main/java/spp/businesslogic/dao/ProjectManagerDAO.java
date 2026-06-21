@@ -24,82 +24,63 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
     }
 
     @Override
-    public boolean addProjectManagerDAO(ProjectManagerDTO projectManagerDTO) throws DAOException {
+    public boolean registerProjectManager(ProjectManagerDTO projectManagerDTO) throws DAOException {
         final String INSERT_PROJECT_MANAGER = "INSERT INTO Encargados_Proyectos " + "(nombres, apellidos, " +
             "responsabilidad, rol, telefono)" + "VALUES (?, ?, ?, ?, ?)";
-        boolean isAddSuccesful = false;
+        boolean isInsertSuccessful = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            connection.setAutoCommit(false);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PROJECT_MANAGER)) {
+                preparedStatement.setString(1,
+                        projectManagerDTO.getFirstName() + " " + projectManagerDTO.getSecondName());
+                preparedStatement.setString(2,
+                        projectManagerDTO.getFirstLastName() + " " + projectManagerDTO.getSecondLastName());
+                preparedStatement.setString(3,
+                        projectManagerDTO.getResponsibility());
+                preparedStatement.setString(4,
+                        projectManagerDTO.getRole());
+                preparedStatement.setString(5,
+                        projectManagerDTO.getPhoneNumber());
 
-            try {
-                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PROJECT_MANAGER);
-                preparedStatement.setString(1, projectManagerDTO.getFirstName() + " " +
-                    projectManagerDTO.getSecondName());
-                preparedStatement.setString(2, projectManagerDTO.getFirstLastName() + " " +
-                    projectManagerDTO.getSecondLastName());
-                preparedStatement.setString(3, projectManagerDTO.getResponsibility());
-                preparedStatement.setString(4, projectManagerDTO.getRole());
-                preparedStatement.setString(5, projectManagerDTO.getPhoneNumber());
+                isInsertSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
 
-                int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("WARN: Fallo al insertar encargado de proyecto. No se afectaron filas");
-                }
-
-                connection.commit();
-                isAddSuccesful = true;
-
-            } catch (SQLIntegrityConstraintViolationException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
-
-            } catch (SQLException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("ERROR: Error general al insertar encargado de proyecto", e);
-
-            } finally {
-                connection.setAutoCommit(true);
             }
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            AppLogger.logError(e);
+            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
 
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("FATAL: Error de conexión al insertar encargado de proyecto", e);
         }
 
-        return isAddSuccesful;
+        return isInsertSuccessful;
 
     }
 
     @Override
-    public boolean updateProjectManagerDAO(ProjectManagerDTO projectManagerDTO) throws DAOException {
-        return true;
-    }
-
-    @Override
-    public List<ProjectManagerDTO> obtainActiveProjectManagers() throws DAOException {
+    public List<ProjectManagerDTO> getActiveProjectManagers() throws DAOException {
         final String SELECT_PROJECT_MANAGER = "SELECT id_encargado_proyecto, CONCAT(nombres, ' ', apellidos) " +
                 "AS nombre_completo FROM encargados_proyectos";
         List<ProjectManagerDTO> projectManagersList = new ArrayList<>();
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PROJECT_MANAGER);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
-                ProjectManagerDTO projectManager = new ProjectManagerDTO();
-                projectManager.setId(resultSet.getInt("id_encargado_proyecto"));
-                projectManager.setFirstName(resultSet.getString("nombre_completo"));
-                projectManagersList.add(projectManager);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PROJECT_MANAGER);
+                ResultSet resultSet = preparedStatement.executeQuery();) {
+                while (resultSet.next()) {
+                    ProjectManagerDTO projectManager = new ProjectManagerDTO();
+                    projectManager.setId(resultSet.getInt("id_encargado_proyecto"));
+                    projectManager.setFirstName(resultSet.getString("nombre_completo"));
+                    projectManagersList.add(projectManager);
+                }
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar encargados proyectos");
+            throw new DAOException("FATAL: Error de conexión al buscar encargados proyectos", e);
         }
 
         return projectManagersList;
@@ -107,26 +88,26 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
     }
 
     @Override
-    public boolean searchProjectManagerRegisters() throws DAOException {
+    public boolean existsProjectManagers() throws DAOException {
         final String SEARCH_REGISTERS = "SELECT f_hay_encargados_proyectos()";
-        boolean isSearchSuccesful = false;
+        boolean projectManagersExists = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_REGISTERS);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    isSearchSuccesful = resultSet.getBoolean(1);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_REGISTERS)) {
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        projectManagersExists = resultSet.getBoolean(1);
+                    }
                 }
             }
 
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar encargados proyectos");
+            throw new DAOException("FATAL: Error de conexión al buscar encargados proyectos", e);
         }
 
-        return isSearchSuccesful;
+        return projectManagersExists;
     }
 
 }

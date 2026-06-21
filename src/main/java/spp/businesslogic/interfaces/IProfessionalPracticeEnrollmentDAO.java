@@ -7,8 +7,8 @@ import spp.businesslogic.exceptions.DAOException;
 
 public interface IProfessionalPracticeEnrollmentDAO {
 
-    boolean addProfessionalPracticeEnrollment(ProfessionalPracticeEnrollmentDTO professionalPracticeEnrollmentDTO)
+    boolean registerProfessionalPracticeEnrollment(ProfessionalPracticeEnrollmentDTO professionalPracticeEnrollmentDTO)
             throws DAOException;
-    boolean assignProjectToInscription(String studentNumber, int idProject) throws DAOException;
+    boolean assignProjectByStudentNumber(String studentNumber, int idProject) throws DAOException;
 
 }

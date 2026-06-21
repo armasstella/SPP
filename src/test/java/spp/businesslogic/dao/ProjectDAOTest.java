@@ -47,17 +47,17 @@ public class ProjectDAOTest {
 
     @Test
     @DisplayName("Debe insertar un proyecto exitosamente")
-    void testAddProjectSuccess() throws DAOException {
-        boolean result = projectDAO.addProject(testProject);
+    void testRegisterProjectSuccess() throws DAOException {
+        boolean result = projectDAO.registerProject(testProject);
         assertTrue(result);
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException cuando no hay una organización vinculada asignada")
-    void testAddProjectFailedMissingLinkedOrganization() throws DAOException {
+    void testRegisterProjectFailedMissingLinkedOrganization() throws DAOException {
         testProject.setLinkedOrganizationDTO(null);
         assertThrows(DAOException.class, () -> {
-            projectDAO.addProject(testProject);
+            projectDAO.registerProject(testProject);
         });
     }
 
@@ -65,7 +65,7 @@ public class ProjectDAOTest {
     @DisplayName("Debe obtener la cantidad de proyectos y retornar un valor booleano")
     void testGetNumberOfProjectsSuccess() {
         try {
-            boolean totalProjects = projectDAO.verifyMinimumProjects();
+            boolean totalProjects = projectDAO.hasMinimumProjectsForActiveTerm();
             assertTrue(totalProjects);
 
         } catch (DAOException e) {
@@ -74,55 +74,55 @@ public class ProjectDAOTest {
     }
 
     @DisplayName("Debe lanzar DAOException cuando no hay un encargado de proyecto asignado")
-    void testAddProjectFailedMissingProjectManager() throws DAOException {
+    void testRegisterProjectFailedMissingProjectManager() throws DAOException {
         testProject.setProjectManagerDTO(null);
         assertThrows(DAOException.class, () -> {
-            projectDAO.addProject(testProject);
+            projectDAO.registerProject(testProject);
         });
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException cuando el encargado de proyecto no existe")
-    void testAddProjectFailedInvalidProjectManager() throws DAOException {
+    void testRegisterProjectFailedInvalidProjectManager() throws DAOException {
         testProject.getProjectManagerDTO().setId(3987);
         assertThrows(DAOException.class, () -> {
-            projectDAO.addProject(testProject);
+            projectDAO.registerProject(testProject);
         });
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException cuando el nombre del proyecto es nulo")
-    void testAddProjectFailedNullName() throws DAOException {
+    void testRegisterProjectFailedNullName() throws DAOException {
         testProject.setName(null);
         assertThrows(DAOException.class, () -> {
-            projectDAO.addProject(testProject);
+            projectDAO.registerProject(testProject);
         });
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException cuando la descripción del proyecto es nula")
-    void testAddProjectFailedNullDescription() throws DAOException {
+    void testRegisterProjectFailedNullDescription() throws DAOException {
         testProject.setDescription(null);
         assertThrows(DAOException.class, () -> {
-            projectDAO.addProject(testProject);
+            projectDAO.registerProject(testProject);
         });
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException cuando la organización vinculada no existe")
-    void testAddProjectFailedInvalidLinkedOrganization() throws DAOException {
+    void testRegisterProjectFailedInvalidLinkedOrganization() throws DAOException {
         testProject.getLinkedOrganizationDTO().setId(12111);
         assertThrows(DAOException.class, () -> {
-            projectDAO.addProject(testProject);
+            projectDAO.registerProject(testProject);
         });
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException cuando el nombre del proyecto ya existe")
-    void testAddProjectFailedDuplicateName() throws DAOException {
-        projectDAO.addProject(testProject);
+    void testRegisterProjectFailedDuplicateName() throws DAOException {
+        projectDAO.registerProject(testProject);
         assertThrows(DAOException.class, () -> {
-            projectDAO.addProject(testProject);
+            projectDAO.registerProject(testProject);
         });
     }
 }

@@ -18,38 +18,26 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
     private static final int NO_ROWS_AFFECTED = 0;
 
     @Override
-    public boolean saveDocument(String email, InitialDocumentDTO initialDocumentDTO) throws DAOException {
-        final String INSERT_DOCUMENT = " INSERT INTO documentos_iniciales (nombre_original, " +
+    public boolean saveDocument(String studentNumber, InitialDocumentDTO initialDocumentDTO) throws DAOException {
+        final String INSERT_DOCUMENT = " INSERT INTO documentos_practicantes (nombre_original, " +
                 "nombre_almacenado, ruta_archivo, tamaño_mb, extension, fecha_subida," +
                 "tipo, id_usuario_practicante," +
-                "matricula) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "matricula) SELECT ?, ?, ?, ?, ?, ?, ?, p.id_usuario, p.matricula " +
+                "FROM practicantes p WHERE p.matricula = ?";
         boolean isSaveSuccessful = false;
-        InternDAO internDAO = new InternDAO();
-        UserDAO userDAO = new UserDAO();
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            connection.setAutoCommit(false);
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_DOCUMENT);
-
-            preparedStatement.setString(1, initialDocumentDTO.getOriginalName());
-            preparedStatement.setString(2, initialDocumentDTO.getSavedName());
-            preparedStatement.setString(3, initialDocumentDTO.getFilePath());
-            preparedStatement.setDouble(4, initialDocumentDTO.getSizeMb());
-            preparedStatement.setString(5, initialDocumentDTO.getExtension());
-            preparedStatement.setTimestamp(6, Timestamp.valueOf(initialDocumentDTO.getUploadDate()));
-            preparedStatement.setString(7, initialDocumentDTO.getDocumentType());
-            preparedStatement.setInt(8, userDAO.obtainId(email));
-            preparedStatement.setString(9, internDAO.obtainStudentNumber(email));
-
-            int affectedRows = preparedStatement.executeUpdate();
-            if (affectedRows == NO_ROWS_AFFECTED) {
-                throw new DAOException("WARN: Fallo al guardar documento. No se afectaron filas.");
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_DOCUMENT)) {
+                preparedStatement.setString(1, initialDocumentDTO.getOriginalName());
+                preparedStatement.setString(2, initialDocumentDTO.getSavedName());
+                preparedStatement.setString(3, initialDocumentDTO.getFilePath());
+                preparedStatement.setDouble(4, initialDocumentDTO.getSizeMb());
+                preparedStatement.setString(5, initialDocumentDTO.getExtension());
+                preparedStatement.setTimestamp(6, Timestamp.valueOf(initialDocumentDTO.getUploadDate()));
+                preparedStatement.setString(7, initialDocumentDTO.getDocumentType());
+                isSaveSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
             }
-
-            connection.commit();
-            isSaveSuccessful = true;
-            connection.setAutoCommit(true);
 
         } catch (SQLException e) {
             AppLogger.logError(e);
@@ -61,19 +49,20 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
     }
 
     @Override
-    public boolean searchClassScheduleForIntern(String email) throws DAOException {
-        final String SEARCH_SCHEDULE = "SELECT f_existe_horario_estudiante(?)";
-        boolean isSearchSuccessful = false;
+    public boolean hasClassScheduleByInternEmail(String email) throws DAOException {
+        final String CHECK_CLASS_SCHEDULE =
+                "SELECT f_existe_horario_estudiante(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
+        boolean hasClassSchedule = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_SCHEDULE);
-            UserDAO userDAO = new UserDAO();
-            preparedStatement.setInt(1, userDAO.obtainId(email));
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_CLASS_SCHEDULE)) {
+                preparedStatement.setString(1, email);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    isSearchSuccessful = resultSet.getBoolean(1);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasClassSchedule = resultSet.getBoolean(1);
+                    }
                 }
             }
 
@@ -82,24 +71,25 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             throw new DAOException("FATAL: Error de conexión al buscar horario.", e);
         }
 
-        return isSearchSuccessful;
+        return hasClassSchedule;
 
     }
 
     @Override
-    public boolean searchActivitiesScheduleForIntern(String email) throws DAOException {
-        final String SEARCH_SCHEDULE = "SELECT f_existe_calendarizacion_actividades_estudiante(?)";
-        boolean isSearchSuccessful = false;
+    public boolean hasActivitiesScheduleByInternEmail(String email) throws DAOException {
+        final String CHECK_SCHEDULE =
+                "SELECT f_existe_calendarizacion_actividades_estudiante(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
+        boolean hasActivitiesSchedule = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_SCHEDULE);
-            UserDAO userDAO = new UserDAO();
-            preparedStatement.setInt(1, userDAO.obtainId(email));
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_SCHEDULE)) {
+                preparedStatement.setString(1, email);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    isSearchSuccessful = resultSet.getBoolean(1);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasActivitiesSchedule = resultSet.getBoolean(1);
+                    }
                 }
             }
 
@@ -108,24 +98,22 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             throw new DAOException("FATAL: Error de conexión al buscar calendarización.", e);
         }
 
-        return isSearchSuccessful;
+        return hasActivitiesSchedule;
 
     }
 
     @Override
-    public boolean searchPSPForIntern(String email) throws DAOException {
-        final String SEARCH_PSP = "SELECT f_existe_psp(?)";
-        boolean isSearchSuccessful = false;
+    public boolean hasPSPByInternEmail(String email) throws DAOException {
+        final String CHECK_PSP = "SELECT f_existe_psp(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
+        boolean hasPSP = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_PSP);
-            UserDAO userDAO = new UserDAO();
-            preparedStatement.setInt(1, userDAO.obtainId(email));
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    isSearchSuccessful = resultSet.getBoolean(1);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_PSP)) {
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasPSP = resultSet.getBoolean(1);
+                    }
                 }
             }
 
@@ -134,24 +122,24 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             throw new DAOException("FATAL: Error de conexión al buscar psp.", e);
         }
 
-        return isSearchSuccessful;
+        return hasPSP;
 
     }
 
     @Override
-    public boolean searchPartialReportForIntern(String email) throws DAOException {
-        final String SEARCH_PARTIAL_REPORT = "SELECT f_existe_reporte_parcial(?)";
-        boolean isSearchSuccessful = false;
+    public boolean hasPartialReportByInternEmail(String email) throws DAOException {
+        final String CHECK_PARTIAL_REPORT = "SELECT f_existe_reporte_parcial(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
+        boolean hasPartialReport = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_PARTIAL_REPORT);
-            UserDAO userDAO = new UserDAO();
-            preparedStatement.setInt(1, userDAO.obtainId(email));
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_PARTIAL_REPORT)) {
+                preparedStatement.setString(1, email);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    isSearchSuccessful = resultSet.getBoolean(1);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasPartialReport = resultSet.getBoolean(1);
+                    }
                 }
             }
 
@@ -160,23 +148,23 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             throw new DAOException("FATAL: Error de conexión al buscar reporte parcial.", e);
         }
 
-        return isSearchSuccessful;
+        return hasPartialReport;
 
     }
 
-    public boolean searchMonthlyReportForIntern(String email) throws DAOException {
-        final String SEARCH_MONTHLY_REPORT = "SELECT f_existe_reporte_mensual(?)";
-        boolean isSearchSuccessful = false;
+    public boolean hasMonthlyReportByInternEmail(String email) throws DAOException {
+        final String CHECK_MONTHLY_REPORT = "SELECT f_existe_reporte_mensual(?)";
+        boolean hasMonthlyReport = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_MONTHLY_REPORT);
-            UserDAO userDAO = new UserDAO();
-            preparedStatement.setInt(1, userDAO.obtainId(email));
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_MONTHLY_REPORT)) {
+                preparedStatement.setString(1, email);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    isSearchSuccessful = resultSet.getBoolean(1);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasMonthlyReport = resultSet.getBoolean(1);
+                    }
                 }
             }
 
@@ -185,24 +173,24 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             throw new DAOException("FATAL: Error de conexión al buscar reporte mensual.", e);
         }
 
-        return isSearchSuccessful;
+        return hasMonthlyReport;
 
     }
 
     @Override
-    public boolean searchSelfEvaluationForIntern(String email) throws DAOException {
-        final String SEARCH_SELF_EVALUATION = "SELECT f_existe_autoevaluacion(?)";
-        boolean isSearchSuccessful = false;
+    public boolean hasSelfEvaluationByInternEmail(String email) throws DAOException {
+        final String CHECK_SELF_EVALUATION = "SELECT f_existe_autoevaluacion(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
+        boolean hasSelfEvaluation = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_SELF_EVALUATION);
-            UserDAO userDAO = new UserDAO();
-            preparedStatement.setInt(1, userDAO.obtainId(email));
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_SELF_EVALUATION)) {
+                preparedStatement.setString(1, email);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    isSearchSuccessful = resultSet.getBoolean(1);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasSelfEvaluation = resultSet.getBoolean(1);
+                    }
                 }
             }
 
@@ -211,24 +199,24 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             throw new DAOException("FATAL: Error de conexión al buscar autoevaluación.", e);
         }
 
-        return isSearchSuccessful;
+        return hasSelfEvaluation;
 
     }
 
     @Override
-    public boolean searchEvaluationLinkedOrganizationForIntern(String email) throws DAOException {
-        final String SEARCH_LINKED_ORGANIZATION_EVALUATION = "SELECT f_existe_evaluacion_ov(?)";
-        boolean isSearchSuccessful = false;
+    public boolean hasEvaluationLinkedOrganizationByInternEmail(String email) throws DAOException {
+        final String CHECK_EVALUATION = "SELECT f_existe_evaluacion_ov(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
+        boolean hasLinkedOrganizationEvaluation = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_LINKED_ORGANIZATION_EVALUATION);
-            UserDAO userDAO = new UserDAO();
-            preparedStatement.setInt(1, userDAO.obtainId(email));
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_EVALUATION)) {
+                preparedStatement.setString(1, email);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    isSearchSuccessful = resultSet.getBoolean(1);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasLinkedOrganizationEvaluation = resultSet.getBoolean(1);
+                    }
                 }
             }
 
@@ -237,34 +225,10 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             throw new DAOException("FATAL: Error de conexión al buscar evaluación de organización vinculada.", e);
         }
 
-        return isSearchSuccessful;
+        return hasLinkedOrganizationEvaluation;
 
     }
 
-    @Override
-    public boolean searchFinalReportForIntern(String email) throws DAOException {
-        final String SEARCH_FINAL_REPORT = "SELECT f_existe_reporte_final(?)";
-        boolean isSearchSuccessful = false;
 
-        try {
-            Connection connection = MySQLConnection.getInstance().getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_FINAL_REPORT);
-            UserDAO userDAO = new UserDAO();
-            preparedStatement.setInt(1, userDAO.obtainId(email));
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    isSearchSuccessful = resultSet.getBoolean(1);
-                }
-            }
-
-        } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar reporte final.", e);
-        }
-
-        return isSearchSuccessful;
-
-    }
 
 }

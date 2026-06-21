@@ -98,7 +98,7 @@
                         styleClass="option-btn, btn-activate"
                         style="-fx-pref-width: 556; -fx-pref-height: 60;"
                         alignment="CENTER"
-                        onAction="#goToReportGenerationView"
+                        onAction="#goToIndicatorReportView"
                 />
             </HBox>
         </VBox>

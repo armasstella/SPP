@@ -8,10 +8,9 @@ import java.util.List;
 
 public interface IInstructorDAO {
 
-    boolean addInstructor(InstructorDTO instructorDTO) throws DAOException;
-    int obtainId(String personalNumber) throws DAOException;
+    boolean registerInstructor(InstructorDTO instructorDTO) throws DAOException;
     boolean deactivateInstructor(InstructorDTO instructorDTO) throws DAOException;
-    List<InstructorDTO> obtainAllActiveInstructors() throws DAOException;
-    List<InstructorDTO> obtainActiveInstructorForComboBox() throws DAOException;
+    List<InstructorDTO> getActiveInstructors() throws DAOException;
+    List<InstructorDTO> getActiveInstructorsIdentifiers() throws DAOException;
 
 }

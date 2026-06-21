@@ -51,9 +51,6 @@
                             onAction="#goToMonthlyActivityRegistrationView"
                     />
 
-                    <Button text="Generar y Subir Reporte"
-                            styleClass="option-btn, btn-activate"
-                    />
                     <Button text="Subir Documento"
                             styleClass="option-btn, btn-add"
                             onAction="#goToUploadDocumentsView"
@@ -62,10 +59,6 @@
                     <Button text="Generar Autoevaluación"
                             styleClass="option-btn, btn-activate"
                             onAction="#goToSelfEvaluationView"
-                    />
-
-                    <Button text="Evaluar Organización Vinculada"
-                            styleClass="option-btn, btn-activate"
                     />
 
                     <Button text="Solicitar Proyecto"

@@ -74,7 +74,7 @@ public class NewCourseController implements Initializable {
         boolean savedWithoutInstructor = (cmbInstructor.getValue() == null);
 
         try {
-            if (courseDAO.addCourse(buildCourseDTO())) {
+            if (courseDAO.registerCourse(buildCourseDTO())) {
                 String successMessage = savedWithoutInstructor ?
                         "Curso registrado\nRecuerde asignar un profesor posteriormente" :
                         "Curso registrado correctamente";
@@ -127,7 +127,7 @@ public class NewCourseController implements Initializable {
     private void loadActiveInstructors() {
         try {
             InstructorDAO instructorDAO = new InstructorDAO();
-            List<InstructorDTO> activeInstructors = instructorDAO.obtainActiveInstructorForComboBox();
+            List<InstructorDTO> activeInstructors = instructorDAO.getActiveInstructorsIdentifiers();
             ObservableList<InstructorDTO> instructorObservableList =
                     FXCollections.observableArrayList(activeInstructors);
             cmbInstructor.setItems(instructorObservableList);

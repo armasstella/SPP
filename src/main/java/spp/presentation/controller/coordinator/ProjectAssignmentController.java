@@ -12,6 +12,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import spp.businesslogic.dao.PrioritizedProjectDAO;
 import spp.businesslogic.dao.ProfessionalPracticeEnrollmentDAO;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.dto.ProjectDTO;
@@ -39,7 +40,7 @@ public class ProjectAssignmentController implements Initializable {
     @FXML private ToggleButton tglSecondSelectedProject;
     @FXML private ToggleButton tglThirdSelectedProject;
     private final InternDAO internDAO = new InternDAO();
-    private final ProjectDAO projectDAO = new ProjectDAO();
+    private final PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
     private ObservableList<InternDTO> internsObservableList;
     private List<ToggleButton> projectToggleButtons;
     private InternDTO selectedIntern;
@@ -79,7 +80,7 @@ public class ProjectAssignmentController implements Initializable {
     @FXML
     private void obtainInterns() {
         try {
-            List<InternDTO> internList = internDAO.obtainInternsWithoutAssignedProject();
+            List<InternDTO> internList = internDAO.findUnassignedInternsIdentifiers();
             internsObservableList = FXCollections.observableArrayList(internList);
             tblInterns.setItems(internsObservableList);
         } catch (DAOException e) {
@@ -94,7 +95,7 @@ public class ProjectAssignmentController implements Initializable {
         lblStatus.setText("");
         try {
             List<ProjectDTO> selectedProjectList =
-                    projectDAO.obtainSelectedProjectsByIntern(intern.getStudentNumber());
+                    prioritizedProjectDAO.findPrioritizedProjectsIdentifiersByStudentNumber(intern.getStudentNumber());
 
             if (selectedProjectList.isEmpty()) {
                 hideAllProjectCards();
@@ -166,7 +167,7 @@ public class ProjectAssignmentController implements Initializable {
         try {
             ProfessionalPracticeEnrollmentDAO professionalPracticeEnrollmentDAO =
                     new ProfessionalPracticeEnrollmentDAO();
-            if (professionalPracticeEnrollmentDAO.assignProjectToInscription(selectedIntern.getStudentNumber(),
+            if (professionalPracticeEnrollmentDAO.assignProjectByStudentNumber(selectedIntern.getStudentNumber(),
                     selectedProject.getId())) {
                 StatusLabel.showSuccess(lblStatus, "Proyecto asignado correctamente.");
                 obtainInterns();

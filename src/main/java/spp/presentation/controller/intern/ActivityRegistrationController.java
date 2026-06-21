@@ -39,8 +39,8 @@ public class ActivityRegistrationController {
         }
 
         try {
-            String studentNumber = internDAO.obtainStudentNumber(ActiveSessionDTO.get().getEmail());
-            if (activityDAO.saveActivity(studentNumber, buildActivityDTO())) {
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
+            if (activityDAO.saveActivityForIntern(studentNumber, buildActivityDTO())) {
                 StatusLabel.showSuccess(lblStatus, "Actividad registrada correctamente.");
                 clearFields();
             }

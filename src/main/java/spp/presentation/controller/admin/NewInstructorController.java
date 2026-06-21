@@ -74,7 +74,7 @@ public class NewInstructorController implements Initializable {
         }
 
         try {
-            if (instructorDAO.addInstructor(buildInstructorDTO())) {
+            if (instructorDAO.registerInstructor(buildInstructorDTO())) {
                 StatusLabel.showSuccess(lblStatus, "Profesor registrado correctamente.");
                 clearInputFields();
             }

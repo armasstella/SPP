@@ -50,8 +50,8 @@ public class MonthlyActivityRegistersController implements Initializable {
 
     private void obtainActivities() {
         try {
-            String studentNumber = internDAO.obtainStudentNumber(ActiveSessionDTO.get().getEmail());
-            List<ActivityDTO> activityList = activityDAO.obtainActivitiesByIntern(studentNumber);
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
+            List<ActivityDTO> activityList = activityDAO.findActivitiesByStudentNumber(studentNumber);
             tblActivities.setItems(FXCollections.observableArrayList(activityList));
         } catch (DAOException e) {
             AppLogger.logError(e);

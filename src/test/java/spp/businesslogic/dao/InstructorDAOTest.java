@@ -45,59 +45,59 @@ public class InstructorDAOTest {
 
     @Test
     @DisplayName("Debe insertar un profesor exitosamente")
-    void testAddInstructorSuccess() throws DAOException {
-        boolean result = instructorDAO.addInstructor(testInstructor);
+    void testRegisterInstructorSuccess() throws DAOException {
+        boolean result = instructorDAO.registerInstructor(testInstructor);
         assertTrue(result);
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException al insertar un número de personal duplicado")
-    void testAddInstructorFailedDuplicatePersonalNumber() throws DAOException {
-        instructorDAO.addInstructor(testInstructor);
+    void testRegisterInstructorFailedDuplicatePersonalNumber() throws DAOException {
+        instructorDAO.registerInstructor(testInstructor);
         assertThrows(DAOException.class, () -> {
-            instructorDAO.addInstructor(testInstructor);
+            instructorDAO.registerInstructor(testInstructor);
         });
     }
 
     @Test
     @DisplayName("Debe obtener el id de un profesor recién registrado")
     void testObtainIdAfterInsertSuccess() throws DAOException {
-        instructorDAO.addInstructor(testInstructor);
+        instructorDAO.registerInstructor(testInstructor);
         int idObtained = instructorDAO.obtainId(testInstructor.getPersonalNumber());
         assertTrue(idObtained > 0);
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException al insertar profesor sin número de personal")
-    void testAddInstructorFailedNullPersonalNumber() throws DAOException {
+    void testRegisterInstructorFailedNullPersonalNumber() throws DAOException {
         testInstructor.setPersonalNumber(null);
         assertThrows(DAOException.class, () -> {
-            instructorDAO.addInstructor(testInstructor);
+            instructorDAO.registerInstructor(testInstructor);
         });
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException al insertar profesor sin contraseña")
-    void testAddInstructorFailedNullPassword() throws DAOException {
+    void testRegisterInstructorFailedNullPassword() throws DAOException {
         testInstructor.setPassword(null);
         assertThrows(DAOException.class, () -> {
-            instructorDAO.addInstructor(testInstructor);
+            instructorDAO.registerInstructor(testInstructor);
         });
     }
 
     @Test
     @DisplayName("Debe lanzar DAOException al insertar profesor sin nombre")
-    void testAddInstructorFailedNullFirstName() throws DAOException {
+    void testRegisterInstructorFailedNullFirstName() throws DAOException {
         testInstructor.setFirstName(null);
         assertThrows(DAOException.class, () -> {
-            instructorDAO.addInstructor(testInstructor);
+            instructorDAO.registerInstructor(testInstructor);
         });
     }
 
     @Test
     @DisplayName("Debe obtener el mismo ID al consultar varias veces el mismo número de personal")
     void testObtainIdConsistency() throws DAOException {
-        instructorDAO.addInstructor(testInstructor);
+        instructorDAO.registerInstructor(testInstructor);
         int firstId = instructorDAO.obtainId(testInstructor.getPersonalNumber());
         int secondId = instructorDAO.obtainId(testInstructor.getPersonalNumber());
         assertEquals(firstId, secondId);
@@ -105,9 +105,9 @@ public class InstructorDAOTest {
 
     @Test
     @DisplayName("Debe registrar profesor con segundo apellido vacío")
-    void testAddInstructorWithEmptySecondLastNameSuccess() throws DAOException {
+    void testRegisterInstructorWithEmptySecondLastNameSuccess() throws DAOException {
         testInstructor.setSecondLastName(null);
-        boolean result = instructorDAO.addInstructor(testInstructor);
+        boolean result = instructorDAO.registerInstructor(testInstructor);
         assertTrue(result);
     }
 
@@ -122,7 +122,7 @@ public class InstructorDAOTest {
     @Test
     @DisplayName("Debe desactivar un profesor existente exitosamente")
     void testDeactivateInstructorSuccess() throws DAOException {
-        instructorDAO.addInstructor(testInstructor);
+        instructorDAO.registerInstructor(testInstructor);
         boolean result = instructorDAO.deactivateInstructor(testInstructor);
         assertTrue(result);
     }
