@@ -1,26 +1,84 @@
 package spp.businesslogic.dto;
 
+import spp.utils.validation.Validation;
 
-public class LinkedOrganizationDTO {
+public class LinkedOrganizationDTO extends BaseDTO {
 
     private int id;
     private String name;
     private String rfc;
     private String address;
     private String fiscalAddress;
+    private String city;
+    private String state;
     private String business;
     private String phoneNumber;
     private String email;
 
     public LinkedOrganizationDTO() {
-    }
 
-    public void setRfc(String rfc) {
-        this.rfc = rfc;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean setRfc(String rfc) {
+        boolean isValid;
+        Validation validator = new Validation();
+
+        if (validator.validateRfc(rfc)) {
+            this.rfc = rfc.trim();
+            isValid = true;
+        } else {
+            addErrors(validator.getErrors());
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setFiscalAddress(String fiscalAddress) {
+        this.fiscalAddress = fiscalAddress;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public void setBusiness(String business) {
+        this.business = business;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public boolean setEmail(String email) {
+        boolean isValid;
+        Validation validator = new Validation();
+
+        if (validator.validateEmail(email)) {
+            this.email = email.trim();
+            isValid = true;
+        } else {
+            addErrors(validator.getErrors());
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     public int getId() {
@@ -31,10 +89,6 @@ public class LinkedOrganizationDTO {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getRfc() {
         return rfc;
     }
@@ -43,40 +97,28 @@ public class LinkedOrganizationDTO {
         return address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public String getFiscalAddress() {
         return fiscalAddress;
     }
 
-    public void setFiscalAddress(String fiscalAddress) {
-        this.fiscalAddress = fiscalAddress;
+    public String getCity() {
+        return city;
+    }
+
+    public String getState() {
+        return state;
     }
 
     public String getBusiness() {
         return business;
     }
 
-    public void setBusiness(String business) {
-        this.business = business;
-    }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     @Override
