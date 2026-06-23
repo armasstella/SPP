@@ -1,6 +1,5 @@
 package spp.businesslogic.dto;
 
-
 public class CourseDTO {
 
     private int idCourse;
@@ -28,6 +27,7 @@ public class CourseDTO {
     public int getCourseCode() {
         return courseCode;
     }
+
     public void setCourseCode(int courseCode) {
         this.courseCode = courseCode;
     }
@@ -56,14 +56,6 @@ public class CourseDTO {
         this.section = section;
     }
 
-    public InstructorDTO getInstructorDTO() {
-        return instructorDTO;
-    }
-
-    public void setInstructorDTO(InstructorDTO instructorDTO) {
-        this.instructorDTO = instructorDTO;
-    }
-
     public int getCapacity() {
         return capacity;
     }
@@ -80,17 +72,20 @@ public class CourseDTO {
         this.courseDetails = courseDetails;
     }
 
+    public InstructorDTO getInstructorDTO() {
+        return instructorDTO;
+    }
+
+    public void setInstructorDTO(InstructorDTO instructorDTO) {
+        this.instructorDTO = instructorDTO;
+    }
+
     public int getNumberOfInterns() {
         return numberOfInterns;
     }
 
     public void setNumberOfInterns(int numberOfInterns) {
         this.numberOfInterns = numberOfInterns;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(courseCode);
     }
 
 }
