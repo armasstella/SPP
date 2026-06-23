@@ -43,8 +43,6 @@ public class AvailableProjectsController implements Initializable {
     @FXML private TableColumn<ProjectDTO, String> colName;
     @FXML private TableColumn<ProjectDTO, String> colAvailability;
     private static final int MAX_CHOSEN_PROJECTS = 3;
-    private final ProjectDAO projectDAO = new ProjectDAO();
-    private final PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
     private ObservableList<ProjectDTO> availableProjectsObservableList;
     private ObservableList<ProjectDTO> chosenProjectsObservableList;
 
@@ -88,6 +86,7 @@ public class AvailableProjectsController implements Initializable {
 
     @FXML
     private void obtainProjects() {
+        ProjectDAO projectDAO = new ProjectDAO();
         try {
             List<ProjectDTO> projectList = projectDAO.findProjectsDetailsForActiveTerm();
             availableProjectsObservableList = FXCollections.observableArrayList(projectList);
@@ -145,6 +144,8 @@ public class AvailableProjectsController implements Initializable {
             StatusLabel.showError(lblStatus, "Debes elegir al menos un proyecto.");
             return;
         }
+
+        PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
 
         try {
             if (prioritizedProjectDAO.savePrioritizedProjects(
