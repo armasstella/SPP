@@ -1,14 +1,14 @@
 package spp.businesslogic.dto;
 
+import spp.utils.validation.Validation;
 
 import java.time.LocalDateTime;
-
 
 public class InternDTO extends UserDTO {
 
     private int id;
     private String studentNumber;
-    private String gender;
+    private String sex;
     private boolean speaksIndigenousLanguage;
     private String indigenousLanguage;
     private LocalDateTime birthDate;
@@ -17,48 +17,57 @@ public class InternDTO extends UserDTO {
         super();
     }
 
-    public int getId() {
-        return id;
+    public boolean setStudentNumber(String studentNumber) {
+        boolean isValid;
+        Validation validator = new Validation();
+
+        if (validator.validateStudentNumber(studentNumber)) {
+            this.studentNumber = studentNumber.trim();
+            isValid = true;
+        } else {
+            addErrors(validator.getErrors());
+            isValid = false;
+        }
+
+        return isValid;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setStudentNumber(String studentNumber) {
-        this.studentNumber = studentNumber;
-    }
-
-    public String getStudentNumber() {
-        return studentNumber;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getGender() {
-        return gender;
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 
     public void setSpeaksIndigenousLanguage(boolean speaksIndigenousLanguage) {
         this.speaksIndigenousLanguage = speaksIndigenousLanguage;
     }
 
-    public boolean getSpeaksIndigenousLanguage() {
-        return speaksIndigenousLanguage;
-    }
-
     public void setIndigenousLanguage(String indigenousLanguage) {
         this.indigenousLanguage = indigenousLanguage;
     }
 
-    public String getIndigenousLanguage() {
-        return indigenousLanguage;
-    }
-
     public void setBirthDate(LocalDateTime birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+    public String getStudentNumber() {
+        return studentNumber;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+    public boolean getSpeaksIndigenousLanguage() {
+        return speaksIndigenousLanguage;
+    }
+
+    public String getIndigenousLanguage() {
+        return indigenousLanguage;
     }
 
     public LocalDateTime getBirthDate() {
@@ -69,5 +78,4 @@ public class InternDTO extends UserDTO {
     public String toString() {
         return studentNumber + " | " + super.getFullName();
     }
-
 }
