@@ -7,16 +7,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import spp.businesslogic.dao.InstructorDAO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.dao.InstructorDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 
 public class NewInstructorController implements Initializable {
 
@@ -49,8 +48,7 @@ public class NewInstructorController implements Initializable {
 
     }
 
-    private InstructorDTO buildInstructorDTO() {
-        InstructorDTO instructorDTO = new InstructorDTO();
+    private void setAllInstructor(InstructorDTO instructorDTO) {
         instructorDTO.setFirstName(txtFirstName.getText().trim());
         instructorDTO.setSecondName(txtSecondName.getText().trim());
         instructorDTO.setFirstLastName(txtFirstLastName.getText().trim());
@@ -61,26 +59,31 @@ public class NewInstructorController implements Initializable {
         instructorDTO.setPassword(txtPassword.getText().trim());
         instructorDTO.setShift(cmbShift.getValue());
 
-        return instructorDTO;
-
     }
 
     @FXML
     private void saveInstructor(ActionEvent event) {
-        final InstructorDAO instructorDAO = new InstructorDAO();
-
         if (validateRegistrationInputs()) {
             return;
         }
 
-        try {
-            if (instructorDAO.registerInstructor(buildInstructorDTO())) {
-                StatusLabel.showSuccess(lblStatus, "Profesor registrado correctamente.");
-                clearInputFields();
+        InstructorDTO instructorDTO = new InstructorDTO();
+        setAllInstructor(instructorDTO);
+
+        if(instructorDTO.isValid()) {
+            InstructorDAO instructorDAO = new InstructorDAO();
+            try {
+                if (instructorDAO.registerInstructor(instructorDTO)) {
+                    StatusLabel.showSuccess(lblStatus, "Profesor registrado correctamente.");
+                    clearInputFields();
+                }
+            } catch (DAOException e) {
+                AppLogger.logError(e);
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, e.getMessage());
+        } else {
+            String errorMessages = String.join("\n. ", instructorDTO.getErrors());
+            StatusLabel.showError(lblStatus, "Corrige los siguientes formatos:\n. " + errorMessages);
         }
 
     }
