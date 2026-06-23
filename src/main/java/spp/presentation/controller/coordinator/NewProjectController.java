@@ -34,8 +34,6 @@ public class NewProjectController implements Initializable {
     @FXML private ComboBox<ProjectManagerDTO> cmbProjectManager;
     @FXML private ComboBox<LinkedOrganizationDTO> cmbLinkedOrganization;
 
-    private final ProjectDAO projectDAO = new ProjectDAO();
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpFields();
@@ -47,7 +45,8 @@ public class NewProjectController implements Initializable {
     private void loadProjectManagersInComboBox() {
         try {
             ProjectManagerDAO projectManagerDAO = new ProjectManagerDAO();
-            List<ProjectManagerDTO> projectManagerList = projectManagerDAO.getActiveProjectManagers();
+            List<ProjectManagerDTO> projectManagerList =
+                    projectManagerDAO.getActiveProjectManagers();
             ObservableList<ProjectManagerDTO> projectManagerObservableList =
                     FXCollections.observableArrayList(projectManagerList);
             cmbProjectManager.setItems(projectManagerObservableList);
@@ -61,7 +60,8 @@ public class NewProjectController implements Initializable {
     private void loadLinkedOrganizationInComboBox() {
         try {
             LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
-            List<LinkedOrganizationDTO> linkedOrganizationList = linkedOrganizationDAO.findActiveLinkedOrganizationsIdentifiers();
+            List<LinkedOrganizationDTO> linkedOrganizationList =
+                    linkedOrganizationDAO.findActiveLinkedOrganizationsIdentifiers();
             ObservableList<LinkedOrganizationDTO> linkedOrganizationObservableList =
                     FXCollections.observableArrayList(linkedOrganizationList);
             cmbLinkedOrganization.setItems(linkedOrganizationObservableList);
@@ -73,16 +73,13 @@ public class NewProjectController implements Initializable {
     }
 
     private void setUpFields() {
-        final String TEXT_PATTERN = "[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]*";
-
         InputFilter.applyFilter(txtName, InputFilter.NAME_PATTERN, 40);
         InputFilter.applyFilter(txtDescription, InputFilter.ALPHANUMERIC_PATTERN, 40);
         InputFilter.applyFilter(txtPlacesAvailable, InputFilter.NUMERIC_PATTERN, 2);
 
     }
 
-    private ProjectDTO buildProjectDTO() {
-        ProjectDTO projectDTO = new ProjectDTO();
+    private void setAllProject(ProjectDTO projectDTO) {
         ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
         LinkedOrganizationDTO linkedOrganizationDTO = new LinkedOrganizationDTO();
         projectDTO.setName(txtName.getText().trim());
@@ -93,8 +90,6 @@ public class NewProjectController implements Initializable {
         linkedOrganizationDTO.setId(cmbLinkedOrganization.getValue().getId());
         projectDTO.setLinkedOrganizationDTO(linkedOrganizationDTO);
 
-        return projectDTO;
-
     }
 
     @FXML
@@ -102,9 +97,12 @@ public class NewProjectController implements Initializable {
         if (validateRegistrationInputs()) {
             return;
         }
+        ProjectDAO projectDAO = new ProjectDAO();
+        ProjectDTO projectDTO = new ProjectDTO();
+        setAllProject(projectDTO);
 
         try {
-            if (projectDAO.registerProject(buildProjectDTO())) {
+            if (projectDAO.registerProject(projectDTO)) {
                 StatusLabel.showSuccess(lblStatus, "Proyecto registrado correctamente.");
                 clearInputFields();
             }
@@ -118,7 +116,8 @@ public class NewProjectController implements Initializable {
 
     @FXML
     private void cancel(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/coordinator/CoordinatorMenuView.fxml", "Cancelar", event);
+        ViewNavigator.loadView("/spp/presentation/view/coordinator/CoordinatorMenuView.fxml",
+                "Cancelar", event);
 
     }
 
