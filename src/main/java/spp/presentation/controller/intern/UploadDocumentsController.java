@@ -4,7 +4,6 @@ package spp.presentation.controller.intern;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Window;
 import spp.businesslogic.dao.FinalReportDAO;
@@ -28,19 +27,11 @@ public class UploadDocumentsController {
 
     @FXML private Label lblStatus;
     @FXML private Label lblSelectedDocument;
-    @FXML private Button btnUploadClassSchedule;
-    @FXML private Button btnUploadActivitiesSchedule;
-    @FXML private Button btnUploadPSP;
-    @FXML private Button btnUploadPartialReport;
-    @FXML private Button btnUploadSelfEvaluation;
-    @FXML private Button btnUploadEvaluationLinkedOrganization;
-    @FXML private Button btnUploadFinalReport;
     private File selectedDocument;
     private String currentFolder;
     private String currentPrefix;
     private final InitialDocumentDTO initialDocumentDTO = new InitialDocumentDTO();
     private final InitialDocumentDAO initialDocumentDAO = new InitialDocumentDAO();
-    private final FinalReportDAO finalReportDAO = new FinalReportDAO();
     private final InternDAO internDAO = new InternDAO();
 
     @FXML
@@ -229,6 +220,7 @@ public class UploadDocumentsController {
 
     private boolean existsFinalReport() {
         boolean exist = false;
+        FinalReportDAO finalReportDAO = new FinalReportDAO();
         try {
             exist = finalReportDAO.hasFinalReportByInternEmail(ActiveSessionDTO.get().getEmail());
         } catch (DAOException e) {
