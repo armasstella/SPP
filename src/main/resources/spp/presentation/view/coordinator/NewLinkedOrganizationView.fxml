@@ -64,8 +64,16 @@
                             </VBox>
                         </content>
                     </ScrollPane>
-                    <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
             </VBox>
+            <Label fx:id="lblStatus" text=""
+                   styleClass="lbl-status"
+                   alignment="CENTER"
+                   StackPane.alignment= "BOTTOM_CENTER"
+                   wrapText="true"
+                   maxWidth="400"/>
+            <StackPane.margin>
+                <Insets bottom="12" left="48" right="48"/>
+            </StackPane.margin>
         </StackPane>
     </center>
 
