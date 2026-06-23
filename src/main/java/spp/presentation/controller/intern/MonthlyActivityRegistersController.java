@@ -30,8 +30,6 @@ public class MonthlyActivityRegistersController implements Initializable {
     @FXML private TableColumn<ActivityDTO, String> colDescription;
     @FXML private TableColumn<ActivityDTO, String> colStartDate;
     @FXML private TableColumn<ActivityDTO, String> colEndDate;
-    private final ActivityDAO activityDAO = new ActivityDAO();
-    private final InternDAO internDAO = new InternDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -49,6 +47,8 @@ public class MonthlyActivityRegistersController implements Initializable {
     }
 
     private void obtainActivities() {
+        ActivityDAO activityDAO = new ActivityDAO();
+        InternDAO internDAO = new InternDAO();
         try {
             String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
             List<ActivityDTO> activityList = activityDAO.findActivitiesByStudentNumber(studentNumber);
