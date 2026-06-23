@@ -1,7 +1,8 @@
 package spp.businesslogic.dto;
 
+import spp.utils.validation.Validation;
 
-public class UserDTO {
+public class UserDTO extends BaseDTO {
 
     private String status;
     private String lastConnection;
@@ -9,92 +10,114 @@ public class UserDTO {
     private String secondName;
     private String firstLastName;
     private String secondLastName;
-    private String fullName;
     private String email;
     private String phoneNumber;
     private String password;
+    private String fullName;
 
     public UserDTO() {
 
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getLastConnection() {
-        return lastConnection;
-    }
-
-    public void setLastConnection(String lastConnection) {
-        this.lastConnection = lastConnection;
-    }
-
-    public String getFirstName() {
-        return firstName;
     }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
-    public String getSecondName() {
-        return secondName;
-    }
-
     public void setSecondName(String secondName) {
         this.secondName = secondName;
-    }
-
-    public String getFirstLastName() {
-        return firstLastName;
     }
 
     public void setFirstLastName(String firstLastName) {
         this.firstLastName = firstLastName;
     }
 
-    public String getSecondLastName() {
-        return secondLastName;
-    }
-
     public void setSecondLastName(String secondLastName) {
         this.secondLastName = secondLastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
+    public boolean setEmail(String email) {
+        boolean isValid;
+        Validation validator = new Validation();
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+        if (validator.validateEmail(email)) {
+            this.email = email.trim();
+            isValid = true;
+        } else {
+            addErrors(validator.getErrors());
+            isValid = false;
+        }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+        return isValid;
     }
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getPassword() {
-        return password;
+    public boolean setPassword(String password) {
+        boolean isValid;
+        Validation validator = new Validation();
+
+        if (validator.validatePassword(password)) {
+            this.password = password;
+            isValid = true;
+        } else {
+            addErrors(validator.getErrors());
+            isValid = false;
+        }
+
+        return isValid;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public String getFullName() {
-        return fullName;
+    public void setLastConnection(String lastConnection) {
+        this.lastConnection = lastConnection;
     }
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getLastConnection() {
+        return lastConnection;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getSecondName() {
+        return secondName;
+    }
+
+    public String getFirstLastName() {
+        return firstLastName;
+    }
+
+    public String getSecondLastName() {
+        return secondLastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 }
