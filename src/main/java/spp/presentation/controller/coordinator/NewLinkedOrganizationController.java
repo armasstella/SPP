@@ -27,7 +27,6 @@ public class NewLinkedOrganizationController implements Initializable {
     @FXML private TextField txtBusiness;
     @FXML private TextField txtEmail;
     @FXML private TextField txtPhoneNumber;
-    private final LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -46,7 +45,7 @@ public class NewLinkedOrganizationController implements Initializable {
     }
 
     @FXML
-    private void setAllLinkedOrganization(ActionEvent event, LinkedOrganizationDTO linkedOrganizationDTO) {
+    private void setAllLinkedOrganization(LinkedOrganizationDTO linkedOrganizationDTO) {
         linkedOrganizationDTO.setName(txtName.getText().trim());
         linkedOrganizationDTO.setRfc(txtRfc.getText().trim());
         linkedOrganizationDTO.setAddress(txtAddress.getText().trim());
@@ -64,16 +63,22 @@ public class NewLinkedOrganizationController implements Initializable {
         }
 
         LinkedOrganizationDTO linkedOrganizationDTO = new LinkedOrganizationDTO();
-        setAllLinkedOrganization(event, linkedOrganizationDTO);
+        setAllLinkedOrganization(linkedOrganizationDTO);
 
-        try {
-            if (linkedOrganizationDAO.registerLinkedOrganization(linkedOrganizationDTO)) {
-                StatusLabel.showSuccess(lblStatus, "Organización registrada correctamente.");
-                clearInputFields();
+        if (linkedOrganizationDTO.isValid()) {
+            LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
+            try {
+                if (linkedOrganizationDAO.registerLinkedOrganization(linkedOrganizationDTO)) {
+                    StatusLabel.showSuccess(lblStatus, "Organización registrada correctamente.");
+                    clearInputFields();
+                }
+            } catch (DAOException e) {
+                AppLogger.logError(e);
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, e.getMessage());
+        } else {
+            String errorMessages = String.join("\n. ", linkedOrganizationDTO.getErrors());
+            StatusLabel.showError(lblStatus, "Corrige los siguientes formatos:\n. " + errorMessages);
         }
 
     }
