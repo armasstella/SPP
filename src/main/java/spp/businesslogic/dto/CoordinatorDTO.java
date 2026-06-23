@@ -1,7 +1,7 @@
 package spp.businesslogic.dto;
 
-
 public class CoordinatorDTO extends UserDTO {
+
     private String personalNumber;
 
     public CoordinatorDTO() {
@@ -16,5 +16,8 @@ public class CoordinatorDTO extends UserDTO {
         this.personalNumber = personalNumber;
     }
 
+    @Override
+    public String toString() {
+        return personalNumber + " | " + super.getFullName();
+    }
 }
-
