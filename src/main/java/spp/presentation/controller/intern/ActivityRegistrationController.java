@@ -28,8 +28,6 @@ public class ActivityRegistrationController {
     @FXML private TextField txtEffectiveTime;
     @FXML private TextField txtProgress;
     @FXML private TextArea taObservations;
-    private final ActivityDAO activityDAO = new ActivityDAO();
-    private final InternDAO internDAO = new InternDAO();
     private static final int MAX_PROGRESS = 100;
 
     @FXML
@@ -37,6 +35,8 @@ public class ActivityRegistrationController {
         if (validateInputs()) {
             return;
         }
+        ActivityDAO activityDAO = new ActivityDAO();
+        InternDAO internDAO = new InternDAO();
 
         try {
             String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
@@ -60,7 +60,7 @@ public class ActivityRegistrationController {
                 || txtEstimatedTime.getText().trim().isEmpty()
                 || txtEffectiveTime.getText().trim().isEmpty()
                 || txtProgress.getText().trim().isEmpty()) {
-            StatusLabel.showError(lblStatus, "Llene todos los campos.");
+            StatusLabel.showError(lblStatus, "Complete todos los campos.");
             return true;
         }
 
