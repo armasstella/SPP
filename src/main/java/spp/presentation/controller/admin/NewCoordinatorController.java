@@ -28,7 +28,6 @@ public class NewCoordinatorController implements Initializable {
     @FXML private TextField txtPhoneNumber;
     @FXML private TextField txtPersonalNumber;
     @FXML private TextField txtPassword;
-    private final CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -48,8 +47,7 @@ public class NewCoordinatorController implements Initializable {
 
     }
 
-    private CoordinatorDTO buildCoordinatorDTO() {
-        CoordinatorDTO coordinatorDTO = new CoordinatorDTO();
+    private void setAllCoordinator(CoordinatorDTO coordinatorDTO) {
         coordinatorDTO.setFirstName(txtFirstName.getText().trim());
         coordinatorDTO.setSecondName(txtSecondName.getText().trim());
         coordinatorDTO.setFirstLastName(txtFirstLastName.getText().trim());
@@ -58,8 +56,6 @@ public class NewCoordinatorController implements Initializable {
         coordinatorDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
         coordinatorDTO.setPersonalNumber(txtPersonalNumber.getText().trim());
         coordinatorDTO.setPassword(txtPassword.getText().trim());
-
-        return coordinatorDTO;
 
     }
 
@@ -86,14 +82,23 @@ public class NewCoordinatorController implements Initializable {
             return;
         }
 
-        try {
-            if (coordinatorDAO.registerCoordinator(buildCoordinatorDTO())) {
-                StatusLabel.showSuccess(lblStatus, "Coordinador registrado correctamente.");
-                clearInputFields();
+        CoordinatorDTO coordinatorDTO = new CoordinatorDTO();
+        setAllCoordinator(coordinatorDTO);
+
+        if (coordinatorDTO.isValid()) {
+            CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
+            try {
+                if (coordinatorDAO.registerCoordinator(coordinatorDTO)) {
+                    StatusLabel.showSuccess(lblStatus, "Coordinador registrado correctamente.");
+                    clearInputFields();
+                }
+            } catch (DAOException e) {
+                AppLogger.logError(e);
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, e.getMessage());
+        } else {
+            String errorMessages = String.join(" - ", coordinatorDTO.getErrors());
+            StatusLabel.showError(lblStatus, errorMessages);
         }
 
     }
