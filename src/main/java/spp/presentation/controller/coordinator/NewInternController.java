@@ -40,7 +40,7 @@ public class NewInternController implements Initializable {
     @FXML private TextField txtPhoneNumber;
     @FXML private TextField txtStudentNumber;
     @FXML private TextField txtPassword;
-    @FXML private ComboBox<String> cmbGender;
+    @FXML private ComboBox<String> cmbSex;
     @FXML private RadioButton rbYes;
     @FXML private RadioButton rbNo;
     @FXML private VBox vbLanguageDetail;
@@ -48,7 +48,6 @@ public class NewInternController implements Initializable {
     @FXML private DatePicker dpBirthDate;
     @FXML private ComboBox<CourseDTO> cmbCourseCode;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private final InternDAO internDAO = new InternDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -69,7 +68,7 @@ public class NewInternController implements Initializable {
 
         } catch (DAOException e) {
             AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al cargar cursos");
+            StatusLabel.showError(lblStatus, "FATAL: Error al cargar cursos");
         }
 
     }
@@ -101,7 +100,7 @@ public class NewInternController implements Initializable {
         internDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
         internDTO.setStudentNumber(txtStudentNumber.getText().trim());
         internDTO.setPassword(txtPassword.getText().trim());
-        internDTO.setGender(cmbGender.getValue());
+        internDTO.setSex(cmbSex.getValue());
         internDTO.setSpeaksIndigenousLanguage(rbYes.isSelected());
         internDTO.setIndigenousLanguage(txtIndigenousLanguage.getText().trim());
         LocalDate selectedDate = dpBirthDate.getValue();
@@ -137,32 +136,38 @@ public class NewInternController implements Initializable {
         InternDTO internDTO = new InternDTO();
         setAllIntern(internDTO);
 
-        try {
-            if (internDAO.registerIntern(internDTO)) {
-                StatusLabel.showSuccess(lblStatus, "Practicante registrado correctamente.");
-                clearInputFields();
+        if (internDTO.isValid()) {
+            InternDAO internDAO = new InternDAO();
+            try {
+                if (internDAO.registerIntern(internDTO)) {
+                    StatusLabel.showSuccess(lblStatus, "Practicante registrado correctamente.");
+                    clearInputFields();
+                }
+            } catch (DAOException e) {
+                AppLogger.logError(e);
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, e.getMessage());
+        } else {
+            String errorMessages = String.join("\n. ", internDTO.getErrors());
+            StatusLabel.showError(lblStatus, "Corrige los siguientes formatos:\n. " + errorMessages);
         }
-
     }
 
     private boolean validateRegistrationInputs() {
-        boolean validFields = false;
+        boolean emptyFields = false;
         if (txtFirstName.getText().isBlank() ||
                 txtFirstLastName.getText().isBlank() ||
                 txtEmail.getText().isBlank() ||
                 txtPhoneNumber.getText().isBlank() ||
                 txtStudentNumber.getText().isBlank() ||
                 txtPassword.getText().isBlank() ||
-                cmbGender.getValue() == null ||
+                cmbSex.getValue() == null ||
                 dpBirthDate.getValue() == null) {
             StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
-            validFields = true;
+            emptyFields = true;
         }
-        return validFields;
+
+        return emptyFields;
 
     }
 
@@ -175,7 +180,7 @@ public class NewInternController implements Initializable {
         txtPhoneNumber.clear();
         txtStudentNumber.clear();
         txtPassword.clear();
-        cmbGender.setValue(null);
+        cmbSex.setValue(null);
         dpBirthDate.setValue(null);
         rbNo.setSelected(true);
         toggleIndigenousLanguageField();
