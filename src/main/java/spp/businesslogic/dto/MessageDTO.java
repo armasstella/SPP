@@ -1,10 +1,11 @@
 package spp.businesslogic.dto;
 
-
 import spp.businesslogic.enums.MesaggeStatus;
+import spp.utils.validation.Validation;
 
 
-public class MessageDTO {
+public class MessageDTO extends BaseDTO {
+
     private String subject;
     private String content;
     private MesaggeStatus messageStatus;
@@ -16,6 +17,14 @@ public class MessageDTO {
 
     public MessageDTO() {
 
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getSubject() {
+        return subject;
     }
 
     public void setContent(String content) {
@@ -50,36 +59,49 @@ public class MessageDTO {
         return receiver;
     }
 
-    public String getSubject() {
-        return subject;
-    }
+    public boolean setEmailSender(String emailSender) {
+        boolean isValid;
+        Validation validator = new Validation();
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+        if (validator.validateEmail(emailSender)) {
+            this.emailSender = emailSender.trim();
+            isValid = true;
+        } else {
+            addErrors(validator.getErrors());
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     public String getEmailSender() {
         return emailSender;
     }
 
-    public void setEmailSender(String emailSender) {
-        this.emailSender = emailSender;
+    public boolean setEmailReceiver(String emailReceiver) {
+        boolean isValid;
+        Validation validator = new Validation();
+
+        if (validator.validateEmail(emailReceiver)) {
+            this.emailReceiver = emailReceiver.trim();
+            isValid = true;
+        } else {
+            addErrors(validator.getErrors());
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     public String getEmailReceiver() {
         return emailReceiver;
     }
 
-    public void setEmailReceiver(String emailReceiver) {
-        this.emailReceiver = emailReceiver;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getDate() {
         return date;
     }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
 }
