@@ -14,7 +14,7 @@ public final class SelfEvaluationHtmlBuilder {
 
     }
 
-    public static String build(SelfEvaluationDTO evaluation) throws IOException {
+    public static String buildSelfEvaluation(SelfEvaluationDTO evaluation) throws IOException {
         Map<String, String> values = new HashMap<>();
         values.put("studentName", TemplateRenderer.escape(evaluation.getStudentName()));
         values.put("studentNumber", TemplateRenderer.escape(evaluation.getStudentNumber()));
