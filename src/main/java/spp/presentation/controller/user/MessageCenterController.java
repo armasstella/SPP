@@ -46,9 +46,8 @@ public class MessageCenterController implements Initializable {
     @FXML private TextArea txtDetailContent;
     private final MessageDAO messageDAO = new MessageDAO();
     private final UserDAO userDAO = new UserDAO();
-    private ObservableList<MessageDTO> messagesObservableList;
     private String previousViewPath;
-    private String previosViewTitle;
+    private String previousViewTitle;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -78,7 +77,7 @@ public class MessageCenterController implements Initializable {
 
     public void setPreviousView(String path, String title) {
         this.previousViewPath = path;
-        this.previosViewTitle = title;
+        this.previousViewTitle = title;
 
     }
 
@@ -96,7 +95,7 @@ public class MessageCenterController implements Initializable {
     private void obtainMessages() {
         try {
             List<MessageDTO> messagesList = messageDAO.findMessagesByReceiverEmail(ActiveSessionDTO.get().getEmail());
-            messagesObservableList = FXCollections.observableArrayList(messagesList);
+            ObservableList<MessageDTO> messagesObservableList = FXCollections.observableArrayList(messagesList);
             tblMessages.setItems(messagesObservableList);
         } catch (DAOException e) {
             StatusLabel.showError(lblStatus, "Error al obtener mensajes");
@@ -124,31 +123,50 @@ public class MessageCenterController implements Initializable {
 
     }
 
+    private boolean validateRegistrationInputs() {
+        boolean emptyFields = false;
+
+        if (txtRecipient.getText().trim().isEmpty() ||
+                txtSubject.getText().trim().isEmpty() ||
+                txtBody.getText().trim().isEmpty()) {
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
+            emptyFields = true;
+        }
+
+        return emptyFields;
+
+    }
+
     @FXML
     private void sendMessage(ActionEvent event) {
-        if(txtRecipient.getText().trim().isEmpty() ||
-            txtSubject.getText().trim().isEmpty() ||
-            txtBody.getText().trim().isEmpty()) {
-            StatusLabel.showError(lblStatus, "Llene todo los campos.");
+        if(validateRegistrationInputs()) {
             return;
         }
 
-        try {
-            if (userDAO.existsEmailRegister(txtRecipient.getText().trim())) {
-                try {
-                    if (messageDAO.sendMessage(buildMessageDTO())) {
-                        StatusLabel.showSuccess(lblStatus, "Mensaje enviado correctamente.");
+        MessageDTO messageDTO = new MessageDTO();
+        setAllMessage(messageDTO);
+
+        if (messageDTO.isValid()) {
+            try {
+                if (userDAO.existsEmailRegister(txtRecipient.getText().trim())) {
+                    try {
+                        if (messageDAO.sendMessage(messageDTO)) {
+                            StatusLabel.showSuccess(lblStatus, "Mensaje enviado correctamente.");
+                        }
+                        clearNewMessageFields();
+                    } catch (DAOException e) {
+                        AppLogger.logError(e);
+                        StatusLabel.showError(lblStatus, "Error enviando mensaje");
                     }
-                    clearNewMessageFields();
-                } catch (DAOException e) {
-                    AppLogger.logError(e);
-                    StatusLabel.showError(lblStatus, "Error enviando mensaje");
                 }
+            } catch (DAOException e) {
+                AppLogger.logError(e);
+                StatusLabel.showError(lblStatus, "El correo ingresado no está registrado en el sistema" +
+                        "\nNo es posible enviarle mensaje.");
             }
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "El correo ingresado no está registrado en el sistema" +
-                    "\nNo es posible enviarle mensaje.");
+        } else {
+            String errorMessages = String.join(" - ", messageDTO.getErrors());
+            StatusLabel.showError(lblStatus, errorMessages);
         }
 
     }
@@ -165,13 +183,11 @@ public class MessageCenterController implements Initializable {
 
     }
 
-    public MessageDTO buildMessageDTO() {
-        MessageDTO newMessageDTO = new MessageDTO();
+    public void setAllMessage(MessageDTO newMessageDTO) {
         newMessageDTO.setEmailSender(ActiveSessionDTO.get().getEmail());
         newMessageDTO.setEmailReceiver(txtRecipient.getText().trim());
         newMessageDTO.setSubject(txtSubject.getText().trim());
         newMessageDTO.setContent(txtBody.getText().trim());
-        return newMessageDTO;
 
     }
 
@@ -185,8 +201,8 @@ public class MessageCenterController implements Initializable {
     @FXML
     public void goToMenuView(ActionEvent event) {
         if (previousViewPath != null &&
-            previosViewTitle != null) {
-            ViewNavigator.loadView(previousViewPath, previosViewTitle, event);
+            previousViewTitle != null) {
+            ViewNavigator.loadView(previousViewPath, previousViewTitle, event);
         } else {
             StatusLabel.showError(lblStatus, "Error al regresar. Reinicie el programa");
         }
