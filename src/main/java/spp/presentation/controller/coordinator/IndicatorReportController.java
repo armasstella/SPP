@@ -7,7 +7,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dao.IndicatorReportDAO;
-import spp.businesslogic.dao.TermDAO; // Importamos el nuevo DAO
+import spp.businesslogic.dao.TermDAO;
 import spp.businesslogic.dto.IndicatorFilterDTO;
 import spp.businesslogic.dto.IndicatorReportDTO;
 import spp.businesslogic.enums.DocumentType;
@@ -39,9 +39,6 @@ public class IndicatorReportController implements Initializable {
     @FXML private TextField txtFilterMaxAge;
     @FXML private Label lblStatus;
 
-    private final IndicatorReportDAO indicatorDAO = new IndicatorReportDAO();
-    private final TermDAO termDAO = new TermDAO();
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeComboBoxes();
@@ -63,6 +60,7 @@ public class IndicatorReportController implements Initializable {
             cmbFilterLanguage.getItems().add(filter);
         }
         cmbFilterLanguage.getSelectionModel().selectFirst();
+        TermDAO termDAO = new TermDAO();
 
         try {
             List<String> periods = termDAO.findTermNames();
@@ -84,12 +82,13 @@ public class IndicatorReportController implements Initializable {
     @FXML
     public void generateReport(ActionEvent event) {
         IndicatorFilterDTO filters = buildIndicatorFilterDTO();
+        IndicatorReportDAO indicatorDAO = new IndicatorReportDAO();
 
         try {
             IndicatorReportDTO reportData = indicatorDAO.getStaticsByIndicators(filters);
             reportData.setGenerationDate(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-            String html = IndicatorReportHtmlBuilder.build(reportData);
+            String html = IndicatorReportHtmlBuilder.buildIndicatorReport(reportData);
 
             File outputFile = FileChooserUtil.chooseOutputFile(event, DocumentType.INDICATOR_REPORT);
             if (outputFile == null) {
