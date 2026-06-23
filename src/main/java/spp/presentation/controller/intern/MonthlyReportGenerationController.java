@@ -68,7 +68,6 @@ public class MonthlyReportGenerationController implements Initializable {
     @FXML private TableColumn<ActivityDTO, String> colChosenActivityObservations;
     private final ActivityDAO activityDAO = new ActivityDAO();
     private final InternDAO internDAO = new InternDAO();
-    private final FinalReportDAO reportDAO = new FinalReportDAO();
     private ObservableList<ActivityDTO> availableActivitiesObservableList;
     private ObservableList<ActivityDTO> includedActivitiesObservableList;
 
@@ -209,6 +208,8 @@ public class MonthlyReportGenerationController implements Initializable {
             return;
         }
 
+        FinalReportDAO reportDAO = new FinalReportDAO();
+
         try {
             String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
             FinalReportDTO finalReportDTO = reportDAO.getFinalReportDetailByStudentNumber(studentNumber);
@@ -217,7 +218,7 @@ public class MonthlyReportGenerationController implements Initializable {
             finalReportDTO.setReportDate(LocalDate.now().format(DATE_FORMAT));
             finalReportDTO.setTotalHours(String.valueOf(sumIncludedEffectiveTime()));
 
-            String html = FinalReportHtmlBuilder.build(finalReportDTO,
+            String html = FinalReportHtmlBuilder.buildFinalReport(finalReportDTO,
                     new ArrayList<>(includedActivitiesObservableList));
 
             File outputFile = chooseOutputFile(event, studentNumber);
