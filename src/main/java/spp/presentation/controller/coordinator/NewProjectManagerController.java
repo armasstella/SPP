@@ -24,10 +24,9 @@ public class NewProjectManagerController implements Initializable {
     @FXML private TextField txtSecondName;
     @FXML private TextField txtFirstLastName;
     @FXML private TextField txtSecondLastName;
-    @FXML private TextField txtResponsability;
+    @FXML private TextField txtResponsibility;
     @FXML private TextField txtRole;
     @FXML private TextField txtPhoneNumber;
-    private final ProjectManagerDAO projectManagerDAO  = new ProjectManagerDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -39,24 +38,21 @@ public class NewProjectManagerController implements Initializable {
         InputFilter.applyFilter(txtSecondName, InputFilter.NAME_PATTERN, 40);
         InputFilter.applyFilter(txtFirstLastName, InputFilter.NAME_PATTERN, 40);
         InputFilter.applyFilter(txtSecondLastName, InputFilter.NAME_PATTERN, 40);
-        InputFilter.applyFilter(txtResponsability, InputFilter.ALPHANUMERIC_PATTERN, 100);
+        InputFilter.applyFilter(txtResponsibility, InputFilter.ALPHANUMERIC_PATTERN, 100);
         InputFilter.applyFilter(txtRole, InputFilter.ALPHANUMERIC_PATTERN, 100);
         InputFilter.applyFilter(txtPhoneNumber, InputFilter.NUMERIC_PATTERN, 10);
 
     }
 
     @FXML
-    private ProjectManagerDTO buildProjectManagerDTO() {
-        ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
+    private void setAllProjectManager(ProjectManagerDTO projectManagerDTO) {
         projectManagerDTO.setFirstName(txtFirstName.getText().trim());
         projectManagerDTO.setSecondName(txtSecondName.getText().trim());
         projectManagerDTO.setFirstLastName(txtFirstLastName.getText().trim());
         projectManagerDTO.setSecondLastName(txtSecondLastName.getText().trim());
         projectManagerDTO.setRole(txtRole.getText().trim());
-        projectManagerDTO.setResponsibility(txtResponsability.getText().trim());
+        projectManagerDTO.setResponsibility(txtResponsibility.getText().trim());
         projectManagerDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
-
-        return projectManagerDTO;
 
     }
 
@@ -65,9 +61,12 @@ public class NewProjectManagerController implements Initializable {
         if (validateRegistrationInputs()) {
             return;
         }
+        ProjectManagerDAO projectManagerDAO  = new ProjectManagerDAO();
+        ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
+        setAllProjectManager(projectManagerDTO);
 
         try {
-            if (projectManagerDAO.registerProjectManager(buildProjectManagerDTO())) {
+            if (projectManagerDAO.registerProjectManager(projectManagerDTO)) {
                 StatusLabel.showSuccess(lblStatus, "Encargado de proyecto registrado correctamente.");
                 clearInputFields();
             }
@@ -86,18 +85,18 @@ public class NewProjectManagerController implements Initializable {
     }
 
     private boolean validateRegistrationInputs() {
-        boolean validFields = false;
+        boolean emptyFields = false;
 
         if (txtFirstName.getText().isBlank() ||
                 txtFirstLastName.getText().isBlank() ||
-                txtResponsability.getText().isBlank() ||
+                txtResponsibility.getText().isBlank() ||
                 txtRole.getText().isBlank() ||
                 txtPhoneNumber.getText().isBlank()){
             StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
-            validFields = true;
+            emptyFields = true;
         }
 
-        return validFields;
+        return emptyFields;
 
     }
 
@@ -106,7 +105,7 @@ public class NewProjectManagerController implements Initializable {
         txtSecondName.clear();
         txtFirstLastName.clear();
         txtSecondLastName.clear();
-        txtResponsability.clear();
+        txtResponsibility.clear();
         txtRole.clear();
         txtPhoneNumber.clear();
 
