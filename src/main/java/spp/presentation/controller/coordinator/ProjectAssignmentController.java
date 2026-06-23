@@ -18,7 +18,6 @@ import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.InternDAO;
-import spp.businesslogic.dao.ProjectDAO;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
@@ -39,9 +38,6 @@ public class ProjectAssignmentController implements Initializable {
     @FXML private ToggleButton tglFirstSelectedProject;
     @FXML private ToggleButton tglSecondSelectedProject;
     @FXML private ToggleButton tglThirdSelectedProject;
-    private final InternDAO internDAO = new InternDAO();
-    private final PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
-    private ObservableList<InternDTO> internsObservableList;
     private List<ToggleButton> projectToggleButtons;
     private InternDTO selectedIntern;
 
@@ -79,9 +75,10 @@ public class ProjectAssignmentController implements Initializable {
 
     @FXML
     private void obtainInterns() {
+        InternDAO internDAO = new InternDAO();
         try {
             List<InternDTO> internList = internDAO.findUnassignedInternsIdentifiers();
-            internsObservableList = FXCollections.observableArrayList(internList);
+            ObservableList<InternDTO> internsObservableList = FXCollections.observableArrayList(internList);
             tblInterns.setItems(internsObservableList);
         } catch (DAOException e) {
             AppLogger.logError(e);
@@ -93,6 +90,7 @@ public class ProjectAssignmentController implements Initializable {
     private void displaySelectedProjects(InternDTO intern) {
         clearProjectSelection();
         lblStatus.setText("");
+        PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
         try {
             List<ProjectDTO> selectedProjectList =
                     prioritizedProjectDAO.findPrioritizedProjectsIdentifiersByStudentNumber(intern.getStudentNumber());
