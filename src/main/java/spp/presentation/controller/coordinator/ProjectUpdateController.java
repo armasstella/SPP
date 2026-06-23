@@ -39,8 +39,6 @@ public class ProjectUpdateController implements Initializable {
     @FXML private TextField txtName;
     @FXML private TextArea txtDescription;
     @FXML private TextField txtPlacesAvailable;
-    @FXML private TextField txtLinkedOrganizationId;
-    @FXML private TextField txtProjectManagerId;
     @FXML private TableView<ProjectDTO> tblProjects;
     @FXML private TableColumn<ProjectDTO, String> colName;
     @FXML private TableColumn<ProjectDTO, String> colDescription;
