@@ -34,7 +34,6 @@ public class NewCourseController implements Initializable {
     @FXML ComboBox<InstructorDTO> cmbInstructor;
     @FXML TextField txtCapacity;
     @FXML TextArea taCourseDetails;
-    private final CourseDAO courseDAO = new CourseDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -51,8 +50,7 @@ public class NewCourseController implements Initializable {
 
     }
 
-    private CourseDTO buildCourseDTO() {
-        CourseDTO courseDTO = new CourseDTO();
+    private void setAllCourse(CourseDTO courseDTO) {
         courseDTO.setCourseCode(Integer.parseInt(txtCourseCode.getText().trim()));
         courseDTO.setTerm(txtTerm.getText().trim());
         courseDTO.setSchoolBlock(Integer.parseInt(cmbSchoolBlock.getSelectionModel().getSelectedItem()));
@@ -60,8 +58,6 @@ public class NewCourseController implements Initializable {
         courseDTO.setCapacity(Integer.parseInt(txtCapacity.getText().trim()));
         courseDTO.setCourseDetails(taCourseDetails.getText().trim());
         courseDTO.setInstructorDTO(cmbInstructor.getSelectionModel().getSelectedItem());
-
-        return courseDTO;
 
     }
 
@@ -71,10 +67,13 @@ public class NewCourseController implements Initializable {
             return;
         }
 
+        CourseDTO courseDTO = new CourseDTO();
+        setAllCourse(courseDTO);
         boolean savedWithoutInstructor = (cmbInstructor.getValue() == null);
+        CourseDAO courseDAO = new CourseDAO();
 
         try {
-            if (courseDAO.registerCourse(buildCourseDTO())) {
+            if (courseDAO.registerCourse(courseDTO)) {
                 String successMessage = savedWithoutInstructor ?
                         "Curso registrado\nRecuerde asignar un profesor posteriormente" :
                         "Curso registrado correctamente";
@@ -101,7 +100,7 @@ public class NewCourseController implements Initializable {
     }
 
     private boolean validateEmptyFields() {
-        boolean thereAreEmptyFields = false;
+        boolean emptyFields = false;
 
         if (txtCourseCode.getText().isBlank() ||
                 txtTerm.getText().isBlank() ||
@@ -110,10 +109,10 @@ public class NewCourseController implements Initializable {
                 txtCapacity.getText().isBlank() ||
                 txtCourseCode.getText().isBlank()) {
             StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
-            thereAreEmptyFields = true;
+            emptyFields = true;
         }
 
-        return thereAreEmptyFields;
+        return emptyFields;
 
     }
 
