@@ -46,7 +46,6 @@ public class SelfEvaluationGenerationController implements Initializable {
     @FXML private ToggleGroup tgQuestionNinth;
     @FXML private ToggleGroup tgQuestionTenth;
     private List<ToggleGroup> toggleGroups;
-    private final SelfEvaluationDAO selfEvaluationDAO = new SelfEvaluationDAO();
     private SelfEvaluationDTO currentEvaluation;
 
     @Override
@@ -77,6 +76,7 @@ public class SelfEvaluationGenerationController implements Initializable {
             InternDAO internDAO = new InternDAO();
             String studentNumber = internDAO.findActiveStudentNumberByEmail(activeEmail);
 
+            SelfEvaluationDAO selfEvaluationDAO = new SelfEvaluationDAO();
             currentEvaluation = selfEvaluationDAO.findEvaluationHeaderByStudentNumber(studentNumber);
 
             if (currentEvaluation == null) {
@@ -122,7 +122,7 @@ public class SelfEvaluationGenerationController implements Initializable {
 
         try {
             SelfEvaluationDTO evaluation = buildEvaluationDTO();
-            String html = SelfEvaluationHtmlBuilder.build(evaluation);
+            String html = SelfEvaluationHtmlBuilder.buildSelfEvaluation(evaluation);
 
             File outputFile = chooseOutputFile(event, evaluation.getStudentNumber());
             if (outputFile == null) {
@@ -139,8 +139,8 @@ public class SelfEvaluationGenerationController implements Initializable {
     }
 
     private boolean validateAllQuestionsAnswered() {
-        for (ToggleGroup tg : toggleGroups) {
-            if (tg.getSelectedToggle() == null) {
+        for (ToggleGroup toggleGroup : toggleGroups) {
+            if (toggleGroup.getSelectedToggle() == null) {
                 return false;
             }
         }
