@@ -12,6 +12,7 @@ import javafx.scene.control.TableView;
 import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.CoordinatorDAO;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.GenericNestedSelector;
@@ -69,21 +70,20 @@ public class CoordinatorDeactivationController implements Initializable {
         CoordinatorDTO coordinatorSelected = tblCoordinators.getSelectionModel().getSelectedItem();
         if (coordinatorSelected == null) {
             StatusLabel.showError(lblStatus, "Seleccione el coordinador a inactivar");
-            return;
-        }
-        if (AlertHelper.showConfirmation("Confirmar acción",
-                "¿Seguro que desea inactivar \"" + coordinatorSelected.getPersonalNumber() + "\"?")) {
-            try {
-                if (coordinatorDAO.deactivateCoordinator(coordinatorSelected)) {
-                    obtainCoordinators();
-                    StatusLabel.showSuccess(lblStatus, "Coordinador inactivado exitosamente.");
+        } else {
+            if (AlertHelper.showConfirmation("Confirmar acción",
+                    "¿Seguro que desea inactivar \"" + coordinatorSelected.getPersonalNumber() + "\"?")) {
+                try {
+                    if (coordinatorDAO.deactivateCoordinator(coordinatorSelected)) {
+                        obtainCoordinators();
+                        StatusLabel.showSuccess(lblStatus, "Coordinador inactivado exitosamente.");
+                    }
+                } catch (DAOException e) {
+                    AppLogger.log(ExceptionLevel.FATAL, e);
+                    StatusLabel.showError(lblStatus, "Error al inactivar coordinador.");
                 }
-            } catch (DAOException e) {
-                AppLogger.logError(e);
-                StatusLabel.showError(lblStatus, "Error al inactivar coordinador.");
-            }
+            }   
         }
-
     }
 
     @FXML
