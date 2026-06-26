@@ -9,9 +9,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import spp.businesslogic.dto.InstructorDTO;
+import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.dao.InstructorDAO;
+import spp.businesslogic.dao.CoordinatorDAO;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.GenericNestedSelector;
@@ -22,78 +23,73 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 
-public class InstructorDeactivationController implements Initializable {
+public class CoordinatorDeactivationController implements Initializable {
 
     @FXML private Label lblStatus;
-    @FXML private TableView<InstructorDTO> tblInstructors;
-    @FXML private TableColumn<InstructorDTO, String> colNames;
-    @FXML private TableColumn<InstructorDTO, String> colSurnames;
-    @FXML private TableColumn<InstructorDTO, String> colEmail;
-    @FXML private TableColumn<InstructorDTO, String> colPersonalNumber;
-    @FXML private TableColumn<InstructorDTO, String> colShift;
-    private final InstructorDAO instructorDAO = new InstructorDAO();
+    @FXML private TableView<CoordinatorDTO> tblCoordinators;
+    @FXML private TableColumn<CoordinatorDTO, String> colNames;
+    @FXML private TableColumn<CoordinatorDTO, String> colSurnames;
+    @FXML private TableColumn<CoordinatorDTO, String> colEmail;
+    @FXML private TableColumn<CoordinatorDTO, String> colPersonalNumber;
+    private final CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpColumns();
-        obtainInstructors();
-
-    }
-
-    @FXML
-    public void deactivateInstructor() {
-        InstructorDTO instructorSelected = tblInstructors.getSelectionModel().getSelectedItem();
-        if(instructorSelected == null) {
-            StatusLabel.showError(lblStatus, "Seleccione el profesor a inactivar");
-            return;
-        }
-
-        if (AlertHelper.showConfirmation("Confirmar acción",
-                "¿Seguro que desea inactivar \"" + instructorSelected.getPersonalNumber() + "\"?")) {
-            try {
-                if (instructorDAO.deactivateInstructor(instructorSelected)) {
-                    obtainInstructors();
-                    StatusLabel.showSuccess(lblStatus, "Profesor inactivado exitosamente.");
-                }
-            } catch (DAOException e) {
-                AppLogger.logError(e);
-                StatusLabel.showError(lblStatus, "Error al inactivar profesor.");
-            }
-        }
-
-    }
-
-    @FXML
-    private void cancel(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/admin/AdminMenuView.fxml",
-                "Menú Administrador", event);
+        obtainCoordinators();
 
     }
 
     private void setUpColumns() {
         colNames.setCellValueFactory(
-                new GenericNestedSelector<>("firstName", "Sin nombres"));
+                new GenericNestedSelector<>("firstName", "Sin nombre"));
         colSurnames.setCellValueFactory(
                 new GenericNestedSelector<>("firstLastName", "Sin apellidos"));
         colEmail.setCellValueFactory(
                 new GenericNestedSelector<>("email", "Sin correo electrónico"));
         colPersonalNumber.setCellValueFactory(
                 new GenericNestedSelector<>("personalNumber", "Sin número de personal"));
-        colShift.setCellValueFactory(
-                new GenericNestedSelector<>("shift", "Sin turno"));
 
     }
 
     @FXML
-    private void obtainInstructors() {
+    private void obtainCoordinators() {
         try {
-            List<InstructorDTO> instructorsList = instructorDAO.getActiveInstructors();
-            ObservableList<InstructorDTO> instructorsObservableList =
-                    FXCollections.observableArrayList(instructorsList);
-            tblInstructors.setItems(instructorsObservableList);
+            List<CoordinatorDTO> coordinatorsList = coordinatorDAO.getActiveCoordinators();
+            ObservableList<CoordinatorDTO> coordinatorsObservableList =
+                    FXCollections.observableArrayList(coordinatorsList);
+            tblCoordinators.setItems(coordinatorsObservableList);
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener lista de profesores");
+            StatusLabel.showError(lblStatus, "Error al obtener lista de coordinadores");
         }
+
+    }
+
+    @FXML
+    private void deactivateCoordinator(ActionEvent event) {
+        CoordinatorDTO coordinatorSelected = tblCoordinators.getSelectionModel().getSelectedItem();
+        if (coordinatorSelected == null) {
+            StatusLabel.showError(lblStatus, "Seleccione el coordinador a inactivar");
+        } else {
+            if (AlertHelper.showConfirmation("Confirmar acción",
+                    "¿Seguro que desea inactivar \"" + coordinatorSelected.getPersonalNumber() + "\"?")) {
+                try {
+                    if (coordinatorDAO.deactivateCoordinator(coordinatorSelected)) {
+                        obtainCoordinators();
+                        StatusLabel.showSuccess(lblStatus, "Coordinador inactivado exitosamente.");
+                    }
+                } catch (DAOException e) {
+                    AppLogger.log(ExceptionLevel.FATAL, e);
+                    StatusLabel.showError(lblStatus, "Error al inactivar coordinador.");
+                }
+            }   
+        }
+    }
+
+    @FXML
+    private void cancel(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/admin/AdminMenuView.fxml",
+                "Menú Administrador", event);
 
     }
 
