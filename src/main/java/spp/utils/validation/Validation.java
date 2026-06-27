@@ -9,18 +9,18 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 
-public class Validation {
+public class PatternDomainValidator {
 
     private final List<String> errors = new ArrayList<>();
 
-    public Validation() {
+    public PatternDomainValidator() {
 
     }
 
-    public boolean validatePattern(String value, String pattern, String errorMessage) {
+    public boolean validatePattern(String value, Pattern compiledPattern, String errorMessage) {
         boolean isValidPattern;
 
-        if (Pattern.matches(pattern, value)) {
+        if (compiledPattern.matcher(value).matches()) {
             isValidPattern = true;
         } else {
             isValidPattern = false;
@@ -43,8 +43,8 @@ public class Validation {
         boolean isValidPasswordPattern;
 
         isValidPasswordPattern = validatePattern(password,
-                    BusinessConstant.PATTERN_PASSWORD,
-                    BusinessConstant.MESSAGE_INVALID_PASSWORD);
+                Pattern.compile(String.valueOf(BusinessConstant.PATTERN_PASSWORD)),
+                BusinessConstant.MESSAGE_INVALID_PASSWORD);
 
         return isValidPasswordPattern;
     }
@@ -53,7 +53,7 @@ public class Validation {
         boolean isValidStudentNumberPattern;
 
         isValidStudentNumberPattern = validatePattern(studentNumber,
-                    BusinessConstant.PATTERN_STUDENT_NUMBER,
+                Pattern.compile(String.valueOf(BusinessConstant.PATTERN_STUDENT_NUMBER)),
                     BusinessConstant.MESSAGE_INVALID_STUDENT_NUMBER);
 
         return isValidStudentNumberPattern;
@@ -63,13 +63,23 @@ public class Validation {
         boolean isValidRfcPattern;
 
         isValidRfcPattern = validatePattern(rfc,
-                BusinessConstant.PATTERN_RFC,
+                Pattern.compile(String.valueOf(BusinessConstant.PATTERN_RFC)),
                 BusinessConstant.MESSAGE_INVALID_RFC);
 
         return isValidRfcPattern;
     }
 
-    public List<String> getErrors() {
+    public boolean validateTerm(String term) {
+        boolean isValidTermPattern;
+
+        isValidTermPattern = validatePattern(term,
+                Pattern.compile(String.valueOf(BusinessConstant.PATTERN_TERM)),
+                BusinessConstant.MESSAGE_INVALID_TERM);
+
+        return isValidTermPattern;
+    }
+
+    public List<String> getPatternsErrors() {
         return Collections.unmodifiableList(errors);
     }
 }
