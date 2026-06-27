@@ -25,7 +25,6 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
 import spp.utils.htmlbuilder.FinalReportHtmlBuilder;
-import spp.utils.logger.AppLogger;
 import spp.utils.file.HtmlToPdfConverter;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.GenericNestedSelector;
@@ -43,9 +42,6 @@ import java.util.ResourceBundle;
 
 public class MonthlyReportGenerationController implements Initializable {
 
-    private static final String CAREER = "Licenciatura en Ingeniería de Software";
-    private static final String REPORT_TYPE = "MENSUAL";
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     @FXML private Label lblStatus;
     @FXML private Label lblCounter;
     @FXML private TableView<ActivityDTO> tblActivities;
@@ -115,7 +111,6 @@ public class MonthlyReportGenerationController implements Initializable {
             availableActivitiesObservableList = FXCollections.observableArrayList(activityList);
             tblActivities.setItems(availableActivitiesObservableList);
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al obtener actividades");
         }
 
@@ -185,7 +180,6 @@ public class MonthlyReportGenerationController implements Initializable {
                 StatusLabel.showSuccess(lblStatus, "Actividad actualizada correctamente.");
             }
         } catch (IOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al abrir la edición de la actividad");
         }
 
@@ -200,44 +194,41 @@ public class MonthlyReportGenerationController implements Initializable {
     private void generateReport(ActionEvent event) {
         if (includedActivitiesObservableList.isEmpty()) {
             StatusLabel.showError(lblStatus, "Incluye al menos una actividad.");
-            return;
         }
+        else {
+            if (!AlertHelper.showConfirmation("Generar reporte",
+                    "¿Seguro que desea generar el reporte con las actividades incluidas?")) {
+            } else {
+                FinalReportDAO reportDAO = new FinalReportDAO();
+                String career = "Licenciatura en Ingeniería de Software";
+                DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                String REPORT_TYPE = "MENSUAL";
 
-        if (!AlertHelper.showConfirmation("Generar reporte",
-                "¿Seguro que desea generar el reporte con las actividades incluidas?")) {
-            return;
-        }
+                try {
+                    String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
+                    FinalReportDTO finalReportDTO = reportDAO.getFinalReportDetailByStudentNumber(studentNumber);
+                    finalReportDTO.setCareer(career);
+                    finalReportDTO.setReportType(REPORT_TYPE);
+                    finalReportDTO.setReportDate(LocalDate.now().format(DATE_FORMAT));
+                    finalReportDTO.setTotalHours(String.valueOf(sumIncludedEffectiveTime()));
 
-        FinalReportDAO reportDAO = new FinalReportDAO();
+                    String html = FinalReportHtmlBuilder.buildFinalReport(finalReportDTO,
+                            new ArrayList<>(includedActivitiesObservableList));
 
-        try {
-            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
-            FinalReportDTO finalReportDTO = reportDAO.getFinalReportDetailByStudentNumber(studentNumber);
-            finalReportDTO.setCareer(CAREER);
-            finalReportDTO.setReportType(REPORT_TYPE);
-            finalReportDTO.setReportDate(LocalDate.now().format(DATE_FORMAT));
-            finalReportDTO.setTotalHours(String.valueOf(sumIncludedEffectiveTime()));
-
-            String html = FinalReportHtmlBuilder.buildFinalReport(finalReportDTO,
-                    new ArrayList<>(includedActivitiesObservableList));
-
-            File outputFile = chooseOutputFile(event, studentNumber);
-            if (outputFile == null) {
-                return;
+                    File outputFile = chooseOutputFile(event, studentNumber);
+                    if (outputFile != null) {
+                        HtmlToPdfConverter.convertToFile(html, outputFile);
+                        deleteIncludedActivities();
+                        AlertHelper.showMessage("Reporte generado",
+                                "El reporte se generó y guardó correctamente.");
+                    }
+                } catch (DAOException e) {
+                    StatusLabel.showError(lblStatus, "Error al generar el reporte");
+                } catch (IOException e) {
+                    StatusLabel.showError(lblStatus, "Error al generar el PDF");
+                }   
             }
-
-            HtmlToPdfConverter.convertToFile(html, outputFile);
-            deleteIncludedActivities();
-            AlertHelper.showMessage("Reporte generado",
-                    "El reporte se generó y guardó correctamente.");
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al generar el reporte");
-        } catch (IOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al generar el PDF");
         }
-
     }
 
     private void deleteIncludedActivities() throws DAOException {
@@ -274,5 +265,4 @@ public class MonthlyReportGenerationController implements Initializable {
                 "Menú Practicante", event);
 
     }
-
 }
