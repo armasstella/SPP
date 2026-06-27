@@ -1,7 +1,9 @@
 package spp.businesslogic.dto;
 
 
-public class TermDTO {
+import spp.utils.validation.PatternDomainValidator;
+
+public class TermDTO extends BaseDTO {
     private int termId;
     private String name;
     private boolean activeTerm;
@@ -19,7 +21,13 @@ public class TermDTO {
     }
 
     public void setName(String name) {
-        this.name = name;
+        PatternDomainValidator validator = new PatternDomainValidator();
+
+        if (validator.validateTerm(name)) {
+            this.name = name;
+        } else {
+            addErrors(validator.getPatternsErrors());
+        }
     }
 
     public boolean isActiveTerm() {

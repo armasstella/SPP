@@ -40,7 +40,7 @@ public class UserDTO extends BaseDTO {
         PatternDomainValidator validator = new PatternDomainValidator();
 
         if (validator.validateEmail(email)) {
-            this.email = email.trim();
+            this.email = email;
             isValid = true;
         } else {
             addErrors(validator.getPatternsErrors());

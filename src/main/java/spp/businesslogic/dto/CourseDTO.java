@@ -1,12 +1,9 @@
 package spp.businesslogic.dto;
 
-import spp.utils.validation.PatternDomainValidator;
-
 public class CourseDTO extends BaseDTO{
 
     private int idCourse;
     private int courseCode;
-    private String term;
     private int schoolBlock;
     private int section;
     private int capacity;
@@ -32,20 +29,6 @@ public class CourseDTO extends BaseDTO{
 
     public void setCourseCode(int courseCode) {
         this.courseCode = courseCode;
-    }
-
-    public String getTerm() {
-        return term;
-    }
-
-    public void setTerm(String term) {
-        PatternDomainValidator validator = new PatternDomainValidator();
-
-        if (validator.validateTerm(term)) {
-            this.term = term.trim();
-        } else {
-            addErrors(validator.getPatternsErrors());
-        }
     }
 
     public int getSchoolBlock() {

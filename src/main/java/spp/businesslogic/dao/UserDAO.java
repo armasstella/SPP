@@ -1,6 +1,5 @@
 package spp.businesslogic.dao;
 
-
 import spp.businesslogic.dto.LoginResultDTO;
 import spp.businesslogic.dto.UserDTO;
 import spp.businesslogic.exceptions.DAOException;
@@ -8,13 +7,16 @@ import spp.businesslogic.interfaces.IUserDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.logger.AppLogger;
 import spp.utils.password.PasswordHasher;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLInvalidAuthorizationSpecException;
+import java.sql.SQLDataException;
+import java.sql.SQLTimeoutException;
 import java.sql.Statement;
-import java.sql.ResultSet;
-
 
 public class UserDAO implements IUserDAO {
 
@@ -22,7 +24,6 @@ public class UserDAO implements IUserDAO {
     private final PasswordHasher passwordHasher = new PasswordHasher();
 
     public UserDAO() {
-
     }
 
     @Override
@@ -34,6 +35,7 @@ public class UserDAO implements IUserDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(
                     INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
+
                 preparedStatement.setString(1,
                         userDTO.getFirstName() + " " + userDTO.getSecondName());
                 preparedStatement.setString(2,
@@ -56,13 +58,23 @@ public class UserDAO implements IUserDAO {
             AppLogger.logError(e);
             throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
 
+        } catch (SQLDataException e) {
+            AppLogger.logError(e);
+            throw new DAOException("WARN: El formato o la longitud de los datos ingresados no es compatible.", e);
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Error de autenticación en el servidor de datos.", e);
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Tiempo de espera agotado al conectar con el servidor.", e);
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("FATAL: Error de conexión al insertar usuario", e);
         }
-
     }
-
 
     public int getGeneratedKey(PreparedStatement preparedStatement) throws DAOException {
         try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
@@ -75,7 +87,6 @@ public class UserDAO implements IUserDAO {
             AppLogger.logError(e);
             throw new DAOException("ERROR: Error al obtener llave generada", e);
         }
-
     }
 
     @Override
@@ -84,21 +95,29 @@ public class UserDAO implements IUserDAO {
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ID)) {
 
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ID);
-            preparedStatement.setString(1, email);
+                preparedStatement.setString(1, email);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt("id_usuario");
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return resultSet.getInt("id_usuario");
+                    }
+                    throw new DAOException("ERROR: Usuario no encontrado con email: " + email);
                 }
-                throw new DAOException("ERROR: Usuario no encontrado con email: " + email);
             }
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Error de autenticación al obtener id usuario", e);
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Tiempo de espera agotado al consultar id usuario", e);
 
         } catch (SQLException e) {
+            AppLogger.logError(e);
             throw new DAOException("FATAL: Error de conexión al obtener id usuario", e);
         }
-
     }
 
     @Override
@@ -106,24 +125,33 @@ public class UserDAO implements IUserDAO {
         final String CALL_SP_OBTAIN_USER = "CALL sp_obtener_usuario_login(?)";
         LoginResultDTO loginResultDTO = new LoginResultDTO();
 
-        try (Connection connection = MySQLConnection.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(CALL_SP_OBTAIN_USER)) {
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CALL_SP_OBTAIN_USER)) {
 
-            preparedStatement.setString(1, email);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    if (passwordHasher.verifyPassword(resultSet.getString("contraseña"), password)) {
-                        String userType = resultSet.getString("tipo_usuario");
-                        loginResultDTO = loginResultDTO.success(userType);
+                preparedStatement.setString(1, email);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        if (passwordHasher.verifyPassword(resultSet.getString("contraseña"), password)) {
+                            String userType = resultSet.getString("tipo_usuario");
+                            loginResultDTO = loginResultDTO.success(userType);
+                        } else {
+                            loginResultDTO = loginResultDTO.failure("Contraseña incorrecta");
+                        }
                     } else {
-                        loginResultDTO.failure("Contraseña incorrecta");
+                        loginResultDTO = loginResultDTO.failure("Correo incorrecto");
                     }
-
-                } else {
-                    loginResultDTO.failure("Correo incorrecto");
                 }
-
             }
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Error de autenticación en el servidor al intentar iniciar sesión.", e);
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Tiempo de espera agotado al verificar credenciales.", e);
+
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("FATAL: Error crítico de base de datos", e);
@@ -140,14 +168,22 @@ public class UserDAO implements IUserDAO {
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_EMAIL)) {
+
                 preparedStatement.setString(1, email);
+
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         emailExists = resultSet.getBoolean(1);
                     }
-
                 }
             }
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Error de autenticación al buscar disponibilidad del email.", e);
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Tiempo de espera agotado al consultar el email.", e);
 
         } catch (SQLException e) {
             AppLogger.logError(e);
@@ -155,7 +191,5 @@ public class UserDAO implements IUserDAO {
         }
 
         return emailExists;
-
     }
-
 }

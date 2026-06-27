@@ -33,8 +33,8 @@ public class PatternDomainValidator {
         boolean isValidEmailPattern;
 
         isValidEmailPattern = validatePattern(email,
-                    BusinessConstant.PATTERN_EMAIL,
-                    BusinessConstant.MESSAGE_INVALID_EMAIL);
+                BusinessConstant.PATTERN_EMAIL,
+                BusinessConstant.MESSAGE_INVALID_EMAIL);
 
         return isValidEmailPattern;
     }
@@ -43,7 +43,7 @@ public class PatternDomainValidator {
         boolean isValidPasswordPattern;
 
         isValidPasswordPattern = validatePattern(password,
-                Pattern.compile(String.valueOf(BusinessConstant.PATTERN_PASSWORD)),
+                BusinessConstant.PATTERN_PASSWORD,
                 BusinessConstant.MESSAGE_INVALID_PASSWORD);
 
         return isValidPasswordPattern;
@@ -53,8 +53,8 @@ public class PatternDomainValidator {
         boolean isValidStudentNumberPattern;
 
         isValidStudentNumberPattern = validatePattern(studentNumber,
-                Pattern.compile(String.valueOf(BusinessConstant.PATTERN_STUDENT_NUMBER)),
-                    BusinessConstant.MESSAGE_INVALID_STUDENT_NUMBER);
+                BusinessConstant.PATTERN_STUDENT_NUMBER,
+                BusinessConstant.MESSAGE_INVALID_STUDENT_NUMBER);
 
         return isValidStudentNumberPattern;
     }
@@ -63,7 +63,7 @@ public class PatternDomainValidator {
         boolean isValidRfcPattern;
 
         isValidRfcPattern = validatePattern(rfc,
-                Pattern.compile(String.valueOf(BusinessConstant.PATTERN_RFC)),
+                BusinessConstant.PATTERN_RFC,
                 BusinessConstant.MESSAGE_INVALID_RFC);
 
         return isValidRfcPattern;
@@ -73,7 +73,7 @@ public class PatternDomainValidator {
         boolean isValidTermPattern;
 
         isValidTermPattern = validatePattern(term,
-                Pattern.compile(String.valueOf(BusinessConstant.PATTERN_TERM)),
+                BusinessConstant.PATTERN_TERM,
                 BusinessConstant.MESSAGE_INVALID_TERM);
 
         return isValidTermPattern;

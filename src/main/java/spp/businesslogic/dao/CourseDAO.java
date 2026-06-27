@@ -123,7 +123,6 @@ public class CourseDAO implements ICourseDAO {
         CourseDTO courseDTO = new CourseDTO();
         courseDTO.setIdCourse(resultSet.getInt("id_experiencia_educativa"));
         courseDTO.setCourseCode(Integer.parseInt(resultSet.getString("nrc")));
-        courseDTO.setTerm(resultSet.getString("periodo"));
         courseDTO.setSchoolBlock(resultSet.getInt("bloque"));
         courseDTO.setSection(resultSet.getInt("seccion"));
         InstructorDTO instructorDTO = new InstructorDTO();

@@ -46,7 +46,6 @@ public class GroupAssignationToInstructorController implements Initializable {
     private void showDataInFields() {
         if (this.courseInEdition != null) {
             txtCourseCode.setText(String.valueOf(courseInEdition.getCourseCode()));
-            txtTerm.setText(courseInEdition.getTerm());
             txtSchoolBlock.setText(String.valueOf(courseInEdition.getSchoolBlock()));
             txtSection.setText(String.valueOf(courseInEdition.getSection()));
         }

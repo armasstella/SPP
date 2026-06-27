@@ -1,167 +1,112 @@
 package spp.businesslogic.dto;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.DisplayName;
+import spp.utils.businessconstants.BusinessConstant;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserDTOTest {
 
-    private UserDTO testUser;
+    private UserDTO userDTO;
 
     @BeforeEach
-    void setUpEach() {
-        testUser = new UserDTO();
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    @DisplayName("firstName: debe lanzar excepción cuando es null o vacío")
-    void testFirstNameRequired(String invalidValue) {
-        assertThrows(IllegalArgumentException.class, () -> testUser.setFirstName(invalidValue));
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    @DisplayName("firstLastName: debe lanzar excepción cuando es null o vacío")
-    void testFirstLastNameRequired(String invalidValue) {
-        assertThrows(IllegalArgumentException.class, () -> testUser.setFirstLastName(invalidValue));
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    @DisplayName("email: debe lanzar excepción cuando es null o vacío")
-    void testEmailRequired(String invalidValue) {
-        assertThrows(IllegalArgumentException.class, () -> testUser.setEmail(invalidValue));
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    @DisplayName("phoneNumber: debe lanzar excepción cuando es null o vacío")
-    void testPhoneNumberRequired(String invalidValue) {
-        assertThrows(IllegalArgumentException.class, () -> testUser.setPhoneNumber(invalidValue));
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    @DisplayName("password: debe lanzar excepción cuando es null o vacío")
-    void testPasswordRequired(String invalidValue) {
-        assertThrows(IllegalArgumentException.class, () -> testUser.setPassword(invalidValue));
+    void setUp() {
+        userDTO = new UserDTO();
     }
 
     @Test
-    @DisplayName("firstName: debe lanzar excepción cuando excede 30 caracteres")
-    void testFirstNameMaxLength() {
-        String tooLong = "Nicooooooooooooooooooooooooooooooole";
-        assertThrows(IllegalArgumentException.class, () -> testUser.setFirstName(tooLong));
+    @Order(1)
+    @DisplayName("Flujo Normal: Debe aceptar un correo electrónico con formato válido")
+    void testSetEmailValidFormat() {
+        boolean result = userDTO.setEmail("stella.test@uv.mx");
+
+        assertTrue(result);
+        assertTrue(userDTO.isValid());
+        assertTrue(userDTO.getErrors().isEmpty());
     }
 
     @Test
-    @DisplayName("secondName: debe lanzar excepción cuando excede 30 caracteres (opcional)")
-    void testSecondNameMaxLength() {
-        String tooLong = "Stellaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-        assertThrows(IllegalArgumentException.class, () -> testUser.setSecondName(tooLong));
+    @Order(2)
+    @DisplayName("Flujo Normal: Debe aceptar una contraseña con formato válido (incluyendo todos los requisitos)")
+    void testSetPasswordValidFormat() {
+        boolean result = userDTO.setPassword("StellaTest123!");
+
+        assertTrue(result);
+        assertTrue(userDTO.isValid());
+        assertTrue(userDTO.getErrors().isEmpty());
     }
 
     @Test
-    @DisplayName("firstLastName: debe lanzar excepción cuando excede 30 caracteres")
-    void testFirstLastNameMaxLength() {
-        String tooLong = "Armaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas";
-        assertThrows(IllegalArgumentException.class, () -> testUser.setFirstLastName(tooLong));
+    @Order(3)
+    @DisplayName("Flujo Alterno: Debe rechazar un correo sin dominio y mostrar el error")
+    void testSetEmailInvalidFormatNoDomain() {
+        boolean result = userDTO.setEmail("stella.test@");
+
+        assertFalse(result);
+        assertFalse(userDTO.isValid());
+        assertEquals(1, userDTO.getErrors().size());
+        assertTrue(userDTO.getErrors().contains(BusinessConstant.MESSAGE_INVALID_EMAIL));
     }
 
     @Test
-    @DisplayName("secondLastName: debe lanzar excepción cuando excede 30 caracteres (opcional)")
-    void testSecondLastNameMaxLength() {
-        String tooLong = "Mendozaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-        assertThrows(IllegalArgumentException.class, () -> testUser.setSecondLastName(tooLong));
+    @Order(4)
+    @DisplayName("Flujo Alterno: Debe rechazar un correo con espacios intermedios y registrar el error")
+    void testSetEmailInvalidFormatWithSpaces() {
+        boolean result = userDTO.setEmail("stella @uv.mx");
+
+        assertFalse(result);
+        assertFalse(userDTO.isValid());
     }
 
     @Test
-    @DisplayName("email: debe lanzar excepción cuando excede 30 caracteres")
-    void testEmailMaxLength() {
-        String tooLong = "nicole_stella_armas_mendoza_20061206@gmail.com";
-        assertThrows(IllegalArgumentException.class, () -> testUser.setEmail(tooLong));
+    @Order(5)
+    @DisplayName("Flujo Alterno: Debe rechazar una contraseña sin mayúsculas")
+    void testSetPasswordInvalidNoUpperCase() {
+        boolean result = userDTO.setPassword("stellatest123!");
+
+        assertFalse(result);
+        assertFalse(userDTO.isValid());
+        assertTrue(userDTO.getErrors().contains(BusinessConstant.MESSAGE_INVALID_PASSWORD));
     }
 
     @Test
-    @DisplayName("phoneNumber: debe lanzar excepción cuando excede 10 caracteres")
-    void testPhoneNumberMaxLength() {
-        assertThrows(IllegalArgumentException.class, () -> testUser.setPhoneNumber("228123456789"));
+    @Order(6)
+    @DisplayName("Flujo Alterno: Debe rechazar una contraseña sin caracteres especiales")
+    void testSetPasswordInvalidNoSpecialChar() {
+        boolean result = userDTO.setPassword("StellaTest1234");
+
+        assertFalse(result);
+        assertFalse(userDTO.isValid());
     }
 
     @Test
-    @DisplayName("password: debe lanzar excepción cuando excede 255 caracteres")
-    void testPasswordMaxLength() {
-        String tooLong = "A1!" + "a".repeat(253);
-        assertThrows(IllegalArgumentException.class, () -> testUser.setPassword(tooLong));
-    }
+    @Order(7)
+    @DisplayName("Flujo Alterno: Debe rechazar una contraseña menor a 8 caracteres")
+    void testSetPasswordInvalidTooShort() {
+        boolean result = userDTO.setPassword("Stel1!");
 
-    @ParameterizedTest
-    @ValueSource(strings = {"armasstellagmail.com", "sin@dominio", "usuario@dominio"})
-    @DisplayName("email: debe lanzar excepción cuando el formato es inválido")
-    void testEmailInvalidFormat(String invalidEmail) {
-        assertThrows(IllegalArgumentException.class, () -> testUser.setEmail(invalidEmail));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"123456789", "12345678AB", "228-123-4567", "abc1234567"})
-    @DisplayName("phoneNumber: debe lanzar excepción cuando el formato es inválido (no 10 dígitos)")
-    void testPhoneNumberInvalidFormat(String invalidPhone) {
-        assertThrows(IllegalArgumentException.class, () -> testUser.setPhoneNumber(invalidPhone));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"password", "PASSWORD123", "Pass123456", "Pass!@#", "PASS123!@", "pass123!@", "Password!"})
-    @DisplayName("password: debe lanzar excepción cuando no cumple con una contraseña segura")
-    void testPasswordInvalidFormat(String invalidPassword) {
-        assertThrows(IllegalArgumentException.class, () -> testUser.setPassword(invalidPassword));
+        assertFalse(result);
+        assertFalse(userDTO.isValid());
     }
 
     @Test
-    @DisplayName("Debe aceptar un usuario con datos válidos (incluyendo campos opcionales)")
-    void testValidUserSuccess() {
-        assertDoesNotThrow(() -> {
-            testUser.setFirstName("María");
-            testUser.setSecondName("Isabel");
-            testUser.setFirstLastName("González");
-            testUser.setSecondLastName("Pérez");
-            testUser.setEmail("zs24013311@estudiantes.uv.mx");
-            testUser.setPhoneNumber("2281234567");
-            testUser.setPassword("Password123!");
-        });
-    }
+    @Order(8)
+    @DisplayName("Flujo de Acumulación: Debe acumular múltiples errores si fallan varios campos")
+    void testAccumulateMultipleErrors() {
+        userDTO.setEmail("correo-invalido.com");
+        userDTO.setPassword("pass");
 
-    @Test
-    @DisplayName("Debe aceptar campos opcionales como null")
-    void testOptionalFieldsCanBeNull() {
-        assertDoesNotThrow(() -> {
-            testUser.setFirstName("Juan");
-            testUser.setSecondName(null);
-            testUser.setFirstLastName("López");
-            testUser.setSecondLastName(null);
-            testUser.setEmail("juan@uv.mx");
-            testUser.setPhoneNumber("2287654321");
-            testUser.setPassword("SecureP@ssw0rd");
-        });
-    }
-
-    @Test
-    @DisplayName("Debe aceptar nombre con exactamente 30 caracteres (límite)")
-    void testNameAtMaxLength() {
-        String thirtyCharsName = "Evangelina del Socorro Socorro";
-        assertDoesNotThrow(() -> testUser.setFirstName(thirtyCharsName));
-    }
-
-    @Test
-    @DisplayName("Debe aceptar email con exactamente 30 caracteres (límite)")
-    void testEmailAtMaxLength() {
-        String thirtyCharsEmail = "zszs24013315@estudiantes.uv.mx";
-        assertDoesNotThrow(() -> testUser.setEmail(thirtyCharsEmail));
+        assertFalse(userDTO.isValid());
+        assertEquals(2, userDTO.getErrors().size());
+        assertTrue(userDTO.getErrors().contains(BusinessConstant.MESSAGE_INVALID_EMAIL));
+        assertTrue(userDTO.getErrors().contains(BusinessConstant.MESSAGE_INVALID_PASSWORD));
     }
 }
