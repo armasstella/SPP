@@ -76,7 +76,6 @@ public class GroupAssignationToInstructorController implements Initializable {
                 }
 
             } catch (DAOException e) {
-                AppLogger.log(ExceptionLevel.FATAL, e);
                 StatusLabel.showError(lblStatus, "Error al asignar profesor a curso");
             }
         }
@@ -98,7 +97,6 @@ public class GroupAssignationToInstructorController implements Initializable {
             cmbInstructor.setItems(instructorObservableList);
 
         } catch (DAOException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
             StatusLabel.showError(lblStatus, "Error al cargar lista de profesores");
         }
 
