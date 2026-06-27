@@ -1,11 +1,11 @@
 package spp.businesslogic.dao;
 
 
-import spp.businesslogic.dto.ReportDTO;
 import spp.businesslogic.dto.ReportDocumentFileDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IFinalReportDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,8 +50,8 @@ public class FinalReportDAO implements IFinalReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("Error al obtener los reportes finales del alumno.");
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error al obtener los reportes finales del alumno.", e);
         }
 
         return reportsList;
@@ -77,8 +77,8 @@ public class FinalReportDAO implements IFinalReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al verificar la existencia del reporte final.", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al verificar la existencia del reporte final.", e);
         }
 
         return hasReport;

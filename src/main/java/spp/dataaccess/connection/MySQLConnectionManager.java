@@ -1,5 +1,6 @@
 package spp.dataaccess.connection;
 
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 
 import java.sql.Connection;
@@ -30,7 +31,7 @@ public class MySQLConnectionManager {
                 this.connection.rollback();
             }
         } catch (SQLException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
         }
 
     }
@@ -42,7 +43,7 @@ public class MySQLConnectionManager {
                 this.connection.setAutoCommit(true);
             }
         } catch (SQLException e){
-                AppLogger.logError(e);
+                AppLogger.logError(ExceptionLevel.FATAL, e);
         }
 
     }
@@ -54,7 +55,7 @@ public class MySQLConnectionManager {
                 this.connection.setAutoCommit(false);
             }
         } catch (SQLException e){
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
         }
 
     }

@@ -4,6 +4,7 @@ import spp.businesslogic.dto.ReportDocumentFileDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IPartialReportDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -45,8 +46,8 @@ public class PartialReportDAO implements IPartialReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("Error al obtener los reportes finales del alumno.");
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error al obtener los reportes finales del alumno.", e);
         }
 
         return reportsList;

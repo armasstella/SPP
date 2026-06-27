@@ -16,7 +16,6 @@ import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.dto.ReportDocumentFileDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.utils.logger.AppLogger;
-import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
@@ -55,7 +54,6 @@ public class PartialReportEvaluationController implements Initializable {
                 cmbInterns.getItems().add(intern);
             }
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al cargar la lista de estudiantes.");
         }
     }
@@ -86,7 +84,6 @@ public class PartialReportEvaluationController implements Initializable {
             StatusLabel.showSuccess(lblStatus, "Reportes cargados. Seleccione uno para evaluar.");
 
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al cargar los documentos.");
         }
 
@@ -149,7 +146,6 @@ public class PartialReportEvaluationController implements Initializable {
 
             StatusLabel.showSuccess(lblStatus, "Calificación asignada correctamente.");
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al guardar la calificación.");
         }
     }
@@ -173,7 +169,6 @@ public class PartialReportEvaluationController implements Initializable {
             }
 
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al actualizar la calificación.");
         }
     }
