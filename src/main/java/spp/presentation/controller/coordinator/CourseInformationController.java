@@ -80,15 +80,14 @@ public class CourseInformationController implements Initializable {
 
         if (courseSelected == null) {
             StatusLabel.showError(lblStatus, "Debe seleccionar un curso primero");
-            return;
-        }
+        } else {
+            GroupAssignationToInstructorController groupAssignationToInstructorController = ViewNavigator.loadView(
+                    "/spp/presentation/view/coordinator/GroupAssignationToInstructorView.fxml",
+                    "Asignar Profesor", event);
 
-        GroupAssignationToInstructorController groupAssignationToInstructorController = ViewNavigator.loadView(
-                "/spp/presentation/view/coordinator/GroupAssignationToInstructorView.fxml",
-                "Asignar Profesor", event);
-
-        if (groupAssignationToInstructorController != null) {
-            groupAssignationToInstructorController.setCourseInEdition(courseSelected);
+            if (groupAssignationToInstructorController != null) {
+                groupAssignationToInstructorController.setCourseInEdition(courseSelected);
+            }   
         }
 
     }
