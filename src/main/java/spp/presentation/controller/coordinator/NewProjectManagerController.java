@@ -50,13 +50,13 @@ public class NewProjectManagerController implements Initializable {
     }
 
     private void setAllProjectManager(ProjectManagerDTO projectManagerDTO) {
-        projectManagerDTO.setFirstName(txtFirstName.getText());
-        projectManagerDTO.setSecondName(txtSecondName.getText());
-        projectManagerDTO.setFirstLastName(txtFirstLastName.getText());
-        projectManagerDTO.setSecondLastName(txtSecondLastName.getText());
-        projectManagerDTO.setRole(txtRole.getText());
-        projectManagerDTO.setResponsibility(txtResponsibility.getText());
-        projectManagerDTO.setPhoneNumber(txtPhoneNumber.getText());
+        projectManagerDTO.setFirstName(txtFirstName.getText().trim());
+        projectManagerDTO.setSecondName(txtSecondName.getText().trim());
+        projectManagerDTO.setFirstLastName(txtFirstLastName.getText().trim());
+        projectManagerDTO.setSecondLastName(txtSecondLastName.getText().trim());
+        projectManagerDTO.setRole(txtRole.getText().trim());
+        projectManagerDTO.setResponsibility(txtResponsibility.getText().trim());
+        projectManagerDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
     }
 
     private boolean hasEmptyFields() {
