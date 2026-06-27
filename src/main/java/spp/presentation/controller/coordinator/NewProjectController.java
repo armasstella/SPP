@@ -1,72 +1,70 @@
 package spp.presentation.controller.coordinator;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import spp.businesslogic.dao.LinkedOrganizationDAO;
+import spp.businesslogic.dao.ProjectManagerDAO;
+import spp.businesslogic.dto.LinkedOrganizationDTO;
+import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.dao.ProjectManagerDAO;
+import spp.businesslogic.dao.ProjectDAO;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
-public class NewProjectManagerController implements Initializable {
+public class NewProjectController implements Initializable {
 
     @FXML private Label lblStatus;
-    @FXML private TextField txtFirstName;
-    @FXML private TextField txtSecondName;
-    @FXML private TextField txtFirstLastName;
-    @FXML private TextField txtSecondLastName;
-    @FXML private TextField txtResponsibility;
-    @FXML private TextField txtRole;
-    @FXML private TextField txtPhoneNumber;
+    @FXML private TextField txtName;
+    @FXML private TextField txtDescription;
+    @FXML private TextField txtPlacesAvailable;
+    @FXML private ComboBox<ProjectManagerDTO> cmbProjectManager;
+    @FXML private ComboBox<LinkedOrganizationDTO> cmbLinkedOrganization;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpFields();
+        loadLinkedOrganizationInComboBox();
+        loadProjectManagersInComboBox();
     }
 
     private void setUpFields() {
-        InputFilter.applyFormatFilter(txtFirstName,
-                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
-        InputFilter.applyFormatFilter(txtSecondName,
-                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
-        InputFilter.applyFormatFilter(txtFirstLastName,
-                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
-        InputFilter.applyFormatFilter(txtSecondLastName,
-                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
-        InputFilter.applyFormatFilter(txtResponsibility,
-                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_CATEGORY);
-        InputFilter.applyFormatFilter(txtRole,
-                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_CATEGORY);
-        InputFilter.applyFormatFilter(txtPhoneNumber,
-                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_PHONE);
+        InputFilter.applyFormatFilter(txtName,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_TITLE);
+        InputFilter.applyFormatFilter(txtDescription,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
+        InputFilter.applyFormatFilter(txtPlacesAvailable,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
     }
 
-    private void setAllProjectManager(ProjectManagerDTO projectManagerDTO) {
-        projectManagerDTO.setFirstName(txtFirstName.getText());
-        projectManagerDTO.setSecondName(txtSecondName.getText());
-        projectManagerDTO.setFirstLastName(txtFirstLastName.getText());
-        projectManagerDTO.setSecondLastName(txtSecondLastName.getText());
-        projectManagerDTO.setRole(txtRole.getText());
-        projectManagerDTO.setResponsibility(txtResponsibility.getText());
-        projectManagerDTO.setPhoneNumber(txtPhoneNumber.getText());
+    private void setAllProject(ProjectDTO projectDTO) {
+        projectDTO.setName(txtName.getText());
+        projectDTO.setDescription(txtDescription.getText());
+        projectDTO.setPlacesAvailable(Integer.parseInt(txtPlacesAvailable.getText()));
+        projectDTO.setProjectManagerDTO(cmbProjectManager.getValue());
+        projectDTO.setLinkedOrganizationDTO(cmbLinkedOrganization.getValue());
     }
 
     private boolean hasEmptyFields() {
         boolean emptyFields = false;
 
-        if (txtFirstName.getText().isBlank() ||
-                txtFirstLastName.getText().isBlank() ||
-                txtResponsibility.getText().isBlank() ||
-                txtRole.getText().isBlank() ||
-                txtPhoneNumber.getText().isBlank()) {
+        if (txtName.getText().isBlank() ||
+                txtDescription.getText().isBlank() ||
+                txtPlacesAvailable.getText().isBlank() ||
+                cmbProjectManager.getValue() == null ||
+                cmbLinkedOrganization.getValue() == null) {
 
             emptyFields = true;
         }
@@ -77,31 +75,10 @@ public class NewProjectManagerController implements Initializable {
     private boolean hasValidMinimumLengths() {
         boolean validLengths = false;
 
-        boolean validFirstName = InputFilter.hasMinimumLength(txtFirstName,
-                ViewConstant.MIN_LENGTH_NAME);
-        boolean validFirstLastName = InputFilter.hasMinimumLength(txtFirstLastName,
-                ViewConstant.MIN_LENGTH_NAME);
-        boolean validResponsibility = InputFilter.hasMinimumLength(txtResponsibility,
-                ViewConstant.MIN_LENGTH_CATEGORY);
-        boolean validRole = InputFilter.hasMinimumLength(txtRole,
-                ViewConstant.MIN_LENGTH_CATEGORY);
-        boolean validPhone = InputFilter.hasMinimumLength(txtPhoneNumber,
-                ViewConstant.MIN_LENGTH_PHONE);
+        boolean validName = InputFilter.hasMinimumLength(txtName, ViewConstant.
+                MIN_LENGTH_NAME);
 
-        boolean validSecondName = true;
-        if (!txtSecondName.getText().isBlank()) {
-            validSecondName = InputFilter.hasMinimumLength(txtSecondName,
-                    ViewConstant.MIN_LENGTH_NAME);
-        }
-
-        boolean validSecondLastName = true;
-        if (!txtSecondLastName.getText().isBlank()) {
-            validSecondLastName = InputFilter.hasMinimumLength(txtSecondLastName,
-                    ViewConstant.MIN_LENGTH_NAME);
-        }
-
-        if (validFirstName && validFirstLastName && validResponsibility && validRole &&
-                validPhone && validSecondName && validSecondLastName) {
+        if (validName) {
             validLengths = true;
         }
 
@@ -125,19 +102,19 @@ public class NewProjectManagerController implements Initializable {
     }
 
     @FXML
-    private void saveProjectManager(ActionEvent event) {
+    private void saveProject(ActionEvent event) {
         if (areValidFields()) {
-            ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
-            setAllProjectManager(projectManagerDTO);
+            ProjectDTO projectDTO = new ProjectDTO();
+            setAllProject(projectDTO);
 
-            ProjectManagerDAO projectManagerDAO  = new ProjectManagerDAO();
+            ProjectDAO projectDAO = new ProjectDAO();
             try {
-                if (projectManagerDAO.registerProjectManager(projectManagerDTO)) {
-                    StatusLabel.showSuccess(lblStatus, "Encargado de proyecto registrado correctamente.");
+                if (projectDAO.registerProject(projectDTO)) {
+                    StatusLabel.showSuccess(lblStatus, "Proyecto registrado correctamente.");
                     clearInputFields();
                 }
             } catch (DAOException e) {
-                StatusLabel.showError(lblStatus, "No se pudo registrar el encargado.");
+                StatusLabel.showError(lblStatus, "No se pudo registrar el proyecto");
             }
         }
     }
@@ -148,13 +125,37 @@ public class NewProjectManagerController implements Initializable {
                 "Menú Coordinador", event);
     }
 
+    private void loadProjectManagersInComboBox() {
+        try {
+            ProjectManagerDAO projectManagerDAO = new ProjectManagerDAO();
+            List<ProjectManagerDTO> projectManagerList = projectManagerDAO.getActiveProjectManagers();
+            ObservableList<ProjectManagerDTO> projectManagerObservableList = FXCollections.observableArrayList(projectManagerList);
+
+            cmbProjectManager.setItems(projectManagerObservableList);
+
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, "Error al cargar la lista de encargados de proyecto.");
+        }
+    }
+
+    private void loadLinkedOrganizationInComboBox() {
+        try {
+            LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
+            List<LinkedOrganizationDTO> linkedOrganizationList = linkedOrganizationDAO.findActiveLinkedOrganizationsIdentifiers();
+            ObservableList<LinkedOrganizationDTO> linkedOrganizationObservableList = FXCollections.observableArrayList(linkedOrganizationList);
+
+            cmbLinkedOrganization.setItems(linkedOrganizationObservableList);
+
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, "Error al cargar la lista de organizaciones vinculadas.");
+        }
+    }
+
     private void clearInputFields() {
-        txtFirstName.clear();
-        txtSecondName.clear();
-        txtFirstLastName.clear();
-        txtSecondLastName.clear();
-        txtResponsibility.clear();
-        txtRole.clear();
-        txtPhoneNumber.clear();
+        txtName.clear();
+        txtDescription.clear();
+        txtPlacesAvailable.clear();
+        cmbProjectManager.setValue(null);
+        cmbLinkedOrganization.setValue(null);
     }
 }
