@@ -1,6 +1,6 @@
 package spp.businesslogic.dto;
 
-import spp.utils.validation.Validation;
+import spp.utils.validation.PatternDomainValidator;
 
 public class UserDTO extends BaseDTO {
 
@@ -37,13 +37,13 @@ public class UserDTO extends BaseDTO {
 
     public boolean setEmail(String email) {
         boolean isValid;
-        Validation validator = new Validation();
+        PatternDomainValidator validator = new PatternDomainValidator();
 
         if (validator.validateEmail(email)) {
             this.email = email.trim();
             isValid = true;
         } else {
-            addErrors(validator.getErrors());
+            addErrors(validator.getPatternsErrors());
             isValid = false;
         }
 
@@ -56,13 +56,13 @@ public class UserDTO extends BaseDTO {
 
     public boolean setPassword(String password) {
         boolean isValid;
-        Validation validator = new Validation();
+        PatternDomainValidator validator = new PatternDomainValidator();
 
         if (validator.validatePassword(password)) {
             this.password = password;
             isValid = true;
         } else {
-            addErrors(validator.getErrors());
+            addErrors(validator.getPatternsErrors());
             isValid = false;
         }
 
