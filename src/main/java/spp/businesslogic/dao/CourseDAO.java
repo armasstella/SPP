@@ -7,6 +7,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ICourseDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.dataaccess.connection.MySQLConnectionManager;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -57,12 +58,12 @@ public class CourseDAO implements ICourseDAO {
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(e);
-            throw new DAOException("WARN: Violación a integridad de datos al insertar", e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
+            throw new DAOException("Verifique los datos ingresados", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al insertar curso", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al insertar curso", e);
         } finally {
             MySQLConnectionManager.getInstance().enableAutoCommitConnection();
         }
@@ -87,8 +88,8 @@ public class CourseDAO implements ICourseDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar cursos", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar cursos", e);
         }
 
         return coursesExist;
@@ -111,8 +112,8 @@ public class CourseDAO implements ICourseDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al obtener cursos", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al obtener cursos", e);
         }
 
         return coursesList;
@@ -151,8 +152,8 @@ public class CourseDAO implements ICourseDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al asignar profesor", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al asignar profesor", e);
         }
 
         return isUpdateSuccessful;
@@ -179,8 +180,8 @@ public class CourseDAO implements ICourseDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar nrc de cursos", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar nrc de cursos", e);
         }
 
         return coursesList;

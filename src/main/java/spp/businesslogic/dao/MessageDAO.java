@@ -5,6 +5,7 @@ import spp.businesslogic.dto.MessageDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IMessageDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -45,11 +46,11 @@ public class MessageDAO implements IMessageDAO {
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(e);
-            throw new DAOException("WARN: Violación de integridad de datos (Verifique que los correos existan)", e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
+            throw new DAOException("Verifique los datos ingresados", e);
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al guardar el mensaje", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al guardar el mensaje", e);
         }
 
         return isMessageSent;
@@ -81,8 +82,8 @@ public class MessageDAO implements IMessageDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al obtener mensajes");
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al obtener mensajes");
         }
 
         return messagesList;

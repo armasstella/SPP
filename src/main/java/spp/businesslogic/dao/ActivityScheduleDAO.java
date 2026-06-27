@@ -4,7 +4,7 @@ import spp.businesslogic.dto.ActivityScheduleDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IActivityScheduleDAO;
 import spp.dataaccess.connection.MySQLConnection;
-import spp.dataaccess.connection.MySQLConnectionManager;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 
 import java.sql.Connection;
@@ -39,8 +39,8 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al guardar documento", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al guardar documento", e);
         }
 
         return isSaveSuccessful;

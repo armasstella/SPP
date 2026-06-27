@@ -5,6 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.util.Optional;
 
@@ -27,7 +28,7 @@ public class AlertHelper {
             dialogPane.getStyleClass().add("custom-alert");
 
         } catch (Exception e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
         }
 
         Button btnYes = (Button) dialogPane.lookupButton(ButtonType.YES);
@@ -62,7 +63,7 @@ public class AlertHelper {
             dialogPane.getStylesheets().add(cssPath);
             dialogPane.getStyleClass().add("custom-alert");
         } catch (Exception e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
         }
 
         Button btnYes = (Button) dialogPane.lookupButton(ButtonType.OK);
@@ -90,7 +91,7 @@ public class AlertHelper {
             dialogPane.getStylesheets().add(cssPath);
             dialogPane.getStyleClass().add("custom-alert");
         } catch (Exception e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
         }
 
         Button btnYes = (Button) dialogPane.lookupButton(ButtonType.OK);
@@ -119,7 +120,7 @@ public class AlertHelper {
             dialogPane.getStylesheets().add(cssPath);
             dialogPane.getStyleClass().add("custom-alert");
         } catch (Exception e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
         }
 
         Button firstStyledButton = (Button) dialogPane.lookupButton(firstButton);

@@ -6,6 +6,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IInstructorDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.dataaccess.connection.MySQLConnectionManager;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,18 +50,18 @@ public class InstructorDAO implements IInstructorDAO {
 
         } catch (DAOException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
-            AppLogger.logError(e);
-            throw new DAOException("ERROR: Error al insertar profesor", e);
+            AppLogger.logError(ExceptionLevel.ERROR, e);
+            throw new DAOException("Error al insertar profesor", e);
 
         } catch (SQLIntegrityConstraintViolationException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
-            AppLogger.logError(e);
-            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
+            throw new DAOException("Verifique los datos ingresados", e);
 
         } catch (SQLException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al insertar profesor", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al insertar profesor", e);
         } finally {
             MySQLConnectionManager.getInstance().enableAutoCommitConnection();
         }
@@ -86,8 +87,8 @@ public class InstructorDAO implements IInstructorDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al desactivar profesor", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al desactivar profesor", e);
         }
 
         return isDeactivationSuccesful;
@@ -116,8 +117,8 @@ public class InstructorDAO implements IInstructorDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar profesores", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar profesores", e);
         }
 
         return instructorsList;
@@ -147,8 +148,8 @@ public class InstructorDAO implements IInstructorDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar profesores", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar profesores", e);
         }
 
         return instructorsList;
@@ -173,8 +174,8 @@ public class InstructorDAO implements IInstructorDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al obtener numero personal", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al obtener numero personal", e);
         }
 
         return personalNumber;

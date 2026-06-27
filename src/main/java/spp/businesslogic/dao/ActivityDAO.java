@@ -5,6 +5,7 @@ import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IActivityDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.Date;
@@ -50,8 +51,8 @@ public class ActivityDAO implements IActivityDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al registrar la actividad", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al registrar la actividad", e);
         }
 
         return isInsertSuccessful;
@@ -77,8 +78,8 @@ public class ActivityDAO implements IActivityDAO {
                 }
             }
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al obtener actividades de practicante", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al obtener actividades de practicante", e);
         }
         return activityList;
 
@@ -123,8 +124,8 @@ public class ActivityDAO implements IActivityDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión actualizar la actividad");
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión actualizar la actividad");
         }
 
         return isActivityUpdated;
@@ -144,8 +145,8 @@ public class ActivityDAO implements IActivityDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión eliminar la actividad");
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión eliminar la actividad");
         }
 
         return isActivityDeleted;

@@ -5,6 +5,7 @@ import spp.businesslogic.dto.SelfEvaluationDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ISelfEvaluationDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 
 public class SelfEvaluationDAO implements ISelfEvaluationDAO {
 
+    @Override
     public SelfEvaluationDTO findEvaluationHeaderByStudentNumber(String studentNumber) throws DAOException {
         final String SELECT_HEADER_DATA =
                 "SELECT CONCAT(ua.nombre, ' ', ua.apellidos) AS nombre_completo, " +
@@ -46,8 +48,8 @@ public class SelfEvaluationDAO implements ISelfEvaluationDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar la cabecera de la autoevaluación", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar datos del alumno", e);
         }
 
         return evaluationHeader;

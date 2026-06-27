@@ -5,6 +5,7 @@ import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ILinkedOrganizationDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,12 +45,12 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(e);
-            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
+            throw new DAOException("Verifique los datos ingresados", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al insertar organización vinculada", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al insertar organización vinculada", e);
         }
 
         return isInsertSuccessful;
@@ -76,8 +77,8 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar organizaciones vinculadas");
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar organizaciones vinculadas", e);
         }
 
         return linkedOrganizationsList;
@@ -99,8 +100,8 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar organizaciones vinculadas");
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar organizaciones vinculadas", e);
         }
 
         return isSearchSuccesful;

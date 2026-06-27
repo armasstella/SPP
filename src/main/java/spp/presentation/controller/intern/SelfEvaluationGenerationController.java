@@ -16,13 +16,12 @@ import spp.businesslogic.dao.SelfEvaluationDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.SelfEvaluationDTO;
 import spp.businesslogic.exceptions.DAOException;
+import spp.businesslogic.exceptions.FileGenerationException;
 import spp.utils.file.HtmlToPdfConverter;
 import spp.utils.htmlbuilder.SelfEvaluationHtmlBuilder;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +88,6 @@ public class SelfEvaluationGenerationController implements Initializable {
             lblStudentNumber.setText(currentEvaluation.getStudentNumber());
 
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al cargar los datos del alumno.");
         }
     }
@@ -131,9 +129,8 @@ public class SelfEvaluationGenerationController implements Initializable {
 
             HtmlToPdfConverter.convertToFile(html, outputFile);
             StatusLabel.showSuccess(lblStatus, "Autoevaluación generada correctamente.");
-        } catch (IOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al generar el PDF.");
+        } catch (FileGenerationException e) {
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }
