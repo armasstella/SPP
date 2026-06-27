@@ -12,7 +12,7 @@ public final class ViewConstant {
     public static final Pattern PATTERN_NUMERIC = Pattern.compile("\\d*");
     public static final Pattern PATTERN_EMAIL_CHARS = Pattern.compile("[a-zA-Z0-9@._\\-]*");
     public static final Pattern PATTERN_ALPHANUMERIC = Pattern.compile("[a-zA-Z0-9áéíóúÁÉÍÓÚüÜñÑ\\s.,#\\-]*");
-    public static final Pattern PATTERN_PASSWORD_CHARS = Pattern.compile("[a-zA-Z0-9ñÑ.*%!-]*");
+    public static final Pattern PATTERN_PASSWORD_CHARS = Pattern.compile("[a-zA-Z0-9@$!%*?&]*");
 
     public static final int MAX_LENGTH_NAME_PART = 40;
     public static final int MAX_LENGTH_PASSWORD = 20;
