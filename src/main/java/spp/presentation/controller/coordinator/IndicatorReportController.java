@@ -75,7 +75,6 @@ public class IndicatorReportController implements Initializable {
             cmbFilterPeriod.getSelectionModel().selectFirst();
 
         } catch (DAOException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
             StatusLabel.showError(lblStatus, "No se pudieron cargar los periodos.");
             cmbFilterPeriod.getItems().add("Todos");
             cmbFilterPeriod.getSelectionModel().selectFirst();
@@ -101,11 +100,9 @@ public class IndicatorReportController implements Initializable {
 
             }
         } catch (DAOException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
             StatusLabel.showError(lblStatus, "No se pudo acceder a la base de datos. Intente más tarde.");
 
         } catch (IOException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
             StatusLabel.showError(lblStatus, "No se pudo generar el reporte en formato PDF. Intente nuevamente.");
         }
 
