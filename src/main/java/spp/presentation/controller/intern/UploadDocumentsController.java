@@ -13,12 +13,12 @@ import spp.businesslogic.enums.DocumentType;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.InitialDocumentDAO;
 import spp.businesslogic.dao.InternDAO;
+import spp.businesslogic.exceptions.FileManagementException;
 import spp.utils.file.FileUtils;
 import spp.utils.view.FileChooserUtil;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 
 
@@ -281,7 +281,7 @@ public class UploadDocumentsController {
             initialDocumentDTO.setUploadDate(LocalDateTime.now());
             saveStatus = true;
 
-        } catch (IOException | DAOException e) {
+        } catch (FileManagementException | DAOException e) {
             StatusLabel.showError(lblStatus, "No se puede guardar el archivo. Intente de nuevo.");
         }
 

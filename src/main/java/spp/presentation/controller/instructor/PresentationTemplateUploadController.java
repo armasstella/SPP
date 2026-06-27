@@ -12,14 +12,12 @@ import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.PresentationTemplateDTO;
 import spp.businesslogic.enums.DocumentType;
 import spp.businesslogic.exceptions.DAOException;
+import spp.businesslogic.exceptions.FileManagementException;
 import spp.utils.file.FileUtils;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.FileChooserUtil;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
-
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class PresentationTemplateUploadController {
@@ -130,7 +128,7 @@ public class PresentationTemplateUploadController {
             presentationTemplateDTO.setUploadDate(LocalDateTime.now());
             saveStatus = true;
 
-        } catch (IOException  e) {
+        } catch (FileManagementException | DAOException  e) {
             StatusLabel.showError(lblStatus, "No se puede guardar el archivo. Intente de nuevo.");
         }
 
