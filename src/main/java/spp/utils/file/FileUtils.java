@@ -24,9 +24,9 @@ public class FileUtils {
 
     }
 
-    public static String generateUniqueName(String studentNumber, String extension, String prefix) {
+    public static String generateUniqueName(String identifier, String extension, String prefix) {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        return prefix + "_" + studentNumber + "_" + timestamp + "." + extension;
+        return prefix + "_" + identifier + "_" + timestamp + "." + extension;
 
     }
 

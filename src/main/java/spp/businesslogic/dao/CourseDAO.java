@@ -26,9 +26,9 @@ public class CourseDAO implements ICourseDAO {
     }
 
     @Override
-    public boolean registerCourse(CourseDTO courseDTO) throws DAOException {
-        final String INSERT_COURSE = "INSERT INTO experiencias_educativas(nrc, bloque, seccion, periodo, " +
-                "cupo, detalles, id_usuario_profesor, num_personal) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public boolean registerCourse(CourseDTO courseDTO, int activeTermId) throws DAOException {
+        final String INSERT_COURSE = "INSERT INTO experiencias_educativas(nrc, bloque, seccion, " +
+                "cupo, detalles, id_usuario_profesor, num_personal, id_periodo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         boolean isInsertSuccessful = false;
 
         try {
@@ -38,20 +38,20 @@ public class CourseDAO implements ICourseDAO {
                 preparedStatement.setInt(1, courseDTO.getCourseCode());
                 preparedStatement.setInt(2, courseDTO.getSchoolBlock());
                 preparedStatement.setInt(3, courseDTO.getSection());
-                preparedStatement.setString(4, courseDTO.getTerm());
-                preparedStatement.setInt(5, courseDTO.getCapacity());
-                preparedStatement.setString(6, courseDTO.getCourseDetails());
+                preparedStatement.setInt(4, courseDTO.getCapacity());
+                preparedStatement.setString(5, courseDTO.getCourseDetails());
                 if (courseDTO.getInstructorDTO() != null) {
-                    preparedStatement.setInt(7, courseDTO.getInstructorDTO().getId());
-                    preparedStatement.setString(8, courseDTO.getInstructorDTO().getPersonalNumber());
+                    preparedStatement.setInt(6, courseDTO.getInstructorDTO().getId());
+                    preparedStatement.setString(7, courseDTO.getInstructorDTO().getPersonalNumber());
                 } else {
-                    preparedStatement.setNull(7, java.sql.Types.INTEGER);
-                    preparedStatement.setNull(8, java.sql.Types.VARCHAR);
+                    preparedStatement.setNull(6, java.sql.Types.INTEGER);
+                    preparedStatement.setNull(7, java.sql.Types.VARCHAR);
                 }
+                preparedStatement.setInt(8, activeTermId);
 
-                if (preparedStatement.executeUpdate() != NO_ROWS_AFFECTED) {
+                int affectedRows = preparedStatement.executeUpdate();
+                if (affectedRows != NO_ROWS_AFFECTED) {
                     isInsertSuccessful = true;
-                    connection.commit();
                 }
 
             }

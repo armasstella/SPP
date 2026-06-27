@@ -71,22 +71,6 @@ public class InternDAOTest {
     }
 
     @Test
-    @DisplayName("Debe obtener el id del practicante recién insertado")
-    void testObtainIdSuccess() throws DAOException {
-        internDAO.registerIntern(testIntern);
-        int result = internDAO.obtainId(testIntern.getStudentNumber());
-        Assertions.assertTrue(result > 0);
-    }
-
-    @Test
-    @DisplayName("Debe lanzar DAOException al buscar una matrícula inexistente")
-    void testObtainIdFailedNonExistentStudentNumber() throws DAOException {
-        assertThrows(DAOException.class, () -> {
-            internDAO.obtainId("S99999999");
-        });
-    }
-
-    @Test
     @DisplayName("Debe devolver true si la función SQL determina que el estudiante existe")
     void testExistsStudentByStudentNumberSuccess() throws DAOException {
         internDAO.registerIntern(testIntern);

@@ -51,6 +51,16 @@
                             onAction="#goToMonthlyActivityRegistrationView"
                     />
 
+                    <Button text="Reporte Parcial"
+                            styleClass="option-btn, btn-add"
+                            onAction="#goToPartialReportView"
+                    />
+
+                    <Button text="Reporte Final"
+                            styleClass="option-btn, btn-add"
+                            onAction="#goToFinalReportView"
+                    />
+
                     <Button text="Subir Documento"
                             styleClass="option-btn, btn-add"
                             onAction="#goToUploadDocumentsView"

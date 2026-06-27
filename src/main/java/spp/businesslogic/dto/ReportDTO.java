@@ -1,7 +1,7 @@
 package spp.businesslogic.dto;
 
 
-public class FinalReportDTO {
+public class ReportDTO {
 
     private String career;
     private String nrc;

@@ -21,8 +21,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
     public boolean saveDocument(String studentNumber, InitialDocumentDTO initialDocumentDTO) throws DAOException {
         final String INSERT_DOCUMENT = " INSERT INTO documentos_practicantes (nombre_original, " +
                 "nombre_almacenado, ruta_archivo, tamaño_mb, extension, fecha_subida," +
-                "tipo, id_usuario_practicante," +
-                "matricula) SELECT ?, ?, ?, ?, ?, ?, ?, p.id_usuario, p.matricula " +
+                "tipo, id_usuario_practicante, matricula) SELECT ?, ?, ?, ?, ?, ?, ?, p.id_usuario, p.matricula " +
                 "FROM practicantes p WHERE p.matricula = ?";
         boolean isSaveSuccessful = false;
 
@@ -36,6 +35,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
                 preparedStatement.setString(5, initialDocumentDTO.getExtension());
                 preparedStatement.setTimestamp(6, Timestamp.valueOf(initialDocumentDTO.getUploadDate()));
                 preparedStatement.setString(7, initialDocumentDTO.getDocumentType());
+                preparedStatement.setString(8, studentNumber);
                 isSaveSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
             }
 
@@ -110,6 +110,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_PSP)) {
+                preparedStatement.setString(1, email);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         hasPSP = resultSet.getBoolean(1);

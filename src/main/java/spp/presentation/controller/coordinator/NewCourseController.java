@@ -11,6 +11,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dao.CourseDAO;
 import spp.businesslogic.dao.InstructorDAO;
+import spp.businesslogic.dao.TermDAO;
+import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
@@ -37,7 +39,12 @@ public class NewCourseController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadActiveInstructors();
+        loadActiveTerm();
         setUpFields();
+    }
+
+    private void loadActiveTerm() {
+        txtTerm.setText(ActiveSessionDTO.get().getActiveTerm());
     }
 
     private void setUpFields() {

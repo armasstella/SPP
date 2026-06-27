@@ -47,9 +47,9 @@ public class UploadDocumentsController {
         } else {
             if (selectFile(event, "Seleccionar horario")) {
                 initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.CLASS_SCHEDULE));
-                currentFolder = "./documents/schedules/";
+                currentFolder = "./documents/intern_documents/schedules/";
                 currentPrefix = "schedule";
-            }   
+            }
         }
     }
 
@@ -60,7 +60,7 @@ public class UploadDocumentsController {
         } else {
             if (selectFile(event, "Seleccionar calendarización de actividades")) {
                 initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.ACTIVITIES_SCHEDULE));
-                currentFolder = "./documents/activities/";
+                currentFolder = "./documents/intern_documents/activities/";
                 currentPrefix = "activity";
             }
         }
@@ -74,7 +74,7 @@ public class UploadDocumentsController {
         } else {
             if (selectFile(event, "Seleccionar bitácora PSP")) {
                 initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.PSP));
-                currentFolder = "./documents/psp/";
+                currentFolder = "./documents/intern_documents/psp/";
                 currentPrefix = "psp";
             }
         }
@@ -87,7 +87,7 @@ public class UploadDocumentsController {
         } else {
             if (selectFile(event, "Seleccionar reporte parcial")) {
                 initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.INDICATOR_REPORT));
-                currentFolder = "./documents/reports/partial/";
+                currentFolder = "./documents/intern_documents/reports/partial/";
                 currentPrefix = "partial";
             }
         }
@@ -100,7 +100,7 @@ public class UploadDocumentsController {
         } else {
             if (selectFile(event, "Seleccionar autoevaluación")) {
                 initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.SELF_EVALUATION));
-                currentFolder = "./documents/evaluations/self/";
+                currentFolder = "./documents/intern_documents/evaluations/self/";
                 currentPrefix = "self_evaluation";
             }
         }
@@ -113,7 +113,7 @@ public class UploadDocumentsController {
         } else {
             if (selectFile(event, "Seleccionar evaluación de organización vinculada")) {
                 initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.EVALUATION_LINKED_ORGANIZATION));
-                currentFolder = "./documents/evaluations/organization/";
+                currentFolder = "./documents/intern_documents/evaluations/organization/";
                 currentPrefix = "organization_evaluation";
             }
         }
@@ -126,7 +126,7 @@ public class UploadDocumentsController {
         } else {
             if (selectFile(event, "Seleccionar reporte final")) {
                 initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.FINAL_REPORT));
-                currentFolder = "./documents/reports/final/";
+                currentFolder = "./documents/intern_documents/reports/final/";
                 currentPrefix = "final";
             }
         }
@@ -202,6 +202,7 @@ public class UploadDocumentsController {
         boolean exist = false;
         FinalReportDAO finalReportDAO = new FinalReportDAO();
         try {
+            FinalReportDAO finalReportDAO = new FinalReportDAO();
             exist = finalReportDAO.hasFinalReportByInternEmail(ActiveSessionDTO.get().getEmail());
         } catch (DAOException e) {
             StatusLabel.showError(lblStatus, "Error al buscar el reporte final.");

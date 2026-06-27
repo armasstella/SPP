@@ -1,9 +1,7 @@
 package spp.businesslogic.dao;
 
 
-import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.LoginResultDTO;
-import spp.businesslogic.dto.SessionDTO;
 import spp.businesslogic.dto.UserDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IUserDAO;
@@ -106,34 +104,32 @@ public class UserDAO implements IUserDAO {
     @Override
     public LoginResultDTO login(String email, String password) throws DAOException {
         final String CALL_SP_OBTAIN_USER = "CALL sp_obtener_usuario_login(?)";
+        LoginResultDTO loginResultDTO = new LoginResultDTO();
 
-        try {
-            Connection connection = MySQLConnection.getInstance().getConnection();
-            try (PreparedStatement preparedStatement = connection.prepareStatement(CALL_SP_OBTAIN_USER)) {
-                preparedStatement.setString(1, email);
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    if (resultSet.next()) {
-                        String storedHash = resultSet.getString("contraseña");
+        try (Connection connection = MySQLConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(CALL_SP_OBTAIN_USER)) {
+
+            preparedStatement.setString(1, email);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    if (passwordHasher.verifyPassword(resultSet.getString("contraseña"), password)) {
                         String userType = resultSet.getString("tipo_usuario");
-
-                        if (passwordHasher.verifyPassword(storedHash, password)) {
-
-                            int idUser = obtainId(email);
-                            ActiveSessionDTO.initialize(new SessionDTO(email));
-
-                            return new LoginResultDTO(userType);
-                        }
+                        loginResultDTO = loginResultDTO.success(userType);
+                    } else {
+                        loginResultDTO.failure("Contraseña incorrecta");
                     }
+
+                } else {
+                    loginResultDTO.failure("Correo incorrecto");
                 }
 
-                throw new DAOException("ERROR: Credenciales incorrectas");
             }
-
         } catch (SQLException e) {
             AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al verificar credenciales", e);
+            throw new DAOException("FATAL: Error crítico de base de datos", e);
         }
 
+        return loginResultDTO;
     }
 
     @Override
@@ -148,9 +144,6 @@ public class UserDAO implements IUserDAO {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         emailExists = resultSet.getBoolean(1);
-                        if (!emailExists) {
-                            throw new DAOException("ERROR: Correo no encontrado en el sistema");
-                        }
                     }
 
                 }

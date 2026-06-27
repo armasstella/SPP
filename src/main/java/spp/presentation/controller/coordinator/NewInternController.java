@@ -1,5 +1,6 @@
 package spp.presentation.controller.coordinator;
 
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,6 +14,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import spp.businesslogic.dao.CourseDAO;
+import spp.businesslogic.dao.ProfessionalPracticeEnrollmentDAO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
@@ -21,12 +23,12 @@ import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
-
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
+
 
 public class NewInternController implements Initializable {
 
@@ -46,7 +48,6 @@ public class NewInternController implements Initializable {
     @FXML private TextField txtIndigenousLanguage;
     @FXML private DatePicker dpBirthDate;
     @FXML private ComboBox<CourseDTO> cmbCourseCode;
-
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Override
@@ -243,7 +244,6 @@ public class NewInternController implements Initializable {
         cmbSex.setValue(null);
         cmbCourseCode.setValue(null);
         dpBirthDate.setValue(null);
-
         rbNo.setSelected(true);
         toggleIndigenousLanguageField();
     }

@@ -38,12 +38,12 @@ public class MessageCenterController implements Initializable {
     @FXML private VBox vbOptionNewMessage;
     @FXML private TextField txtRecipient;
     @FXML private TextField txtSubject;
-    @FXML private TextArea txtBody;
+    @FXML private TextArea taBody;
     @FXML private VBox vbMessageDetail;
     @FXML private Label lblDetailSender;
     @FXML private Label lblDetailDate;
     @FXML private Label lblDetailSubject;
-    @FXML private TextArea txtDetailContent;
+    @FXML private TextArea taDetailContent;
     private final MessageDAO messageDAO = new MessageDAO();
     private final UserDAO userDAO = new UserDAO();
     private String previousViewPath;
@@ -178,7 +178,7 @@ public class MessageCenterController implements Initializable {
         lblDetailSender.setText(message.getEmailSender());
         lblDetailDate.setText(message.getDate());
         lblDetailSubject.setText(message.getSubject());
-        txtDetailContent.setText(message.getContent());
+        taDetailContent.setText(message.getContent());
 
     }
 
@@ -193,7 +193,7 @@ public class MessageCenterController implements Initializable {
     private void clearNewMessageFields() {
         txtRecipient.clear();
         txtSubject.clear();
-        txtBody.clear();
+        taBody.clear();
 
     }
 

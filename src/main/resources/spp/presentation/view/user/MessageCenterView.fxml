@@ -42,8 +42,6 @@
                             onAction="#showNewMessageForm"/>
                     <Button text="Todos los mensajes" styleClass="option-btn, btn-activate" maxWidth="Infinity"
                             onAction="#showAllMessages"/>
-                    <Button text="No leídos" styleClass="option-btn, btn-activate" maxWidth="Infinity"/>
-                    <Button text="Enviados" styleClass="option-btn, btn-activate" maxWidth="Infinity"/>
                 </VBox>
 
                 <VBox fx:id="vbOptionSelected" HBox.hgrow="ALWAYS">
@@ -84,7 +82,7 @@
 
                         <VBox spacing="5" VBox.vgrow="ALWAYS">
                             <Label text="Mensaje:" styleClass="field-description" style="-fx-font-weight: bold;"/>
-                            <TextArea fx:id="txtDetailContent" editable="false" wrapText="true" styleClass="field-input" VBox.vgrow="ALWAYS"/>
+                            <TextArea fx:id="taDetailContent" editable="false" wrapText="true" styleClass="field-input" VBox.vgrow="ALWAYS"/>
                         </VBox>
 
                         <HBox alignment="BOTTOM_RIGHT">
@@ -110,7 +108,7 @@
 
                         <VBox spacing="5" VBox.vgrow="ALWAYS">
                             <Label text="Mensaje:" styleClass="field-description"/>
-                            <TextArea fx:id="txtBody" promptText="Escriba su mensaje aquí..." styleClass="field-input"
+                            <TextArea fx:id="taBody" promptText="Escriba su mensaje aquí..." styleClass="field-input"
                                       VBox.vgrow="ALWAYS" wrapText="true"/>
                         </VBox>
 
@@ -118,14 +116,6 @@
                             <Button text="Cancelar" styleClass="btn-danger" onAction="#showAllMessages"/>
                             <Button text="Enviar Mensaje" styleClass="btn-primary" onAction="#sendMessage"/>
                         </HBox>
-                    </VBox>
-
-                    <VBox fx:id="vbOtpionMessagesNoRead" visible="false" managed="${vbOtpionMessagesNoRead.visible}">
-
-                    </VBox>
-
-                    <VBox fx:id="vbOptionSendedMessage" visible="false" managed="${vbOptionSendedMessage.visible}">
-
                     </VBox>
                 </VBox>
 

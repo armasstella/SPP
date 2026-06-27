@@ -52,7 +52,7 @@ public class InternMenuController {
             PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
             if (prioritizedProjectDAO.findPrioritizedProjectsByInternEmail(ActiveSessionDTO.get().getEmail())) {
                 hasPrioritizedProjects = true;
-            } else  {
+            } else {
                 AlertHelper.showErrorMessage("Operación no disponible", 
                         "Ya has seleccionado tres proyectos");
             }
@@ -65,17 +65,13 @@ public class InternMenuController {
 
     }
 
-    private boolean searchMinimumProjects() {
+    private boolean existsMinimumProjects() {
         boolean isThisOptionAllowed = false;
         try {
             ProjectDAO projectDAO = new ProjectDAO();
             if (projectDAO.hasMinimumProjectsForActiveTerm()) {
                 isThisOptionAllowed = true;
-            } else {
-                AlertHelper.showErrorMessage("Operación no disponible",
-                        "No hay proyectos suficientes para elección del practicante");
             }
-
         } catch (Exception e) {
             AlertHelper.showErrorMessage("Error", "Error al realizar operación.\n" +
                     "Intente más tarde.");
@@ -103,6 +99,18 @@ public class InternMenuController {
                     "Menú Practicante");
         }
 
+    }
+
+    @FXML
+    private void goToPartialReportView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/intern/PartialReporteView.fxml",
+                "Reporte Parcial", event);
+    }
+
+    @FXML
+    private void goToFinalReportView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/intern/FinalReporteView.fxml",
+                "Reporte Final", event);
     }
 
 }

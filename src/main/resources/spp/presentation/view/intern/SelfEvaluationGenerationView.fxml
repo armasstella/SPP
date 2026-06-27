@@ -94,8 +94,7 @@
                     <RadioButton userData="5" toggleGroup="$tgQuestionFirst"
                                  GridPane.columnIndex="5" GridPane.rowIndex="1" styleClass="radio-button-custom"/>
 
-                    <Label text="2. Logré la aplicación de los conocimientos teórico-prácticos adquiridos en la
-                    Licenciatura en Ingeniería de Software."
+                    <Label text="2. Logré la aplicación de los conocimientos teórico-prácticos adquiridos en la Licenciatura en Ingeniería de Software."
                            wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="field-value"/>
                     <RadioButton userData="1" toggleGroup="$tgQuestionSecond"
                                  GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="radio-button-custom"/>
@@ -134,8 +133,7 @@
                     <RadioButton userData="5" toggleGroup="$tgQuestionFourth"
                                  GridPane.columnIndex="5" GridPane.rowIndex="4" styleClass="radio-button-custom"/>
 
-                    <Label text="5. La Organización Vinculada me proporcionó la información y facilidades adecuados
-                    durante el desarrollo de las prácticas."
+                    <Label text="5. La Organización Vinculada me proporcionó la información y facilidades adecuados durante el desarrollo de las prácticas."
                            wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="field-value"/>
                     <RadioButton userData="1" toggleGroup="$tgQuestionFifth"
                                  GridPane.columnIndex="1" GridPane.rowIndex="5" styleClass="radio-button-custom"/>

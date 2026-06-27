@@ -35,6 +35,7 @@
                     <Region HBox.hgrow="ALWAYS"/>
                     <Button text="Registrar actividad" styleClass="btn-add" onAction="#goToActivityRegistrationView"/>
                     <Button text="Generar reporte mensual" styleClass="btn-add" onAction="#goToMonthlyReportGenerationView"/>
+                    <Button text="Generar reporte final" styleClass="btn-add" onAction="#goToMonthlyReportGenerationView"/>
                 </HBox>
 
                 <TableView fx:id="tblActivities" VBox.vgrow="ALWAYS" styleClass="custom-table">

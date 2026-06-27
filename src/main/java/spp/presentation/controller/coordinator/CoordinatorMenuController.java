@@ -39,19 +39,33 @@ public class CoordinatorMenuController {
 
     @FXML
     private void goToNewProjectManagerView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/coordinator/NewProjectManagerView.fxml",
-                "Registrar Encargado de Proyecto", event);
+        if (searchLinkedOrganization()) {
+            ViewNavigator.loadView("/spp/presentation/view/coordinator/NewProjectManagerView.fxml",
+                    "Registrar Encargado de Proyecto", event);
+        } else {
+            AlertHelper.showErrorMessage("No puede realizar la operación",
+                    "No hay información registrada de Organizaciones Vinculadas");
+        }
+
     }
 
     @FXML
     private void goToNewProjectView(ActionEvent event) {
-        if (searchProjectManager() && searchLinkedOrganization()) {
-            ViewNavigator.loadView("/spp/presentation/view/coordinator/NewProjectView.fxml",
-                    "Registrar Proyecto", event);
+        if (searchLinkedOrganization()) {
+            if (searchProjectManager()) {
+                ViewNavigator.loadView("/spp/presentation/view/coordinator/NewProjectView.fxml",
+                        "Registrar Proyecto", event);
+            } else {
+                AlertHelper.showErrorMessage("No se puede realizar la operación",
+                        "No hay información registrada de Encargados de Proyecto");
+            }
+
         } else {
             AlertHelper.showErrorMessage("No puede realizar la operación",
-                    "No hay información registrada de Organizaciones Vinculadas\no de Encargados de Proyectos.");
+                    "No hay información registrada de Organizaciones Vinculadas");
         }
+
+
     }
 
     @FXML
