@@ -13,7 +13,6 @@ import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
@@ -54,7 +53,6 @@ public class MonthlyActivityRegistersController implements Initializable {
             List<ActivityDTO> activityList = activityDAO.findActivitiesByStudentNumber(studentNumber);
             tblActivities.setItems(FXCollections.observableArrayList(activityList));
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al obtener actividades");
         }
 
