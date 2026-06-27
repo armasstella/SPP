@@ -1,6 +1,5 @@
 package spp.presentation.controller.coordinator;
 
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,13 +8,13 @@ import javafx.scene.control.TextField;
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectManagerDAO;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
+
 import java.net.URL;
 import java.util.ResourceBundle;
-
 
 public class NewProjectManagerController implements Initializable {
 
@@ -34,70 +33,119 @@ public class NewProjectManagerController implements Initializable {
     }
 
     private void setUpFields() {
-        InputFilter.applyFilter(txtFirstName, InputFilter.NAME_PATTERN, 40);
-        InputFilter.applyFilter(txtSecondName, InputFilter.NAME_PATTERN, 40);
-        InputFilter.applyFilter(txtFirstLastName, InputFilter.NAME_PATTERN, 40);
-        InputFilter.applyFilter(txtSecondLastName, InputFilter.NAME_PATTERN, 40);
-        InputFilter.applyFilter(txtResponsibility, InputFilter.ALPHANUMERIC_PATTERN, 100);
-        InputFilter.applyFilter(txtRole, InputFilter.ALPHANUMERIC_PATTERN, 100);
-        InputFilter.applyFilter(txtPhoneNumber, InputFilter.NUMERIC_PATTERN, 10);
-
+        InputFilter.applyFormatFilter(txtFirstName,
+                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
+        InputFilter.applyFormatFilter(txtSecondName,
+                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
+        InputFilter.applyFormatFilter(txtFirstLastName,
+                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
+        InputFilter.applyFormatFilter(txtSecondLastName,
+                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
+        InputFilter.applyFormatFilter(txtResponsibility,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_CATEGORY);
+        InputFilter.applyFormatFilter(txtRole,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_CATEGORY);
+        InputFilter.applyFormatFilter(txtPhoneNumber,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_PHONE);
     }
 
-    @FXML
     private void setAllProjectManager(ProjectManagerDTO projectManagerDTO) {
-        projectManagerDTO.setFirstName(txtFirstName.getText().trim());
-        projectManagerDTO.setSecondName(txtSecondName.getText().trim());
-        projectManagerDTO.setFirstLastName(txtFirstLastName.getText().trim());
-        projectManagerDTO.setSecondLastName(txtSecondLastName.getText().trim());
-        projectManagerDTO.setRole(txtRole.getText().trim());
-        projectManagerDTO.setResponsibility(txtResponsibility.getText().trim());
-        projectManagerDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
-
+        projectManagerDTO.setFirstName(txtFirstName.getText());
+        projectManagerDTO.setSecondName(txtSecondName.getText());
+        projectManagerDTO.setFirstLastName(txtFirstLastName.getText());
+        projectManagerDTO.setSecondLastName(txtSecondLastName.getText());
+        projectManagerDTO.setRole(txtRole.getText());
+        projectManagerDTO.setResponsibility(txtResponsibility.getText());
+        projectManagerDTO.setPhoneNumber(txtPhoneNumber.getText());
     }
 
-    @FXML
-    private void saveProjectManager(ActionEvent event) {
-        if (validateRegistrationInputs()) {
-            return;
-        }
-        ProjectManagerDAO projectManagerDAO  = new ProjectManagerDAO();
-        ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
-        setAllProjectManager(projectManagerDTO);
-
-        try {
-            if (projectManagerDAO.registerProjectManager(projectManagerDTO)) {
-                StatusLabel.showSuccess(lblStatus, "Encargado de proyecto registrado correctamente.");
-                clearInputFields();
-            }
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, e.getMessage());
-        }
-
-    }
-
-    @FXML
-    private void cancel(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/coordinator/CoordinatorMenuView.fxml",
-                "Menú Coordinador", event);
-
-    }
-
-    private boolean validateRegistrationInputs() {
+    private boolean hasEmptyFields() {
         boolean emptyFields = false;
 
         if (txtFirstName.getText().isBlank() ||
                 txtFirstLastName.getText().isBlank() ||
                 txtResponsibility.getText().isBlank() ||
                 txtRole.getText().isBlank() ||
-                txtPhoneNumber.getText().isBlank()){
-            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
+                txtPhoneNumber.getText().isBlank()) {
+
             emptyFields = true;
         }
 
         return emptyFields;
+    }
 
+    private boolean hasValidMinimumLengths() {
+        boolean validLengths = false;
+
+        boolean validFirstName = InputFilter.hasMinimumLength(txtFirstName,
+                ViewConstant.MIN_LENGTH_NAME);
+        boolean validFirstLastName = InputFilter.hasMinimumLength(txtFirstLastName,
+                ViewConstant.MIN_LENGTH_NAME);
+        boolean validResponsibility = InputFilter.hasMinimumLength(txtResponsibility,
+                ViewConstant.MIN_LENGTH_CATEGORY);
+        boolean validRole = InputFilter.hasMinimumLength(txtRole,
+                ViewConstant.MIN_LENGTH_CATEGORY);
+        boolean validPhone = InputFilter.hasMinimumLength(txtPhoneNumber,
+                ViewConstant.MIN_LENGTH_PHONE);
+
+        boolean validSecondName = true;
+        if (!txtSecondName.getText().isBlank()) {
+            validSecondName = InputFilter.hasMinimumLength(txtSecondName,
+                    ViewConstant.MIN_LENGTH_NAME);
+        }
+
+        boolean validSecondLastName = true;
+        if (!txtSecondLastName.getText().isBlank()) {
+            validSecondLastName = InputFilter.hasMinimumLength(txtSecondLastName,
+                    ViewConstant.MIN_LENGTH_NAME);
+        }
+
+        if (validFirstName && validFirstLastName && validResponsibility && validRole &&
+                validPhone && validSecondName && validSecondLastName) {
+            validLengths = true;
+        }
+
+        return validLengths;
+    }
+
+    private boolean areValidFields() {
+        boolean validFields = false;
+
+        if (hasEmptyFields()) {
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
+        } else {
+            if (hasValidMinimumLengths()) {
+                validFields = true;
+            } else {
+                StatusLabel.showError(lblStatus, "La longitud de los campos debe cumplir con el mínimo de caracteres.");
+            }
+        }
+
+        return validFields;
+    }
+
+    @FXML
+    private void saveProjectManager(ActionEvent event) {
+        if (areValidFields()) {
+            ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
+            setAllProjectManager(projectManagerDTO);
+
+            ProjectManagerDAO projectManagerDAO  = new ProjectManagerDAO();
+            try {
+                if (projectManagerDAO.registerProjectManager(projectManagerDTO)) {
+                    StatusLabel.showSuccess(lblStatus, "Encargado de proyecto registrado correctamente.");
+                    clearInputFields();
+                }
+            } catch (DAOException e) {
+                StatusLabel.showError(lblStatus, "No se pudo registrar el encargado.");
+            }
+        }
+    }
+
+    @FXML
+    private void cancel(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/coordinator/CoordinatorMenuView.fxml",
+                "Menú Coordinador", event);
     }
 
     private void clearInputFields() {
@@ -108,7 +156,5 @@ public class NewProjectManagerController implements Initializable {
         txtResponsibility.clear();
         txtRole.clear();
         txtPhoneNumber.clear();
-
     }
-
 }
