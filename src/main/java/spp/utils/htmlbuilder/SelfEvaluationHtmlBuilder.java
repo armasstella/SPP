@@ -1,6 +1,7 @@
 package spp.utils.htmlbuilder;
 
 import spp.businesslogic.dto.SelfEvaluationDTO;
+import spp.businesslogic.exceptions.FileGenerationException;
 import spp.utils.file.TemplateRenderer;
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,7 +15,7 @@ public final class SelfEvaluationHtmlBuilder {
 
     }
 
-    public static String buildSelfEvaluation(SelfEvaluationDTO evaluation) throws IOException {
+    public static String buildSelfEvaluation(SelfEvaluationDTO evaluation) throws FileGenerationException {
         Map<String, String> values = new HashMap<>();
         values.put("studentName", TemplateRenderer.escape(evaluation.getStudentName()));
         values.put("studentNumber", TemplateRenderer.escape(evaluation.getStudentNumber()));
@@ -25,8 +26,15 @@ public final class SelfEvaluationHtmlBuilder {
         values.put("finalScore", String.valueOf(evaluation.getFinalScore()));
 
         values.put("evaluationRows", buildEvaluationRows(evaluation.getScores()));
+        String templateRenderized = null;
 
-        return TemplateRenderer.render(TEMPLATE, values);
+        try {
+            templateRenderized = TemplateRenderer.render(TEMPLATE, values);
+        } catch (IOException e) {
+            throw new FileGenerationException("Error generando archivo de autoevaluación");
+        }
+
+        return templateRenderized;
     }
 
     private static String buildEvaluationRows(int[] scores) {

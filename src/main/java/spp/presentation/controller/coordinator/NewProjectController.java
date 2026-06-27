@@ -22,6 +22,7 @@ import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
+import spp.businesslogic.exceptions.FileManagementException;
 import spp.utils.file.FileUtils;
 import spp.utils.view.FileChooserUtil;
 import spp.utils.view.InputFilter;
@@ -29,7 +30,6 @@ import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -203,7 +203,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
             activityScheduleDTO.setUploadDate(LocalDateTime.now());
             saveStatus = true;
 
-        } catch (IOException e) {
+        } catch (FileManagementException e) {
             StatusLabel.showError(lblStatus, "No se puede guardar el archivo. Intente de nuevo.");
         }
 

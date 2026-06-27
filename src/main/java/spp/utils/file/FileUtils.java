@@ -1,9 +1,14 @@
 package spp.utils.file;
 
 
+import spp.businesslogic.exceptions.FileManagementException;
+import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.logger.AppLogger;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -30,11 +35,18 @@ public class FileUtils {
 
     }
 
-    public static String copyFile(File source, String destinationFolder, String destinationName) throws IOException {
-        new File(destinationFolder).mkdirs();
-        Path destination = Paths.get(destinationFolder + destinationName);
-        Files.copy(source.toPath(), destination, StandardCopyOption.REPLACE_EXISTING);
-        return destination.toString();
+    public static String copyFile(File source, String destinationFolder, String destinationName) throws FileManagementException {
+        String fileDestination = null;
+        try {
+            new File(destinationFolder).mkdirs();
+            Path destination = Paths.get(destinationFolder + destinationName);
+            fileDestination = destination.toString();
+            Files.copy(source.toPath(), destination, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException | InvalidPathException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new FileManagementException("Error al guardar archivo ", e);
+        }
+        return fileDestination;
 
     }
 }
