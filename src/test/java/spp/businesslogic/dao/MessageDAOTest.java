@@ -12,8 +12,6 @@ import spp.businesslogic.dto.SessionDTO;
 import spp.businesslogic.enums.MesaggeStatus;
 import spp.businesslogic.exceptions.DAOException;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,7 +27,7 @@ public class MessageDAOTest {
     void setUp() {
         messageDAO = new MessageDAO();
         testMessage = new MessageDTO();
-        activeSession = new SessionDTO("zs24013315@estudiantes.uv.mx");
+        activeSession = new SessionDTO("zs24013315@estudiantes.uv.mx", );
     }
 
     @BeforeEach

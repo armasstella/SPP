@@ -8,8 +8,9 @@ import java.util.List;
 
 public interface IProjectManagerDAO {
 
-    boolean registerProjectManager(ProjectManagerDTO projectManagerDTO) throws DAOException;
+    boolean registerProjectManager(ProjectManagerDTO projectManagerDTO, int linkedOrganizationId) throws DAOException;
     List<ProjectManagerDTO> getActiveProjectManagers() throws DAOException;
     boolean existsProjectManagers() throws DAOException;
+    List<ProjectManagerDTO> getProjectManagersByOrganization(int organizationId) throws DAOException;
 
 }

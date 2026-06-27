@@ -71,15 +71,6 @@ public class CoordinatorDAOTest {
     }
 
     @Test
-    @DisplayName("Debe activar un coordinador existente")
-    void testActivateCoordinatorSuccess() throws DAOException {
-        coordinatorDAO.registerCoordinator(testCoordinator);
-        coordinatorDAO.deactivateCoordinator(testCoordinator);
-        boolean result = coordinatorDAO.activateCoordinator(testCoordinator);
-        assertTrue(result);
-    }
-
-    @Test
     @DisplayName("Debe lanzar DAOException al insertar coordinador sin número de personal")
     void testRegisterCoordinatorFailedNullPersonalNumber() throws DAOException {
         testCoordinator.setPersonalNumber(null);

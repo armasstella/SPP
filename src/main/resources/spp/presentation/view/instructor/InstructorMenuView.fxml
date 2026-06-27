@@ -42,10 +42,21 @@
                 <VBox alignment="CENTER" spacing="16">
                     <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
 
-                    <Button text="Evaluar Reporte"
+                    <Button text="Subir Plantilla Presentación"
+                            styleClass="option-btn, btn-inactivate"
+                            onAction="#goToPresentationTemplateUploadView"
+                    />
+
+                    <Button text="Evaluar Reporte Parcial"
+                            styleClass="option-btn, btn-inactivate"
+                            onAction="#goToPartialReportEvaluationView"
+                    />
+
+                    <Button text="Evaluar Reporte Final"
                             styleClass="option-btn, btn-inactivate"
                             onAction="#goToFinalReportEvaluationView"
                     />
+
                 </VBox>
             </HBox>
         </VBox>

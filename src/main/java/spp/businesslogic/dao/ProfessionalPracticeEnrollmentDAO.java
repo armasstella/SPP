@@ -5,6 +5,7 @@ import spp.businesslogic.dto.ProfessionalPracticeEnrollmentDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IProfessionalPracticeEnrollmentDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.dataaccess.connection.MySQLConnectionManager;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -63,19 +64,19 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
 
     @Override
     public boolean assignProjectByStudentNumber(String studentNumber, int idProject) throws DAOException {
-        boolean isProjectAssigned = false;
         final String ASSIGN_PROJECT = "UPDATE inscripciones_practicas_profesionales ipp " +
-                "INNER JOIN experiencias_educativas ee ON ipp.id_experiencia_educativa = ee.id_experiencia_educativa " +
-                "INNER JOIN periodos p ON ee.id_periodo = p.id_periodo " +
+                "INNER JOIN periodos p ON ipp.id_periodo = p.id_periodo " +
                 "SET ipp.id_proyecto = ? " +
                 "WHERE ipp.matricula = ? AND p.periodoActual = 1";
+        boolean isProjectAssigned = false;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try(PreparedStatement preparedStatement = connection.prepareStatement(ASSIGN_PROJECT)) {
                 preparedStatement.setInt(1, idProject);
                 preparedStatement.setString(2, studentNumber);
-                isProjectAssigned = preparedStatement.executeUpdate() > NO_ROWS_AFFECTED;
+                int rowsAffected = preparedStatement.executeUpdate();
+                isProjectAssigned = rowsAffected != NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {
@@ -84,6 +85,31 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
         }
 
         return isProjectAssigned;
+    }
+
+    @Override
+    public boolean assignCourseByStudentNumber(String studentNumber, int courseId) throws DAOException {
+        final String ASSIGN_COURSE = "UPDATE inscripciones_practicas_profesionales ipp " +
+                "INNER JOIN periodos p ON ipp.id_periodo = p.id_periodo " +
+                "SET ipp.id_experiencia_educativa = ? " +
+                "WHERE ipp.matricula = ? AND p.periodoActual = 1";
+        boolean isCourseAssigned = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try(PreparedStatement preparedStatement = connection.prepareStatement(ASSIGN_COURSE)) {
+                preparedStatement.setInt(1, courseId);
+                preparedStatement.setString(2, studentNumber);
+                int rowsAffected = preparedStatement.executeUpdate();
+                isCourseAssigned = rowsAffected != NO_ROWS_AFFECTED;
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Error de conexión al asignar la experiencia educativa al practicante", e);
+        }
+
+        return isCourseAssigned;
     }
 
 }

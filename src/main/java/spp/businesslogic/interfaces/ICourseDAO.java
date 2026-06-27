@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ICourseDAO {
 
-    boolean registerCourse(CourseDTO courseDTO) throws DAOException;
+    boolean registerCourse(CourseDTO courseDTO, int activeTermId) throws DAOException;
     boolean existsRegisteredCourses() throws DAOException;
     List<CourseDTO> getActiveCoursesStatistics() throws DAOException;
     boolean assignInstructorToCourse(CourseDTO courseDTO) throws DAOException;

@@ -22,18 +22,15 @@ public class IndicatorReportDAO implements IIndicatorReportDAO {
     public IndicatorReportDTO getStaticsByIndicators(IndicatorFilterDTO filters) throws DAOException {
         IndicatorReportDTO indicatorReportDTO = new IndicatorReportDTO();
         indicatorReportDTO.setAppliedFilters(filters);
+        List<Object> filterValues = new ArrayList<>();
 
-        List<Object> parameters = new ArrayList<>();
-
-        String dynamicQuery = IndicatorReportQueryBuilder.buildDynamicQuery(filters, parameters);
+        String dynamicQuery = IndicatorReportQueryBuilder.buildDynamicQuery(filters, filterValues);
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-
             try (PreparedStatement preparedStatement = connection.prepareStatement(dynamicQuery)) {
-
-                for (int i = 0; i < parameters.size(); i++) {
-                    preparedStatement.setObject(i + 1, parameters.get(i));
+                for (int i = 0; i < filterValues.size(); i++) {
+                    preparedStatement.setObject(i + 1, filterValues.get(i));
                 }
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {

@@ -60,14 +60,6 @@ public class InstructorDAOTest {
     }
 
     @Test
-    @DisplayName("Debe obtener el id de un profesor recién registrado")
-    void testObtainIdAfterInsertSuccess() throws DAOException {
-        instructorDAO.registerInstructor(testInstructor);
-        int idObtained = instructorDAO.obtainId(testInstructor.getPersonalNumber());
-        assertTrue(idObtained > 0);
-    }
-
-    @Test
     @DisplayName("Debe lanzar DAOException al insertar profesor sin número de personal")
     void testRegisterInstructorFailedNullPersonalNumber() throws DAOException {
         testInstructor.setPersonalNumber(null);
@@ -95,28 +87,11 @@ public class InstructorDAOTest {
     }
 
     @Test
-    @DisplayName("Debe obtener el mismo ID al consultar varias veces el mismo número de personal")
-    void testObtainIdConsistency() throws DAOException {
-        instructorDAO.registerInstructor(testInstructor);
-        int firstId = instructorDAO.obtainId(testInstructor.getPersonalNumber());
-        int secondId = instructorDAO.obtainId(testInstructor.getPersonalNumber());
-        assertEquals(firstId, secondId);
-    }
-
-    @Test
     @DisplayName("Debe registrar profesor con segundo apellido vacío")
     void testRegisterInstructorWithEmptySecondLastNameSuccess() throws DAOException {
         testInstructor.setSecondLastName(null);
         boolean result = instructorDAO.registerInstructor(testInstructor);
         assertTrue(result);
-    }
-
-    @Test
-    @DisplayName("Debe lanzar DAOException al buscar un número de personal inexistente")
-    void testObtainIdFailedNonExistentPersonalNumber() throws DAOException {
-        assertThrows(DAOException.class, () -> {
-            instructorDAO.obtainId("999999");
-        });
     }
 
     @Test

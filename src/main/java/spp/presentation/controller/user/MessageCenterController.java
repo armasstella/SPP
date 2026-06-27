@@ -38,12 +38,12 @@ public class MessageCenterController implements Initializable {
     @FXML private VBox vbOptionNewMessage;
     @FXML private TextField txtRecipient;
     @FXML private TextField txtSubject;
-    @FXML private TextArea txtBody;
+    @FXML private TextArea taBody;
     @FXML private VBox vbMessageDetail;
     @FXML private Label lblDetailSender;
     @FXML private Label lblDetailDate;
     @FXML private Label lblDetailSubject;
-    @FXML private TextArea txtDetailContent;
+    @FXML private TextArea taDetailContent;
     private final MessageDAO messageDAO = new MessageDAO();
     private final UserDAO userDAO = new UserDAO();
     private ObservableList<MessageDTO> messagesObservableList;
@@ -62,7 +62,7 @@ public class MessageCenterController implements Initializable {
     private void setUpFields() {
         InputFilter.applyFilter(txtRecipient, InputFilter.EMAIL_CHARS_PATTERN, 30);
         InputFilter.applyFilter(txtSubject, InputFilter.NAME_PATTERN, 20);
-        InputFilter.applyFilter(txtBody, InputFilter.NAME_PATTERN, 250);
+        InputFilter.applyFilter(taBody, InputFilter.NAME_PATTERN, 250);
 
     }
 
@@ -128,7 +128,7 @@ public class MessageCenterController implements Initializable {
     private void sendMessage(ActionEvent event) {
         if(txtRecipient.getText().trim().isEmpty() ||
             txtSubject.getText().trim().isEmpty() ||
-            txtBody.getText().trim().isEmpty()) {
+            taBody.getText().trim().isEmpty()) {
             StatusLabel.showError(lblStatus, "Llene todo los campos.");
             return;
         }
@@ -144,11 +144,12 @@ public class MessageCenterController implements Initializable {
                     AppLogger.logError(e);
                     StatusLabel.showError(lblStatus, "Error enviando mensaje");
                 }
+            } else {
+                StatusLabel.showError(lblStatus, "El email ingresado no está registrado en el sistema.");
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "El correo ingresado no está registrado en el sistema" +
-                    "\nNo es posible enviarle mensaje.");
+            StatusLabel.showError(lblStatus, "Error enviando mensaje");
         }
 
     }
@@ -161,7 +162,7 @@ public class MessageCenterController implements Initializable {
         lblDetailSender.setText(message.getEmailSender());
         lblDetailDate.setText(message.getDate());
         lblDetailSubject.setText(message.getSubject());
-        txtDetailContent.setText(message.getContent());
+        taDetailContent.setText(message.getContent());
 
     }
 
@@ -170,7 +171,7 @@ public class MessageCenterController implements Initializable {
         newMessageDTO.setEmailSender(ActiveSessionDTO.get().getEmail());
         newMessageDTO.setEmailReceiver(txtRecipient.getText().trim());
         newMessageDTO.setSubject(txtSubject.getText().trim());
-        newMessageDTO.setContent(txtBody.getText().trim());
+        newMessageDTO.setContent(taBody.getText().trim());
         return newMessageDTO;
 
     }
@@ -178,7 +179,7 @@ public class MessageCenterController implements Initializable {
     private void clearNewMessageFields() {
         txtRecipient.clear();
         txtSubject.clear();
-        txtBody.clear();
+        taBody.clear();
 
     }
 

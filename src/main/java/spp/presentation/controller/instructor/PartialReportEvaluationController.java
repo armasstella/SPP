@@ -1,6 +1,5 @@
 package spp.presentation.controller.instructor;
 
-
 import com.dlsc.pdfviewfx.PDFView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,13 +19,13 @@ import spp.utils.logger.AppLogger;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
+
 import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
-public class FinalReportEvaluationController implements Initializable {
+public class PartialReportEvaluationController implements Initializable {
 
     @FXML private ComboBox<InternDTO> cmbInterns;
     @FXML private ComboBox<ReportDocumentFileDTO> cmbInternDocuments;
@@ -35,6 +34,8 @@ public class FinalReportEvaluationController implements Initializable {
     @FXML private Button btnAssignGrade;
     @FXML private Button btnModifyGrade;
     @FXML private Label lblStatus;
+
+    private final FinalReportDAO finalReportDAO = new FinalReportDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -75,10 +76,9 @@ public class FinalReportEvaluationController implements Initializable {
         resetEvaluationArea();
 
         try {
-            FinalReportDAO finalReportDAO = new FinalReportDAO();
             List<ReportDocumentFileDTO> documentsList = finalReportDAO.getFinalReportsByIntern(studentNumber);
             if (documentsList.isEmpty()) {
-                StatusLabel.showError(lblStatus, "El estudiante seleccionado no tiene reportes finales subidos.");
+                StatusLabel.showError(lblStatus, "El estudiante seleccionado no tiene reportes parciales/mensuales subidos.");
                 return;
             }
 
@@ -150,6 +150,7 @@ public class FinalReportEvaluationController implements Initializable {
                 StatusLabel.showError(lblStatus, "No se asignó la calificación. Intente nuevamente.");
             }
 
+            StatusLabel.showSuccess(lblStatus, "Calificación asignada correctamente.");
         } catch (DAOException e) {
             AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al guardar la calificación.");

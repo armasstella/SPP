@@ -1,10 +1,8 @@
 package spp.businesslogic.dto;
 
-
 import java.time.LocalDateTime;
 
-
-public class PresentationTemplateDTO {
+public class ActivityScheduleDTO {
 
     private String originalName;
     private String savedName;

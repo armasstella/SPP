@@ -24,9 +24,9 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
     }
 
     @Override
-    public boolean registerProjectManager(ProjectManagerDTO projectManagerDTO) throws DAOException {
+    public boolean registerProjectManager(ProjectManagerDTO projectManagerDTO, int linkedOrganizationId) throws DAOException {
         final String INSERT_PROJECT_MANAGER = "INSERT INTO Encargados_Proyectos " + "(nombres, apellidos, " +
-            "responsabilidad, rol, telefono)" + "VALUES (?, ?, ?, ?, ?)";
+            "responsabilidad, rol, telefono, id_organizacion_vinculada)" + "VALUES (?, ?, ?, ?, ?, ?)";
         boolean isInsertSuccessful = false;
 
         try {
@@ -42,6 +42,8 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                         projectManagerDTO.getRole());
                 preparedStatement.setString(5,
                         projectManagerDTO.getPhoneNumber());
+                preparedStatement.setInt(6,
+                        linkedOrganizationId);
 
                 isInsertSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
 
@@ -108,6 +110,29 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
         }
 
         return projectManagersExists;
+    }
+
+    @Override
+    public List<ProjectManagerDTO> getProjectManagersByOrganization(int organizationId) throws DAOException {
+        final String SELECT_BY_ORGANIZATION = "SELECT id_encargado_proyecto, CONCAT(nombres, ' ', apellidos) AS nombre_completo " +
+                "FROM encargados_proyectos WHERE id_organizacion_vinculada = ?";
+        List<ProjectManagerDTO> projectManagersList = new ArrayList<>();
+
+        try (Connection connection = MySQLConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ORGANIZATION)) {
+            preparedStatement.setInt(1, organizationId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
+                    projectManagerDTO.setId(resultSet.getInt("id_encargado_proyecto"));
+                    projectManagerDTO.setFirstName(resultSet.getString("nombre_completo"));
+                    projectManagersList.add(projectManagerDTO);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException("FATAL: Error crítico de base de datos al filtrar encargados por organización", e);
+        }
+        return projectManagersList;
     }
 
 }

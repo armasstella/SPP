@@ -6,10 +6,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import spp.businesslogic.dao.TermDAO;
+import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.LoginResultDTO;
+import spp.businesslogic.dto.SessionDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.UserDAO;
 import spp.utils.logger.AppLogger;
+import spp.utils.term.TermCalculator;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
@@ -23,6 +27,7 @@ public class LoginController implements Initializable {
     @FXML private TextField txtPassword;
     @FXML private Label lblStatus;
     private final UserDAO userDAO = new UserDAO();
+    private final TermDAO termDAO = new TermDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -47,21 +52,21 @@ public class LoginController implements Initializable {
 
         try {
             LoginResultDTO result = userDAO.login(email, password);
-            int idUser = userDAO.obtainId(email);
 
-            if (result == null) {
-                StatusLabel.showError(lblStatus, "Usuario o contraseña incorrectos.");
+            if (!result.isSuccess()) {
+                StatusLabel.showError(lblStatus, result.getMessage());
                 return;
             }
 
+            synchronizeCurrentTerm();
+            ActiveSessionDTO.initialize(new SessionDTO(email, TermCalculator.getCurrentPeriod()));
             StatusLabel.showSuccess(lblStatus, "Bienvenido al sistema.");
             goToView(result.getUserType(), event);
 
         } catch (DAOException e) {
             AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Credenciales ingresadas incorrectas");
+            StatusLabel.showError(lblStatus, "Error técnico al conectar con el servidor.");
         }
-
     }
 
     private void goToView(String userType, ActionEvent event) {
@@ -98,6 +103,18 @@ public class LoginController implements Initializable {
 
         return emptyFields;
 
+    }
+
+    private void synchronizeCurrentTerm() throws DAOException {
+        String currentRealTerm = TermCalculator.getCurrentPeriod();
+        String activeTermRegister = termDAO.findActiveTermName();
+
+        if (activeTermRegister == null) {
+            termDAO.insertTerm(currentRealTerm);
+        } else if (!activeTermRegister.equals(currentRealTerm)) {
+            termDAO.deactivateCurrentTerm();
+            termDAO.insertTerm(currentRealTerm);
+        }
     }
 
 }

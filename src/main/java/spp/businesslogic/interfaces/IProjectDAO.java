@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IProjectDAO {
 
-    boolean registerProject(ProjectDTO projectDTO) throws DAOException;
+    int registerProject(ProjectDTO projectDTO) throws DAOException;
     boolean deleteProject(ProjectDTO projectDTO) throws DAOException;
     boolean updateProject(ProjectDTO projectDTO) throws DAOException;
     List<ProjectDTO> findProjectsDetailsForActiveTerm() throws DAOException;

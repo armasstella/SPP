@@ -18,9 +18,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import spp.businesslogic.dao.FinalReportDAO;
+import spp.businesslogic.dao.ReportDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.ActivityDTO;
-import spp.businesslogic.dto.FinalReportDTO;
+import spp.businesslogic.dto.ReportDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
@@ -68,7 +69,7 @@ public class MonthlyReportGenerationController implements Initializable {
     @FXML private TableColumn<ActivityDTO, String> colChosenActivityObservations;
     private final ActivityDAO activityDAO = new ActivityDAO();
     private final InternDAO internDAO = new InternDAO();
-    private final FinalReportDAO reportDAO = new FinalReportDAO();
+    private final ReportDAO reportDAO = new ReportDAO();
     private ObservableList<ActivityDTO> availableActivitiesObservableList;
     private ObservableList<ActivityDTO> includedActivitiesObservableList;
 
@@ -211,13 +212,13 @@ public class MonthlyReportGenerationController implements Initializable {
 
         try {
             String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
-            FinalReportDTO finalReportDTO = reportDAO.getFinalReportDetailByStudentNumber(studentNumber);
-            finalReportDTO.setCareer(CAREER);
-            finalReportDTO.setReportType(REPORT_TYPE);
-            finalReportDTO.setReportDate(LocalDate.now().format(DATE_FORMAT));
-            finalReportDTO.setTotalHours(String.valueOf(sumIncludedEffectiveTime()));
+            ReportDTO reportDTO = reportDAO.getReportDetailByStudentNumber(studentNumber);
+            reportDTO.setCareer(CAREER);
+            reportDTO.setReportType(REPORT_TYPE);
+            reportDTO.setReportDate(LocalDate.now().format(DATE_FORMAT));
+            reportDTO.setTotalHours(String.valueOf(sumIncludedEffectiveTime()));
 
-            String html = FinalReportHtmlBuilder.build(finalReportDTO,
+            String html = FinalReportHtmlBuilder.build(reportDTO,
                     new ArrayList<>(includedActivitiesObservableList));
 
             File outputFile = chooseOutputFile(event, studentNumber);

@@ -30,6 +30,20 @@ public class InstructorMenuController {
     }
 
     @FXML
+    private void goToPresentationTemplateUploadView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/instructor/PresentationTemplateUploadView.fxml",
+                "Subir plantilla presentación", event);
+
+    }
+
+    @FXML
+    private void goToPartialReportEvaluationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/instructor/PartialReportEvaluationView.fxml",
+                "Calificar reporte", event);
+
+    }
+
+    @FXML
     private void goToFinalReportEvaluationView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/instructor/FinalReportEvaluationView.fxml",
                 "Calificar reporte", event);

@@ -44,7 +44,7 @@
                             <TextField fx:id="txtCourseCode" promptText="Ej. 13213" styleClass="field-input"/>
 
                             <Label text="Período *" styleClass="field-label"/>
-                            <TextField fx:id="txtTerm" promptText="" styleClass="field-input"/>
+                            <TextField fx:id="txtTerm" promptText="" styleClass="field-input" editable="false"/>
 
                             <Label text="Bloque *" styleClass="field-label"/>
                             <ComboBox fx:id="cmbSchoolBlock" promptText="Seleccione una opción"

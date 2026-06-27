@@ -155,4 +155,29 @@ public class InstructorDAO implements IInstructorDAO {
 
     }
 
+    @Override
+    public String findActivePersonalNumberByEmail(String email) throws DAOException {
+        final String SELECT_PERSONAL_NUMBER = "SELECT num_personal FROM profesores p INNER JOIN usuarios u " +
+                "WHERE p.id_usuario = u.id_usuario AND u.estado = 'Activo' AND u.correo_electronico = ?";
+        String personalNumber = null;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PERSONAL_NUMBER)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        personalNumber = resultSet.getString(1);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(e);
+            throw new DAOException("FATAL: Error de conexión al obtener numero personal", e);
+        }
+
+        return personalNumber;
+    }
+
 }

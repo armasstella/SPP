@@ -14,5 +14,6 @@ public interface IInternDAO{
     List<InternDTO> getActiveInterns() throws DAOException;
     String findActiveStudentNumberByEmail(String email) throws DAOException;
     List<InternDTO> findUnassignedInternsIdentifiers() throws DAOException;
+    List<InternDTO> getAssignedInternsByProfessorEmail(String email) throws DAOException;
 
 }

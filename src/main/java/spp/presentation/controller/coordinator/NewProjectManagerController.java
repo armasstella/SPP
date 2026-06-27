@@ -1,11 +1,16 @@
 package spp.presentation.controller.coordinator;
 
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import spp.businesslogic.dao.LinkedOrganizationDAO;
+import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectManagerDAO;
@@ -14,6 +19,7 @@ import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -27,10 +33,12 @@ public class NewProjectManagerController implements Initializable {
     @FXML private TextField txtResponsability;
     @FXML private TextField txtRole;
     @FXML private TextField txtPhoneNumber;
+    @FXML private ComboBox<LinkedOrganizationDTO> cmbLinkedOrganizations;
     private final ProjectManagerDAO projectManagerDAO  = new ProjectManagerDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        loadLinkedOrganizationsInComboBox();
         setUpFields();
     }
 
@@ -45,6 +53,21 @@ public class NewProjectManagerController implements Initializable {
 
     }
 
+    private void loadLinkedOrganizationsInComboBox() {
+        try {
+            LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
+            List<LinkedOrganizationDTO> linkedOrganizationsList = linkedOrganizationDAO.findActiveLinkedOrganizationsIdentifiers();
+            ObservableList<LinkedOrganizationDTO> linkedOrganizationsObservableList =
+                    FXCollections.observableArrayList(linkedOrganizationsList);
+            cmbLinkedOrganizations.setItems(linkedOrganizationsObservableList);
+
+        } catch (DAOException e) {
+            AppLogger.logError(e);
+            StatusLabel.showError(lblStatus, "Error al cargar organizaciones vinculadas");
+        }
+
+    }
+
     @FXML
     private ProjectManagerDTO buildProjectManagerDTO() {
         ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
@@ -55,7 +78,6 @@ public class NewProjectManagerController implements Initializable {
         projectManagerDTO.setRole(txtRole.getText().trim());
         projectManagerDTO.setResponsibility(txtResponsability.getText().trim());
         projectManagerDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
-
         return projectManagerDTO;
 
     }
@@ -67,7 +89,8 @@ public class NewProjectManagerController implements Initializable {
         }
 
         try {
-            if (projectManagerDAO.registerProjectManager(buildProjectManagerDTO())) {
+            int linkedOrganizationId = cmbLinkedOrganizations.getValue().getId();
+            if (projectManagerDAO.registerProjectManager(buildProjectManagerDTO(),linkedOrganizationId)) {
                 StatusLabel.showSuccess(lblStatus, "Encargado de proyecto registrado correctamente.");
                 clearInputFields();
             }

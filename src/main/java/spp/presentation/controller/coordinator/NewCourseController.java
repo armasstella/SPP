@@ -12,6 +12,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dao.CourseDAO;
 import spp.businesslogic.dao.InstructorDAO;
+import spp.businesslogic.dao.TermDAO;
+import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
@@ -35,12 +37,18 @@ public class NewCourseController implements Initializable {
     @FXML TextField txtCapacity;
     @FXML TextArea taCourseDetails;
     private final CourseDAO courseDAO = new CourseDAO();
+    private final TermDAO termDAO = new TermDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadActiveInstructors();
+        loadActiveTerm();
         setUpFields();
 
+    }
+
+    private void loadActiveTerm() {
+        txtTerm.setText(ActiveSessionDTO.get().getActiveTerm());
     }
 
     private void setUpFields() {
@@ -74,17 +82,23 @@ public class NewCourseController implements Initializable {
         boolean savedWithoutInstructor = (cmbInstructor.getValue() == null);
 
         try {
-            if (courseDAO.registerCourse(buildCourseDTO())) {
-                String successMessage = savedWithoutInstructor ?
-                        "Curso registrado\nRecuerde asignar un profesor posteriormente" :
-                        "Curso registrado correctamente";
+            int activeTermId = termDAO.findActiveTermId();
+            if (activeTermId > 0) {
+                if (courseDAO.registerCourse(buildCourseDTO(), activeTermId)) {
+                    String successMessage = savedWithoutInstructor ?
+                            "Curso registrado\nRecuerde asignar un profesor posteriormente" :
+                            "Curso registrado correctamente";
 
-                StatusLabel.showSuccess(lblStatus, successMessage);
-                clearInputFields();
+                    StatusLabel.showSuccess(lblStatus, successMessage);
+                    clearInputFields();
+                }
+            } else {
+                StatusLabel.showError(lblStatus, "Error al obtener periodo. Intente más tarde.");
             }
+
         } catch (DAOException e) {
             AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, String.valueOf(e.getMessage()));
+            StatusLabel.showError(lblStatus, "Error al registrar curso");
         }
 
     }

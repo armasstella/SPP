@@ -2,7 +2,7 @@ package spp.utils.htmlbuilder;
 
 
 import spp.businesslogic.dto.ActivityDTO;
-import spp.businesslogic.dto.FinalReportDTO;
+import spp.businesslogic.dto.ReportDTO;
 import spp.utils.file.TemplateRenderer;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ public final class FinalReportHtmlBuilder {
     private FinalReportHtmlBuilder() {
     }
 
-    public static String build(FinalReportDTO report, List<ActivityDTO> activities) throws IOException {
+    public static String build(ReportDTO report, List<ActivityDTO> activities) throws IOException {
         Map<String, String> values = new HashMap<>();
         values.put("career", TemplateRenderer.escape(report.getCareer()));
         values.put("nrc", TemplateRenderer.escape(report.getNrc()));

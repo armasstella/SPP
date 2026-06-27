@@ -40,12 +40,13 @@ public class InternMenuController {
         if (searchPrioritizedProjects()) {
             AlertHelper.showMessage("Operación no permitida", "Ya has seleccionado tres proyectos");
         } else {
-            if (searchMinimumProjects()) {
+            if (existsMinimumProjects()) {
                 ViewNavigator.loadView("/spp/presentation/view/intern/AvailableProjectsView.fxml",
                         "Proyectos disponibles", event);
             } else {
                 AlertHelper.showErrorMessage("Operación no disponible",
-                        "No hay proyectos suficientes para elección del practicante");
+                        "No hay proyectos suficientes para elección del practicante\n" +
+                                "Intente en otro momento.");
             }
         }
 
@@ -71,17 +72,13 @@ public class InternMenuController {
 
     }
 
-    private boolean searchMinimumProjects() {
+    private boolean existsMinimumProjects() {
         boolean isThisOptionAllowed = false;
         try {
             ProjectDAO projectDAO = new ProjectDAO();
             if (projectDAO.hasMinimumProjectsForActiveTerm()) {
                 isThisOptionAllowed = true;
-            } else {
-                AlertHelper.showErrorMessage("Operación no disponible",
-                        "No hay proyectos suficientes para elección del practicante");
             }
-
         } catch (Exception e) {
             AppLogger.logError(e);
             AlertHelper.showErrorMessage("Error", "Error al realizar operación.\n" +
@@ -110,6 +107,18 @@ public class InternMenuController {
                     "Menú Practicante");
         }
 
+    }
+
+    @FXML
+    private void goToPartialReportView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/intern/PartialReporteView.fxml",
+                "Reporte Parcial", event);
+    }
+
+    @FXML
+    private void goToFinalReportView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/intern/FinalReporteView.fxml",
+                "Reporte Final", event);
     }
 
 }

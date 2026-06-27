@@ -14,6 +14,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import spp.businesslogic.dao.CourseDAO;
+import spp.businesslogic.dao.ProfessionalPracticeEnrollmentDAO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
@@ -49,6 +50,7 @@ public class NewInternController implements Initializable {
     @FXML private ComboBox<CourseDTO> cmbCourseCode;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final InternDAO internDAO = new InternDAO();
+    private final ProfessionalPracticeEnrollmentDAO professionalPracticeEnrollmentDAO = new ProfessionalPracticeEnrollmentDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -92,7 +94,8 @@ public class NewInternController implements Initializable {
     }
 
     @FXML
-    private void setAllIntern(InternDTO internDTO) {
+    private InternDTO setAllInternDTO() {
+        InternDTO internDTO = new InternDTO();
         internDTO.setFirstName(txtFirstName.getText().trim());
         internDTO.setSecondName(txtSecondName.getText().trim());
         internDTO.setFirstLastName(txtFirstLastName.getText().trim());
@@ -106,7 +109,7 @@ public class NewInternController implements Initializable {
         internDTO.setIndigenousLanguage(txtIndigenousLanguage.getText().trim());
         LocalDate selectedDate = dpBirthDate.getValue();
         internDTO.setBirthDate(selectedDate.atStartOfDay());
-
+        return internDTO;
     }
 
     @FXML
@@ -134,13 +137,14 @@ public class NewInternController implements Initializable {
             return;
         }
 
-        InternDTO internDTO = new InternDTO();
-        setAllIntern(internDTO);
-
         try {
-            if (internDAO.registerIntern(internDTO)) {
-                StatusLabel.showSuccess(lblStatus, "Practicante registrado correctamente.");
-                clearInputFields();
+            if (internDAO.registerIntern(setAllInternDTO())) {
+                if (professionalPracticeEnrollmentDAO.assignCourseByStudentNumber(
+                        txtStudentNumber.getText().trim(), cmbCourseCode.getValue().getIdCourse()
+                )) {
+                    StatusLabel.showSuccess(lblStatus, "Practicante registrado correctamente.");
+                    clearInputFields();
+                }
             }
         } catch (DAOException e) {
             AppLogger.logError(e);
@@ -158,7 +162,8 @@ public class NewInternController implements Initializable {
                 txtStudentNumber.getText().isBlank() ||
                 txtPassword.getText().isBlank() ||
                 cmbGender.getValue() == null ||
-                dpBirthDate.getValue() == null) {
+                dpBirthDate.getValue() == null ||
+                cmbCourseCode.getValue() == null) {
             StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             validFields = true;
         }
@@ -179,6 +184,7 @@ public class NewInternController implements Initializable {
         dpBirthDate.setValue(null);
         rbNo.setSelected(true);
         toggleIndigenousLanguageField();
+        cmbCourseCode.setValue(null);
 
     }
 

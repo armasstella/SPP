@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
@@ -37,26 +38,35 @@
                                 <padding>
                                     <Insets left="5" right="5" top="5" bottom="5"/>
                                 </padding>
-                                    <Label text="Nombre del Proyecto *" styleClass="field-label"/>
-                                    <TextField fx:id="txtName" promptText="Ej. Sistema para Prácticas Profesionales"
-                                               styleClass="field-input"/>
+                                <Label text="Nombre del Proyecto *" styleClass="field-label"/>
+                                <TextField fx:id="txtName" promptText="Ej. Sistema para Prácticas Profesionales"
+                                           styleClass="field-input"/>
 
-                                    <Label text="Descripción *" styleClass="field-label"/>
-                                    <TextField fx:id="txtDescription" promptText="Ej. Desarrollo de software para..."
-                                               styleClass="field-input"/>
+                                <Label text="Descripción *" styleClass="field-label"/>
+                                <TextArea fx:id="taDescription" promptText="Ej. Desarrollo de software para..."
+                                           styleClass="field-input" wrapText="true"/>
 
-                                    <Label text="Cupo *" styleClass="field-label"/>
-                                    <TextField fx:id="txtPlacesAvailable" promptText="Ej. 4"
-                                               styleClass="field-input"/>
+                                <Label text="Cupo *" styleClass="field-label"/>
+                                <TextField fx:id="txtPlacesAvailable" promptText="Ej. 4"
+                                           styleClass="field-input"/>
 
-                                    <Label text="Encargado del Proyecto *" styleClass="field-label"/>
-                                    <ComboBox fx:id="cmbProjectManager" promptText="Seleccione una opción"
-                                               styleClass="field-input"/>
+                                <Label text="Organización Vinculada *" styleClass="field-label"/>
+                                <ComboBox fx:id="cmbLinkedOrganization"
+                                          promptText="Seleccione una opción"
+                                          styleClass="field-input"/>
 
-                                    <Label text="Organización Responsable *" styleClass="field-label"/>
-                                    <ComboBox fx:id="cmbLinkedOrganization"
-                                               promptText="Seleccione una opción"
-                                               styleClass="field-input"/>
+                                <Label text="Encargado del Proyecto *" styleClass="field-label"/>
+                                <ComboBox fx:id="cmbProjectManager" promptText="Seleccione una opción"
+                                          styleClass="field-input"/>
+
+                                <Label text="Calendarización de Actividades (Opcional)" styleClass="field-label"/>
+                                <TextField fx:id="txtActivitiesScheduleFile" promptText="Archivo seleccionado"
+                                           styleClass="field-input" editable="false"/>
+                                <Button fx:id="btnUploadActivitiesSchedule" text="Seleccionar archivo"
+                                        styleClass="option-btn, btn-add" onAction="#chooseActivitiesScheduleFile"
+                                />
+
+
                             </VBox>
                         </content>
                     </ScrollPane>

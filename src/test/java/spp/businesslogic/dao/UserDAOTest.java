@@ -35,16 +35,18 @@ public class UserDAOTest {
     @BeforeEach
     void setUp() {
         String uniqueSuffix = String.valueOf(System.currentTimeMillis());
-        String uniqueEmail = "stella" + uniqueSuffix.substring(
-                uniqueSuffix.length() - 8) + "@uv.mx";
+        String uniqueEmail = "admin.test@uv.mx";
 
-        testUser.setFirstName("Nicole");
-        testUser.setSecondName("Stella");
-        testUser.setFirstLastName("Armas");
-        testUser.setSecondLastName("Mendoza");
+                //"stella" + uniqueSuffix.substring(
+                //uniqueSuffix.length() - 8) + "@uv.mx";
+
+        testUser.setFirstName("Juan");
+        testUser.setSecondName("Ernesto");
+        testUser.setFirstLastName("Sanchez");
+        testUser.setSecondLastName("Pérez");
         testUser.setEmail(uniqueEmail);
         testUser.setPhoneNumber("2284457188");
-        testUser.setPassword("100LQ0612b!c");
+        testUser.setPassword("AdminTest123!");
     }
 
     @Test

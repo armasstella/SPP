@@ -1,7 +1,7 @@
 package spp.businesslogic.dto;
 
 
-public class ReportDocumentDTO {
+public class ReportDocumentFileDTO {
     private int documentId;
     private String storedName;
     private String filePath;

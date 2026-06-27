@@ -7,6 +7,7 @@ import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IProjectDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.dataaccess.connection.MySQLConnectionManager;
 import spp.utils.logger.AppLogger;
 
 import java.sql.Connection;
@@ -14,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,53 +29,41 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     @Override
-    public boolean registerProject(ProjectDTO projectDTO) throws DAOException {
+    public int registerProject(ProjectDTO projectDTO) throws DAOException {
         final String INSERT_PROJECT = "INSERT INTO Proyectos " +
-                "(descripcion, " +
-                "id_organizacion_vinculada, id_encargado_proyecto, cupo, nombre) " +
+                "(descripcion, id_organizacion_vinculada, id_encargado_proyecto, cupo, nombre) " +
                 "VALUES (?, ?, ?, ?, ?)";
-        boolean isAddSuccesful = false;
+        int projectIdGenerated = -1;
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            connection.setAutoCommit(false);
 
-            try {
-                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PROJECT);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PROJECT, Statement.RETURN_GENERATED_KEYS);) {
                 preparedStatement.setString(1, projectDTO.getDescription());
                 preparedStatement.setInt(2, projectDTO.getLinkedOrganizationDTO().getId());
                 preparedStatement.setInt(3, projectDTO.getProjectManagerDTO().getId());
                 preparedStatement.setInt(4, projectDTO.getPlacesAvailable());
                 preparedStatement.setString(5, projectDTO.getName());
-
-                int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == NO_ROWS_AFFECTED) {
-                    throw new DAOException("WARN: Fallo al insertar proyecto. No se afectaron filas");
+                preparedStatement.executeUpdate();
+                try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                    if (resultSet.next()) {
+                        projectIdGenerated = resultSet.getInt(1);
+                        System.out.println(projectIdGenerated);
+                    }
                 }
-
-                connection.commit();
-                isAddSuccesful = true;
-
-            } catch (SQLIntegrityConstraintViolationException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
-
-            } catch (SQLException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("ERROR: Error general al insertar proyecto", e);
-
-            } finally {
-               connection.setAutoCommit(true);
             }
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            AppLogger.logError(e);
+            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
+
 
         } catch (SQLException e) {
             AppLogger.logError(e);
             throw new DAOException("FATAL: Error de conexión al insertar proyecto", e);
         }
 
-        return isAddSuccesful;
+        return projectIdGenerated;
 
     }
 

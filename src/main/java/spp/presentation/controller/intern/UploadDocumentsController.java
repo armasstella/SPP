@@ -40,7 +40,6 @@ public class UploadDocumentsController {
     private String currentPrefix;
     private final InitialDocumentDTO initialDocumentDTO = new InitialDocumentDTO();
     private final InitialDocumentDAO initialDocumentDAO = new InitialDocumentDAO();
-    private final FinalReportDAO finalReportDAO = new FinalReportDAO();
     private final InternDAO internDAO = new InternDAO();
 
     @FXML
@@ -59,7 +58,7 @@ public class UploadDocumentsController {
 
         if (selectFile(event, "Seleccionar horario")) {
             initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.CLASS_SCHEDULE));
-            currentFolder = "./documents/schedules/";
+            currentFolder = "./documents/intern_documents/schedules/";
             currentPrefix = "schedule";
         }
 
@@ -74,7 +73,7 @@ public class UploadDocumentsController {
 
         if (selectFile(event, "Seleccionar calendarización de actividades")) {
             initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.ACTIVITIES_SCHEDULE));
-            currentFolder = "./documents/activities/";
+            currentFolder = "./documents/intern_documents/activities/";
             currentPrefix = "activity";
         }
 
@@ -89,7 +88,7 @@ public class UploadDocumentsController {
 
         if (selectFile(event, "Seleccionar bitácora PSP")) {
             initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.PSP));
-            currentFolder = "./documents/psp/";
+            currentFolder = "./documents/intern_documents/psp/";
             currentPrefix = "psp";
         }
 
@@ -104,7 +103,7 @@ public class UploadDocumentsController {
 
         if (selectFile(event, "Seleccionar reporte parcial")) {
             initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.INDICATOR_REPORT));
-            currentFolder = "./documents/reports/partial/";
+            currentFolder = "./documents/intern_documents/reports/partial/";
             currentPrefix = "partial";
         }
 
@@ -119,7 +118,7 @@ public class UploadDocumentsController {
 
         if (selectFile(event, "Seleccionar autoevaluación")) {
             initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.SELF_EVALUATION));
-            currentFolder = "./documents/evaluations/self/";
+            currentFolder = "./documents/intern_documents/evaluations/self/";
             currentPrefix = "self_evaluation";
         }
 
@@ -134,7 +133,7 @@ public class UploadDocumentsController {
 
         if (selectFile(event, "Seleccionar evaluación de organización vinculada")) {
             initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.EVALUATION_LINKED_ORGANIZATION));
-            currentFolder = "./documents/evaluations/organization/";
+            currentFolder = "./documents/intern_documents/evaluations/organization/";
             currentPrefix = "organization_evaluation";
         }
 
@@ -149,7 +148,7 @@ public class UploadDocumentsController {
 
         if (selectFile(event, "Seleccionar reporte final")) {
             initialDocumentDTO.setDocumentType(String.valueOf(DocumentType.FINAL_REPORT));
-            currentFolder = "./documents/reports/final/";
+            currentFolder = "./documents/intern_documents/reports/final/";
             currentPrefix = "final";
         }
 
@@ -230,6 +229,7 @@ public class UploadDocumentsController {
     private boolean existsFinalReport() {
         boolean exist = false;
         try {
+            FinalReportDAO finalReportDAO = new FinalReportDAO();
             exist = finalReportDAO.hasFinalReportByInternEmail(ActiveSessionDTO.get().getEmail());
         } catch (DAOException e) {
             AppLogger.logError(e);
@@ -254,7 +254,7 @@ public class UploadDocumentsController {
 
     @FXML
     private void confirm() {
-        if (validateEmptyInputs()) {
+        if (validateFileInputs()) {
             return;
         }
 
@@ -273,28 +273,29 @@ public class UploadDocumentsController {
         currentPrefix = null;
     }
 
-    private boolean validateEmptyInputs() {
+    private boolean validateFileInputs() {
+        boolean areInputFieldsEmpty = false;
         if (selectedDocument == null) {
             StatusLabel.showError(lblStatus, "No se ha elegido un archivo.");
-            return true;
+            areInputFieldsEmpty = true;
         }
 
         String extension = FileUtils.getExtension(selectedDocument.getName());
 
         if (!FileUtils.ALLOWED_EXTENSIONS.contains(extension)) {
             StatusLabel.showError(lblStatus, "Formato invalido. Solo se acepta PDF o DOCX.");
-            return true;
+            areInputFieldsEmpty = true;
         }
         if (selectedDocument.length() == 0) {
             StatusLabel.showError(lblStatus, "El documento está vacío y no puede guardarse.");
-            return true;
+            areInputFieldsEmpty = true;
         }
         if (selectedDocument.length() > FileUtils.MAX_BYTES) {
             StatusLabel.showError(lblStatus, "El tamaño de archivo excede el permitido.");
-            return true;
+            areInputFieldsEmpty = true;
         }
 
-        return false;
+        return areInputFieldsEmpty;
     }
 
     private boolean setFileMetadata() {
