@@ -14,12 +14,14 @@ import spp.businesslogic.enums.DocumentType;
 import spp.businesslogic.enums.GenderFilter;
 import spp.businesslogic.enums.YesNoAllFilter;
 import spp.businesslogic.exceptions.DAOException;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.file.HtmlToPdfConverter;
 import spp.utils.htmlbuilder.IndicatorReportHtmlBuilder;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.FileChooserUtil;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
 
 import java.io.File;
@@ -46,8 +48,10 @@ public class IndicatorReportController implements Initializable {
     }
 
     private void setUpFields() {
-        InputFilter.applyFilter(txtFilterMinAge, InputFilter.NUMERIC_PATTERN, 2);
-        InputFilter.applyFilter(txtFilterMaxAge, InputFilter.NUMERIC_PATTERN, 2);
+        InputFilter.applyFormatFilter(txtFilterMinAge,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
+        InputFilter.applyFormatFilter(txtFilterMaxAge,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY );
     }
 
     private void initializeComboBoxes() {
@@ -71,7 +75,7 @@ public class IndicatorReportController implements Initializable {
             cmbFilterPeriod.getSelectionModel().selectFirst();
 
         } catch (DAOException e) {
-            AppLogger.logError(e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             StatusLabel.showError(lblStatus, "No se pudieron cargar los periodos.");
             cmbFilterPeriod.getItems().add("Todos");
             cmbFilterPeriod.getSelectionModel().selectFirst();
@@ -91,19 +95,17 @@ public class IndicatorReportController implements Initializable {
             String html = IndicatorReportHtmlBuilder.buildIndicatorReport(reportData);
 
             File outputFile = FileChooserUtil.chooseOutputFile(event, DocumentType.INDICATOR_REPORT);
-            if (outputFile == null) {
-                return;
+            if (outputFile != null) {
+                HtmlToPdfConverter.convertToFile(html, outputFile);
+                StatusLabel.showSuccess(lblStatus, "El reporte de indicadores ha sido generado exitosamente.");
+
             }
-
-            HtmlToPdfConverter.convertToFile(html, outputFile);
-            StatusLabel.showSuccess(lblStatus, "El reporte de indicadores ha sido generado exitosamente.");
-
         } catch (DAOException e) {
-            AppLogger.logError(e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             StatusLabel.showError(lblStatus, "No se pudo acceder a la base de datos. Intente más tarde.");
 
         } catch (IOException e) {
-            AppLogger.logError(e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             StatusLabel.showError(lblStatus, "No se pudo generar el reporte en formato PDF. Intente nuevamente.");
         }
 
