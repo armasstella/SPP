@@ -129,7 +129,7 @@ public class FinalReportEvaluationController implements Initializable {
 
     private boolean hasValidGradeRange() {
         boolean validRange = false;
-        int grade = Integer.parseInt(txtGrade.getText());
+        int grade = Integer.parseInt(txtGrade.getText().trim());
 
         if (grade >= ViewConstant.MIN_GRADE && grade <= ViewConstant.MAX_GRADE) {
             validRange = true;
@@ -159,7 +159,7 @@ public class FinalReportEvaluationController implements Initializable {
         if (isGradeInputValid()) {
             try {
                 ReportDocumentDTO selectedDocument = cmbInternDocuments.getValue();
-                int grade = Integer.parseInt(txtGrade.getText());
+                int grade = Integer.parseInt(txtGrade.getText().trim());
                 String email = ActiveSessionDTO.get().getEmail();
 
                 if (finalReportDAO.assignGrade(selectedDocument.getDocumentId(), email, grade)) {
@@ -180,7 +180,7 @@ public class FinalReportEvaluationController implements Initializable {
         if (isGradeInputValid()) {
             try {
                 ReportDocumentDTO selectedDocument = cmbInternDocuments.getValue();
-                int grade = Integer.parseInt(txtGrade.getText());
+                int grade = Integer.parseInt(txtGrade.getText().trim());
 
                 if (finalReportDAO.updateGrade(selectedDocument.getDocumentId(), grade)) {
                     selectedDocument.setGrade(grade);
