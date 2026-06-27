@@ -50,9 +50,9 @@ public class NewProjectController implements Initializable {
     }
 
     private void setAllProject(ProjectDTO projectDTO) {
-        projectDTO.setName(txtName.getText());
-        projectDTO.setDescription(txtDescription.getText());
-        projectDTO.setPlacesAvailable(Integer.parseInt(txtPlacesAvailable.getText()));
+        projectDTO.setName(txtName.getText().trim());
+        projectDTO.setDescription(txtDescription.getText().trim());
+        projectDTO.setPlacesAvailable(Integer.parseInt(txtPlacesAvailable.getText().trim()));
         projectDTO.setProjectManagerDTO(cmbProjectManager.getValue());
         projectDTO.setLinkedOrganizationDTO(cmbLinkedOrganization.getValue());
     }
