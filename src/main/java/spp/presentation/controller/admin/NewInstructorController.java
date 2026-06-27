@@ -55,15 +55,15 @@ public class NewInstructorController implements Initializable {
     }
 
     private void setAllInstructor(InstructorDTO instructorDTO) {
-        instructorDTO.setFirstName(txtFirstName.getText());
-        instructorDTO.setSecondName(txtSecondName.getText());
-        instructorDTO.setFirstLastName(txtFirstLastName.getText());
-        instructorDTO.setSecondLastName(txtSecondLastName.getText());
-        instructorDTO.setEmail(txtEmail.getText());
-        instructorDTO.setPhoneNumber(txtPhoneNumber.getText());
-        instructorDTO.setPersonalNumber(txtPersonalNumber.getText());
-        instructorDTO.setPassword(txtPassword.getText());
-        instructorDTO.setShift(cmbShift.getValue());
+        instructorDTO.setFirstName(txtFirstName.getText().trim());
+        instructorDTO.setSecondName(txtSecondName.getText().trim());
+        instructorDTO.setFirstLastName(txtFirstLastName.getText().trim());
+        instructorDTO.setSecondLastName(txtSecondLastName.getText().trim());
+        instructorDTO.setEmail(txtEmail.getText().trim());
+        instructorDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
+        instructorDTO.setPersonalNumber(txtPersonalNumber.getText().trim());
+        instructorDTO.setPassword(txtPassword.getText().trim());
+        instructorDTO.setShift(cmbShift.getValue().trim());
     }
 
     private boolean hasEmptyFields() {
