@@ -9,9 +9,11 @@ import javafx.scene.control.TextField;
 import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.CoordinatorDAO;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -36,30 +38,38 @@ public class NewCoordinatorController implements Initializable {
     }
 
     private void setUpFields() {
-        InputFilter.applyFilter(txtFirstName, InputFilter.NAME_PATTERN, 40);
-        InputFilter.applyFilter(txtSecondName, InputFilter.NAME_PATTERN, 40);
-        InputFilter.applyFilter(txtFirstLastName, InputFilter.NAME_PATTERN, 40);
-        InputFilter.applyFilter(txtSecondLastName, InputFilter.NAME_PATTERN, 40);
-        InputFilter.applyFilter(txtEmail, InputFilter.EMAIL_CHARS_PATTERN, 40);
-        InputFilter.applyFilter(txtPhoneNumber, InputFilter.NUMERIC_PATTERN, 10);
-        InputFilter.applyFilter(txtPersonalNumber, InputFilter.NUMERIC_PATTERN, 5);
-        InputFilter.applyFilter(txtPassword, InputFilter.PASSWORD_PATTERN, 15);
+        InputFilter.applyFormatFilter(txtFirstName,
+                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
+        InputFilter.applyFormatFilter(txtSecondName,
+                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
+        InputFilter.applyFormatFilter(txtFirstLastName,
+                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
+        InputFilter.applyFormatFilter(txtSecondLastName,
+                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
+        InputFilter.applyFormatFilter(txtEmail,
+                ViewConstant.PATTERN_EMAIL_CHARS, ViewConstant.MAX_LENGTH_EMAIL);
+        InputFilter.applyFormatFilter(txtPhoneNumber,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_PHONE);
+        InputFilter.applyFormatFilter(txtPersonalNumber,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_PERSONAL_NUMBER );
+        InputFilter.applyFormatFilter(txtPassword,
+                ViewConstant.PATTERN_PASSWORD_CHARS , ViewConstant.MAX_LENGTH_PASSWORD);
 
     }
 
     private void setAllCoordinator(CoordinatorDTO coordinatorDTO) {
-        coordinatorDTO.setFirstName(txtFirstName.getText().trim());
-        coordinatorDTO.setSecondName(txtSecondName.getText().trim());
-        coordinatorDTO.setFirstLastName(txtFirstLastName.getText().trim());
-        coordinatorDTO.setSecondLastName(txtSecondLastName.getText().trim());
-        coordinatorDTO.setEmail(txtEmail.getText().trim());
-        coordinatorDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
-        coordinatorDTO.setPersonalNumber(txtPersonalNumber.getText().trim());
-        coordinatorDTO.setPassword(txtPassword.getText().trim());
+        coordinatorDTO.setFirstName(txtFirstName.getText());
+        coordinatorDTO.setSecondName(txtSecondName.getText());
+        coordinatorDTO.setFirstLastName(txtFirstLastName.getText());
+        coordinatorDTO.setSecondLastName(txtSecondLastName.getText());
+        coordinatorDTO.setEmail(txtEmail.getText());
+        coordinatorDTO.setPhoneNumber(txtPhoneNumber.getText());
+        coordinatorDTO.setPersonalNumber(txtPersonalNumber.getText());
+        coordinatorDTO.setPassword(txtPassword.getText());
 
     }
 
-    private boolean validateRegistrationInputs() {
+    private boolean hasEmptyFields() {
         boolean emptyFields = false;
 
         if (txtFirstName.getText().isBlank() ||
@@ -68,7 +78,6 @@ public class NewCoordinatorController implements Initializable {
                 txtPhoneNumber.getText().isBlank() ||
                 txtPersonalNumber.getText().isBlank() ||
                 txtPassword.getText().isBlank()) {
-            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             emptyFields = true;
         }
 
@@ -76,31 +85,78 @@ public class NewCoordinatorController implements Initializable {
 
     }
 
+    private boolean hasValidMinimumLengths() {
+        boolean validLengths = false;
+
+        boolean validFirstName = InputFilter.hasMinimumLength(txtFirstName,
+                ViewConstant.MIN_LENGTH_NAME);
+
+        boolean validSecondName = true;
+        if (!txtSecondName.getText().isBlank()) {
+            validSecondName = InputFilter.hasMinimumLength(txtSecondName,
+                    ViewConstant.MIN_LENGTH_NAME);
+        }
+        boolean validFirstLastName = InputFilter.hasMinimumLength(txtFirstLastName,
+                ViewConstant.MIN_LENGTH_NAME);
+
+        boolean validPersonalNumber = InputFilter.hasMinimumLength(txtPersonalNumber,
+                ViewConstant.MIN_LENGTH_PERSONAL_NUMBER);
+
+        boolean validSecondLastName = true;
+        if (!txtSecondLastName.getText().isBlank()) {
+            validSecondLastName = InputFilter.hasMinimumLength(txtSecondLastName,
+                    ViewConstant.MIN_LENGTH_NAME);
+        }
+
+        boolean validPassword = InputFilter.hasMinimumLength(txtPassword,
+                ViewConstant.MIN_LENGTH_PASSWORD);
+
+        if (validFirstName && validSecondName && validFirstLastName && validSecondLastName && validPassword && validPersonalNumber) {
+            validLengths = true;
+        }
+
+        return validLengths;
+    }
+
+    private boolean areValidFields() {
+        boolean validFields = false;
+
+        if (hasEmptyFields()) {
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
+        } else {
+
+            if (hasValidMinimumLengths()) {
+                validFields = true;
+            } else {
+                StatusLabel.showError(lblStatus, "La longitud de los campos debe cumplir con el mínimo de caracteres.");
+            }
+        }
+        return validFields;
+    }
+
     @FXML
     private void saveCoordinator(ActionEvent event) {
-        if (validateRegistrationInputs()) {
-            return;
-        }
 
-        CoordinatorDTO coordinatorDTO = new CoordinatorDTO();
-        setAllCoordinator(coordinatorDTO);
+        if (areValidFields()) {
+            CoordinatorDTO coordinatorDTO = new CoordinatorDTO();
+            setAllCoordinator(coordinatorDTO);
 
-        if (coordinatorDTO.isValid()) {
-            CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
-            try {
-                if (coordinatorDAO.registerCoordinator(coordinatorDTO)) {
-                    StatusLabel.showSuccess(lblStatus, "Coordinador registrado correctamente.");
-                    clearInputFields();
+            if (coordinatorDTO.isValid()) {
+                CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
+                try {
+                    if (coordinatorDAO.registerCoordinator(coordinatorDTO)) {
+                        StatusLabel.showSuccess(lblStatus, "Coordinador registrado correctamente.");
+                        clearInputFields();
+                    }
+                } catch (DAOException e) {
+                    AppLogger.log(ExceptionLevel.ERROR, e);
+                    StatusLabel.showError(lblStatus, "No se pudo registrar el coordinador.");
                 }
-            } catch (DAOException e) {
-                AppLogger.logError(e);
-                StatusLabel.showError(lblStatus, e.getMessage());
+            } else {
+                String errorMessages = String.join("\n• ", coordinatorDTO.getErrors());
+                StatusLabel.showError(lblStatus, "Corrige los siguientes formatos:\n• " + errorMessages);
             }
-        } else {
-            String errorMessages = String.join(" - ", coordinatorDTO.getErrors());
-            StatusLabel.showError(lblStatus, errorMessages);
         }
-
     }
 
     @FXML
