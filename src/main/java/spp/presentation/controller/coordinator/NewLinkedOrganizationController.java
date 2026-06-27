@@ -50,13 +50,13 @@ public class NewLinkedOrganizationController implements Initializable {
     }
 
     private void setAllLinkedOrganization(LinkedOrganizationDTO linkedOrganizationDTO) {
-        linkedOrganizationDTO.setName(txtName.getText());
-        linkedOrganizationDTO.setRfc(txtRfc.getText());
-        linkedOrganizationDTO.setAddress(txtAddress.getText());
-        linkedOrganizationDTO.setFiscalAddress(txtFiscalAddress.getText());
-        linkedOrganizationDTO.setBusiness(txtBusiness.getText());
-        linkedOrganizationDTO.setPhoneNumber(txtPhoneNumber.getText());
-        linkedOrganizationDTO.setEmail(txtEmail.getText());
+        linkedOrganizationDTO.setName(txtName.getText().trim());
+        linkedOrganizationDTO.setRfc(txtRfc.getText().trim());
+        linkedOrganizationDTO.setAddress(txtAddress.getText().trim());
+        linkedOrganizationDTO.setFiscalAddress(txtFiscalAddress.getText().trim());
+        linkedOrganizationDTO.setBusiness(txtBusiness.getText().trim());
+        linkedOrganizationDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
+        linkedOrganizationDTO.setEmail(txtEmail.getText().trim());
     }
 
     private boolean hasEmptyFields() {
