@@ -48,4 +48,6 @@ public final class ViewConstant {
     public static final int MIN_LENGTH_MORAL_RFC = 12;
     public static final int MIN_LENGTH_PERSONAL_NUMBER = 5;
     public static final int MIN_GRADE = 0;
+
+    public static final int ID_ZERO_INVALID = 0;
 }

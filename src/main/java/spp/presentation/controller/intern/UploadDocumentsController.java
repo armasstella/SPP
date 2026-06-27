@@ -202,7 +202,6 @@ public class UploadDocumentsController {
         boolean exist = false;
         FinalReportDAO finalReportDAO = new FinalReportDAO();
         try {
-            FinalReportDAO finalReportDAO = new FinalReportDAO();
             exist = finalReportDAO.hasFinalReportByInternEmail(ActiveSessionDTO.get().getEmail());
         } catch (DAOException e) {
             StatusLabel.showError(lblStatus, "Error al buscar el reporte final.");

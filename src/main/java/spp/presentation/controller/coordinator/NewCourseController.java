@@ -123,8 +123,11 @@ public class NewCourseController implements Initializable {
 
             if (courseDTO.isValid()) {
                 CourseDAO courseDAO = new CourseDAO();
+                setAllCourse(courseDTO);
+                TermDAO termDAO = new TermDAO();
                 try {
-                    if (courseDAO.registerCourse(courseDTO)) {
+                    int activeTermId = termDAO.findActiveTermId();
+                    if (courseDAO.registerCourse(courseDTO, activeTermId)) {
                         boolean savedWithoutInstructor = (cmbInstructor.getValue() == null);
                         String successMessage;
 

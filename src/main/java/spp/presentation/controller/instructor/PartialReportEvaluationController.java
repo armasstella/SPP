@@ -41,13 +41,10 @@ public class PartialReportEvaluationController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadInternsForProfessor();
         resetEvaluationArea();
-        setUpFields();
-    }
-
-    private void setUpFields() {
-        InputFilter.applyFilter(txtGrade, InputFilter.NUMERIC_PATTERN, 2);
 
     }
+
+
 
     private void loadInternsForProfessor() {
         try {

@@ -16,6 +16,7 @@ import spp.utils.logger.AppLogger;
 import spp.utils.term.TermCalculator;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -36,38 +37,40 @@ public class LoginController implements Initializable {
     }
 
     private void setUpFields() {
-        InputFilter.applyFilter(txtEmail, InputFilter.EMAIL_CHARS_PATTERN, 30);
-        InputFilter.applyFilter(txtPassword, InputFilter.PASSWORD_PATTERN, 15);
+        InputFilter.applyFormatFilter(txtEmail,
+                ViewConstant.PATTERN_EMAIL_CHARS, ViewConstant.MAX_LENGTH_EMAIL);
+        InputFilter.applyFormatFilter(txtPassword,
+                ViewConstant.PATTERN_PASSWORD_CHARS, ViewConstant.MAX_LENGTH_PASSWORD);
 
     }
 
     @FXML
     private void login(ActionEvent event) {
-        if (validateEmptyDataFields()) {
-            return;
-        }
+        if (!hasEmptyDataFields()) {
 
-        String email = txtEmail.getText().trim();
-        String password = txtPassword.getText().trim();
+            String email = txtEmail.getText().trim();
+            String password = txtPassword.getText().trim();
 
-        try {
-            LoginResultDTO result = userDAO.login(email, password);
+            try {
+                LoginResultDTO result = userDAO.login(email, password);
+                userDAO.obtainId(email);
 
-            if (!result.isSuccess()) {
-                StatusLabel.showError(lblStatus, result.getMessage());
-                return;
+                if (result.isSuccess()) {
+                    synchronizeCurrentTerm();
+                    ActiveSessionDTO.initialize(new SessionDTO(email, TermCalculator.getCurrentPeriod()));
+                    StatusLabel.showSuccess(lblStatus, "Bienvenido al sistema.");
+                    goToView(result.getUserType(), event);
+                } else {
+                    StatusLabel.showError(lblStatus, result.getMessage());
+                }
+
+            } catch (DAOException e) {
+                StatusLabel.showError(lblStatus, "Credenciales ingresadas incorrectas");
             }
 
-            synchronizeCurrentTerm();
-            ActiveSessionDTO.initialize(new SessionDTO(email, TermCalculator.getCurrentPeriod()));
-            StatusLabel.showSuccess(lblStatus, "Bienvenido al sistema.");
-            goToView(result.getUserType(), event);
-
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error técnico al conectar con el servidor.");
         }
     }
+
 
     private void goToView(String userType, ActionEvent event) {
         switch (userType) {
@@ -93,7 +96,7 @@ public class LoginController implements Initializable {
 
     }
 
-    private boolean validateEmptyDataFields() {
+    private boolean hasEmptyDataFields() {
         boolean emptyFields = false;
 
         if (txtEmail.getText().isBlank() || txtPassword.getText().isBlank()) {
@@ -104,6 +107,7 @@ public class LoginController implements Initializable {
         return emptyFields;
 
     }
+
 
     private void synchronizeCurrentTerm() throws DAOException {
         String currentRealTerm = TermCalculator.getCurrentPeriod();

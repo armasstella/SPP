@@ -1,5 +1,7 @@
 package spp.presentation.controller.coordinator;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -58,7 +60,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
     private void setUpFields() {
         InputFilter.applyFormatFilter(txtName,
                 ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_TITLE);
-        InputFilter.applyFormatFilter(txtDescription,
+        InputFilter.applyFormatFilter(taDescription,
                 ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
         InputFilter.applyFormatFilter(txtPlacesAvailable,
                 ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
@@ -66,7 +68,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
 
     private void setAllProject(ProjectDTO projectDTO) {
         projectDTO.setName(txtName.getText().trim());
-        projectDTO.setDescription(txtDescription.getText().trim());
+        projectDTO.setDescription(taDescription.getText().trim());
         projectDTO.setPlacesAvailable(Integer.parseInt(txtPlacesAvailable.getText().trim()));
         projectDTO.setProjectManagerDTO(cmbProjectManager.getValue());
         projectDTO.setLinkedOrganizationDTO(cmbLinkedOrganization.getValue());
@@ -120,7 +122,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
         boolean emptyFields = false;
 
         if (txtName.getText().isBlank() ||
-                txtDescription.getText().isBlank() ||
+                taDescription.getText().isBlank() ||
                 txtPlacesAvailable.getText().isBlank() ||
                 cmbProjectManager.getValue() == null ||
                 cmbLinkedOrganization.getValue() == null) {
@@ -202,7 +204,6 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
             saveStatus = true;
 
         } catch (IOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "No se puede guardar el archivo. Intente de nuevo.");
         }
 

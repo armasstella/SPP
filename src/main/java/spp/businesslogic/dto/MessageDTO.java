@@ -1,6 +1,5 @@
 package spp.businesslogic.dto;
 
-import spp.businesslogic.enums.MessageStatus;
 import spp.utils.validation.PatternDomainValidator;
 
 
@@ -8,7 +7,6 @@ public class MessageDTO extends BaseDTO {
 
     private String subject;
     private String content;
-    private MessageStatus messageStatus;
     private int sender;
     private int receiver;
     private String emailSender;
@@ -33,14 +31,6 @@ public class MessageDTO extends BaseDTO {
 
     public String getContent() {
         return content;
-    }
-
-    public void setMessageStatus(MessageStatus messageStatus) {
-        this.messageStatus = messageStatus;
-    }
-
-    public MessageStatus getMessageStatus() {
-        return messageStatus;
     }
 
     public void setSender(int sender) {

@@ -49,7 +49,6 @@ public class NewProjectManagerController implements Initializable {
             cmbLinkedOrganizations.setItems(linkedOrganizationsObservableList);
 
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al cargar organizaciones vinculadas");
         }
 

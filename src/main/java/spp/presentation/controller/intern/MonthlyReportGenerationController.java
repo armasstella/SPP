@@ -200,20 +200,20 @@ public class MonthlyReportGenerationController implements Initializable {
             if (!AlertHelper.showConfirmation("Generar reporte",
                     "¿Seguro que desea generar el reporte con las actividades incluidas?")) {
             } else {
-                FinalReportDAO reportDAO = new FinalReportDAO();
+                ReportDAO reportDAO = new ReportDAO();
                 String career = "Licenciatura en Ingeniería de Software";
                 DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 String REPORT_TYPE = "MENSUAL";
 
                 try {
                     String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
-                    FinalReportDTO finalReportDTO = reportDAO.getFinalReportDetailByStudentNumber(studentNumber);
-                    finalReportDTO.setCareer(career);
-                    finalReportDTO.setReportType(REPORT_TYPE);
-                    finalReportDTO.setReportDate(LocalDate.now().format(DATE_FORMAT));
-                    finalReportDTO.setTotalHours(String.valueOf(sumIncludedEffectiveTime()));
+                    ReportDTO reportDTO = reportDAO.getReportDetailByStudentNumber(studentNumber);
+                    reportDTO.setCareer(career);
+                    reportDTO.setReportType(REPORT_TYPE);
+                    reportDTO.setReportDate(LocalDate.now().format(DATE_FORMAT));
+                    reportDTO.setTotalHours(String.valueOf(sumIncludedEffectiveTime()));
 
-                    String html = FinalReportHtmlBuilder.buildFinalReport(finalReportDTO,
+                    String html = FinalReportHtmlBuilder.buildFinalReport(reportDTO,
                             new ArrayList<>(includedActivitiesObservableList));
 
                     File outputFile = chooseOutputFile(event, studentNumber);

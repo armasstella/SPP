@@ -63,7 +63,7 @@ public class MessageCenterController implements Initializable {
                 ViewConstant.PATTERN_EMAIL_CHARS, ViewConstant.MAX_LENGTH_EMAIL);
         InputFilter.applyFormatFilter(txtSubject,
                 ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_TITLE);
-        InputFilter.applyFormatFilter(txtBody,
+        InputFilter.applyFormatFilter(taBody,
                 ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
 
     }
@@ -131,7 +131,7 @@ public class MessageCenterController implements Initializable {
 
         if (txtRecipient.getText().trim().isEmpty() ||
                 txtSubject.getText().trim().isEmpty() ||
-                txtBody.getText().trim().isEmpty()) {
+                taBody.getText().trim().isEmpty()) {
             emptyFields = true;
         }
 
@@ -186,7 +186,7 @@ public class MessageCenterController implements Initializable {
         newMessageDTO.setEmailSender(ActiveSessionDTO.get().getEmail());
         newMessageDTO.setEmailReceiver(txtRecipient.getText().trim());
         newMessageDTO.setSubject(txtSubject.getText().trim());
-        newMessageDTO.setContent(txtBody.getText().trim());
+        newMessageDTO.setContent(taBody.getText().trim());
 
     }
 

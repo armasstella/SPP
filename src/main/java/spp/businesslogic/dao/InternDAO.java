@@ -40,7 +40,7 @@ public class InternDAO implements IInternDAO {
             try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INTERN)) {
                 preparedStatement.setInt(1, generatedId);
                 preparedStatement.setString(2, internDTO.getStudentNumber());
-                preparedStatement.setString(3, internDTO.getGender());
+                preparedStatement.setString(3, internDTO.getSex());
                 preparedStatement.setBoolean(4, internDTO.getSpeaksIndigenousLanguage());
                 preparedStatement.setString(5, internDTO.getIndigenousLanguage());
                 preparedStatement.setTimestamp(6, Timestamp.valueOf(internDTO.getBirthDate()));

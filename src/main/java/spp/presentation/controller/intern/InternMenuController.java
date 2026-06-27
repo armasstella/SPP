@@ -35,7 +35,6 @@ public class InternMenuController {
 
     @FXML
     private void goToAvailableProjectsView(ActionEvent event) {
-
         if (!searchPrioritizedProjects()) {
             if (searchMinimumProjects()) {
                 ViewNavigator.loadView("/spp/presentation/view/intern/AvailableProjectsView.fxml",
@@ -65,7 +64,7 @@ public class InternMenuController {
 
     }
 
-    private boolean existsMinimumProjects() {
+    private boolean searchMinimumProjects() {
         boolean isThisOptionAllowed = false;
         try {
             ProjectDAO projectDAO = new ProjectDAO();
