@@ -3,6 +3,7 @@ package spp.businesslogic.dao;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ITermDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 
 import java.sql.Connection;
@@ -35,15 +36,15 @@ public class TermDAO implements ITermDAO {
                 }
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de autenticación al intentar obtener la lista de periodos.");
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar los periodos escolares.");
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de red al intentar cargar los periodos escolares.");
         }
 
@@ -65,15 +66,15 @@ public class TermDAO implements ITermDAO {
                 }
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de autenticación al verificar el periodo activo.");
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar el periodo activo.");
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al obtener el periodo escolar actual.");
         }
 
@@ -95,15 +96,15 @@ public class TermDAO implements ITermDAO {
                 }
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de autenticación al verificar el identificador del periodo.");
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar el identificador del periodo.");
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al obtener el identificador del periodo escolar.");
         }
 
@@ -123,15 +124,15 @@ public class TermDAO implements ITermDAO {
                 deactivationSuccesful = affectedRows != NO_ROWS_AFFECTED;
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de autenticación al intentar desactivar el periodo escolar.");
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al procesar la desactivación del periodo.");
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión con el servidor al desactivar el periodo escolar.");
         }
 
@@ -152,23 +153,23 @@ public class TermDAO implements ITermDAO {
                 isInsertSuccessful = affectedRows != NO_ROWS_AFFECTED;
             }
         } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
             throw new DAOException("El periodo escolar que intenta registrar ya existe en el sistema.");
 
         } catch (SQLDataException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
             throw new DAOException("El formato o la longitud del nombre del periodo no es compatible.");
 
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de autenticación al registrar un nuevo periodo escolar.");
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al intentar registrar el periodo.");
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión con el servidor al registrar el nuevo periodo escolar.");
         }
 
