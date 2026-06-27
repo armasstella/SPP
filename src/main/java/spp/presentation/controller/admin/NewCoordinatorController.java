@@ -56,14 +56,14 @@ public class NewCoordinatorController implements Initializable {
     }
 
     private void setAllCoordinator(CoordinatorDTO coordinatorDTO) {
-        coordinatorDTO.setFirstName(txtFirstName.getText());
-        coordinatorDTO.setSecondName(txtSecondName.getText());
-        coordinatorDTO.setFirstLastName(txtFirstLastName.getText());
-        coordinatorDTO.setSecondLastName(txtSecondLastName.getText());
-        coordinatorDTO.setEmail(txtEmail.getText());
-        coordinatorDTO.setPhoneNumber(txtPhoneNumber.getText());
-        coordinatorDTO.setPersonalNumber(txtPersonalNumber.getText());
-        coordinatorDTO.setPassword(txtPassword.getText());
+        coordinatorDTO.setFirstName(txtFirstName.getText().trim());
+        coordinatorDTO.setSecondName(txtSecondName.getText().trim());
+        coordinatorDTO.setFirstLastName(txtFirstLastName.getText().trim());
+        coordinatorDTO.setSecondLastName(txtSecondLastName.getText().trim());
+        coordinatorDTO.setEmail(txtEmail.getText().trim());
+        coordinatorDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
+        coordinatorDTO.setPersonalNumber(txtPersonalNumber.getText().trim());
+        coordinatorDTO.setPassword(txtPassword.getText().trim());
 
     }
 
