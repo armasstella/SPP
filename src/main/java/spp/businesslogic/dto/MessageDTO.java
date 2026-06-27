@@ -1,14 +1,14 @@
 package spp.businesslogic.dto;
 
-import spp.businesslogic.enums.MesaggeStatus;
-import spp.utils.validation.Validation;
+import spp.businesslogic.enums.MessageStatus;
+import spp.utils.validation.PatternDomainValidator;
 
 
 public class MessageDTO extends BaseDTO {
 
     private String subject;
     private String content;
-    private MesaggeStatus messageStatus;
+    private MessageStatus messageStatus;
     private int sender;
     private int receiver;
     private String emailSender;
@@ -35,11 +35,11 @@ public class MessageDTO extends BaseDTO {
         return content;
     }
 
-    public void setMessageStatus(MesaggeStatus messageStatus) {
+    public void setMessageStatus(MessageStatus messageStatus) {
         this.messageStatus = messageStatus;
     }
 
-    public MesaggeStatus getMessageStatus() {
+    public MessageStatus getMessageStatus() {
         return messageStatus;
     }
 
@@ -61,13 +61,13 @@ public class MessageDTO extends BaseDTO {
 
     public boolean setEmailSender(String emailSender) {
         boolean isValid;
-        Validation validator = new Validation();
+        PatternDomainValidator validator = new PatternDomainValidator();
 
         if (validator.validateEmail(emailSender)) {
             this.emailSender = emailSender.trim();
             isValid = true;
         } else {
-            addErrors(validator.getErrors());
+            addErrors(validator.getPatternsErrors());
             isValid = false;
         }
 
@@ -80,13 +80,13 @@ public class MessageDTO extends BaseDTO {
 
     public boolean setEmailReceiver(String emailReceiver) {
         boolean isValid;
-        Validation validator = new Validation();
+        PatternDomainValidator validator = new PatternDomainValidator();
 
         if (validator.validateEmail(emailReceiver)) {
             this.emailReceiver = emailReceiver.trim();
             isValid = true;
         } else {
-            addErrors(validator.getErrors());
+            addErrors(validator.getPatternsErrors());
             isValid = false;
         }
 
