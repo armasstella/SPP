@@ -27,7 +27,7 @@ public class MessageDAOTest {
     void setUp() {
         messageDAO = new MessageDAO();
         testMessage = new MessageDTO();
-        activeSession = new SessionDTO("zs24013315@estudiantes.uv.mx", );
+        //activeSession = new SessionDTO("zs24013315@estudiantes.uv.mx", );
     }
 
     @BeforeEach
