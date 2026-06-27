@@ -9,8 +9,6 @@ import javafx.scene.control.TextField;
 import spp.businesslogic.dao.InstructorDAO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.utils.exceptionmanager.ExceptionLevel;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewConstant;
@@ -149,7 +147,6 @@ public class NewInstructorController implements Initializable {
                         clearInputFields();
                     }
                 } catch (DAOException e) {
-                    AppLogger.log(ExceptionLevel.ERROR, e);
                     StatusLabel.showError(lblStatus, "No se pudo registrar el profesor.");
                 }
             } else {
