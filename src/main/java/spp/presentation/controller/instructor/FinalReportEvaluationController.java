@@ -35,6 +35,7 @@ public class FinalReportEvaluationController implements Initializable {
     @FXML private Button btnAssignGrade;
     @FXML private Button btnModifyGrade;
     @FXML private Label lblStatus;
+    private final ReportDAO reportDAO = new ReportDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -75,13 +76,13 @@ public class FinalReportEvaluationController implements Initializable {
 
         try {
             FinalReportDAO finalReportDAO = new FinalReportDAO();
-            List<ReportDocumentDTO> documentsList = finalReportDAO.getFinalReportsByIntern(studentNumber);
+            List<ReportDocumentFileDTO> documentsList = finalReportDAO.getFinalReportsByIntern(studentNumber);
 
             if (!documentsList.isEmpty()) {
                 cmbInternDocuments.setItems(FXCollections.observableArrayList(documentsList));
                 cmbInternDocuments.setDisable(false);
                 StatusLabel.showSuccess(lblStatus, "Reportes cargados. Seleccione uno para evaluar.");
-              
+
             } else {
                 StatusLabel.showError(lblStatus, "El estudiante seleccionado no tiene reportes finales subidos.");
             }
@@ -163,11 +164,11 @@ public class FinalReportEvaluationController implements Initializable {
     public void assignGrade(ActionEvent event) {
         if (isGradeInputValid()) {
             try {
-                ReportDocumentDTO selectedDocument = cmbInternDocuments.getValue();
+                ReportDocumentFileDTO selectedDocument = cmbInternDocuments.getValue();
                 int grade = Integer.parseInt(txtGrade.getText().trim());
                 String email = ActiveSessionDTO.get().getEmail();
 
-                if (finalReportDAO.assignGrade(selectedDocument.getDocumentId(), email, grade)) {
+                if (reportDAO.assignGrade(selectedDocument.getDocumentId(), email, grade)) {
                     selectedDocument.setGraded(true);
                     selectedDocument.setGrade(grade);
                     configureGradeButtons(selectedDocument);
@@ -184,10 +185,10 @@ public class FinalReportEvaluationController implements Initializable {
     public void modifyGrade(ActionEvent event) {
         if (isGradeInputValid()) {
             try {
-                ReportDocumentDTO selectedDocument = cmbInternDocuments.getValue();
+                ReportDocumentFileDTO selectedDocument = cmbInternDocuments.getValue();
                 int grade = Integer.parseInt(txtGrade.getText().trim());
 
-                if (finalReportDAO.updateGrade(selectedDocument.getDocumentId(), grade)) {
+                if (reportDAO.updateGrade(selectedDocument.getDocumentId(), grade)) {
                     selectedDocument.setGrade(grade);
                     StatusLabel.showSuccess(lblStatus, "Calificación actualizada correctamente.");
                 }
