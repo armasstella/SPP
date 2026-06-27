@@ -17,10 +17,10 @@ import spp.businesslogic.dto.MessageDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.MessageDAO;
 import spp.businesslogic.dao.UserDAO;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
 import java.util.List;
@@ -59,9 +59,12 @@ public class MessageCenterController implements Initializable {
     }
 
     private void setUpFields() {
-        InputFilter.applyFilter(txtRecipient, InputFilter.EMAIL_CHARS_PATTERN, 30);
-        InputFilter.applyFilter(txtSubject, InputFilter.NAME_PATTERN, 20);
-        InputFilter.applyFilter(txtBody, InputFilter.NAME_PATTERN, 250);
+        InputFilter.applyFormatFilter(txtRecipient,
+                ViewConstant.PATTERN_EMAIL_CHARS, ViewConstant.MAX_LENGTH_EMAIL);
+        InputFilter.applyFormatFilter(txtSubject,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_TITLE);
+        InputFilter.applyFormatFilter(txtBody,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
 
     }
 
@@ -123,13 +126,12 @@ public class MessageCenterController implements Initializable {
 
     }
 
-    private boolean validateRegistrationInputs() {
+    private boolean hasEmptyFields() {
         boolean emptyFields = false;
 
         if (txtRecipient.getText().trim().isEmpty() ||
                 txtSubject.getText().trim().isEmpty() ||
                 txtBody.getText().trim().isEmpty()) {
-            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
             emptyFields = true;
         }
 
@@ -139,36 +141,33 @@ public class MessageCenterController implements Initializable {
 
     @FXML
     private void sendMessage(ActionEvent event) {
-        if(validateRegistrationInputs()) {
-            return;
-        }
-
-        MessageDTO messageDTO = new MessageDTO();
-        setAllMessage(messageDTO);
-
-        if (messageDTO.isValid()) {
-            try {
-                if (userDAO.existsEmailRegister(txtRecipient.getText().trim())) {
-                    try {
-                        if (messageDAO.sendMessage(messageDTO)) {
-                            StatusLabel.showSuccess(lblStatus, "Mensaje enviado correctamente.");
-                        }
-                        clearNewMessageFields();
-                    } catch (DAOException e) {
-                        AppLogger.logError(e);
-                        StatusLabel.showError(lblStatus, "Error enviando mensaje");
-                    }
-                }
-            } catch (DAOException e) {
-                AppLogger.logError(e);
-                StatusLabel.showError(lblStatus, "El correo ingresado no está registrado en el sistema" +
-                        "\nNo es posible enviarle mensaje.");
-            }
+        if(hasEmptyFields()) {
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
         } else {
-            String errorMessages = String.join(" - ", messageDTO.getErrors());
-            StatusLabel.showError(lblStatus, errorMessages);
-        }
+            MessageDTO messageDTO = new MessageDTO();
+            setAllMessage(messageDTO);
 
+            if (messageDTO.isValid()) {
+                try {
+                    if (userDAO.existsEmailRegister(txtRecipient.getText().trim())) {
+                        try {
+                            if (messageDAO.sendMessage(messageDTO)) {
+                                StatusLabel.showSuccess(lblStatus, "Mensaje enviado correctamente.");
+                            }
+                            clearNewMessageFields();
+                        } catch (DAOException e) {
+                            StatusLabel.showError(lblStatus, "Error enviando mensaje");
+                        }
+                    }
+                } catch (DAOException e) {
+                    StatusLabel.showError(lblStatus, "El correo ingresado no está registrado en el sistema" +
+                            "\nNo es posible enviarle mensaje.");
+                }
+            } else {
+                String errorMessages = String.join(" - ", messageDTO.getErrors());
+                StatusLabel.showError(lblStatus, errorMessages);
+            }
+        }
     }
 
     private void displayMessageDetail(MessageDTO message) {
