@@ -20,10 +20,10 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.businesslogic.dao.PrioritizedProjectDAO;
 import spp.presentation.controller.coordinator.ProjectDetailController;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
 import java.io.IOException;
 import java.net.URL;
@@ -42,9 +42,7 @@ public class AvailableProjectsController implements Initializable {
     @FXML private TableView<ProjectDTO> tblProjects;
     @FXML private TableColumn<ProjectDTO, String> colName;
     @FXML private TableColumn<ProjectDTO, String> colAvailability;
-    private static final int MAX_CHOSEN_PROJECTS = 3;
-    private final ProjectDAO projectDAO = new ProjectDAO();
-    private final PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
+
     private ObservableList<ProjectDTO> availableProjectsObservableList;
     private ObservableList<ProjectDTO> chosenProjectsObservableList;
 
@@ -88,19 +86,19 @@ public class AvailableProjectsController implements Initializable {
 
     @FXML
     private void obtainProjects() {
+        ProjectDAO projectDAO = new ProjectDAO();
         try {
             List<ProjectDTO> projectList = projectDAO.findProjectsDetailsForActiveTerm();
             availableProjectsObservableList = FXCollections.observableArrayList(projectList);
             tblProjects.setItems(availableProjectsObservableList);
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al obtener proyectos");
         }
 
     }
 
     private void openProjectDetail(ProjectDTO project) {
-        boolean selectionAllowed = chosenProjectsObservableList.size() < MAX_CHOSEN_PROJECTS;
+        boolean selectionAllowed = chosenProjectsObservableList.size() < ViewConstant.MAX_CHOSEN_PROJECTS;
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/spp/presentation/view/coordinator/ProjectDetailView.fxml"));
@@ -119,7 +117,6 @@ public class AvailableProjectsController implements Initializable {
                 moveProjectToChosen(project);
             }
         } catch (IOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al abrir el detalle del proyecto");
         }
 
@@ -135,7 +132,7 @@ public class AvailableProjectsController implements Initializable {
 
     private void updateCounter() {
         lblCounter.setText(chosenProjectsObservableList.size()
-                + " de " + MAX_CHOSEN_PROJECTS + " proyectos elegidos.");
+                + " de " + ViewConstant.MAX_CHOSEN_PROJECTS + " proyectos elegidos.");
 
     }
 
@@ -143,22 +140,21 @@ public class AvailableProjectsController implements Initializable {
     private void finishSelection(ActionEvent event) {
         if (chosenProjectsObservableList.isEmpty()) {
             StatusLabel.showError(lblStatus, "Debes elegir al menos un proyecto.");
-            return;
-        }
+        } else {
+            PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
 
-        try {
-            if (prioritizedProjectDAO.savePrioritizedProjects(
-                    ActiveSessionDTO.get().getEmail(), new ArrayList<>(chosenProjectsObservableList))) {
-                AlertHelper.showMessage("Elección finalizada",
-                        "Tu elección de proyectos se guardó correctamente.");
-                ViewNavigator.loadView("/spp/presentation/view/intern/InternMenuView.fxml",
-                        "Menú Practicante", event);
+            try {
+                if (prioritizedProjectDAO.savePrioritizedProjects(
+                        ActiveSessionDTO.get().getEmail(), new ArrayList<>(chosenProjectsObservableList))) {
+                    AlertHelper.showMessage("Elección finalizada",
+                            "Tu elección de proyectos se guardó correctamente.");
+                    ViewNavigator.loadView("/spp/presentation/view/intern/InternMenuView.fxml",
+                            "Menú Practicante", event);
+                }
+            } catch (DAOException e) {
+                StatusLabel.showError(lblStatus, "Error al guardar la elección");
             }
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al guardar la elección");
         }
-
     }
 
     @FXML

@@ -16,11 +16,11 @@ import javafx.scene.layout.VBox;
 import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
 import java.util.List;
@@ -39,8 +39,6 @@ public class ProjectUpdateController implements Initializable {
     @FXML private TextField txtName;
     @FXML private TextArea txtDescription;
     @FXML private TextField txtPlacesAvailable;
-    @FXML private TextField txtLinkedOrganizationId;
-    @FXML private TextField txtProjectManagerId;
     @FXML private TableView<ProjectDTO> tblProjects;
     @FXML private TableColumn<ProjectDTO, String> colName;
     @FXML private TableColumn<ProjectDTO, String> colDescription;
@@ -60,9 +58,12 @@ public class ProjectUpdateController implements Initializable {
     }
 
     private void setUpFields() {
-        InputFilter.applyFilter(txtName, InputFilter.NAME_PATTERN, 100);
-        InputFilter.applyFilter(txtDescription, InputFilter.ALPHANUMERIC_PATTERN, 500);
-        InputFilter.applyFilter(txtPlacesAvailable, InputFilter.NUMERIC_PATTERN, 2);
+        InputFilter.applyFormatFilter(txtName,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_TITLE);
+        InputFilter.applyFormatFilter(txtDescription,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
+        InputFilter.applyFormatFilter(txtPlacesAvailable,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
 
     }
 
@@ -98,19 +99,19 @@ public class ProjectUpdateController implements Initializable {
         projectInEdition = tblProjects.getSelectionModel().getSelectedItem();
         if (projectInEdition == null) {
             StatusLabel.showError(lblStatus, "Debe seleccionar un proyecto");
-            return;
-        }
-        lblStatus.setText("");
-        lblMessageBeforeEdition.setVisible(false);
-        vbShowAllProjects.setVisible(false);
-        hbContinueButtons.setVisible(false);
-        lblMessageInEdition.setVisible(true);
-        vbEditProject.setVisible(true);
-        hbEditionButtons.setVisible(true);
-        txtName.setText(projectInEdition.getName());
-        txtDescription.setText(projectInEdition.getDescription());
-        txtPlacesAvailable.setText(String.valueOf(projectInEdition.getPlacesAvailable()));
+        } else {
+            lblStatus.setText("");
+            lblMessageBeforeEdition.setVisible(false);
+            vbShowAllProjects.setVisible(false);
+            hbContinueButtons.setVisible(false);
+            lblMessageInEdition.setVisible(true);
+            vbEditProject.setVisible(true);
+            hbEditionButtons.setVisible(true);
+            txtName.setText(projectInEdition.getName());
+            txtDescription.setText(projectInEdition.getDescription());
+            txtPlacesAvailable.setText(String.valueOf(projectInEdition.getPlacesAvailable()));
 
+        }
     }
 
     @FXML
@@ -143,45 +144,69 @@ public class ProjectUpdateController implements Initializable {
 
     }
 
-    private boolean areRequiredInputFieldsEmpty() {
-        return txtName.getText().isBlank() ||
-                txtDescription.getText().isBlank() ||
-                txtPlacesAvailable.getText().isBlank();
+    private boolean hasEmptyFields() {
+        boolean emptyFields = false;
 
+        if (txtName.getText().isBlank() ||
+                txtDescription.getText().isBlank() ||
+                txtPlacesAvailable.getText().isBlank()) {
+            emptyFields = true;
+        }
+
+        return emptyFields;
+    }
+
+    private boolean hasValidMinimumLengths() {
+        boolean validLengths = false;
+
+        boolean validName = InputFilter.hasMinimumLength(txtName, ViewConstant.MIN_LENGTH_NAME);
+
+        if (validName) {
+            validLengths = true;
+        }
+
+        return validLengths;
+    }
+    private boolean areValidFields() {
+        boolean validFields = false;
+
+        if (hasEmptyFields()) {
+            StatusLabel.showError(lblStatus, "Los campos obligatorios no deben estar vacíos.");
+        } else {
+            if (hasValidMinimumLengths()) {
+                validFields = true;
+            } else {
+                StatusLabel.showError(lblStatus, "La longitud de los campos debe cumplir con el mínimo de caracteres.");
+            }
+        }
+
+        return validFields;
     }
 
     @FXML
     private void updateProject(ActionEvent event) {
-        if (!validateUpdateInputs()) {
-            return;
-        }
+        if (areValidFields()) {
+            try {
+                String newName = txtName.getText().trim();
+                String newDescription = txtDescription.getText().trim();
+                int newPlacesAvailable = Integer.parseInt(txtPlacesAvailable.getText().trim());
 
-        try {
-            String newName = txtName.getText().trim();
-            String newDescription = txtDescription.getText().trim();
-            int newPlacesAvailable = Integer.parseInt(txtPlacesAvailable.getText().trim());
+                ProjectDTO projectDTO = new ProjectDTO();
+                projectDTO.setName(newName);
+                projectDTO.setDescription(newDescription);
+                projectDTO.setPlacesAvailable(newPlacesAvailable);
+                projectDTO.setId(projectInEdition.getId());
 
-            ProjectDTO projectDTO = new ProjectDTO();
-            projectDTO.setName(newName);
-            projectDTO.setDescription(newDescription);
-            projectDTO.setPlacesAvailable(newPlacesAvailable);
-            projectDTO.setId(projectInEdition.getId());
+                if (projectDAO.updateProject(projectDTO)) {
+                    showAllProjects();
+                    StatusLabel.showSuccess(lblStatus, "Proyecto actualizado correctamente.");
+                    clearInputFields();
+                }
 
-            if (projectDAO.updateProject(projectDTO)) {
-                showAllProjects();
-                StatusLabel.showSuccess(lblStatus, "Proyecto actualizado correctamente.");
-                clearInputFields();
+            } catch (DAOException e) {
+                StatusLabel.showError(lblStatus, "Error al actualizar el proyecto.");
             }
-
-        } catch (NumberFormatException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "El ID debe ser un número válido.");
-
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, e.getMessage());
         }
-
     }
 
     private void showAllProjects() {
@@ -199,18 +224,6 @@ public class ProjectUpdateController implements Initializable {
     @FXML
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/coordinator/CoordinatorMenuView.fxml", "Cancelar", event);
-
-    }
-
-    private boolean validateUpdateInputs() {
-        boolean areInputsValid = true;
-
-        if (areRequiredInputFieldsEmpty()) {
-            StatusLabel.showError(lblStatus, "Los campos no deben estar vacíos.");
-            areInputsValid = false;
-        }
-
-        return areInputsValid;
 
     }
 

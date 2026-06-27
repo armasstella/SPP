@@ -1,6 +1,5 @@
 package spp.businesslogic.dto;
 
-
 public class InstructorDTO extends UserDTO {
 
     private int id;
@@ -11,8 +10,16 @@ public class InstructorDTO extends UserDTO {
         super();
     }
 
+    public void setPersonalNumber(String personalNumber) {
+        this.personalNumber = personalNumber;
+    }
+
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setShift(String shift) {
+        this.shift = shift;
     }
 
     public int getId() {
@@ -23,21 +30,12 @@ public class InstructorDTO extends UserDTO {
         return personalNumber;
     }
 
-    public void setPersonalNumber(String personalNumber) {
-        this.personalNumber = personalNumber;
-    }
-
     public String getShift() {
         return shift;
-    }
-
-    public void setShift(String shift) {
-        this.shift = shift;
     }
 
     @Override
     public String toString() {
         return personalNumber + " | " + getFullName();
     }
-
 }

@@ -7,7 +7,6 @@ import spp.businesslogic.dao.PrioritizedProjectDAO;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.presentation.controller.user.MessageCenterController;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.ViewNavigator;
 
@@ -37,16 +36,10 @@ public class InternMenuController {
     @FXML
     private void goToAvailableProjectsView(ActionEvent event) {
 
-        if (searchPrioritizedProjects()) {
-            AlertHelper.showMessage("Operación no permitida", "Ya has seleccionado tres proyectos");
-        } else {
-            if (existsMinimumProjects()) {
+        if (!searchPrioritizedProjects()) {
+            if (searchMinimumProjects()) {
                 ViewNavigator.loadView("/spp/presentation/view/intern/AvailableProjectsView.fxml",
                         "Proyectos disponibles", event);
-            } else {
-                AlertHelper.showErrorMessage("Operación no disponible",
-                        "No hay proyectos suficientes para elección del practicante\n" +
-                                "Intente en otro momento.");
             }
         }
 
@@ -59,13 +52,13 @@ public class InternMenuController {
             PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
             if (prioritizedProjectDAO.findPrioritizedProjectsByInternEmail(ActiveSessionDTO.get().getEmail())) {
                 hasPrioritizedProjects = true;
+            } else {
+                AlertHelper.showErrorMessage("Operación no disponible", 
+                        "Ya has seleccionado tres proyectos");
             }
-
         } catch (Exception e) {
-            AppLogger.logError(e);
             AlertHelper.showErrorMessage("Error", "Error al realizar operación.\n" +
                     "Intente más tarde.");
-
         }
 
         return hasPrioritizedProjects;
@@ -80,7 +73,6 @@ public class InternMenuController {
                 isThisOptionAllowed = true;
             }
         } catch (Exception e) {
-            AppLogger.logError(e);
             AlertHelper.showErrorMessage("Error", "Error al realizar operación.\n" +
                     "Intente más tarde.");
         }

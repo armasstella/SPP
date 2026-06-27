@@ -1,6 +1,5 @@
 package spp.businesslogic.dto;
 
-
 public class ProfessionalPracticeEnrollmentDTO {
 
     private CourseDTO courseDTO;
@@ -8,7 +7,6 @@ public class ProfessionalPracticeEnrollmentDTO {
     private int finalGrade;
     private ProjectDTO projectDTO;
     private int coveredHours;
-
 
     public ProfessionalPracticeEnrollmentDTO() {
 

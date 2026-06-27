@@ -16,7 +16,7 @@ public final class IndicatorReportHtmlBuilder {
     private IndicatorReportHtmlBuilder() {
     }
 
-    public static String build(IndicatorReportDTO indicatorReportDTO) throws IOException {
+    public static String buildIndicatorReport(IndicatorReportDTO indicatorReportDTO) throws IOException {
         Map<String, String> values = new HashMap<>();
 
         values.put("generationDate", TemplateRenderer.escape(indicatorReportDTO.getGenerationDate()));

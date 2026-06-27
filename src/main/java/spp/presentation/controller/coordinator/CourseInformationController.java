@@ -30,7 +30,6 @@ public class CourseInformationController implements Initializable {
     @FXML private TableColumn<CourseDTO, String> colSection;
     @FXML private TableColumn<CourseDTO, String> colInstructor;
     @FXML private TableColumn<CourseDTO, String> colNumberOfInterns;
-    private final CourseDAO courseDAO = new CourseDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -57,6 +56,7 @@ public class CourseInformationController implements Initializable {
 
     @FXML
     private void obtainCourses() {
+        CourseDAO courseDAO = new CourseDAO();
         try {
             List<CourseDTO> courseDTOList = courseDAO.getActiveCoursesStatistics();
             ObservableList<CourseDTO> coursesObservableList = FXCollections.observableArrayList(courseDTOList);
@@ -72,7 +72,6 @@ public class CourseInformationController implements Initializable {
     private void goToNewCourseView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/coordinator/NewCourseView.fxml",
                 "Registrar Curso", event);
-
     }
 
     @FXML
@@ -81,15 +80,14 @@ public class CourseInformationController implements Initializable {
 
         if (courseSelected == null) {
             StatusLabel.showError(lblStatus, "Debe seleccionar un curso primero");
-            return;
-        }
+        } else {
+            GroupAssignationToInstructorController groupAssignationToInstructorController = ViewNavigator.loadView(
+                    "/spp/presentation/view/coordinator/GroupAssignationToInstructorView.fxml",
+                    "Asignar Profesor", event);
 
-        GroupAssignationToInstructorController groupAssignationToInstructorController = ViewNavigator.loadView(
-                "/spp/presentation/view/coordinator/GroupAssignationToInstructorView.fxml",
-                "Asignar Profesor", event);
-
-        if (groupAssignationToInstructorController != null) {
-            groupAssignationToInstructorController.setCourseInEdition(courseSelected);
+            if (groupAssignationToInstructorController != null) {
+                groupAssignationToInstructorController.setCourseInEdition(courseSelected);
+            }   
         }
 
     }

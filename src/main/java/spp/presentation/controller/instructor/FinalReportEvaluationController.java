@@ -1,7 +1,7 @@
 package spp.presentation.controller.instructor;
 
-
 import com.dlsc.pdfviewfx.PDFView;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,15 +16,15 @@ import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.dto.ReportDocumentFileDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
+
 import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-
 
 public class FinalReportEvaluationController implements Initializable {
 
@@ -44,20 +44,19 @@ public class FinalReportEvaluationController implements Initializable {
     }
 
     private void setUpFields() {
-        InputFilter.applyFilter(txtGrade, InputFilter.NUMERIC_PATTERN, 2);
-
+        InputFilter.applyFormatFilter(txtGrade,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY );
     }
 
     private void loadInternsForProfessor() {
         try {
             InternDAO internDAO = new InternDAO();
             List<InternDTO> interns = internDAO.getAssignedInternsByProfessorEmail(ActiveSessionDTO.get().getEmail());
-
             for (InternDTO intern : interns) {
                 cmbInterns.getItems().add(intern);
             }
+
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al cargar la lista de estudiantes.");
         }
     }
@@ -76,23 +75,20 @@ public class FinalReportEvaluationController implements Initializable {
 
         try {
             FinalReportDAO finalReportDAO = new FinalReportDAO();
-            List<ReportDocumentFileDTO> documentsList = finalReportDAO.getFinalReportsByIntern(studentNumber);
-            if (documentsList.isEmpty()) {
-                StatusLabel.showError(lblStatus, "El estudiante seleccionado no tiene reportes finales subidos.");
-                return;
-            }
+            List<ReportDocumentDTO> documentsList = finalReportDAO.getFinalReportsByIntern(studentNumber);
 
-            for (ReportDocumentFileDTO reportDocumentFileDTO : documentsList) {
-                cmbInternDocuments.getItems().add(reportDocumentFileDTO);
+            if (!documentsList.isEmpty()) {
+                cmbInternDocuments.setItems(FXCollections.observableArrayList(documentsList));
+                cmbInternDocuments.setDisable(false);
+                StatusLabel.showSuccess(lblStatus, "Reportes cargados. Seleccione uno para evaluar.");
+              
+            } else {
+                StatusLabel.showError(lblStatus, "El estudiante seleccionado no tiene reportes finales subidos.");
             }
-            cmbInternDocuments.setDisable(false);
-            StatusLabel.showSuccess(lblStatus, "Reportes cargados. Seleccione uno para evaluar.");
 
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al cargar los documentos.");
         }
-
     }
 
     @FXML
@@ -107,12 +103,10 @@ public class FinalReportEvaluationController implements Initializable {
     private void displayPdf(String relativePath) {
         File pdfFile = new File(relativePath);
         if (pdfFile.exists()) {
-            System.out.println("Ruta: " + relativePath);
             pdfView.load(pdfFile);
         } else {
             StatusLabel.showError(lblStatus, "El archivo PDF no se encontró en el servidor local.");
         }
-
     }
 
     private void configureGradeButtons(ReportDocumentFileDTO document) {
@@ -128,74 +122,78 @@ public class FinalReportEvaluationController implements Initializable {
         }
     }
 
-    @FXML
-    public void assignGrade(ActionEvent event) {
-        if (!validateGradeInput()) {
-            return;
+    private boolean hasEmptyFields() {
+        boolean emptyFields = false;
+
+        if (txtGrade.getText().isBlank()) {
+            emptyFields = true;
         }
 
-        try {
-            ReportDocumentFileDTO selectedDocument = cmbInternDocuments.getValue();
-            int grade = Integer.parseInt(txtGrade.getText());
-            String email = ActiveSessionDTO.get().getEmail();
+        return emptyFields;
+    }
 
-            ReportDAO reportDAO = new ReportDAO();
-            if (reportDAO.assignGrade(selectedDocument.getDocumentId(), email, grade)) {
-                selectedDocument.setGraded(true);
-                selectedDocument.setGrade(grade);
-                configureGradeButtons(selectedDocument);
+    private boolean hasValidGradeRange() {
+        boolean validRange = false;
+        int grade = Integer.parseInt(txtGrade.getText().trim());
 
-                StatusLabel.showSuccess(lblStatus, "Calificación asignada correctamente.");
+        if (grade >= ViewConstant.MIN_GRADE && grade <= ViewConstant.MAX_GRADE) {
+            validRange = true;
+        }
+
+        return validRange;
+    }
+
+    private boolean isGradeInputValid() {
+        boolean isValid = false;
+
+        if (hasEmptyFields()) {
+            StatusLabel.showError(lblStatus, "Ingrese una calificación válida.");
+        } else {
+            if (hasValidGradeRange()) {
+                isValid = true;
             } else {
-                StatusLabel.showError(lblStatus, "No se asignó la calificación. Intente nuevamente.");
+                StatusLabel.showError(lblStatus, "La calificación debe ser un número entre 0 y 10.");
             }
+        }
 
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al guardar la calificación.");
+        return isValid;
+    }
+
+    @FXML
+    public void assignGrade(ActionEvent event) {
+        if (isGradeInputValid()) {
+            try {
+                ReportDocumentDTO selectedDocument = cmbInternDocuments.getValue();
+                int grade = Integer.parseInt(txtGrade.getText().trim());
+                String email = ActiveSessionDTO.get().getEmail();
+
+                if (finalReportDAO.assignGrade(selectedDocument.getDocumentId(), email, grade)) {
+                    selectedDocument.setGraded(true);
+                    selectedDocument.setGrade(grade);
+                    configureGradeButtons(selectedDocument);
+
+                    StatusLabel.showSuccess(lblStatus, "Calificación asignada correctamente.");
+                }
+            } catch (DAOException e) {
+                StatusLabel.showError(lblStatus, "Error al guardar la calificación.");
+            }
         }
     }
 
     @FXML
     public void modifyGrade(ActionEvent event) {
-        if (!validateGradeInput()) {
-            return;
-        }
+        if (isGradeInputValid()) {
+            try {
+                ReportDocumentDTO selectedDocument = cmbInternDocuments.getValue();
+                int grade = Integer.parseInt(txtGrade.getText().trim());
 
-        try {
-            ReportDocumentFileDTO selectedDocument = cmbInternDocuments.getValue();
-            int grade = Integer.parseInt(txtGrade.getText());
-
-            ReportDAO reportDAO = new ReportDAO();
-            if (reportDAO.updateGrade(selectedDocument.getDocumentId(), grade)) {
-                selectedDocument.setGrade(grade);
-                StatusLabel.showSuccess(lblStatus, "Calificación actualizada correctamente.");
-            } else {
-                StatusLabel.showError(lblStatus, "No se actualizó la calificación. Intente nuevamente.");
+                if (finalReportDAO.updateGrade(selectedDocument.getDocumentId(), grade)) {
+                    selectedDocument.setGrade(grade);
+                    StatusLabel.showSuccess(lblStatus, "Calificación actualizada correctamente.");
+                }
+            } catch (DAOException e) {
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
-
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al actualizar la calificación.");
-        }
-    }
-
-    private boolean validateGradeInput() {
-        String input = txtGrade.getText();
-        if (input == null || input.trim().isEmpty()) {
-            StatusLabel.showError(lblStatus, "Ingrese una calificación válida.");
-            return false;
-        }
-        try {
-            int grade = Integer.parseInt(input);
-            if (grade < 0 || grade > 10) {
-                StatusLabel.showError(lblStatus, "La calificación debe ser entre 0 y 10.");
-                return false;
-            }
-            return true;
-        } catch (NumberFormatException e) {
-            StatusLabel.showError(lblStatus, "La calificación debe ser un número entero.");
-            return false;
         }
     }
 
@@ -205,7 +203,6 @@ public class FinalReportEvaluationController implements Initializable {
         txtGrade.setDisable(true);
         btnAssignGrade.setDisable(true);
         btnModifyGrade.setDisable(true);
-
     }
 
     @FXML

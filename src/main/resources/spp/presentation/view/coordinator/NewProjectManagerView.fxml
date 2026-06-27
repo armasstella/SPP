@@ -52,7 +52,7 @@
                                            styleClass="field-input"/>
 
                                 <Label text="Responsabilidad *" styleClass="field-label"/>
-                                <TextField fx:id="txtResponsability" promptText="Ej. Observar el ingreso de fruta"
+                                <TextField fx:id="txtResponsibility" promptText="Ej. Observar el ingreso de fruta"
                                            styleClass="field-input"/>
 
                                 <Label text="Rol *" styleClass="field-label"/>

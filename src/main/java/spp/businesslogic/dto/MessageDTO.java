@@ -1,13 +1,14 @@
 package spp.businesslogic.dto;
 
+import spp.businesslogic.enums.MessageStatus;
+import spp.utils.validation.PatternDomainValidator;
 
-import spp.businesslogic.enums.MesaggeStatus;
 
+public class MessageDTO extends BaseDTO {
 
-public class MessageDTO {
     private String subject;
     private String content;
-    private MesaggeStatus messageStatus;
+    private MessageStatus messageStatus;
     private int sender;
     private int receiver;
     private String emailSender;
@@ -18,6 +19,14 @@ public class MessageDTO {
 
     }
 
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
     public void setContent(String content) {
         this.content = content;
     }
@@ -26,11 +35,11 @@ public class MessageDTO {
         return content;
     }
 
-    public void setMessageStatus(MesaggeStatus messageStatus) {
+    public void setMessageStatus(MessageStatus messageStatus) {
         this.messageStatus = messageStatus;
     }
 
-    public MesaggeStatus getMessageStatus() {
+    public MessageStatus getMessageStatus() {
         return messageStatus;
     }
 
@@ -50,36 +59,49 @@ public class MessageDTO {
         return receiver;
     }
 
-    public String getSubject() {
-        return subject;
-    }
+    public boolean setEmailSender(String emailSender) {
+        boolean isValid;
+        PatternDomainValidator validator = new PatternDomainValidator();
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+        if (validator.validateEmail(emailSender)) {
+            this.emailSender = emailSender.trim();
+            isValid = true;
+        } else {
+            addErrors(validator.getPatternsErrors());
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     public String getEmailSender() {
         return emailSender;
     }
 
-    public void setEmailSender(String emailSender) {
-        this.emailSender = emailSender;
+    public boolean setEmailReceiver(String emailReceiver) {
+        boolean isValid;
+        PatternDomainValidator validator = new PatternDomainValidator();
+
+        if (validator.validateEmail(emailReceiver)) {
+            this.emailReceiver = emailReceiver.trim();
+            isValid = true;
+        } else {
+            addErrors(validator.getPatternsErrors());
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     public String getEmailReceiver() {
         return emailReceiver;
     }
 
-    public void setEmailReceiver(String emailReceiver) {
-        this.emailReceiver = emailReceiver;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getDate() {
         return date;
     }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
 }

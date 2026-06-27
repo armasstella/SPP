@@ -12,7 +12,6 @@ import javafx.scene.control.TableView;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.InternDAO;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
@@ -71,22 +70,19 @@ public class InternDeactivationController implements Initializable {
 
         if (internSelected == null) {
             StatusLabel.showError(lblStatus, "Seleccione el coordinador a inactivar");
-            return;
-        }
-
-        if (AlertHelper.showConfirmation("Confirmar acción",
-                "¿Seguro que desea inactivar \"" + internSelected.getStudentNumber() + "\"?")) {
-            try {
-                if (internDAO.deactivateIntern(internSelected)) {
-                    obtainInterns();
-                    StatusLabel.showSuccess(lblStatus, "Practicante inactivado exitosamente.");
+        } else {
+            if (AlertHelper.showConfirmation("Confirmar acción",
+                    "¿Seguro que desea inactivar \"" + internSelected.getStudentNumber() + "\"?")) {
+                try {
+                    if (internDAO.deactivateIntern(internSelected)) {
+                        obtainInterns();
+                        StatusLabel.showSuccess(lblStatus, "Practicante inactivado exitosamente.");
+                    }
+                } catch (DAOException e) {
+                    StatusLabel.showError(lblStatus, "Error al inactivar practicante.");
                 }
-            } catch (DAOException e) {
-                AppLogger.logError(e);
-                StatusLabel.showError(lblStatus, "Error al inactivar practicante.");
             }
         }
-
     }
 
 }

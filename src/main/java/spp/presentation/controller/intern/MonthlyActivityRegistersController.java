@@ -13,7 +13,6 @@ import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
@@ -30,8 +29,6 @@ public class MonthlyActivityRegistersController implements Initializable {
     @FXML private TableColumn<ActivityDTO, String> colDescription;
     @FXML private TableColumn<ActivityDTO, String> colStartDate;
     @FXML private TableColumn<ActivityDTO, String> colEndDate;
-    private final ActivityDAO activityDAO = new ActivityDAO();
-    private final InternDAO internDAO = new InternDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -49,12 +46,13 @@ public class MonthlyActivityRegistersController implements Initializable {
     }
 
     private void obtainActivities() {
+        ActivityDAO activityDAO = new ActivityDAO();
+        InternDAO internDAO = new InternDAO();
         try {
             String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
             List<ActivityDTO> activityList = activityDAO.findActivitiesByStudentNumber(studentNumber);
             tblActivities.setItems(FXCollections.observableArrayList(activityList));
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al obtener actividades");
         }
 

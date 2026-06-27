@@ -1,8 +1,5 @@
 package spp.presentation.controller.coordinator;
 
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,12 +21,11 @@ import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.utils.file.FileUtils;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.FileChooserUtil;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -52,14 +48,28 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
     String currentFolder;
     String currentPrefix;
 
-    private final ProjectDAO projectDAO = new ProjectDAO();
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpFields();
         loadLinkedOrganizationInComboBox();
         cmbLinkedOrganization.getSelectionModel().selectedItemProperty().addListener(this);
+    }
 
+    private void setUpFields() {
+        InputFilter.applyFormatFilter(txtName,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_TITLE);
+        InputFilter.applyFormatFilter(txtDescription,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
+        InputFilter.applyFormatFilter(txtPlacesAvailable,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
+    }
+
+    private void setAllProject(ProjectDTO projectDTO) {
+        projectDTO.setName(txtName.getText().trim());
+        projectDTO.setDescription(txtDescription.getText().trim());
+        projectDTO.setPlacesAvailable(Integer.parseInt(txtPlacesAvailable.getText().trim()));
+        projectDTO.setProjectManagerDTO(cmbProjectManager.getValue());
+        projectDTO.setLinkedOrganizationDTO(cmbLinkedOrganization.getValue());
     }
 
     @Override
@@ -102,74 +112,77 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
             cmbProjectManager.setItems(observableList);
             cmbProjectManager.setDisable(managers.isEmpty());
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al cargar encargados.");
         }
     }
 
-    private void loadLinkedOrganizationInComboBox() {
-        try {
-            LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
-            List<LinkedOrganizationDTO> linkedOrganizationList = linkedOrganizationDAO.findActiveLinkedOrganizationsIdentifiers();
-            ObservableList<LinkedOrganizationDTO> linkedOrganizationObservableList =
-                    FXCollections.observableArrayList(linkedOrganizationList);
-            cmbLinkedOrganization.setItems(linkedOrganizationObservableList);
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al cargar organizaciones vinculadas");
+    private boolean hasEmptyFields() {
+        boolean emptyFields = false;
+
+        if (txtName.getText().isBlank() ||
+                txtDescription.getText().isBlank() ||
+                txtPlacesAvailable.getText().isBlank() ||
+                cmbProjectManager.getValue() == null ||
+                cmbLinkedOrganization.getValue() == null) {
+
+            emptyFields = true;
         }
 
+        return emptyFields;
     }
 
-    private void setUpFields() {
-        final String TEXT_PATTERN = "[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ ]*";
+    private boolean hasValidMinimumLengths() {
+        boolean validLengths = false;
 
-        InputFilter.applyFilter(txtName, InputFilter.NAME_PATTERN, 40);
-        InputFilter.applyFilter(taDescription, InputFilter.ALPHANUMERIC_PATTERN, 40);
-        InputFilter.applyFilter(txtPlacesAvailable, InputFilter.NUMERIC_PATTERN, 2);
+        boolean validName = InputFilter.hasMinimumLength(txtName, ViewConstant.
+                MIN_LENGTH_NAME);
 
+        if (validName) {
+            validLengths = true;
+        }
+
+        return validLengths;
     }
 
-    private ProjectDTO buildProjectDTO() {
-        ProjectDTO projectDTO = new ProjectDTO();
-        ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
-        LinkedOrganizationDTO linkedOrganizationDTO = new LinkedOrganizationDTO();
-        projectDTO.setName(txtName.getText().trim());
-        projectDTO.setDescription(taDescription.getText().trim());
-        projectDTO.setPlacesAvailable(Integer.parseInt(txtPlacesAvailable.getText().trim()));
-        projectManagerDTO.setId(cmbProjectManager.getValue().getId());
-        projectDTO.setProjectManagerDTO(projectManagerDTO);
-        linkedOrganizationDTO.setId(cmbLinkedOrganization.getValue().getId());
-        projectDTO.setLinkedOrganizationDTO(linkedOrganizationDTO);
+    private boolean areValidFields() {
+        boolean validFields = false;
 
-        return projectDTO;
+        if (hasEmptyFields()) {
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
+        } else {
+            if (hasValidMinimumLengths()) {
+                validFields = true;
+            } else {
+                StatusLabel.showError(lblStatus, "La longitud de los campos debe cumplir con el mínimo de caracteres.");
+            }
+        }
 
+        return validFields;
     }
 
     @FXML
     private void saveProject(ActionEvent event) {
-        if (validateRegistrationInputs()) {
-            return;
-        }
+        if (areValidFields()) {
+            ProjectDTO projectDTO = new ProjectDTO();
+            setAllProject(projectDTO);
 
-        try {
-            int projectIdInserted = projectDAO.registerProject(buildProjectDTO());
-            if (projectIdInserted > 0) {
-                ActivityScheduleDAO  activityScheduleDAO = new ActivityScheduleDAO();
-                ActivityScheduleDTO activityScheduleDTO = new ActivityScheduleDTO();
-                if (setMetaDataFile(activityScheduleDTO, projectIdInserted)) {
-                    if (activityScheduleDAO.saveActivitySchedule(activityScheduleDTO, projectIdInserted)) {
-                        StatusLabel.showSuccess(lblStatus, "Proyecto registrado correctamente.");
-                        clearInputFields();
+            ProjectDAO projectDAO = new ProjectDAO();
+            try {
+                int projectIdInserted = projectDAO.registerProject(projectDTO);
+                if (projectIdInserted > ViewConstant.ID_ZERO_INVALID) {
+                    ActivityScheduleDAO activityScheduleDAO = new ActivityScheduleDAO();
+                    ActivityScheduleDTO activityScheduleDTO = new ActivityScheduleDTO();
+                    if (setMetaDataFile(activityScheduleDTO, projectIdInserted)) {
+                        if (activityScheduleDAO.saveActivitySchedule(activityScheduleDTO, projectIdInserted)) {
+                            StatusLabel.showSuccess(lblStatus, "Proyecto registrado correctamente.");
+                            clearInputFields();
+                        }
                     }
                 }
+            } catch (DAOException e) {
+                StatusLabel.showError(lblStatus, "No se pudo registrar el proyecto");
             }
-
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, e.getMessage());
         }
-
     }
 
     private boolean setMetaDataFile(ActivityScheduleDTO activityScheduleDTO, int projectIdInserted) {
@@ -198,23 +211,34 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
 
     @FXML
     private void cancel(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/coordinator/CoordinatorMenuView.fxml", "Cancelar", event);
-
+        ViewNavigator.loadView("/spp/presentation/view/coordinator/CoordinatorMenuView.fxml",
+                "Menú Coordinador", event);
     }
 
-    private boolean validateRegistrationInputs() {
-        boolean emptyFields = false;
-        if (txtName.getText().isBlank() ||
-                taDescription.getText().isBlank() ||
-                txtPlacesAvailable.getText().isBlank() ||
-                cmbProjectManager.getValue() == null ||
-                cmbLinkedOrganization.getValue() == null) {
-            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
-            emptyFields = true;
+    private void loadProjectManagersInComboBox() {
+        try {
+            ProjectManagerDAO projectManagerDAO = new ProjectManagerDAO();
+            List<ProjectManagerDTO> projectManagerList = projectManagerDAO.getActiveProjectManagers();
+            ObservableList<ProjectManagerDTO> projectManagerObservableList = FXCollections.observableArrayList(projectManagerList);
+
+            cmbProjectManager.setItems(projectManagerObservableList);
+
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, "Error al cargar la lista de encargados de proyecto.");
         }
+    }
 
-        return emptyFields;
+    private void loadLinkedOrganizationInComboBox() {
+        try {
+            LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
+            List<LinkedOrganizationDTO> linkedOrganizationList = linkedOrganizationDAO.findActiveLinkedOrganizationsIdentifiers();
+            ObservableList<LinkedOrganizationDTO> linkedOrganizationObservableList = FXCollections.observableArrayList(linkedOrganizationList);
 
+            cmbLinkedOrganization.setItems(linkedOrganizationObservableList);
+
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, "Error al cargar la lista de organizaciones vinculadas.");
+        }
     }
 
     private void clearInputFields() {
@@ -227,5 +251,4 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
         selectedDocument = null;
 
     }
-
 }

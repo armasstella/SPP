@@ -1,6 +1,5 @@
 package spp.presentation.controller.coordinator;
 
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,34 +16,31 @@ import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
+
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
 public class NewCourseController implements Initializable {
 
-    @FXML Label lblStatus;
-    @FXML TextField txtCourseCode;
-    @FXML TextField txtTerm;
-    @FXML ComboBox<String> cmbSchoolBlock;
-    @FXML ComboBox<String> cmbSection;
-    @FXML ComboBox<InstructorDTO> cmbInstructor;
-    @FXML TextField txtCapacity;
-    @FXML TextArea taCourseDetails;
-    private final CourseDAO courseDAO = new CourseDAO();
-    private final TermDAO termDAO = new TermDAO();
+    @FXML private Label lblStatus;
+    @FXML private TextField txtCourseCode;
+    @FXML private TextField txtTerm;
+    @FXML private ComboBox<String> cmbSchoolBlock;
+    @FXML private ComboBox<String> cmbSection;
+    @FXML private ComboBox<InstructorDTO> cmbInstructor;
+    @FXML private TextField txtCapacity;
+    @FXML private TextArea taCourseDetails;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadActiveInstructors();
         loadActiveTerm();
         setUpFields();
-
     }
 
     private void loadActiveTerm() {
@@ -52,55 +48,122 @@ public class NewCourseController implements Initializable {
     }
 
     private void setUpFields() {
-        InputFilter.applyFilter(txtCourseCode, InputFilter.NUMERIC_PATTERN, 6);
-        InputFilter.applyFilter(txtTerm, InputFilter.ALPHANUMERIC_PATTERN, 10);
-        InputFilter.applyFilter(txtCapacity, InputFilter.NUMERIC_PATTERN, 2);
-        InputFilter.applyFilter(taCourseDetails, InputFilter.ALPHANUMERIC_PATTERN, 40);
-
+        InputFilter.applyFormatFilter(txtCourseCode,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_NRC);
+        InputFilter.applyFormatFilter(txtTerm,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_TERM);
+        InputFilter.applyFormatFilter(txtCapacity,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
+        InputFilter.applyFormatFilter(taCourseDetails,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
     }
 
-    private CourseDTO buildCourseDTO() {
-        CourseDTO courseDTO = new CourseDTO();
+    private void setAllCourse(CourseDTO courseDTO) {
         courseDTO.setCourseCode(Integer.parseInt(txtCourseCode.getText().trim()));
         courseDTO.setTerm(txtTerm.getText().trim());
-        courseDTO.setSchoolBlock(Integer.parseInt(cmbSchoolBlock.getSelectionModel().getSelectedItem()));
-        courseDTO.setSection(Integer.parseInt(cmbSection.getSelectionModel().getSelectedItem()));
+        courseDTO.setSchoolBlock(Integer.parseInt(cmbSchoolBlock.getValue()));
+        courseDTO.setSection(Integer.parseInt(cmbSection.getValue()));
         courseDTO.setCapacity(Integer.parseInt(txtCapacity.getText().trim()));
         courseDTO.setCourseDetails(taCourseDetails.getText().trim());
-        courseDTO.setInstructorDTO(cmbInstructor.getSelectionModel().getSelectedItem());
+        courseDTO.setInstructorDTO(cmbInstructor.getValue());
+    }
 
-        return courseDTO;
+    private boolean hasEmptyFields() {
+        boolean emptyFields = false;
 
+        if (txtCourseCode.getText().isBlank() ||
+                txtTerm.getText().isBlank() ||
+                cmbSchoolBlock.getValue() == null ||
+                cmbSection.getValue() == null ||
+                txtCapacity.getText().isBlank()) {
+
+            emptyFields = true;
+        }
+
+        return emptyFields;
+    }
+
+    private boolean hasValidMinimumLengths() {
+        boolean validLengths = false;
+
+        boolean validCourseCode = InputFilter.hasMinimumLength(txtCourseCode,
+                ViewConstant.MIN_LENGTH_NRC);
+
+        boolean validTerm = InputFilter.hasMinimumLength(txtTerm,
+                ViewConstant.MIN_LENGTH_TERM);
+
+        if (validCourseCode && validTerm) {
+            validLengths = true;
+        }
+
+        return validLengths;
+    }
+
+    private boolean areValidFields() {
+        boolean validFields = false;
+
+        if (hasEmptyFields()) {
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
+        } else {
+            if (hasValidMinimumLengths()) {
+                validFields = true;
+            } else {
+                StatusLabel.showError(lblStatus, "La longitud de los campos debe cumplir con el mínimo de caracteres.");
+            }
+        }
+
+        return validFields;
     }
 
     @FXML
     private void saveCourse(ActionEvent event) {
-        if (validateEmptyFields()) {
-            return;
-        }
+        if (areValidFields()) {
+            CourseDTO courseDTO = new CourseDTO();
+            setAllCourse(courseDTO);
 
-        boolean savedWithoutInstructor = (cmbInstructor.getValue() == null);
+            if (courseDTO.isValid()) {
+                CourseDAO courseDAO = new CourseDAO();
+                try {
+                    if (courseDAO.registerCourse(courseDTO)) {
+                        boolean savedWithoutInstructor = (cmbInstructor.getValue() == null);
+                        String successMessage;
 
-        try {
-            int activeTermId = termDAO.findActiveTermId();
-            if (activeTermId > 0) {
-                if (courseDAO.registerCourse(buildCourseDTO(), activeTermId)) {
-                    String successMessage = savedWithoutInstructor ?
-                            "Curso registrado\nRecuerde asignar un profesor posteriormente" :
-                            "Curso registrado correctamente";
+                        if (savedWithoutInstructor) {
+                            successMessage = "Curso registrado.\nRecuerde asignar un profesor posteriormente.";
+                        } else {
+                            successMessage = "Curso registrado correctamente.";
+                        }
 
-                    StatusLabel.showSuccess(lblStatus, successMessage);
-                    clearInputFields();
+                        StatusLabel.showSuccess(lblStatus, successMessage);
+                        clearInputFields();
+                    }
+                } catch (DAOException e) {
+                    StatusLabel.showError(lblStatus, "No se pudo registrar el curso.");
                 }
             } else {
-                StatusLabel.showError(lblStatus, "Error al obtener periodo. Intente más tarde.");
+                String errorMessages = String.join("\n• ", courseDTO.getErrors());
+                StatusLabel.showError(lblStatus, "Corrige los siguientes formatos:\n• " + errorMessages);
             }
+        }
+    }
+
+    private void loadActiveInstructors() {
+        try {
+            InstructorDAO instructorDAO = new InstructorDAO();
+            List<InstructorDTO> activeInstructors = instructorDAO.getActiveInstructorsIdentifiers();
+            ObservableList<InstructorDTO> instructorObservableList = FXCollections.observableArrayList(activeInstructors);
+
+            cmbInstructor.setItems(instructorObservableList);
 
         } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al registrar curso");
+            StatusLabel.showError(lblStatus, "Error al cargar la lista de profesores.");
         }
+    }
 
+    @FXML
+    private void goBackToCourseInformationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/coordinator/CourseInformationView.fxml",
+                "Cursos", event);
     }
 
     private void clearInputFields() {
@@ -111,46 +174,5 @@ public class NewCourseController implements Initializable {
         txtCapacity.clear();
         taCourseDetails.clear();
         cmbInstructor.setValue(null);
-
     }
-
-    private boolean validateEmptyFields() {
-        boolean thereAreEmptyFields = false;
-
-        if (txtCourseCode.getText().isBlank() ||
-                txtTerm.getText().isBlank() ||
-                cmbSchoolBlock.getValue() == null ||
-                cmbSection.getValue() == null ||
-                txtCapacity.getText().isBlank() ||
-                txtCourseCode.getText().isBlank()) {
-            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
-            thereAreEmptyFields = true;
-        }
-
-        return thereAreEmptyFields;
-
-    }
-
-    @FXML
-    private void goBackToCourseInformationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/coordinator/CourseInformationView.fxml",
-                "Cursos", event);
-
-    }
-
-    private void loadActiveInstructors() {
-        try {
-            InstructorDAO instructorDAO = new InstructorDAO();
-            List<InstructorDTO> activeInstructors = instructorDAO.getActiveInstructorsIdentifiers();
-            ObservableList<InstructorDTO> instructorObservableList =
-                    FXCollections.observableArrayList(activeInstructors);
-            cmbInstructor.setItems(instructorObservableList);
-
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al cargar lista de profesores");
-        }
-
-    }
-
 }

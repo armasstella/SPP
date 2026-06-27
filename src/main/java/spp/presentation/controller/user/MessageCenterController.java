@@ -17,10 +17,10 @@ import spp.businesslogic.dto.MessageDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.MessageDAO;
 import spp.businesslogic.dao.UserDAO;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
 import java.net.URL;
 import java.util.List;
@@ -46,9 +46,8 @@ public class MessageCenterController implements Initializable {
     @FXML private TextArea taDetailContent;
     private final MessageDAO messageDAO = new MessageDAO();
     private final UserDAO userDAO = new UserDAO();
-    private ObservableList<MessageDTO> messagesObservableList;
     private String previousViewPath;
-    private String previosViewTitle;
+    private String previousViewTitle;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -60,9 +59,12 @@ public class MessageCenterController implements Initializable {
     }
 
     private void setUpFields() {
-        InputFilter.applyFilter(txtRecipient, InputFilter.EMAIL_CHARS_PATTERN, 30);
-        InputFilter.applyFilter(txtSubject, InputFilter.NAME_PATTERN, 20);
-        InputFilter.applyFilter(taBody, InputFilter.NAME_PATTERN, 250);
+        InputFilter.applyFormatFilter(txtRecipient,
+                ViewConstant.PATTERN_EMAIL_CHARS, ViewConstant.MAX_LENGTH_EMAIL);
+        InputFilter.applyFormatFilter(txtSubject,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_TITLE);
+        InputFilter.applyFormatFilter(txtBody,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
 
     }
 
@@ -78,7 +80,7 @@ public class MessageCenterController implements Initializable {
 
     public void setPreviousView(String path, String title) {
         this.previousViewPath = path;
-        this.previosViewTitle = title;
+        this.previousViewTitle = title;
 
     }
 
@@ -96,7 +98,7 @@ public class MessageCenterController implements Initializable {
     private void obtainMessages() {
         try {
             List<MessageDTO> messagesList = messageDAO.findMessagesByReceiverEmail(ActiveSessionDTO.get().getEmail());
-            messagesObservableList = FXCollections.observableArrayList(messagesList);
+            ObservableList<MessageDTO> messagesObservableList = FXCollections.observableArrayList(messagesList);
             tblMessages.setItems(messagesObservableList);
         } catch (DAOException e) {
             StatusLabel.showError(lblStatus, "Error al obtener mensajes");
@@ -124,34 +126,48 @@ public class MessageCenterController implements Initializable {
 
     }
 
+    private boolean hasEmptyFields() {
+        boolean emptyFields = false;
+
+        if (txtRecipient.getText().trim().isEmpty() ||
+                txtSubject.getText().trim().isEmpty() ||
+                txtBody.getText().trim().isEmpty()) {
+            emptyFields = true;
+        }
+
+        return emptyFields;
+
+    }
+
     @FXML
     private void sendMessage(ActionEvent event) {
-        if(txtRecipient.getText().trim().isEmpty() ||
-            txtSubject.getText().trim().isEmpty() ||
-            taBody.getText().trim().isEmpty()) {
-            StatusLabel.showError(lblStatus, "Llene todo los campos.");
-            return;
-        }
+        if(hasEmptyFields()) {
+            StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
+        } else {
+            MessageDTO messageDTO = new MessageDTO();
+            setAllMessage(messageDTO);
 
-        try {
-            if (userDAO.existsEmailRegister(txtRecipient.getText().trim())) {
+            if (messageDTO.isValid()) {
                 try {
-                    if (messageDAO.sendMessage(buildMessageDTO())) {
-                        StatusLabel.showSuccess(lblStatus, "Mensaje enviado correctamente.");
+                    if (userDAO.existsEmailRegister(txtRecipient.getText().trim())) {
+                        try {
+                            if (messageDAO.sendMessage(messageDTO)) {
+                                StatusLabel.showSuccess(lblStatus, "Mensaje enviado correctamente.");
+                            }
+                            clearNewMessageFields();
+                        } catch (DAOException e) {
+                            StatusLabel.showError(lblStatus, "Error enviando mensaje");
+                        }
                     }
-                    clearNewMessageFields();
                 } catch (DAOException e) {
-                    AppLogger.logError(e);
-                    StatusLabel.showError(lblStatus, "Error enviando mensaje");
+                    StatusLabel.showError(lblStatus, "El correo ingresado no está registrado en el sistema" +
+                            "\nNo es posible enviarle mensaje.");
                 }
             } else {
-                StatusLabel.showError(lblStatus, "El email ingresado no está registrado en el sistema.");
+                String errorMessages = String.join(" - ", messageDTO.getErrors());
+                StatusLabel.showError(lblStatus, errorMessages);
             }
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error enviando mensaje");
         }
-
     }
 
     private void displayMessageDetail(MessageDTO message) {
@@ -166,13 +182,11 @@ public class MessageCenterController implements Initializable {
 
     }
 
-    public MessageDTO buildMessageDTO() {
-        MessageDTO newMessageDTO = new MessageDTO();
+    public void setAllMessage(MessageDTO newMessageDTO) {
         newMessageDTO.setEmailSender(ActiveSessionDTO.get().getEmail());
         newMessageDTO.setEmailReceiver(txtRecipient.getText().trim());
         newMessageDTO.setSubject(txtSubject.getText().trim());
-        newMessageDTO.setContent(taBody.getText().trim());
-        return newMessageDTO;
+        newMessageDTO.setContent(txtBody.getText().trim());
 
     }
 
@@ -186,8 +200,8 @@ public class MessageCenterController implements Initializable {
     @FXML
     public void goToMenuView(ActionEvent event) {
         if (previousViewPath != null &&
-            previosViewTitle != null) {
-            ViewNavigator.loadView(previousViewPath, previosViewTitle, event);
+            previousViewTitle != null) {
+            ViewNavigator.loadView(previousViewPath, previousViewTitle, event);
         } else {
             StatusLabel.showError(lblStatus, "Error al regresar. Reinicie el programa");
         }

@@ -12,8 +12,8 @@ import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
 
 
@@ -28,27 +28,23 @@ public class ActivityRegistrationController {
     @FXML private TextField txtEffectiveTime;
     @FXML private TextField txtProgress;
     @FXML private TextArea taObservations;
-    private final ActivityDAO activityDAO = new ActivityDAO();
-    private final InternDAO internDAO = new InternDAO();
-    private static final int MAX_PROGRESS = 100;
 
     @FXML
     private void saveActivity(ActionEvent event) {
-        if (validateInputs()) {
-            return;
-        }
+        if (!validateInputs()) {
+            ActivityDAO activityDAO = new ActivityDAO();
+            InternDAO internDAO = new InternDAO();
 
-        try {
-            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
-            if (activityDAO.saveActivityForIntern(studentNumber, buildActivityDTO())) {
-                StatusLabel.showSuccess(lblStatus, "Actividad registrada correctamente.");
-                clearFields();
+            try {
+                String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
+                if (activityDAO.saveActivityForIntern(studentNumber, buildActivityDTO())) {
+                    StatusLabel.showSuccess(lblStatus, "Actividad registrada correctamente.");
+                    clearFields();
+                }
+            } catch (DAOException e) {
+                StatusLabel.showError(lblStatus, "Error al registrar la actividad");
             }
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al registrar la actividad");
         }
-
     }
 
     private boolean validateInputs() {
@@ -60,7 +56,6 @@ public class ActivityRegistrationController {
                 || txtEstimatedTime.getText().trim().isEmpty()
                 || txtEffectiveTime.getText().trim().isEmpty()
                 || txtProgress.getText().trim().isEmpty()) {
-            StatusLabel.showError(lblStatus, "Llene todos los campos.");
             return true;
         }
 
@@ -77,7 +72,7 @@ public class ActivityRegistrationController {
             return true;
         }
 
-        if (progress > MAX_PROGRESS) {
+        if (progress > ViewConstant.MAX_PROGRESS) {
             StatusLabel.showError(lblStatus, "El avance debe estar entre 0 y 100.");
             return true;
         }

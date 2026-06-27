@@ -12,7 +12,6 @@ import javafx.scene.control.TableView;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.InstructorDAO;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
@@ -45,19 +44,17 @@ public class InstructorDeactivationController implements Initializable {
         InstructorDTO instructorSelected = tblInstructors.getSelectionModel().getSelectedItem();
         if(instructorSelected == null) {
             StatusLabel.showError(lblStatus, "Seleccione el profesor a inactivar");
-            return;
-        }
-
-        if (AlertHelper.showConfirmation("Confirmar acción",
-                "¿Seguro que desea inactivar \"" + instructorSelected.getPersonalNumber() + "\"?")) {
-            try {
-                if (instructorDAO.deactivateInstructor(instructorSelected)) {
-                    obtainInstructors();
-                    StatusLabel.showSuccess(lblStatus, "Profesor inactivado exitosamente.");
+        } else {
+            if (AlertHelper.showConfirmation("Confirmar acción",
+                    "¿Seguro que desea inactivar \"" + instructorSelected.getPersonalNumber() + "\"?")) {
+                try {
+                    if (instructorDAO.deactivateInstructor(instructorSelected)) {
+                        obtainInstructors();
+                        StatusLabel.showSuccess(lblStatus, "Profesor inactivado exitosamente.");
+                    }
+                } catch (DAOException e) {
+                    StatusLabel.showError(lblStatus, "Error al inactivar profesor.");
                 }
-            } catch (DAOException e) {
-                AppLogger.logError(e);
-                StatusLabel.showError(lblStatus, "Error al inactivar profesor.");
             }
         }
 

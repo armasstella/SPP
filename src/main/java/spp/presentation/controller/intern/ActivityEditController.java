@@ -11,8 +11,8 @@ import javafx.stage.Stage;
 import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 
 
 public class ActivityEditController {
@@ -26,10 +26,8 @@ public class ActivityEditController {
     @FXML private TextField txtProgress;
     @FXML private TextArea taObservations;
     @FXML private Label lblStatus;
-    private final ActivityDAO activityDAO = new ActivityDAO();
     private ActivityDTO activity;
     private boolean updated = false;
-    private static final int MAX_PROGRESS = 100;
 
     public void setActivity(ActivityDTO activity) {
         this.activity = activity;
@@ -51,22 +49,19 @@ public class ActivityEditController {
 
     @FXML
     private void saveChanges(ActionEvent event) {
-        if (validateInputs()) {
-            return;
-        }
-
-        ActivityDTO editedActivity = readForm();
-        try {
-            if (activityDAO.updateActivity(editedActivity)) {
-                copyInto(activity, editedActivity);
-                updated = true;
-                closeWindow(event);
+        if (!validateInputs()) {
+            ActivityDTO editedActivity = readForm();
+            ActivityDAO activityDAO = new ActivityDAO();
+            try {
+                if (activityDAO.updateActivity(editedActivity)) {
+                    copyInto(activity, editedActivity);
+                    updated = true;
+                    closeWindow(event);
+                }
+            } catch (DAOException e) {
+                StatusLabel.showError(lblStatus, "Error al actualizar la actividad");
             }
-        } catch (DAOException e) {
-            AppLogger.logError(e);
-            StatusLabel.showError(lblStatus, "Error al actualizar la actividad");
         }
-
     }
 
     private boolean validateInputs() {
@@ -78,7 +73,7 @@ public class ActivityEditController {
                 || txtEstimatedTime.getText().trim().isEmpty()
                 || txtEffectiveTime.getText().trim().isEmpty()
                 || txtProgress.getText().trim().isEmpty()) {
-            StatusLabel.showError(lblStatus, "Llene todos los campos.");
+            StatusLabel.showError(lblStatus, "Complete todos los campos.");
             return true;
         }
 
@@ -95,7 +90,7 @@ public class ActivityEditController {
             return true;
         }
 
-        if (progress > MAX_PROGRESS) {
+        if (progress > ViewConstant.MAX_PROGRESS) {
             StatusLabel.showError(lblStatus, "El avance debe estar entre 0 y 100.");
             return true;
         }

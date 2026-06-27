@@ -17,7 +17,7 @@ public final class FinalReportHtmlBuilder {
     private FinalReportHtmlBuilder() {
     }
 
-    public static String build(ReportDTO report, List<ActivityDTO> activities) throws IOException {
+    public static String buildFinalReport(ReportDTO report, List<ActivityDTO> activities) throws IOException {
         Map<String, String> values = new HashMap<>();
         values.put("career", TemplateRenderer.escape(report.getCareer()));
         values.put("nrc", TemplateRenderer.escape(report.getNrc()));

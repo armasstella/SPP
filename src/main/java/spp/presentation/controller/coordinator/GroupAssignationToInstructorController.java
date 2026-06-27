@@ -14,7 +14,6 @@ import spp.businesslogic.dao.InstructorDAO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
@@ -59,24 +58,24 @@ public class GroupAssignationToInstructorController implements Initializable {
 
         if (selectedInstructor == null) {
             StatusLabel.showError(lblStatus, "Debe seleccionar un profesor");
-            return;
-        }
-        this.courseInEdition.setInstructorDTO(selectedInstructor);
+        } else {
+            this.courseInEdition.setInstructorDTO(selectedInstructor);
 
-        try {
-            CourseDAO courseDAO = new CourseDAO();
+            try {
+                CourseDAO courseDAO = new CourseDAO();
 
-            if (AlertHelper.showConfirmation("Confirmar operación",
-                    "¿Seguro que desea asignar el profesor?")) {
-                if (courseDAO.assignInstructorToCourse(this.courseInEdition)) {
-                    ViewNavigator.loadView(
-                            "/spp/presentation/view/coordinator/CourseInformationView.fxml",
-                            "Información de Cursos", event);
+                if (AlertHelper.showConfirmation("Confirmar operación",
+                        "¿Seguro que desea asignar el profesor?")) {
+                    if (courseDAO.assignInstructorToCourse(this.courseInEdition)) {
+                        ViewNavigator.loadView(
+                                "/spp/presentation/view/coordinator/CourseInformationView.fxml",
+                                "Información de Cursos", event);
+                    }
                 }
-            }
 
-        } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al asignar profesor a curso");
+            } catch (DAOException e) {
+                StatusLabel.showError(lblStatus, "Error al asignar profesor a curso");
+            }
         }
     }
 
@@ -96,7 +95,6 @@ public class GroupAssignationToInstructorController implements Initializable {
             cmbInstructor.setItems(instructorObservableList);
 
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al cargar lista de profesores");
         }
 

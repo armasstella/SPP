@@ -1,7 +1,8 @@
 package spp.businesslogic.dto;
 
+import spp.utils.validation.PatternDomainValidator;
 
-public class CourseDTO {
+public class CourseDTO extends BaseDTO{
 
     private int idCourse;
     private int courseCode;
@@ -28,6 +29,7 @@ public class CourseDTO {
     public int getCourseCode() {
         return courseCode;
     }
+
     public void setCourseCode(int courseCode) {
         this.courseCode = courseCode;
     }
@@ -37,7 +39,13 @@ public class CourseDTO {
     }
 
     public void setTerm(String term) {
-        this.term = term;
+        PatternDomainValidator validator = new PatternDomainValidator();
+
+        if (validator.validateTerm(term)) {
+            this.term = term.trim();
+        } else {
+            addErrors(validator.getPatternsErrors());
+        }
     }
 
     public int getSchoolBlock() {
@@ -56,14 +64,6 @@ public class CourseDTO {
         this.section = section;
     }
 
-    public InstructorDTO getInstructorDTO() {
-        return instructorDTO;
-    }
-
-    public void setInstructorDTO(InstructorDTO instructorDTO) {
-        this.instructorDTO = instructorDTO;
-    }
-
     public int getCapacity() {
         return capacity;
     }
@@ -80,17 +80,20 @@ public class CourseDTO {
         this.courseDetails = courseDetails;
     }
 
+    public InstructorDTO getInstructorDTO() {
+        return instructorDTO;
+    }
+
+    public void setInstructorDTO(InstructorDTO instructorDTO) {
+        this.instructorDTO = instructorDTO;
+    }
+
     public int getNumberOfInterns() {
         return numberOfInterns;
     }
 
     public void setNumberOfInterns(int numberOfInterns) {
         this.numberOfInterns = numberOfInterns;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(courseCode);
     }
 
 }

@@ -7,7 +7,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dao.IndicatorReportDAO;
-import spp.businesslogic.dao.TermDAO; // Importamos el nuevo DAO
+import spp.businesslogic.dao.TermDAO;
 import spp.businesslogic.dto.IndicatorFilterDTO;
 import spp.businesslogic.dto.IndicatorReportDTO;
 import spp.businesslogic.enums.DocumentType;
@@ -16,10 +16,10 @@ import spp.businesslogic.enums.YesNoAllFilter;
 import spp.businesslogic.exceptions.DAOException;
 import spp.utils.file.HtmlToPdfConverter;
 import spp.utils.htmlbuilder.IndicatorReportHtmlBuilder;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.FileChooserUtil;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
 
 import java.io.File;
@@ -39,9 +39,6 @@ public class IndicatorReportController implements Initializable {
     @FXML private TextField txtFilterMaxAge;
     @FXML private Label lblStatus;
 
-    private final IndicatorReportDAO indicatorDAO = new IndicatorReportDAO();
-    private final TermDAO termDAO = new TermDAO();
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeComboBoxes();
@@ -49,8 +46,10 @@ public class IndicatorReportController implements Initializable {
     }
 
     private void setUpFields() {
-        InputFilter.applyFilter(txtFilterMinAge, InputFilter.NUMERIC_PATTERN, 2);
-        InputFilter.applyFilter(txtFilterMaxAge, InputFilter.NUMERIC_PATTERN, 2);
+        InputFilter.applyFormatFilter(txtFilterMinAge,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
+        InputFilter.applyFormatFilter(txtFilterMaxAge,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY );
     }
 
     private void initializeComboBoxes() {
@@ -63,6 +62,7 @@ public class IndicatorReportController implements Initializable {
             cmbFilterLanguage.getItems().add(filter);
         }
         cmbFilterLanguage.getSelectionModel().selectFirst();
+        TermDAO termDAO = new TermDAO();
 
         try {
             List<String> periods = termDAO.findTermNames();
@@ -73,7 +73,6 @@ public class IndicatorReportController implements Initializable {
             cmbFilterPeriod.getSelectionModel().selectFirst();
 
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "No se pudieron cargar los periodos.");
             cmbFilterPeriod.getItems().add("Todos");
             cmbFilterPeriod.getSelectionModel().selectFirst();
@@ -84,27 +83,24 @@ public class IndicatorReportController implements Initializable {
     @FXML
     public void generateReport(ActionEvent event) {
         IndicatorFilterDTO filters = buildIndicatorFilterDTO();
+        IndicatorReportDAO indicatorDAO = new IndicatorReportDAO();
 
         try {
             IndicatorReportDTO reportData = indicatorDAO.getStaticsByIndicators(filters);
             reportData.setGenerationDate(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-            String html = IndicatorReportHtmlBuilder.build(reportData);
+            String html = IndicatorReportHtmlBuilder.buildIndicatorReport(reportData);
 
             File outputFile = FileChooserUtil.chooseOutputFile(event, DocumentType.INDICATOR_REPORT);
-            if (outputFile == null) {
-                return;
+            if (outputFile != null) {
+                HtmlToPdfConverter.convertToFile(html, outputFile);
+                StatusLabel.showSuccess(lblStatus, "El reporte de indicadores ha sido generado exitosamente.");
+
             }
-
-            HtmlToPdfConverter.convertToFile(html, outputFile);
-            StatusLabel.showSuccess(lblStatus, "El reporte de indicadores ha sido generado exitosamente.");
-
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "No se pudo acceder a la base de datos. Intente más tarde.");
 
         } catch (IOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "No se pudo generar el reporte en formato PDF. Intente nuevamente.");
         }
 
