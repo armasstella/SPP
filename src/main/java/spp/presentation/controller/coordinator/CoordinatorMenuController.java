@@ -8,6 +8,7 @@ import spp.businesslogic.dao.LinkedOrganizationDAO;
 import spp.businesslogic.dao.ProjectManagerDAO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.presentation.controller.user.MessageCenterController;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.ViewNavigator;
@@ -40,21 +41,19 @@ public class CoordinatorMenuController {
 
     @FXML
     private void goToNewProjectManagerView(ActionEvent event) {
-        if (searchProjectManager() && searchLinkedOrganization()) {
-            ViewNavigator.loadView("/spp/presentation/view/coordinator/NewProjectManagerView.fxml",
-                    "Registrar Encargado de Proyecto", event);
-        } else {
-            AlertHelper.showErrorMessage("No puede realizar la operación",
-                    "No hay información registrada de Organizaciones Vinculadas\no de Encargados de Proyectos.");
-        }
-
+        ViewNavigator.loadView("/spp/presentation/view/coordinator/NewProjectManagerView.fxml",
+                "Registrar Encargado de Proyecto", event);
     }
 
     @FXML
     private void goToNewProjectView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/coordinator/NewProjectView.fxml",
-                "Registrar Proyecto", event);
-
+        if (searchProjectManager() && searchLinkedOrganization()) {
+            ViewNavigator.loadView("/spp/presentation/view/coordinator/NewProjectView.fxml",
+                    "Registrar Proyecto", event);
+        } else {
+            AlertHelper.showErrorMessage("No puede realizar la operación",
+                    "No hay información registrada de Organizaciones Vinculadas\no de Encargados de Proyectos.");
+        }
     }
 
     @FXML
@@ -94,7 +93,7 @@ public class CoordinatorMenuController {
                         "Generar Reporte", event);
             }
         } catch (DAOException e) {
-            AppLogger.logError(e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             AlertHelper.showErrorMessage("No puede realizar la operación",
                     "No hay información de cursos para extraer información.\nRegistre cursos primero.");
         }
@@ -135,7 +134,7 @@ public class CoordinatorMenuController {
             LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
             exists = linkedOrganizationDAO.existsLinkedOrganizations();
         } catch (DAOException e) {
-            AppLogger.logError(e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
         }
 
         return exists;
@@ -149,11 +148,22 @@ public class CoordinatorMenuController {
             ProjectManagerDAO projectManagerDAO = new ProjectManagerDAO();
             exists = projectManagerDAO.existsProjectManagers();
         } catch (DAOException e) {
-            AppLogger.logError(e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
         }
 
         return exists;
 
     }
 
+    private boolean searchCourse() {
+        boolean exists = false;
+        try {
+            CourseDAO courseDAO = new CourseDAO();
+            exists = courseDAO.existsRegisteredCourses();
+        } catch (DAOException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+        }
+
+        return exists;
+    }
 }
