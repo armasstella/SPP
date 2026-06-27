@@ -52,12 +52,12 @@ public class NewCourseController implements Initializable {
     }
 
     private void setAllCourse(CourseDTO courseDTO) {
-        courseDTO.setCourseCode(Integer.parseInt(txtCourseCode.getText()));
-        courseDTO.setTerm(txtTerm.getText());
+        courseDTO.setCourseCode(Integer.parseInt(txtCourseCode.getText().trim()));
+        courseDTO.setTerm(txtTerm.getText().trim());
         courseDTO.setSchoolBlock(Integer.parseInt(cmbSchoolBlock.getValue()));
         courseDTO.setSection(Integer.parseInt(cmbSection.getValue()));
-        courseDTO.setCapacity(Integer.parseInt(txtCapacity.getText()));
-        courseDTO.setCourseDetails(taCourseDetails.getText());
+        courseDTO.setCapacity(Integer.parseInt(txtCapacity.getText().trim()));
+        courseDTO.setCourseDetails(taCourseDetails.getText().trim());
         courseDTO.setInstructorDTO(cmbInstructor.getValue());
     }
 
