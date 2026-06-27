@@ -89,7 +89,6 @@ public class SelfEvaluationGenerationController implements Initializable {
             lblStudentNumber.setText(currentEvaluation.getStudentNumber());
 
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al cargar los datos del alumno.");
         }
     }
@@ -132,7 +131,7 @@ public class SelfEvaluationGenerationController implements Initializable {
             HtmlToPdfConverter.convertToFile(html, outputFile);
             StatusLabel.showSuccess(lblStatus, "Autoevaluación generada correctamente.");
         } catch (IOException e) {
-            AppLogger.logError(e);
+            //ToDo: Añadir excepción personalizada en ese catch
             StatusLabel.showError(lblStatus, "Error al generar el PDF.");
         }
 

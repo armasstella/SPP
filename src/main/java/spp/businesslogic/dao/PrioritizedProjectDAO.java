@@ -6,6 +6,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IPrioritizedProjectDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.dataaccess.connection.MySQLConnectionManager;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -64,8 +65,8 @@ public class PrioritizedProjectDAO implements IPrioritizedProjectDAO {
 
         } catch (SQLException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de base de datos al guardar los proyectos priorizados", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de base de datos al guardar los proyectos priorizados", e);
 
         } finally {
             MySQLConnectionManager.getInstance().enableAutoCommitConnection();
@@ -92,8 +93,8 @@ public class PrioritizedProjectDAO implements IPrioritizedProjectDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar proyectos priorizados");
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar proyectos priorizados", e);
         }
 
         return has_prioritized_projects;
@@ -124,8 +125,8 @@ public class PrioritizedProjectDAO implements IPrioritizedProjectDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error al obtener proyectos del practicante");
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("FATAL: Error al obtener proyectos del practicante", e);
         }
         return selectedProjectList;
     }

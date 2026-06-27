@@ -6,6 +6,7 @@ import spp.businesslogic.dto.IndicatorReportDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IIndicatorReportDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import spp.utils.query.IndicatorReportQueryBuilder;
 import java.sql.Connection;
@@ -45,8 +46,8 @@ public class IndicatorReportDAO implements IIndicatorReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al calcular las métricas de los indicadores", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al calcular las métricas de los indicadores", e);
         }
 
         return indicatorReportDTO;

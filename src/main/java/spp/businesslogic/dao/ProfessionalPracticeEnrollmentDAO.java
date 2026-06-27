@@ -5,7 +5,7 @@ import spp.businesslogic.dto.ProfessionalPracticeEnrollmentDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IProfessionalPracticeEnrollmentDAO;
 import spp.dataaccess.connection.MySQLConnection;
-import spp.dataaccess.connection.MySQLConnectionManager;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,12 +50,12 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(e);
-            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
+            throw new DAOException("Verifique los datos ingresados", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al insertar inscripción", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al insertar inscripción", e);
         }
 
         return isInsertSuccessful;
@@ -80,7 +80,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error al asignar el proyecto al practicante", e);
         }
 
@@ -105,8 +105,8 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al asignar la experiencia educativa al practicante", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("wError de conexión al asignar la experiencia educativa al practicante", e);
         }
 
         return isCourseAssigned;

@@ -130,8 +130,7 @@ public class PresentationTemplateUploadController {
             presentationTemplateDTO.setUploadDate(LocalDateTime.now());
             saveStatus = true;
 
-        } catch (IOException | DAOException e) {
-            AppLogger.logError(e);
+        } catch (IOException  e) {
             StatusLabel.showError(lblStatus, "No se puede guardar el archivo. Intente de nuevo.");
         }
 
@@ -146,7 +145,6 @@ public class PresentationTemplateUploadController {
                     ActiveSessionDTO.get().getEmail());
             success = presentationTemplateDAO.saveDocument(personalNumber, presentationTemplateDTO);
         } catch (DAOException e) {
-            AppLogger.logError(e);
             StatusLabel.showError(lblStatus, "Error al guardar documento");
         }
 

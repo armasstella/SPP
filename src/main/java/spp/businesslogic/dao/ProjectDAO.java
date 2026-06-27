@@ -7,7 +7,7 @@ import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IProjectDAO;
 import spp.dataaccess.connection.MySQLConnection;
-import spp.dataaccess.connection.MySQLConnectionManager;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 
 import java.sql.Connection;
@@ -54,13 +54,13 @@ public class ProjectDAO implements IProjectDAO {
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(e);
-            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
+            throw new DAOException("Verifique los datos ingresados", e);
 
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al insertar proyecto", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al insertar proyecto", e);
         }
 
         return projectIdGenerated;
@@ -74,32 +74,17 @@ public class ProjectDAO implements IProjectDAO {
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            connection.setAutoCommit(false);
-
-            try {
-                PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PROJECT);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PROJECT)) {
                 preparedStatement.setInt(1, projectDTO.getId());
-
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == 0) {
-                    throw new DAOException("WARN: Fallo al eliminar proyecto. No se afectaron filas");
+                if (affectedRows != NO_ROWS_AFFECTED) {
+                    isDeletionSuccesful = true;
                 }
-
-                connection.commit();
-                isDeletionSuccesful = true;
-
-            } catch (SQLException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("ERROR: Error general al eliminar proyecto", e);
-
-            } finally {
-                connection.setAutoCommit(true);
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al eliminar proyecto", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al eliminar proyecto", e);
         }
 
         return isDeletionSuccesful;
@@ -114,40 +99,24 @@ public class ProjectDAO implements IProjectDAO {
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            connection.setAutoCommit(false);
-
             try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PROJECT)) {
-
                 preparedStatement.setString(1, projectDTO.getDescription());
                 preparedStatement.setString(2, projectDTO.getName());
                 preparedStatement.setInt(3, projectDTO.getPlacesAvailable());
                 preparedStatement.setInt(4, projectDTO.getId());
-
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows == 0) {
-                    throw new DAOException("WARN: Fallo al actualizar proyecto. No se afectaron filas");
+                if (affectedRows != NO_ROWS_AFFECTED) {
+                    isUpdateSuccesful = true;
                 }
-
-                connection.commit();
-                isUpdateSuccesful = true;
-
-            } catch (SQLIntegrityConstraintViolationException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("WARN: Violación de integridad de datos al actualizar", e);
-
-            } catch (SQLException e) {
-                connection.rollback();
-                AppLogger.logError(e);
-                throw new DAOException("ERROR: Error general al actualizar proyecto", e);
-
-            } finally {
-                connection.setAutoCommit(true);
             }
 
+        } catch (SQLIntegrityConstraintViolationException e) {
+            AppLogger.logError(ExceptionLevel.WARN, e);
+            throw new DAOException("Verifique los datos ingresados", e);
+
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al actualizar proyecto", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al actualizar proyecto", e);
         }
 
         return isUpdateSuccesful;
@@ -172,7 +141,6 @@ public class ProjectDAO implements IProjectDAO {
                     ProjectDTO projectDTO = new ProjectDTO();
                     LinkedOrganizationDTO linkedOrganizationDTO = new LinkedOrganizationDTO();
                     ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
-
                     projectDTO.setId(resultSet.getInt("id_proyecto"));
                     projectDTO.setName(resultSet.getString("nombre"));
                     projectDTO.setDescription(resultSet.getString("descripcion"));
@@ -187,8 +155,8 @@ public class ProjectDAO implements IProjectDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al obtener proyectos.", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al obtener proyectos.", e);
         }
 
         return projectsList;
@@ -210,8 +178,8 @@ public class ProjectDAO implements IProjectDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al contar proyectos", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al contar proyectos", e);
         }
 
         return hasMinimum;

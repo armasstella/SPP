@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.io.IOException;
 
@@ -31,7 +32,7 @@ public class ViewNavigator {
 
             return loader.getController();
         } catch (IOException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             return null;
         }
     }

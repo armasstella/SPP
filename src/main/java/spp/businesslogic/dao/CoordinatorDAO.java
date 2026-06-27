@@ -6,6 +6,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ICoordinatorDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.dataaccess.connection.MySQLConnectionManager;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,18 +49,18 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
         } catch (SQLIntegrityConstraintViolationException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
-            AppLogger.logError(e);
-            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
+            throw new DAOException("Verifique los datos ingresados", e);
 
         } catch (DAOException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
-            AppLogger.logError(e);
-            throw new DAOException("ERROR: Error al insertar coordinador mientras se insertaba como usuario", e);
+            AppLogger.logError(ExceptionLevel.ERROR, e);
+            throw new DAOException("Error al insertar coordinador", e);
 
         } catch (SQLException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al insertar coordinador", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al insertar coordinador", e);
 
         } finally {
             MySQLConnectionManager.getInstance().enableAutoCommitConnection();
@@ -86,8 +87,8 @@ public class CoordinatorDAO implements ICoordinatorDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al inactivar coordinador", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al inactivar coordinador", e);
         }
 
         return isDeactivationSuccessful;
@@ -111,8 +112,8 @@ public class CoordinatorDAO implements ICoordinatorDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar coordinadores", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar coordinadores", e);
         }
 
     }
@@ -138,8 +139,8 @@ public class CoordinatorDAO implements ICoordinatorDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar coordinadores", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar coordinadores", e);
         }
 
         return coordinatorsList;

@@ -5,6 +5,7 @@ import spp.businesslogic.dto.PresentationTemplateDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IPresentationTemplateDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,8 +38,8 @@ public class PresentationTemplateDAO implements IPresentationTemplateDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al guardar documento", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al guardar documento", e);
         }
 
         return isSaveSuccessful;

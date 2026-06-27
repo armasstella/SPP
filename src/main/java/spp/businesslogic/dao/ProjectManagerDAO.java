@@ -5,6 +5,7 @@ import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IProjectManagerDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,12 +51,12 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(e);
-            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
+            AppLogger.logError(ExceptionLevel.WARN, e);
+            throw new DAOException("Verifique los datos ingresados", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al insertar encargado de proyecto", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al insertar encargado de proyecto", e);
         }
 
         return isInsertSuccessful;
@@ -81,8 +82,8 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar encargados proyectos", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar encargados proyectos", e);
         }
 
         return projectManagersList;
@@ -105,8 +106,8 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al buscar encargados proyectos", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar encargados proyectos", e);
         }
 
         return projectManagersExists;
@@ -130,7 +131,8 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DAOException("FATAL: Error crítico de base de datos al filtrar encargados por organización", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error crítico de base de datos al filtrar encargados por organización", e);
         }
         return projectManagersList;
     }

@@ -4,6 +4,7 @@ import spp.businesslogic.dto.ReportDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IReportDAO;
 import spp.dataaccess.connection.MySQLConnection;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,7 +38,7 @@ public class ReportDAO implements IReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error al obtener los datos del reporte", e);
         }
 
@@ -62,8 +63,8 @@ public class ReportDAO implements IReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al asignar la calificación del reporte", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al asignar la calificación del reporte", e);
         }
 
         return isGradeAssigned;
@@ -83,8 +84,8 @@ public class ReportDAO implements IReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(e);
-            throw new DAOException("FATAL: Error de conexión al actualizar la calificación del reporte", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al actualizar la calificación del reporte", e);
         }
 
         return isGradeUpdated;
