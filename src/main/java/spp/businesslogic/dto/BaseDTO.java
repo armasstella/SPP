@@ -6,17 +6,17 @@ import java.util.List;
 
 public abstract class BaseDTO {
 
-    private final List<String> validationErrors = new ArrayList<>();
+    private final List<String> validationsErrors = new ArrayList<>();
 
     protected void addErrors(List<String> errors) {
-        this.validationErrors.addAll(errors);
+        this.validationsErrors.addAll(errors);
     }
 
     public boolean isValid() {
-        return validationErrors.isEmpty();
+        return validationsErrors.isEmpty();
     }
 
     public List<String> getErrors() {
-        return Collections.unmodifiableList(validationErrors);
+        return Collections.unmodifiableList(validationsErrors);
     }
 }
