@@ -12,8 +12,6 @@ import javafx.scene.control.TableView;
 import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.CoordinatorDAO;
-import spp.utils.exceptionmanager.ExceptionLevel;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
@@ -79,10 +77,9 @@ public class CoordinatorDeactivationController implements Initializable {
                         StatusLabel.showSuccess(lblStatus, "Coordinador inactivado exitosamente.");
                     }
                 } catch (DAOException e) {
-                    AppLogger.log(ExceptionLevel.FATAL, e);
                     StatusLabel.showError(lblStatus, "Error al inactivar coordinador.");
                 }
-            }   
+            }
         }
     }
 
