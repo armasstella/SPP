@@ -12,7 +12,6 @@ import javafx.scene.control.TableView;
 import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
@@ -46,19 +45,17 @@ public class ProjectDeletionController implements Initializable {
 
         if(projectSelected == null) {
             StatusLabel.showError(lblStatus, "Seleccione el proyecto a eliminar.");
-            return;
-        }
-
-        if (AlertHelper.showConfirmation("Confirmar acción",
-                "¿Seguro que desea eliminar el proyecto: \"" + projectSelected.getName() + "\"?")) {
-            try {
-                if (projectDAO.deleteProject(projectSelected)) {
-                    obtainProjects();
-                    StatusLabel.showSuccess(lblStatus, "Proyecto eliminado exitosamente.");
+        } else {
+            if (AlertHelper.showConfirmation("Confirmar acción",
+                    "¿Seguro que desea eliminar el proyecto: \"" + projectSelected.getName() + "\"?")) {
+                try {
+                    if (projectDAO.deleteProject(projectSelected)) {
+                        obtainProjects();
+                        StatusLabel.showSuccess(lblStatus, "Proyecto eliminado exitosamente.");
+                    }
+                } catch (DAOException e) {
+                    StatusLabel.showError(lblStatus, "Error al eliminar proyecto.");
                 }
-            } catch (DAOException e) {
-                AppLogger.logError(e);
-                StatusLabel.showError(lblStatus, "Error al eliminar proyecto.");
             }
         }
 
