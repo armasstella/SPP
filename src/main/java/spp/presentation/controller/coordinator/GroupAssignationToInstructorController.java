@@ -14,8 +14,6 @@ import spp.businesslogic.dao.InstructorDAO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.utils.exceptionmanager.ExceptionLevel;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.AlertHelper;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
