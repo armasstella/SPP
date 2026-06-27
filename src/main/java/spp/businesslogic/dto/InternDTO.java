@@ -1,6 +1,6 @@
 package spp.businesslogic.dto;
 
-import spp.utils.validation.Validation;
+import spp.utils.validation.PatternDomainValidator;
 
 import java.time.LocalDateTime;
 
@@ -17,19 +17,14 @@ public class InternDTO extends UserDTO {
         super();
     }
 
-    public boolean setStudentNumber(String studentNumber) {
-        boolean isValid;
-        Validation validator = new Validation();
+    public void setStudentNumber(String studentNumber) {
+        PatternDomainValidator validator = new PatternDomainValidator();
 
         if (validator.validateStudentNumber(studentNumber)) {
             this.studentNumber = studentNumber.trim();
-            isValid = true;
         } else {
-            addErrors(validator.getErrors());
-            isValid = false;
+            addErrors(validator.getPatternsErrors());
         }
-
-        return isValid;
     }
 
     public void setSex(String sex) {
