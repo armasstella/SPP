@@ -79,18 +79,18 @@ public class NewInternController implements Initializable {
     }
 
     private void setAllIntern(InternDTO internDTO) {
-        internDTO.setFirstName(txtFirstName.getText());
-        internDTO.setSecondName(txtSecondName.getText());
-        internDTO.setFirstLastName(txtFirstLastName.getText());
-        internDTO.setSecondLastName(txtSecondLastName.getText());
-        internDTO.setEmail(txtEmail.getText());
-        internDTO.setPhoneNumber(txtPhoneNumber.getText());
-        internDTO.setStudentNumber(txtStudentNumber.getText());
-        internDTO.setPassword(txtPassword.getText());
+        internDTO.setFirstName(txtFirstName.getText().trim());
+        internDTO.setSecondName(txtSecondName.getText().trim());
+        internDTO.setFirstLastName(txtFirstLastName.getText().trim());
+        internDTO.setSecondLastName(txtSecondLastName.getText().trim());
+        internDTO.setEmail(txtEmail.getText().trim());
+        internDTO.setPhoneNumber(txtPhoneNumber.getText().trim());
+        internDTO.setStudentNumber(txtStudentNumber.getText().trim());
+        internDTO.setPassword(txtPassword.getText().trim());
         internDTO.setSex(cmbSex.getValue());
 
         internDTO.setSpeaksIndigenousLanguage(rbYes.isSelected());
-        internDTO.setIndigenousLanguage(txtIndigenousLanguage.getText());
+        internDTO.setIndigenousLanguage(txtIndigenousLanguage.getText().trim());
 
         LocalDate selectedDate = dpBirthDate.getValue();
         if (selectedDate != null) {
