@@ -4,6 +4,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ITermDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
 
 import java.sql.Connection;
@@ -156,7 +157,7 @@ public class TermDAO implements ITermDAO {
             AppLogger.logError(ExceptionLevel.WARN, e);
             throw new DAOException("El periodo escolar que intenta registrar ya existe en el sistema.");
 
-        } catch (SQLDataException e) {
+        } catch (java.sql.DataTruncation e) {
             AppLogger.logError(ExceptionLevel.WARN, e);
             throw new DAOException("El formato o la longitud del nombre del periodo no es compatible.");
 
@@ -170,7 +171,16 @@ public class TermDAO implements ITermDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión con el servidor al registrar el nuevo periodo escolar.");
+
+            String sqlStateMessage = e.getSQLState();
+
+            if (sqlStateMessage != null && sqlStateMessage.startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión con el servidor al registrar el nuevo periodo escolar.");
+            } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(sqlStateMessage)) {
+                throw new DAOException(e.getMessage());
+            } else {
+                throw new DAOException("Ocurrió un error interno en la base de datos al intentar registrar el periodo.");
+            }
         }
 
         return isInsertSuccessful;
