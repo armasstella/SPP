@@ -121,7 +121,7 @@ public class UserDAOTest {
             userDAO.registerUser(testUser);
         });
 
-        assertTrue(exception.getMessage().contains("WARN: Violación de integridad de datos al insertar"));
+        assertTrue(exception.getMessage().contains("El Usuario que usted está intentando registrar ya existe"));
     }
 
     @Test
@@ -132,6 +132,6 @@ public class UserDAOTest {
             userDAO.obtainId("desconocido_" + System.currentTimeMillis() + "@uv.mx");
         });
 
-        assertTrue(exception.getMessage().contains("ERROR: Usuario no encontrado con email: "));
+        assertTrue(exception.getMessage().contains("Usuario no encontrado con email: "));
     }
 }

@@ -1,33 +1,35 @@
 package spp.businesslogic.dao;
 
-
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IProjectManagerDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLInvalidAuthorizationSpecException;
+import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class ProjectManagerDAO implements IProjectManagerDAO {
 
     private static final int NO_ROWS_AFFECTED = 0;
 
     public ProjectManagerDAO() {
-
     }
 
     @Override
     public boolean registerProjectManager(ProjectManagerDTO projectManagerDTO, int linkedOrganizationId) throws DAOException {
-        final String INSERT_PROJECT_MANAGER = "INSERT INTO Encargados_Proyectos " + "(nombres, apellidos, " +
-            "responsabilidad, rol, telefono, id_organizacion_vinculada)" + "VALUES (?, ?, ?, ?, ?, ?)";
+        final String INSERT_PROJECT_MANAGER = "INSERT INTO Encargados_Proyectos " +
+                "(nombres, apellidos, responsabilidad, rol, telefono, id_organizacion_vinculada) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
         boolean isInsertSuccessful = false;
 
         try {
@@ -47,20 +49,33 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                         linkedOrganizationId);
 
                 isInsertSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
-
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.logError(ExceptionLevel.WARN, e);
-            throw new DAOException("Verifique los datos ingresados", e);
+            throw new DAOException("El encargado de proyecto ya existe o la organización vinculada no es válida. Verifique que los datos no estén duplicados.");
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al registrar el encargado de proyecto.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al registrar el encargado de proyecto.");
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al insertar encargado de proyecto", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al registrar el encargado de proyecto.");
+            } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
+                throw new DAOException(e.getMessage());
+            } else {
+                throw new DAOException("Ocurrió un error interno al intentar registrar el encargado de proyecto.");
+            }
         }
 
         return isInsertSuccessful;
-
     }
 
     @Override
@@ -72,7 +87,8 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PROJECT_MANAGER);
-                ResultSet resultSet = preparedStatement.executeQuery();) {
+                 ResultSet resultSet = preparedStatement.executeQuery()) {
+
                 while (resultSet.next()) {
                     ProjectManagerDTO projectManager = new ProjectManagerDTO();
                     projectManager.setId(resultSet.getInt("id_encargado_proyecto"));
@@ -81,13 +97,25 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al obtener la lista de encargados de proyectos.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al consultar la lista de encargados de proyectos.");
+
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar encargados proyectos", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar encargados de proyectos.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al obtener los encargados de proyectos.");
+            }
         }
 
         return projectManagersList;
-
     }
 
     @Override
@@ -105,9 +133,22 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al verificar la existencia de encargados de proyectos.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al consultar la disponibilidad de encargados de proyectos.");
+
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar encargados proyectos", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al verificar si existen encargados de proyectos.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al consultar los encargados de proyectos.");
+            }
         }
 
         return projectManagersExists;
@@ -119,22 +160,39 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                 "FROM encargados_proyectos WHERE id_organizacion_vinculada = ?";
         List<ProjectManagerDTO> projectManagersList = new ArrayList<>();
 
-        try (Connection connection = MySQLConnection.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ORGANIZATION)) {
-            preparedStatement.setInt(1, organizationId);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
-                    projectManagerDTO.setId(resultSet.getInt("id_encargado_proyecto"));
-                    projectManagerDTO.setFirstName(resultSet.getString("nombre_completo"));
-                    projectManagersList.add(projectManagerDTO);
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ORGANIZATION)) {
+                preparedStatement.setInt(1, organizationId);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        ProjectManagerDTO projectManagerDTO = new ProjectManagerDTO();
+                        projectManagerDTO.setId(resultSet.getInt("id_encargado_proyecto"));
+                        projectManagerDTO.setFirstName(resultSet.getString("nombre_completo"));
+                        projectManagersList.add(projectManagerDTO);
+                    }
                 }
             }
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al obtener los encargados por organización.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al filtrar encargados por organización.");
+
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error crítico de base de datos al filtrar encargados por organización", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al filtrar encargados por organización.");
+            } else {
+                throw new DAOException("Error interno de base de datos al filtrar encargados por organización.");
+            }
         }
+
         return projectManagersList;
     }
-
 }

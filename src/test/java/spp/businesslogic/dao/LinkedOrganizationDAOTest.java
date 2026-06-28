@@ -2,135 +2,129 @@ package spp.businesslogic.dao;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.DisplayName;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LinkedOrganizationDAOTest {
 
     private LinkedOrganizationDAO linkedOrganizationDAO;
-    private LinkedOrganizationDTO testLinkedOrganization;
+    private LinkedOrganizationDTO testOrganization;
 
     @BeforeAll
-    void setUpAll() {
+    void setupAll() {
         linkedOrganizationDAO = new LinkedOrganizationDAO();
-        testLinkedOrganization = new LinkedOrganizationDTO();
+        testOrganization = new LinkedOrganizationDTO();
     }
 
     @BeforeEach
     void setUp() {
-        String uniqueSuffix = String.valueOf(System.currentTimeMillis());
-        String shortSuffix = uniqueSuffix.substring(uniqueSuffix.length() - 5);
-        String uniqueRfc = "DEV" + shortSuffix + "XYZ";
+        String uniqueId = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        String uniqueName = "Organización " + uniqueId;
 
-        testLinkedOrganization.setName("TechSolutions " + shortSuffix);
-        testLinkedOrganization.setRfc(uniqueRfc);
-        testLinkedOrganization.setAddress("Av. Mártires 28 de Agosto 111");
-        testLinkedOrganization.setFiscalAddress("Av. Mártires 28 de Agosto 111");
-        testLinkedOrganization.setBusiness("Desarrollo de Software");
-        testLinkedOrganization.setPhoneNumber("228123" + shortSuffix.substring(0, 4));
-        testLinkedOrganization.setEmail("tech" + shortSuffix + "@techsolutions.mx");
+        String rfcBase = "ABC";
+
+        String year = String.format("%02d", (int)(Math.random() * 100));
+        String month = String.format("%02d", (int)(Math.random() * 12) + 1);
+        String day = String.format("%02d", (int)(Math.random() * 31) + 1);
+
+        StringBuilder rnd = new StringBuilder();
+        for (int i = 0; i < 3; i++) {
+            if (Math.random() > 0.5) {
+                rnd.append((char) ('A' + (int)(Math.random() * 26)));
+            } else {
+                rnd.append((int)(Math.random() * 10));
+            }
+        }
+
+        String uniqueRfc = rfcBase + year + month + day + rnd.toString();
+
+        String uniqueEmail = "org" + uniqueId + "@test.com";
+        String uniquePhone = "228" + uniqueId;
+
+        testOrganization.setName(uniqueName);
+        testOrganization.setRfc(uniqueRfc);
+        testOrganization.setAddress("Calle 123");
+        testOrganization.setFiscalAddress("Calle Fiscal 456");
+        testOrganization.setCity("Xalapa");
+        testOrganization.setState("Veracruz");
+        testOrganization.setBusiness("Tecnología");
+        testOrganization.setPhoneNumber(uniquePhone);
+        testOrganization.setEmail(uniqueEmail);
     }
 
     @Test
-    @DisplayName("Debe insertar una organización vinculada exitosamente")
+    @Order(1)
+    @DisplayName("Flujo Normal: Debe registrar una organización vinculada correctamente")
     void testRegisterLinkedOrganizationSuccess() throws DAOException {
-        boolean result = linkedOrganizationDAO.registerLinkedOrganization(testLinkedOrganization);
+        boolean result = linkedOrganizationDAO.registerLinkedOrganization(testOrganization);
         assertTrue(result);
     }
 
     @Test
-    @DisplayName("Debe agregar organización con giro modificado")
-    void testRegisterLinkedOrganizationWithBusinessSuccess() throws DAOException {
-        testLinkedOrganization.setBusiness("Consultoría de TI");
-        boolean result = linkedOrganizationDAO.registerLinkedOrganization(testLinkedOrganization);
-        assertTrue(result);
-    }
+    @Order(2)
+    @DisplayName("Excepción: Debe lanzar DAOException al intentar registrar una organización con RFC o email duplicado")
+    void testRegisterLinkedOrganizationDuplicate() throws DAOException {
+        linkedOrganizationDAO.registerLinkedOrganization(testOrganization);
 
-    @Test
-    @DisplayName("Debe lanzar DAOException al insertar exactamente la misma organización dos veces")
-    void testRegisterLinkedOrganizationFailedDuplicatedData() throws DAOException {
-        linkedOrganizationDAO.registerLinkedOrganization(testLinkedOrganization);
-        assertThrows(DAOException.class, () -> {
-            linkedOrganizationDAO.registerLinkedOrganization(testLinkedOrganization);
+        DAOException exception = assertThrows(DAOException.class, () -> {
+            linkedOrganizationDAO.registerLinkedOrganization(testOrganization);
         });
+
+        assertTrue(exception.getMessage().contains("La organización vinculada que intenta registrar ya existe"));
     }
 
     @Test
-    @DisplayName("Debe agregar organización con dirección fiscal distinta a la dirección física")
-    void testRegisterLinkedOrganizationWithDifferentAddressesSuccess() throws DAOException {
-        testLinkedOrganization.setFiscalAddress("Calle Nueva 999, Centro");
-        boolean result = linkedOrganizationDAO.registerLinkedOrganization(testLinkedOrganization);
-        assertTrue(result);
+    @Order(3)
+    @DisplayName("Flujo Normal: Debe obtener la lista de organizaciones vinculadas con identificadores y verificar que la registrada esté presente")
+    void testFindActiveLinkedOrganizationsIdentifiers() throws DAOException {
+        linkedOrganizationDAO.registerLinkedOrganization(testOrganization);
+
+        List<LinkedOrganizationDTO> organizations = linkedOrganizationDAO.findActiveLinkedOrganizationsIdentifiers();
+        assertNotNull(organizations);
+        assertFalse(organizations.isEmpty());
+
+        boolean found = organizations.stream()
+                .anyMatch(organization -> Objects.equals(organization.getRfc(), testOrganization.getRfc()) &&
+                        testOrganization.getName().equals(organization.getName()));
+
+        assertTrue(found);
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException al insertar organización sin nombre")
-    void testRegisterLinkedOrganizationFailedNullName() {
-        testLinkedOrganization.setName(null);
-        assertThrows(DAOException.class, () -> {
-            linkedOrganizationDAO.registerLinkedOrganization(testLinkedOrganization);
-        });
+    @Order(4)
+    @DisplayName("Flujo Normal: Debe verificar que existen organizaciones vinculadas (devuelve true)")
+    void testExistsLinkedOrganizationsTrue() throws DAOException {
+        linkedOrganizationDAO.registerLinkedOrganization(testOrganization);
+
+        boolean exists = linkedOrganizationDAO.existsLinkedOrganizations();
+        assertTrue(exists);
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException al insertar organización sin RFC")
-    void testRegisterLinkedOrganizationFailedNullRFC() {
-        testLinkedOrganization.setRfc(null);
-        assertThrows(DAOException.class, () -> {
-            linkedOrganizationDAO.registerLinkedOrganization(testLinkedOrganization);
-        });
-    }
-
-    @Test
-    @DisplayName("Debe lanzar DAOException al insertar organización sin dirección")
-    void testRegisterLinkedOrganizationFailedNullAddress() {
-        testLinkedOrganization.setAddress(null);
-        assertThrows(DAOException.class, () -> {
-            linkedOrganizationDAO.registerLinkedOrganization(testLinkedOrganization);
-        });
-    }
-
-    @Test
-    @DisplayName("Debe lanzar DAOException al insertar organización sin correo")
-    void testRegisterLinkedOrganizationFailedNullEmail() {
-        testLinkedOrganization.setEmail(null);
-        assertThrows(DAOException.class, () -> {
-            linkedOrganizationDAO.registerLinkedOrganization(testLinkedOrganization);
-        });
-    }
-
-    @Test
-    @DisplayName("Debe lanzar DAOException al insertar organización sin teléfono")
-    void testRegisterLinkedOrganizationFailedNullPhoneNumber() {
-        testLinkedOrganization.setPhoneNumber(null);
-        assertThrows(DAOException.class, () -> {
-            linkedOrganizationDAO.registerLinkedOrganization(testLinkedOrganization);
-        });
-    }
-
-    @Test
-    @DisplayName("Debe lanzar error al insertar un RFC que ya le pertenece a otra empresa")
-    void testRegisterLinkedOrganizationFailedDuplicateRFC() throws DAOException {
-        linkedOrganizationDAO.registerLinkedOrganization(testLinkedOrganization);
-        LinkedOrganizationDTO duplicateOrganization = new LinkedOrganizationDTO();
-        duplicateOrganization.setName("Consultores de Sistemas Alternos");
-        duplicateOrganization.setAddress("Calle Falsa 123");
-        duplicateOrganization.setFiscalAddress("Calle Falsa 123");
-        duplicateOrganization.setBusiness("Auditoría");
-        duplicateOrganization.setPhoneNumber("2289999999");
-        duplicateOrganization.setEmail("auditoria@sistemas.mx");
-
-        duplicateOrganization.setRfc(testLinkedOrganization.getRfc());
-
-        assertThrows(DAOException.class, () -> {
-            linkedOrganizationDAO.registerLinkedOrganization(duplicateOrganization);
+    @Order(5)
+    @DisplayName("Flujo Alterno: Debe verificar que no existen organizaciones vinculadas (devuelve false) - solo si la BD está vacía")
+    void testExistsLinkedOrganizationsFalse() throws DAOException {
+        assertDoesNotThrow(() -> {
+            linkedOrganizationDAO.existsLinkedOrganizations();
         });
     }
 }

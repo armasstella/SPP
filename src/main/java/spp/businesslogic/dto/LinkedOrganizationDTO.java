@@ -27,19 +27,14 @@ public class LinkedOrganizationDTO extends BaseDTO {
         this.name = name;
     }
 
-    public boolean setRfc(String rfc) {
-        boolean isValid;
+    public void setRfc(String rfc) {
         PatternDomainValidator validator = new PatternDomainValidator();
 
         if (validator.validateRfc(rfc)) {
             this.rfc = rfc.trim();
-            isValid = true;
         } else {
             addErrors(validator.getPatternsErrors());
-            isValid = false;
         }
-
-        return isValid;
     }
 
     public void setAddress(String address) {

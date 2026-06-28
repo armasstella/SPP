@@ -1,33 +1,34 @@
 package spp.businesslogic.dao;
 
-
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ILinkedOrganizationDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLInvalidAuthorizationSpecException;
+import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
     private static final int NO_ROWS_AFFECTED = 0;
 
     public LinkedOrganizationDAO() {
-
     }
 
     @Override
     public boolean registerLinkedOrganization(LinkedOrganizationDTO linkedOrganizationDTO) throws DAOException {
         final String INSERT_LINKED_ORGANIZATION = "INSERT INTO Organizaciones_Vinculadas " +
-                "(nombre, rfc, direccion, direccion_fiscal, giro, telefono, correo)" +
+                "(nombre, rfc, direccion, direccion_fiscal, giro, telefono, correo) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
         boolean isInsertSuccessful = false;
 
@@ -46,15 +47,29 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.logError(ExceptionLevel.WARN, e);
-            throw new DAOException("Verifique los datos ingresados", e);
+            throw new DAOException("La organización vinculada que intenta registrar ya existe. Verifique que el RFC o el correo no estén duplicados.");
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al registrar la organización vinculada.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al registrar la organización vinculada.");
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al insertar organización vinculada", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al registrar la organización vinculada.");
+            } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
+                throw new DAOException(e.getMessage());
+            } else {
+                throw new DAOException("Ocurrió un error interno al intentar registrar la organización vinculada.");
+            }
         }
 
         return isInsertSuccessful;
-
     }
 
     @Override
@@ -67,6 +82,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LINKED_ORGANIZATION);
                  ResultSet resultSet = preparedStatement.executeQuery()) {
+
                 while (resultSet.next()) {
                     LinkedOrganizationDTO linkedOrganization = new LinkedOrganizationDTO();
                     linkedOrganization.setId(resultSet.getInt("id_organizacion_vinculada"));
@@ -76,13 +92,25 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al obtener las organizaciones vinculadas.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al consultar la lista de organizaciones vinculadas.");
+
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar organizaciones vinculadas", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar organizaciones vinculadas.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al obtener las organizaciones vinculadas.");
+            }
         }
 
         return linkedOrganizationsList;
-
     }
 
     @Override
@@ -94,18 +122,30 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_LINKED_ORGANIZATIONS);
                  ResultSet resultSet = preparedStatement.executeQuery()) {
+
                 if (resultSet.next()) {
                     isSearchSuccesful = resultSet.getBoolean(1);
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de autenticación al verificar la existencia de organizaciones vinculadas.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al consultar la disponibilidad de organizaciones vinculadas.");
+
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar organizaciones vinculadas", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al verificar si existen organizaciones vinculadas.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al consultar las organizaciones vinculadas.");
+            }
         }
 
         return isSearchSuccesful;
-
     }
-
 }

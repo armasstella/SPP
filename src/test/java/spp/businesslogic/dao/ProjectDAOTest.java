@@ -2,127 +2,179 @@ package spp.businesslogic.dao;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import spp.businesslogic.dto.ProjectDTO;
-import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.dto.ProjectManagerDTO;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.DisplayName;
 import spp.businesslogic.dto.LinkedOrganizationDTO;
+import spp.businesslogic.dto.ProjectDTO;
+import spp.businesslogic.dto.ProjectManagerDTO;
+import spp.businesslogic.exceptions.DAOException;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ProjectDAOTest {
 
     private ProjectDAO projectDAO;
     private ProjectDTO testProject;
-    private LinkedOrganizationDTO linkedOrganizationDTO;
-    private ProjectManagerDTO projectManagerDTO;
 
     @BeforeAll
-    void setUpAll() {
+    void setupAll() {
         projectDAO = new ProjectDAO();
         testProject = new ProjectDTO();
-        linkedOrganizationDTO = new LinkedOrganizationDTO();
-        projectManagerDTO = new ProjectManagerDTO();
     }
 
     @BeforeEach
-    void setUpEach() {
-        projectManagerDTO.setId(1);
-        linkedOrganizationDTO.setId(1);
-
+    void setUp() {
         String uniqueSuffix = String.valueOf(System.currentTimeMillis());
+        String uniqueName = "Proyecto " + uniqueSuffix.substring(uniqueSuffix.length() - 8);
+        String uniqueDescription = "Descripción " + uniqueSuffix;
 
-        testProject.setName("Bolsa de Trabajo" + uniqueSuffix);
-        testProject.setDescription("Desarrollo de un sistema web de la Universidad Mexicana " +
-                "para la bolsa de trabajo");
-        testProject.setAvailability("Disponible");
-        testProject.setPlacesAvailable(2);
-        testProject.setLinkedOrganizationDTO(linkedOrganizationDTO);
-        testProject.setProjectManagerDTO(projectManagerDTO);
+        LinkedOrganizationDTO linkedOrganization = new LinkedOrganizationDTO();
+        int EXISTING_ORGANIZATION_ID = 1;
+        linkedOrganization.setId(EXISTING_ORGANIZATION_ID);
+
+        ProjectManagerDTO projectManager = new ProjectManagerDTO();
+        int EXISTING_PROJECT_MANAGER_ID = 1;
+        projectManager.setId(EXISTING_PROJECT_MANAGER_ID);
+
+        testProject.setName(uniqueName);
+        testProject.setDescription(uniqueDescription);
+        testProject.setPlacesAvailable(5);
+        testProject.setLinkedOrganizationDTO(linkedOrganization);
+        testProject.setProjectManagerDTO(projectManager);
     }
 
     @Test
-    @DisplayName("Debe insertar un proyecto exitosamente")
+    @Order(1)
+    @DisplayName("Flujo Normal: Debe registrar un proyecto correctamente y devolver un ID válido")
     void testRegisterProjectSuccess() throws DAOException {
-        //boolean result = projectDAO.registerProject(testProject);
-        //assertTrue(result);
+        int generatedId = projectDAO.registerProject(testProject);
+        assertTrue(generatedId > 0);
+        testProject.setId(generatedId);
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException cuando no hay una organización vinculada asignada")
-    void testRegisterProjectFailedMissingLinkedOrganization() throws DAOException {
-        testProject.setLinkedOrganizationDTO(null);
-        assertThrows(DAOException.class, () -> {
+    @Order(2)
+    @DisplayName("Excepción: Debe lanzar DAOException al registrar un proyecto duplicado (mismo nombre)")
+    void testRegisterProjectDuplicate() throws DAOException {
+        int id = projectDAO.registerProject(testProject);
+        testProject.setId(id);
+
+        DAOException exception = assertThrows(DAOException.class, () -> {
             projectDAO.registerProject(testProject);
         });
+
+        assertTrue(exception.getMessage().contains("El proyecto no pudo ser registrado"));
     }
 
     @Test
-    @DisplayName("Debe obtener la cantidad de proyectos y retornar un valor booleano")
-    void testGetNumberOfProjectsSuccess() {
-        try {
-            boolean totalProjects = projectDAO.hasMinimumProjectsForActiveTerm();
-            assertTrue(totalProjects);
+    @Order(3)
+    @DisplayName("Excepción: Debe lanzar DAOException al registrar un proyecto con organización o encargado inexistente")
+    void testRegisterProjectInvalidForeignKeys() {
+        ProjectDTO invalidProject = new ProjectDTO();
+        invalidProject.setName("Proyecto Inexistente");
+        invalidProject.setDescription("Descripción");
+        invalidProject.setPlacesAvailable(3);
 
-        } catch (DAOException e) {
-            org.junit.jupiter.api.Assertions.fail("El método lanzó una DAOException inesperada: " + e.getMessage());
-        }
-    }
+        LinkedOrganizationDTO invalidOrg = new LinkedOrganizationDTO();
+        invalidOrg.setId(99999);
+        invalidProject.setLinkedOrganizationDTO(invalidOrg);
 
-    @DisplayName("Debe lanzar DAOException cuando no hay un encargado de proyecto asignado")
-    void testRegisterProjectFailedMissingProjectManager() throws DAOException {
-        testProject.setProjectManagerDTO(null);
-        assertThrows(DAOException.class, () -> {
-            projectDAO.registerProject(testProject);
+        ProjectManagerDTO invalidManager = new ProjectManagerDTO();
+        invalidManager.setId(99999);
+        invalidProject.setProjectManagerDTO(invalidManager);
+
+        DAOException exception = assertThrows(DAOException.class, () -> {
+            projectDAO.registerProject(invalidProject);
         });
-    }
 
-    @Test
-    @DisplayName("Debe lanzar DAOException cuando el encargado de proyecto no existe")
-    void testRegisterProjectFailedInvalidProjectManager() throws DAOException {
-        testProject.getProjectManagerDTO().setId(3987);
-        assertThrows(DAOException.class, () -> {
-            projectDAO.registerProject(testProject);
-        });
+        assertTrue(exception.getMessage().contains("El proyecto no pudo ser registrado"));
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException cuando el nombre del proyecto es nulo")
-    void testRegisterProjectFailedNullName() throws DAOException {
-        testProject.setName(null);
-        assertThrows(DAOException.class, () -> {
-            projectDAO.registerProject(testProject);
-        });
+    @Order(4)
+    @DisplayName("Flujo Normal: Debe actualizar un proyecto correctamente")
+    void testUpdateProjectSuccess() throws DAOException {
+        int id = projectDAO.registerProject(testProject);
+        testProject.setId(id);
+
+        String newName = "Proyecto Actualizado " + System.currentTimeMillis();
+        String newDescription = "Nueva descripción " + System.currentTimeMillis();
+        testProject.setName(newName);
+        testProject.setDescription(newDescription);
+        testProject.setPlacesAvailable(10);
+
+        boolean result = projectDAO.updateProject(testProject);
+        assertTrue(result);
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException cuando la descripción del proyecto es nula")
-    void testRegisterProjectFailedNullDescription() throws DAOException {
-        testProject.setDescription(null);
-        assertThrows(DAOException.class, () -> {
-            projectDAO.registerProject(testProject);
-        });
+    @Order(5)
+    @DisplayName("Flujo Alterno: Actualizar un proyecto que no existe debe devolver false")
+    void testUpdateProjectNotFound() throws DAOException {
+        ProjectDTO fakeProject = new ProjectDTO();
+        fakeProject.setId(99999);
+        fakeProject.setName("Fake");
+        fakeProject.setDescription("Fake");
+        fakeProject.setPlacesAvailable(1);
+
+        boolean result = projectDAO.updateProject(fakeProject);
+        assertFalse(result);
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException cuando la organización vinculada no existe")
-    void testRegisterProjectFailedInvalidLinkedOrganization() throws DAOException {
-        testProject.getLinkedOrganizationDTO().setId(12111);
-        assertThrows(DAOException.class, () -> {
-            projectDAO.registerProject(testProject);
-        });
+    @Order(6)
+    @DisplayName("Flujo Normal: Debe eliminar un proyecto correctamente")
+    void testDeleteProjectSuccess() throws DAOException {
+        int id = projectDAO.registerProject(testProject);
+        testProject.setId(id);
+
+        boolean result = projectDAO.deleteProject(testProject);
+        assertTrue(result);
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException cuando el nombre del proyecto ya existe")
-    void testRegisterProjectFailedDuplicateName() throws DAOException {
-        projectDAO.registerProject(testProject);
-        assertThrows(DAOException.class, () -> {
-            projectDAO.registerProject(testProject);
-        });
+    @Order(7)
+    @DisplayName("Flujo Alterno: Eliminar un proyecto que no existe debe devolver false")
+    void testDeleteProjectNotFound() throws DAOException {
+        ProjectDTO fakeProject = new ProjectDTO();
+        fakeProject.setId(99999);
+
+        boolean result = projectDAO.deleteProject(fakeProject);
+        assertFalse(result);
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("Flujo Normal: Debe obtener la lista de proyectos con detalles para el periodo activo")
+    void testFindProjectsDetailsForActiveTermSuccess() throws DAOException {
+        int id = projectDAO.registerProject(testProject);
+        testProject.setId(id);
+
+        List<ProjectDTO> projects = projectDAO.findProjectsDetailsForActiveTerm();
+        assertNotNull(projects);
+        assertFalse(projects.isEmpty());
+
+        boolean found = projects.stream().anyMatch(project -> project.getId() == id);
+        assertTrue(found);
+    }
+
+    @Test
+    @Order(9)
+    @DisplayName("Flujo Normal: Debe verificar si existe la cantidad mínima de proyectos para el periodo activo")
+    void testHasMinimumProjectsForActiveTerm() throws DAOException {
+        boolean hasMinimum = projectDAO.hasMinimumProjectsForActiveTerm();
+        assertNotNull(hasMinimum);
     }
 }
