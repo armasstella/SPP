@@ -6,6 +6,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IUserDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
 import spp.utils.password.PasswordHasher;
 
@@ -17,6 +18,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLDataException;
 import java.sql.SQLTimeoutException;
+import java.sql.SQLTransactionRollbackException;
 import java.sql.Statement;
 
 public class UserDAO implements IUserDAO {
@@ -57,11 +59,15 @@ public class UserDAO implements IUserDAO {
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("WARN: Violación de integridad de datos al insertar", e);
+            throw new DAOException("WARN: El Usuario que usted está intentando registrar ya existe y está activo.", e);
 
         } catch (SQLDataException e) {
             AppLogger.logError(ExceptionLevel.WARN, e);
             throw new DAOException("WARN: El formato o la longitud de los datos ingresados no es compatible.", e);
+
+        } catch (SQLTransactionRollbackException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("FATAL: Error de concurrencia: la transacción fue abortada por el servidor.", e);
 
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
@@ -73,7 +79,11 @@ public class UserDAO implements IUserDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("FATAL: Error de conexión al insertar usuario", e);
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("FATAL: Error de conexión al insertar usuario", e);
+            } else {
+                throw new DAOException("FATAL: Ocurrió un error interno al intentar registrar al usuario.", e);
+            }
         }
     }
 
@@ -117,7 +127,11 @@ public class UserDAO implements IUserDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("FATAL: Error de conexión al obtener id usuario", e);
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("FATAL: Error de conexión al obtener id usuario", e);
+            } else {
+                throw new DAOException("FATAL: Error interno de base de datos al obtener id usuario", e);
+            }
         }
     }
 
@@ -155,7 +169,11 @@ public class UserDAO implements IUserDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("FATAL: Error crítico de base de datos", e);
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("FATAL: Error de conexión al intentar iniciar sesión", e);
+            } else {
+                throw new DAOException("FATAL: Error crítico de base de datos", e);
+            }
         }
 
         return loginResultDTO;
@@ -188,7 +206,11 @@ public class UserDAO implements IUserDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("FATAL: Error en conexión al buscar email", e);
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("FATAL: Error en conexión al buscar email", e);
+            } else {
+                throw new DAOException("FATAL: Error interno de base de datos al buscar email", e);
+            }
         }
 
         return emailExists;

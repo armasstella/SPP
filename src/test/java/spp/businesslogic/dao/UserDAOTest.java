@@ -121,7 +121,7 @@ public class UserDAOTest {
             userDAO.registerUser(testUser);
         });
 
-        assertTrue(exception.getMessage().contains("WARN: Violación de integridad de datos al insertar"));
+        assertTrue(exception.getMessage().contains("El Usuario que usted está intentando registrar ya existe"));
     }
 
     @Test

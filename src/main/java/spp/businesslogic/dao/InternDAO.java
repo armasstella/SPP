@@ -1,21 +1,25 @@
 package spp.businesslogic.dao;
 
-
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IInternDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.dataaccess.connection.MySQLConnectionManager;
 import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLInvalidAuthorizationSpecException;
+import java.sql.SQLTimeoutException;
+import java.sql.SQLTransactionRollbackException;
 import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class InternDAO implements IInternDAO {
 
@@ -23,7 +27,6 @@ public class InternDAO implements IInternDAO {
     private final UserDAO userDAO = new UserDAO();
 
     public InternDAO() {
-
     }
 
     @Override
@@ -36,6 +39,7 @@ public class InternDAO implements IInternDAO {
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             MySQLConnectionManager.getInstance().disableAutoCommitConnection();
+
             int generatedId = userDAO.registerUser(internDTO);
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INTERN)) {
@@ -52,48 +56,75 @@ public class InternDAO implements IInternDAO {
                     connection.commit();
                 }
             }
-
         } catch (DAOException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
-            AppLogger.logError(ExceptionLevel.ERROR, e);
-            throw new DAOException("Error al insertar practicante", e);
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error al insertar practicante: " + e.getMessage());
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            MySQLConnectionManager.getInstance().rollbackSafe();
+            AppLogger.logError(ExceptionLevel.WARN, e);
+            throw new DAOException("El practicante ya se encuentra activo en el sistema.");
+
+        } catch (SQLTransactionRollbackException e) {
+            MySQLConnectionManager.getInstance().rollbackSafe();
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de concurrencia: la operación fue abortada. Intente de nuevo.");
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            MySQLConnectionManager.getInstance().rollbackSafe();
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al registrar practicante.");
+
+        } catch (SQLTimeoutException e) {
+            MySQLConnectionManager.getInstance().rollbackSafe();
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al registrar practicante.");
 
         } catch (SQLException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al insertar practicante", e);
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al registrar al practicante.");
+            } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
+                throw new DAOException(e.getMessage());
+            } else {
+                throw new DAOException("Ocurrió un error interno al intentar registrar al practicante.");
+            }
         } finally {
             MySQLConnectionManager.getInstance().enableAutoCommitConnection();
         }
 
         return isInsertSuccessful;
-
     }
 
     @Override
     public boolean existsStudentByStudentNumber(String studentNumber) throws DAOException {
         final String SEARCH_STUDENT = "SELECT f_existe_estudiante(?)";
         boolean studentExists = false;
-
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_STUDENT)) {
                 preparedStatement.setString(1, studentNumber);
-
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         studentExists = resultSet.getBoolean(1);
                     }
                 }
             }
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al verificar matrícula.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al verificar matrícula.");
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar matrícula", e);
+            throw new DAOException("Error al consultar la existencia de la matrícula.");
         }
-
         return studentExists;
-
     }
 
     @Override
@@ -106,25 +137,29 @@ public class InternDAO implements IInternDAO {
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_INTERNS)) {
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    while (resultSet.next()) {
-                        InternDTO internDTO = new InternDTO();
-                        internDTO.setStudentNumber(resultSet.getString("matricula"));
-                        internDTO.setFullName(resultSet.getString("nombre_completo"));
-                        internDTO.setEmail(resultSet.getString("correo_electronico"));
-                        internsList.add(internDTO);
-                    }
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_INTERNS);
+                 ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    InternDTO internDTO = new InternDTO();
+                    internDTO.setStudentNumber(resultSet.getString("matricula"));
+                    internDTO.setFullName(resultSet.getString("nombre_completo"));
+                    internDTO.setEmail(resultSet.getString("correo_electronico"));
+                    internsList.add(internDTO);
                 }
             }
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al obtener la lista de practicantes.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al obtener practicantes.");
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al obtener practicantes", e);
+            throw new DAOException("Error al obtener la lista de practicantes activos.", e);
         }
-
         return internsList;
-
     }
 
     @Override
@@ -143,12 +178,18 @@ public class InternDAO implements IInternDAO {
                     }
                 }
             }
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al buscar matrícula.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al buscar matrícula.");
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al obtener studentNumber", e);
+            throw new DAOException("Error al obtener la matrícula", e);
         }
-
         return studentNumber;
     }
 
@@ -162,50 +203,61 @@ public class InternDAO implements IInternDAO {
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-
             try (PreparedStatement preparedStatement = connection.prepareStatement(INACTIVATE_INTERN)) {
                 preparedStatement.setString(1, internDTO.getStudentNumber());
                 isDeactivationSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
             }
+        } catch (SQLTransactionRollbackException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de concurrencia al desactivar practicante.");
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al desactivar practicante.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al desactivar practicante.");
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al desactivar practicante", e);
+            throw new DAOException("Error al desactivar practicante", e);
         }
-
         return isDeactivationSuccessful;
-
     }
 
     @Override
     public List<InternDTO> findUnassignedInternsIdentifiers() throws DAOException {
-        final String SELECT_INTERNS_WITHOUT_PROJECT = "SELECT p.matricula, CONCAT(u.nombre, ' ', u.apellidos) AS" +
-                " 'nombre_completo' " +
+        final String SELECT_INTERNS_WITHOUT_PROJECT = "SELECT p.matricula, CONCAT(u.nombre, ' ', u.apellidos) AS 'nombre_completo' " +
                 "FROM practicantes p " +
                 "INNER JOIN usuarios u ON p.id_usuario = u.id_usuario " +
-                "INNER JOIN inscripciones_practicas_profesionales i " +
-                "    ON i.id_usuario_practicante = p.id_usuario AND i.matricula = p.matricula " +
+                "INNER JOIN inscripciones_practicas_profesionales i ON i.id_usuario_practicante = p.id_usuario AND i.matricula = p.matricula " +
                 "WHERE i.id_proyecto IS NULL";
         List<InternDTO> internList = new ArrayList<>();
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_INTERNS_WITHOUT_PROJECT)) {
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    while (resultSet.next()) {
-                        InternDTO internDTO = new InternDTO();
-                        internDTO.setStudentNumber(resultSet.getString("matricula"));
-                        internDTO.setFullName(resultSet.getString("nombre_completo"));
-                        internList.add(internDTO);
-                    }
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_INTERNS_WITHOUT_PROJECT);
+                 ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    InternDTO internDTO = new InternDTO();
+                    internDTO.setStudentNumber(resultSet.getString("matricula"));
+                    internDTO.setFullName(resultSet.getString("nombre_completo"));
+                    internList.add(internDTO);
                 }
             }
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al buscar practicantes sin proyecto.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al buscar practicantes sin proyecto.");
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
             throw new DAOException("Error al obtener practicantes sin proyecto asignado", e);
         }
-
         return internList;
     }
 
@@ -234,14 +286,18 @@ public class InternDAO implements IInternDAO {
                     }
                 }
             }
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al buscar practicantes del profesor.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al buscar practicantes del profesor.");
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar los practicantes asignados al profesor", e);
+            throw new DAOException("Error al buscar los practicantes asignados al profesor", e);
         }
-
         return internsList;
-
     }
-
 }

@@ -12,10 +12,13 @@ import spp.businesslogic.exceptions.DAOException;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -56,6 +59,7 @@ public class TermDAOTest {
         String activeTerm = termDAO.findActiveTermName();
 
         assertNotNull(activeTerm);
+        assertEquals(dynamicTermName, activeTerm);
     }
 
     @Test
@@ -94,14 +98,29 @@ public class TermDAOTest {
 
     @Test
     @Order(6)
-    @DisplayName("Excepción: Debe lanzar DAOException al insertar un periodo duplicado")
+    @DisplayName("Excepción: Debe lanzar DAOException al insertar un periodo duplicado (ya existe activo)")
     void testInsertTermDuplicate() throws DAOException {
         termDAO.insertTerm(dynamicTermName);
 
         DAOException exception = assertThrows(DAOException.class, () -> {
             termDAO.insertTerm(dynamicTermName);
         });
+        assertTrue(exception.getMessage().startsWith("Operación denegada: Ya existe un periodo activo"));
+    }
 
-        assertTrue(exception.getMessage().contains("Operación denegada: Ya existe un periodo activo."));
+    @Test
+    @Order(7)
+    @DisplayName("Flujo Alterno: Obtener nombre del periodo activo cuando no hay ninguno (debe devolver null)")
+    void testFindActiveTermNameWhenNone() throws DAOException {
+        String activeTerm = termDAO.findActiveTermName();
+        assertNull(activeTerm);
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("Flujo Alterno: Obtener ID del periodo activo cuando no hay ninguno (debe devolver -1)")
+    void testFindActiveTermIdWhenNone() throws DAOException {
+        int activeTermId = termDAO.findActiveTermId();
+        assertEquals(-1, activeTermId);
     }
 }
