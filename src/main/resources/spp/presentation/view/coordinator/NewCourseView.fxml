@@ -29,11 +29,12 @@
     </top>
 
     <center>
-        <StackPane>
-            <VBox spacing="14" maxWidth="400" alignment="TOP_CENTER">
+        <BorderPane maxWidth="400">
                 <padding>
                     <Insets top="24" bottom="20" left="48" right="48"/>
                 </padding>
+
+            <center>
                 <ScrollPane>
                     <content>
                         <VBox spacing="14">
@@ -79,16 +80,31 @@
                             <TextArea fx:id="taCourseDetails" promptText="Detalles de horario" styleClass="field-input"
                                       VBox.vgrow="ALWAYS" wrapText="true" />
 
-                            <Label text="Profesor *" styleClass="field-label"/>
+                            <Label text="Profesor (Opcional)" styleClass="field-label"/>
                             <ComboBox fx:id="cmbInstructor" promptText="Seleccione una opción"
                                       styleClass="field-input, combo-box-custom" maxWidth="Infinity"/>
-
                         </VBox>
                     </content>
                 </ScrollPane>
-                <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
-            </VBox>
-        </StackPane>
+            </center>
+
+            <bottom>
+                <Label fx:id="lblStatus"
+                       text=""
+                       styleClass="lbl-status"
+                       alignment="CENTER"
+                       textAlignment="CENTER"
+                       maxWidth="Infinity"
+                       wrapText="true"
+                       visible="${lblStatus.text != ''}"
+                       managed="${lblStatus.text != ''}">
+                    <BorderPane.margin>
+                        <Insets top="14"/>
+                    </BorderPane.margin>
+                </Label>
+            </bottom>
+
+        </BorderPane>
     </center>
 
     <bottom>
