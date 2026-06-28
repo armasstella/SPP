@@ -75,7 +75,7 @@ public class CourseDAO implements ICourseDAO {
     public boolean existsRegisteredCourses() throws DAOException {
         boolean coursesExist = false;
 
-        final String SEARCH_COURSES = "SELECT f_hay_experiencias_educativas()";
+        final String SEARCH_COURSES = "SELECT f_hay_experiencias_periodo_activo()";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();

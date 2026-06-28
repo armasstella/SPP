@@ -25,59 +25,63 @@
     </top>
 
     <center>
-        <StackPane>
-            <VBox spacing="14" maxWidth="400" alignment="TOP_CENTER">
-                <padding>
-                    <Insets top="24" bottom="20" left="48" right="48"/>
-                </padding>
-                    <ScrollPane>
-                        <content>
-                            <VBox spacing="14">
-                                <padding>
-                                    <Insets left="5" right="5" top="5" bottom="5"/>
-                                </padding>
-                                    <Label text="Primer nombre *" styleClass="field-label"/>
-                                    <TextField fx:id="txtFirstName" promptText="Ej. Juan" styleClass="field-input"/>
+        <BorderPane maxWidth="400">
+            <padding>
+                <Insets top="24" bottom="20" left="48" right="48"/>
+            </padding>
 
-                                    <Label text="Segundo nombre" styleClass="field-label"/>
-                                    <TextField fx:id="txtSecondName" promptText="Ej. Carlos" styleClass="field-input"/>
+            <center>
+                <ScrollPane fitToWidth="true">
+                    <content>
+                        <VBox spacing="14">
+                            <padding>
+                                <Insets left="5" right="5" top="5" bottom="5"/>
+                            </padding>
+                            <Label text="Primer nombre *" styleClass="field-label"/>
+                            <TextField fx:id="txtFirstName" promptText="Ej. Juan" styleClass="field-input"/>
 
-                                    <Label text="Primer apellido *" styleClass="field-label"/>
-                                    <TextField fx:id="txtFirstLastName" promptText="Ej. García"
-                                               styleClass="field-input"/>
+                            <Label text="Segundo nombre" styleClass="field-label"/>
+                            <TextField fx:id="txtSecondName" promptText="Ej. Carlos" styleClass="field-input"/>
 
-                                    <Label text="Segundo apellido" styleClass="field-label"/>
-                                    <TextField fx:id="txtSecondLastName" promptText="Ej. López"
-                                               styleClass="field-input"/>
+                            <Label text="Primer apellido *" styleClass="field-label"/>
+                            <TextField fx:id="txtFirstLastName" promptText="Ej. García" styleClass="field-input"/>
 
-                                    <Label text="Correo electrónico *" styleClass="field-label"/>
-                                    <TextField fx:id="txtEmail" promptText="correo@uv.mx" styleClass="field-input"/>
+                            <Label text="Segundo apellido" styleClass="field-label"/>
+                            <TextField fx:id="txtSecondLastName" promptText="Ej. López" styleClass="field-input"/>
 
-                                    <Label text="Teléfono *" styleClass="field-label"/>
-                                    <TextField fx:id="txtPhoneNumber" promptText="228 111 2222"
-                                               styleClass="field-input"/>
+                            <Label text="Correo electrónico *" styleClass="field-label"/>
+                            <TextField fx:id="txtEmail" promptText="correo@uv.mx" styleClass="field-input"/>
 
-                                    <Label text="Número de personal *" styleClass="field-label"/>
-                                    <TextField fx:id="txtPersonalNumber" promptText="Ej. 12345"
-                                               styleClass="field-input"/>
+                            <Label text="Teléfono *" styleClass="field-label"/>
+                            <TextField fx:id="txtPhoneNumber" promptText="228 111 2222" styleClass="field-input"/>
 
-                                    <Label text="Contraseña *" styleClass="field-label"/>
-                                    <TextField fx:id="txtPassword" promptText="Mínimo 8 carácteres"
-                                               styleClass="field-input"/>
-                            </VBox>
-                        </content>
-                    </ScrollPane>
-            </VBox>
-            <Label fx:id="lblStatus" text=""
-                   styleClass="lbl-status"
-                   alignment="CENTER"
-                   StackPane.alignment= "BOTTOM_CENTER"
-                   wrapText="true"
-                   maxWidth="400"/>
-            <StackPane.margin>
-                <Insets bottom="12" left="48" right="48"/>
-            </StackPane.margin>
-        </StackPane>
+                            <Label text="Número de personal *" styleClass="field-label"/>
+                            <TextField fx:id="txtPersonalNumber" promptText="Ej. 12345" styleClass="field-input"/>
+
+                            <Label text="Contraseña *" styleClass="field-label"/>
+                            <TextField fx:id="txtPassword" promptText="Mínimo 8 carácteres" styleClass="field-input"/>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </center>
+
+            <bottom>
+                <Label fx:id="lblStatus"
+                       text=""
+                       styleClass="lbl-status"
+                       alignment="CENTER"
+                       textAlignment="CENTER"
+                       maxWidth="Infinity"
+                       wrapText="true"
+                       visible="${lblStatus.text != ''}"
+                       managed="${lblStatus.text != ''}">
+                    <BorderPane.margin>
+                        <Insets top="14"/>
+                    </BorderPane.margin>
+                </Label>
+            </bottom>
+
+        </BorderPane>
     </center>
 
     <bottom>

@@ -53,7 +53,6 @@ public class LoginController implements Initializable {
 
             try {
                 LoginResultDTO result = userDAO.login(email, password);
-                userDAO.obtainId(email);
 
                 if (result.isSuccess()) {
                     synchronizeCurrentTerm();
@@ -65,7 +64,7 @@ public class LoginController implements Initializable {
                 }
 
             } catch (DAOException e) {
-                StatusLabel.showError(lblStatus, "Credenciales ingresadas incorrectas");
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
 
         }

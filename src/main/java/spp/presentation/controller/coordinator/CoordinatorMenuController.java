@@ -18,8 +18,14 @@ public class CoordinatorMenuController {
 
     @FXML
     private void goToNewInternView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/coordinator/NewInternView.fxml",
-                "Registrar Practicante", event);
+        if (searchCourse()) {
+            ViewNavigator.loadView("/spp/presentation/view/coordinator/NewInternView.fxml",
+                    "Registrar Practicante", event);
+        } else {
+            AlertHelper.showErrorMessage("No puede realizar la operación",
+                    "No hay Experiencias Educativas registradas");
+
+        }
 
     }
 
@@ -98,15 +104,13 @@ public class CoordinatorMenuController {
 
     @FXML
     private void goToIndicatorReportView(ActionEvent event) {
-
-        try {
-            if (courseDAO.existsRegisteredCourses()) {
-                ViewNavigator.loadView("/spp/presentation/view/coordinator/IndicatorReportView.fxml",
-                        "Generar Reporte", event);
-            }
-        } catch (DAOException e) {
+        if (searchCourse()) {
+            ViewNavigator.loadView("/spp/presentation/view/coordinator/IndicatorReportView.fxml",
+                    "Generar Reporte", event);
+        } else {
             AlertHelper.showErrorMessage("No puede realizar la operación",
-                    "No hay información de cursos para extraer información.\nRegistre cursos primero.");
+                    "No hay Experiencias Educativas registradas");
+
         }
 
     }
@@ -139,13 +143,13 @@ public class CoordinatorMenuController {
     }
 
     private boolean searchLinkedOrganization() {
-        boolean exists;
+        boolean exists = false;
 
         try {
             LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
             exists = linkedOrganizationDAO.existsLinkedOrganizations();
         } catch (DAOException e) {
-            exists =  false;
+            AlertHelper.showErrorMessage("Error", e.getMessage());
         }
 
         return exists;
@@ -153,13 +157,13 @@ public class CoordinatorMenuController {
     }
 
     private boolean searchProjectManager() {
-        boolean exists;
+        boolean exists = false;
 
         try {
             ProjectManagerDAO projectManagerDAO = new ProjectManagerDAO();
             exists = projectManagerDAO.existsProjectManagers();
         } catch (DAOException e) {
-            exists = false;
+            AlertHelper.showErrorMessage("Error", e.getMessage());
         }
 
         return exists;
@@ -167,12 +171,12 @@ public class CoordinatorMenuController {
     }
 
     private boolean searchCourse() {
-        boolean exists;
+        boolean exists = false;
         try {
             CourseDAO courseDAO = new CourseDAO();
             exists = courseDAO.existsRegisteredCourses();
         } catch (DAOException e) {
-            exists = false;
+            AlertHelper.showErrorMessage("Error", e.getMessage());
         }
 
         return exists;
