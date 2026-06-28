@@ -15,9 +15,9 @@ public final class BusinessConstant {
     public static final Pattern PATTERN_STUDENT_NUMBER =
             Pattern.compile("^S\\d{8}$");
     public static final Pattern PATTERN_RFC =
-            Pattern.compile("^([A-ZÑ&]{3})(\\d{2})(0[1-9]|1[0-2])([0-2][1-9]|[3][01])([A-Z0-9]{3})$");
+            Pattern.compile("^([A-ZÑ&]{3})(\\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01])([A-Z0-9]{3})$");
     public static final Pattern PATTERN_TERM =
-            Pattern.compile("^(FEB-JUL|AGO-ENE)-\\d{2}$");
+            Pattern.compile("^(FEBRERO-JULIO|AGOSTO-ENERO)-\\d{4}$");
 
     public static final String MESSAGE_INVALID_EMAIL =
             ("El correo electrónico no tiene un formato válido.");
@@ -29,5 +29,5 @@ public final class BusinessConstant {
     public static final String MESSAGE_INVALID_RFC =
             ("El RFC debe tener un formato válido (ej. ABC123456XYZ).");
     public static final String MESSAGE_INVALID_TERM =
-            ("El periodo escolar debe tener un formato válido (ej. FEB-JUL-26 o AGO-ENE-26).");
+            ("El periodo escolar debe tener un formato válido (ej. FEBRERO-JULIO-2026 o AGOSTO-ENERO-2026).");
 }

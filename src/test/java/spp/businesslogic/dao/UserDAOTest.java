@@ -132,6 +132,6 @@ public class UserDAOTest {
             userDAO.obtainId("desconocido_" + System.currentTimeMillis() + "@uv.mx");
         });
 
-        assertTrue(exception.getMessage().contains("ERROR: Usuario no encontrado con email: "));
+        assertTrue(exception.getMessage().contains("Usuario no encontrado con email: "));
     }
 }

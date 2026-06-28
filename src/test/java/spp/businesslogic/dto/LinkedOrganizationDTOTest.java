@@ -27,8 +27,7 @@ public class LinkedOrganizationDTOTest {
     @Order(1)
     @DisplayName("Flujo Normal: Debe aceptar un RFC con formato válido")
     void testSetRfcValidFormat() {
-        boolean result = organizationDTO.setRfc("GOD561231MN8");
-        assertTrue(result);
+        organizationDTO.setRfc("GOD561231MN8");
         assertTrue(organizationDTO.isValid());
         assertTrue(organizationDTO.getErrors().isEmpty());
         assertEquals("GOD561231MN8", organizationDTO.getRfc());
@@ -38,8 +37,7 @@ public class LinkedOrganizationDTOTest {
     @Order(2)
     @DisplayName("Flujo Alterno: Debe rechazar un RFC con formato inválido (caracteres incorrectos)")
     void testSetRfcInvalidFormat() {
-        boolean result = organizationDTO.setRfc("GODE561231MN");
-        assertFalse(result);
+        organizationDTO.setRfc("GODE561231MN");
         assertFalse(organizationDTO.isValid());
         assertEquals(1, organizationDTO.getErrors().size());
         assertTrue(organizationDTO.getErrors().contains(BusinessConstant.MESSAGE_INVALID_RFC));
@@ -50,8 +48,7 @@ public class LinkedOrganizationDTOTest {
     @Order(3)
     @DisplayName("Flujo Alterno: Debe rechazar un RFC con formato inválido (fecha incorrecta)")
     void testSetRfcInvalidDate() {
-        boolean result = organizationDTO.setRfc("GODE563231MN8"); // mes 32 inválido
-        assertFalse(result);
+        organizationDTO.setRfc("GODE563231MN8");
         assertFalse(organizationDTO.isValid());
         assertTrue(organizationDTO.getErrors().contains(BusinessConstant.MESSAGE_INVALID_RFC));
         assertNull(organizationDTO.getRfc());
@@ -61,8 +58,7 @@ public class LinkedOrganizationDTOTest {
     @Order(4)
     @DisplayName("Flujo Alterno: Debe rechazar un RFC con formato inválido (solo letras)")
     void testSetRfcInvalidOnlyLetters() {
-        boolean result = organizationDTO.setRfc("ABCDEFGHIJKLM");
-        assertFalse(result);
+        organizationDTO.setRfc("ABCDEFGHIJKLM");
         assertFalse(organizationDTO.isValid());
         assertTrue(organizationDTO.getErrors().contains(BusinessConstant.MESSAGE_INVALID_RFC));
         assertNull(organizationDTO.getRfc());
@@ -72,8 +68,7 @@ public class LinkedOrganizationDTOTest {
     @Order(5)
     @DisplayName("Flujo Normal: Debe aceptar un correo electrónico con formato válido")
     void testSetEmailValidFormat() {
-        boolean result = organizationDTO.setEmail("contacto@org.com");
-        assertTrue(result);
+        organizationDTO.setEmail("contacto@org.com");
         assertTrue(organizationDTO.isValid());
         assertTrue(organizationDTO.getErrors().isEmpty());
         assertEquals("contacto@org.com", organizationDTO.getEmail());
@@ -83,8 +78,7 @@ public class LinkedOrganizationDTOTest {
     @Order(6)
     @DisplayName("Flujo Alterno: Debe rechazar un correo sin dominio")
     void testSetEmailInvalidNoDomain() {
-        boolean result = organizationDTO.setEmail("contacto@");
-        assertFalse(result);
+        organizationDTO.setEmail("contacto@");
         assertFalse(organizationDTO.isValid());
         assertEquals(1, organizationDTO.getErrors().size());
         assertTrue(organizationDTO.getErrors().contains(BusinessConstant.MESSAGE_INVALID_EMAIL));
@@ -95,8 +89,7 @@ public class LinkedOrganizationDTOTest {
     @Order(7)
     @DisplayName("Flujo Alterno: Debe rechazar un correo sin arroba")
     void testSetEmailInvalidNoAtSymbol() {
-        boolean result = organizationDTO.setEmail("contacto.org.com");
-        assertFalse(result);
+        organizationDTO.setEmail("contacto.org.com");
         assertFalse(organizationDTO.isValid());
         assertTrue(organizationDTO.getErrors().contains(BusinessConstant.MESSAGE_INVALID_EMAIL));
         assertNull(organizationDTO.getEmail());
@@ -106,11 +99,9 @@ public class LinkedOrganizationDTOTest {
     @Order(8)
     @DisplayName("Flujo de Acumulación: Debe acumular errores si fallan RFC y email")
     void testAccumulateMultipleErrors() {
-        boolean resultRfc = organizationDTO.setRfc("RFC123");
-        boolean resultEmail = organizationDTO.setEmail("correo-invalido.com");
+        organizationDTO.setRfc("RFC123");
+        organizationDTO.setEmail("correo-invalido.com");
 
-        assertFalse(resultRfc);
-        assertFalse(resultEmail);
         assertFalse(organizationDTO.isValid());
         assertEquals(2, organizationDTO.getErrors().size());
         assertTrue(organizationDTO.getErrors().contains(BusinessConstant.MESSAGE_INVALID_RFC));
@@ -123,11 +114,9 @@ public class LinkedOrganizationDTOTest {
     @Order(9)
     @DisplayName("Flujo Normal: Debe ser válido cuando RFC y email son correctos")
     void testAllValidFields() {
-        boolean resultRfc = organizationDTO.setRfc("GOD561231MN8");
-        boolean resultEmail = organizationDTO.setEmail("contacto@valido.com");
+        organizationDTO.setRfc("GOD561231MN8");
+        organizationDTO.setEmail("contacto@valido.com");
 
-        assertTrue(resultRfc);
-        assertTrue(resultEmail);
         assertTrue(organizationDTO.isValid());
         assertTrue(organizationDTO.getErrors().isEmpty());
         assertEquals("GOD561231MN8", organizationDTO.getRfc());
