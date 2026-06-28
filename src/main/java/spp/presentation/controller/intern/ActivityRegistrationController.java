@@ -3,6 +3,7 @@ package spp.presentation.controller.intern;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -15,9 +16,14 @@ import spp.businesslogic.dao.InternDAO;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
+import spp.utils.view.datepicker.DatePickerConfigurator;
+import spp.utils.view.datepicker.DateValidationMode;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
-public class ActivityRegistrationController {
+public class ActivityRegistrationController implements Initializable {
 
     @FXML private Label lblStatus;
     @FXML private TextField txtTitle;
@@ -28,6 +34,12 @@ public class ActivityRegistrationController {
     @FXML private TextField txtEffectiveTime;
     @FXML private TextField txtProgress;
     @FXML private TextArea taObservations;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        DatePickerConfigurator.configureSmartDatePicker(dpStartDate, DateValidationMode.ANY_DATE);
+        DatePickerConfigurator.configureSmartDatePicker(dpEndDate, DateValidationMode.ANY_DATE);
+    }
 
     @FXML
     private void saveActivity(ActionEvent event) {
@@ -123,5 +135,6 @@ public class ActivityRegistrationController {
                 "Menú Practicante", event);
 
     }
+
 
 }

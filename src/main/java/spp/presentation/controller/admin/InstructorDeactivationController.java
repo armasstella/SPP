@@ -12,7 +12,7 @@ import javafx.scene.control.TableView;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.InstructorDAO;
-import spp.utils.view.AlertHelper;
+import spp.utils.view.alert.AlertHelper;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;

@@ -14,7 +14,7 @@ import spp.businesslogic.dao.InstructorDAO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.utils.view.AlertHelper;
+import spp.utils.view.alert.AlertHelper;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewNavigator;
 
@@ -46,6 +46,7 @@ public class GroupAssignationToInstructorController implements Initializable {
     private void showDataInFields() {
         if (this.courseInEdition != null) {
             txtCourseCode.setText(String.valueOf(courseInEdition.getCourseCode()));
+            txtTerm.setText(String.valueOf(courseInEdition.getTermDTO().getName()));
             txtSchoolBlock.setText(String.valueOf(courseInEdition.getSchoolBlock()));
             txtSection.setText(String.valueOf(courseInEdition.getSection()));
         }

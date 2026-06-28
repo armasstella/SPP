@@ -23,6 +23,9 @@ import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewConstant;
 import spp.utils.view.ViewNavigator;
+import spp.utils.view.datepicker.DatePickerConfigurator;
+import spp.utils.view.datepicker.DateValidationMode;
+
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -48,11 +51,10 @@ public class NewInternController implements Initializable {
     @FXML private TextField txtIndigenousLanguage;
     @FXML private DatePicker dpBirthDate;
     @FXML private ComboBox<CourseDTO> cmbCourseCode;
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        configureDatePicker();
+        DatePickerConfigurator.configureSmartDatePicker(dpBirthDate, DateValidationMode.LEGAL_AGE_BIRTHDATE);
         toggleIndigenousLanguageField();
         setUpFields();
         loadCourseCodeInComboBox();
@@ -89,7 +91,6 @@ public class NewInternController implements Initializable {
         internDTO.setStudentNumber(txtStudentNumber.getText().trim());
         internDTO.setPassword(txtPassword.getText().trim());
         internDTO.setSex(cmbSex.getValue());
-
         internDTO.setSpeaksIndigenousLanguage(rbYes.isSelected());
         internDTO.setIndigenousLanguage(txtIndigenousLanguage.getText().trim());
 
@@ -112,7 +113,8 @@ public class NewInternController implements Initializable {
                 txtPassword.getText().isBlank() ||
                 cmbSex.getValue() == null ||
                 dpBirthDate.getValue() == null ||
-                isLanguageEmptyAndRequired) {
+                isLanguageEmptyAndRequired ||
+                cmbCourseCode.getValue() == null) {
 
             emptyFields = true;
         }
@@ -193,13 +195,16 @@ public class NewInternController implements Initializable {
 
             if (internDTO.isValid()) {
                 InternDAO internDAO = new InternDAO();
+                ProfessionalPracticeEnrollmentDAO professionalPracticeEnrollmentDAO = new ProfessionalPracticeEnrollmentDAO();
                 try {
                     if (internDAO.registerIntern(internDTO)) {
-                        StatusLabel.showSuccess(lblStatus, "Practicante registrado correctamente.");
-                        clearInputFields();
+                        if (professionalPracticeEnrollmentDAO.assignCourseByStudentNumber(internDTO.getStudentNumber(), cmbCourseCode.getValue().getIdCourse())) {
+                            StatusLabel.showSuccess(lblStatus, "Practicante registrado correctamente.");
+                            clearInputFields();
+                        }
                     }
                 } catch (DAOException e) {
-                    StatusLabel.showError(lblStatus, "No se pudo registrar el practicante.");
+                    StatusLabel.showError(lblStatus, e.getMessage());
                 }
             } else {
                 String errorMessages = String.join("\n• ", internDTO.getErrors());
@@ -246,26 +251,7 @@ public class NewInternController implements Initializable {
         dpBirthDate.setValue(null);
         rbNo.setSelected(true);
         toggleIndigenousLanguageField();
+        cmbCourseCode.setValue(null);
     }
 
-    private void configureDatePicker() {
-        dpBirthDate.setConverter(new StringConverter<LocalDate>() {
-            @Override
-            public String toString(LocalDate date) {
-                return (date != null) ? dateFormatter.format(date) : "";
-            }
-
-            @Override
-            public LocalDate fromString(String string) {
-                if (string != null && !string.isEmpty()) {
-                    try {
-                        return LocalDate.parse(string, dateFormatter);
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }
-                return null;
-            }
-        });
-    }
 }

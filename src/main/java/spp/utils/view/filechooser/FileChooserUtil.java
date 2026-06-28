@@ -1,4 +1,4 @@
-package spp.utils.view;
+package spp.utils.view.filechooser;
 
 
 import javafx.event.ActionEvent;

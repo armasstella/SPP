@@ -19,69 +19,90 @@
 
     <top>
         <VBox styleClass="header">
-            <Label text="SUBIR DOCUMENTOS" styleClass="header-title"/>
-            <Label text="Subir documentos iniciales" styleClass="header-subtitle"/>
+            <Label text="SUBIR DOCUMENTACIÓN" styleClass="header-title"/>
+            <Label text="SELECCIONE UNA OPCIÓN PARA SUBIR DOCUMENTACIÓN" styleClass="header-subtitle"/>
         </VBox>
     </top>
 
     <center>
         <StackPane>
-            <VBox spacing="14" maxWidth="400" alignment="TOP_CENTER">
+            <VBox spacing="14" alignment="TOP_CENTER">
                 <padding>
                     <Insets top="24" bottom="20" left="48" right="48"/>
                 </padding>
-                <ScrollPane>
+
+                <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
                     <content>
-                        <VBox styleClass="options-container" spacing="14">
+                        <HBox spacing="40" alignment="TOP_CENTER">
                             <padding>
                                 <Insets left="5" right="5" top="5" bottom="5"/>
                             </padding>
 
-                            <Button fx:id="btnUploadClassSchedule"
-                                    text="Subir Horario"
-                                    styleClass="option-btn, btn-add"
-                                    onAction="#uploadClassSchedule"
-                            />
+                            <VBox styleClass="options-container" spacing="14" alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
+                                <Label text="Documentos Iniciales" styleClass="field-label"/>
 
-                            <Button fx:id="btnUploadActivitiesSchedule"
-                                    text="Subir Cronograma de actividad"
-                                    styleClass="option-btn, btn-add"
-                                    onAction="#uploadActivitiesSchedule"
-                            />
+                                <Button fx:id="btnUploadClassSchedule"
+                                        text="Horario Clases"
+                                        styleClass="option-btn, btn-add"
+                                        onAction="#uploadClassSchedule"
+                                />
 
-                            <Button fx:id="btnUploadPSP"
-                                    text="Subir Bitácora PSP"
-                                    styleClass="option-btn, btn-add"
-                                    onAction="#uploadPSP"
-                            />
+                            </VBox>
 
-                            <Button fx:id="btnUploadPartialReport"
-                                    text="Subir Reporte Final"
-                                    styleClass="option-btn, btn-add"
-                                    onAction="#uploadPartialReport"
-                            />
+                            <VBox styleClass="options-container" spacing="14" alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
+                                <Label text="Documentos Prácticas" styleClass="field-label"/>
 
-                            <Button fx:id="btnUploadSelfEvaluation"
-                                    text="Subir Autoevaluación"
-                                    styleClass="option-btn, btn-add"
-                                    onAction="#uploadSelfEvaluation"
-                            />
+                                <Button fx:id="btnUploadPSP"
+                                        text="Bitácora PSP"
+                                        styleClass="option-btn, btn-add"
+                                        onAction="#uploadPSP"
+                                />
 
-                            <Button fx:id="btnUploadEvaluationLinkedOrganization"
-                                    text="Subir Evaluación Organización Vinculada"
-                                    styleClass="option-btn, btn-add"
-                                    onAction="#uploadEvaluationLinkedOrganization"
-                            />
+                                <Button fx:id="btnUploadMonthlyReport"
+                                        text="Reporte Mensual"
+                                        styleClass="option-btn, btn-add"
+                                        onAction="#uploadMonthlyReport"
+                                />
 
-                            <Button fx:id="btnUploadFinalReport"
-                                    text="Subir Reporte Final"
-                                    styleClass="option-btn, btn-add"
-                                    onAction="#uploadFinalReport"
-                            />
+                                <Button fx:id="btnUploadPartialReport"
+                                        text="Reporte Parcial"
+                                        styleClass="option-btn, btn-add"
+                                        onAction="#uploadPartialReport"
+                                />
 
-                        </VBox>
+                                <Button fx:id="btnUploadActivitiesPlan"
+                                        text="Plan Actividades"
+                                        styleClass="option-btn, btn-add"
+                                        onAction="#uploadActivitiesPlan"
+                                />
+                            </VBox>
+
+                            <VBox styleClass="options-container" spacing="14" alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
+                                <Label text="Documentos Cierre Prácticas" styleClass="field-label"/>
+
+                                <Button fx:id="btnUploadSelfEvaluation"
+                                        text="Autoevaluación"
+                                        styleClass="option-btn, btn-add"
+                                        onAction="#uploadSelfEvaluation"
+                                />
+
+                                <Button fx:id="btnUploadEvaluationLinkedOrganization"
+                                        text="Evaluación de la OV"
+                                        styleClass="option-btn, btn-add"
+                                        onAction="#uploadEvaluationLinkedOrganization"
+                                />
+
+                                <Button fx:id="btnUploadFinalReport"
+                                        text="Reporte Final"
+                                        styleClass="option-btn, btn-add"
+                                        onAction="#uploadFinalReport"
+                                />
+                            </VBox>
+
+                        </HBox>
                     </content>
                 </ScrollPane>
+
                 <Label fx:id="lblSelectedDocument" text="Ningún archivo seleccionado" styleClass="lbl-status"
                        wrapText="true" alignment="CENTER"/>
                 <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>

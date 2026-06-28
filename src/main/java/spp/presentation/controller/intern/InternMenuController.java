@@ -7,7 +7,7 @@ import spp.businesslogic.dao.PrioritizedProjectDAO;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.presentation.controller.user.MessageCenterController;
-import spp.utils.view.AlertHelper;
+import spp.utils.view.alert.AlertHelper;
 import spp.utils.view.ViewNavigator;
 
 
@@ -49,10 +49,9 @@ public class InternMenuController {
 
         try {
             PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
-            if (prioritizedProjectDAO.findPrioritizedProjectsByInternEmail(ActiveSessionDTO.get().getEmail())) {
-                hasPrioritizedProjects = true;
-            } else {
-                AlertHelper.showErrorMessage("Operación no disponible", 
+            hasPrioritizedProjects = prioritizedProjectDAO.findPrioritizedProjectsByInternEmail(ActiveSessionDTO.get().getEmail());
+            if (hasPrioritizedProjects) {
+                AlertHelper.showErrorMessage("Operación no disponible",
                         "Ya has seleccionado tres proyectos");
             }
         } catch (Exception e) {
@@ -65,18 +64,20 @@ public class InternMenuController {
     }
 
     private boolean searchMinimumProjects() {
-        boolean isThisOptionAllowed = false;
+        boolean hasMinimumProjectsForActiveTerm = false;
         try {
             ProjectDAO projectDAO = new ProjectDAO();
-            if (projectDAO.hasMinimumProjectsForActiveTerm()) {
-                isThisOptionAllowed = true;
+            hasMinimumProjectsForActiveTerm = projectDAO.hasMinimumProjectsForActiveTerm();
+            if (!hasMinimumProjectsForActiveTerm) {
+                AlertHelper.showErrorMessage("Error", "No hay suficientes proyectos disponibles\n" +
+                        "Revise después.");
             }
         } catch (Exception e) {
             AlertHelper.showErrorMessage("Error", "Error al realizar operación.\n" +
                     "Intente más tarde.");
         }
 
-        return isThisOptionAllowed;
+        return hasMinimumProjectsForActiveTerm;
 
     }
 

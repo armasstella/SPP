@@ -24,7 +24,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.businesslogic.exceptions.FileManagementException;
 import spp.utils.file.FileUtils;
-import spp.utils.view.FileChooserUtil;
+import spp.utils.view.filechooser.FileChooserUtil;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewConstant;

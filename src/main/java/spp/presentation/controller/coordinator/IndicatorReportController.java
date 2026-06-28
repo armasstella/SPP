@@ -16,7 +16,7 @@ import spp.businesslogic.enums.YesNoAllFilter;
 import spp.businesslogic.exceptions.DAOException;
 import spp.utils.file.HtmlToPdfConverter;
 import spp.utils.htmlbuilder.IndicatorReportHtmlBuilder;
-import spp.utils.view.FileChooserUtil;
+import spp.utils.view.filechooser.FileChooserUtil;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewConstant;

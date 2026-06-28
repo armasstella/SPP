@@ -125,12 +125,13 @@ public class ProjectDAO implements IProjectDAO {
 
     @Override
     public List<ProjectDTO> findProjectsDetailsForActiveTerm() throws DAOException {
-        final String SELECT_ALL_PROJECTS = "SELECT  p.id_proyecto, p.nombre, p.descripcion, p.disponibilidad, " +
+        final String SELECT_ALL_PROJECTS = "SELECT p.id_proyecto, p.nombre, p.descripcion, p.disponibilidad, " +
                 "p.cupo, ov.nombre as 'nombre_ov', CONCAT(ep.nombres, ' ', ep.apellidos) as 'nombre_rp' " +
-                "FROM proyectos p INNER JOIN organizaciones_vinculadas ov ON " +
-                "p.id_organizacion_vinculada = ov.id_organizacion_vinculada " +
-                "INNER JOIN encargados_proyectos ep " +
-                "ON ep.id_encargado_proyecto = p.id_encargado_proyecto";
+                "FROM proyectos p " +
+                "INNER JOIN organizaciones_vinculadas ov ON p.id_organizacion_vinculada = ov.id_organizacion_vinculada " +
+                "INNER JOIN encargados_proyectos ep ON ep.id_encargado_proyecto = p.id_encargado_proyecto " +
+                "INNER JOIN periodos per ON p.id_periodo = per.id_periodo " +
+                "WHERE per.periodoActual = 1 AND p.disponibilidad = 'Disponible'";
         List<ProjectDTO> projectsList = new ArrayList<>();
 
         try {

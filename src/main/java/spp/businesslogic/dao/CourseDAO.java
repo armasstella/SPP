@@ -3,6 +3,7 @@ package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
+import spp.businesslogic.dto.TermDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ICourseDAO;
 import spp.dataaccess.connection.MySQLConnection;
@@ -59,7 +60,7 @@ public class CourseDAO implements ICourseDAO {
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.logError(ExceptionLevel.WARN, e);
-            throw new DAOException("Verifique los datos ingresados", e);
+            throw new DAOException("No puede haber dos EE con el mismo NRC para este periodo", e);
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
@@ -124,6 +125,9 @@ public class CourseDAO implements ICourseDAO {
         CourseDTO courseDTO = new CourseDTO();
         courseDTO.setIdCourse(resultSet.getInt("id_experiencia_educativa"));
         courseDTO.setCourseCode(Integer.parseInt(resultSet.getString("nrc")));
+        TermDTO termDTO = new TermDTO();
+        termDTO.setName(resultSet.getString("periodo"));
+        courseDTO.setTermDTO(termDTO);
         courseDTO.setSchoolBlock(resultSet.getInt("bloque"));
         courseDTO.setSection(resultSet.getInt("seccion"));
         InstructorDTO instructorDTO = new InstructorDTO();

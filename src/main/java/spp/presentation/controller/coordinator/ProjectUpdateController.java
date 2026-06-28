@@ -16,7 +16,7 @@ import javafx.scene.layout.VBox;
 import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
-import spp.utils.view.AlertHelper;
+import spp.utils.view.alert.AlertHelper;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.InputFilter;
 import spp.utils.view.StatusLabel;

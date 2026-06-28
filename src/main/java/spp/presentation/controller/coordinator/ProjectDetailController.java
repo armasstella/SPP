@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.dto.ProjectManagerDTO;
-import spp.utils.view.AlertHelper;
+import spp.utils.view.alert.AlertHelper;
 
 
 public class ProjectDetailController {

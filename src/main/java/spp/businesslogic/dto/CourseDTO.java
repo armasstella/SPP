@@ -10,6 +10,7 @@ public class CourseDTO extends BaseDTO{
     private String courseDetails;
     private InstructorDTO instructorDTO;
     private int numberOfInterns;
+    private TermDTO termDTO;
 
     public CourseDTO() {
 
@@ -79,4 +80,16 @@ public class CourseDTO extends BaseDTO{
         this.numberOfInterns = numberOfInterns;
     }
 
+    public TermDTO getTermDTO() {
+        return termDTO;
+    }
+
+    public void setTermDTO(TermDTO termDTO) {
+        this.termDTO = termDTO;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(courseCode);
+    }
 }

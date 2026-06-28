@@ -156,12 +156,13 @@ public class MessageCenterController implements Initializable {
                             }
                             clearNewMessageFields();
                         } catch (DAOException e) {
-                            StatusLabel.showError(lblStatus, "Error enviando mensaje");
+                            StatusLabel.showError(lblStatus, e.getMessage());
                         }
+                    } else {
+                        StatusLabel.showError(lblStatus, "El email no está registrado en el sistema");
                     }
                 } catch (DAOException e) {
-                    StatusLabel.showError(lblStatus, "El correo ingresado no está registrado en el sistema" +
-                            "\nNo es posible enviarle mensaje.");
+                    StatusLabel.showError(lblStatus, e.getMessage());
                 }
             } else {
                 String errorMessages = String.join(" - ", messageDTO.getErrors());

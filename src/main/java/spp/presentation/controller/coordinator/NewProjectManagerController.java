@@ -178,5 +178,6 @@ public class NewProjectManagerController implements Initializable {
         txtResponsibility.clear();
         txtRole.clear();
         txtPhoneNumber.clear();
+        cmbLinkedOrganizations.setValue(null);
     }
 }

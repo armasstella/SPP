@@ -140,7 +140,7 @@ public class NewCourseController implements Initializable {
                         clearInputFields();
                     }
                 } catch (DAOException e) {
-                    StatusLabel.showError(lblStatus, "No se pudo registrar el curso.");
+                    StatusLabel.showError(lblStatus, e.getMessage());
                 }
             } else {
                 String errorMessages = String.join("\n• ", courseDTO.getErrors());
@@ -170,7 +170,6 @@ public class NewCourseController implements Initializable {
 
     private void clearInputFields() {
         txtCourseCode.clear();
-        txtTerm.clear();
         cmbSection.setValue(null);
         cmbSchoolBlock.setValue(null);
         txtCapacity.clear();

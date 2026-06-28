@@ -42,7 +42,7 @@ public class CourseInformationController implements Initializable {
         colCourseCode.setCellValueFactory(
                 new GenericNestedSelector<>("courseCode", "Sin NRC"));
         colTerm.setCellValueFactory(
-                new GenericNestedSelector<>("term", "Sin periodo"));
+                new GenericNestedSelector<>("termDTO.name", "Sin periodo"));
         colSchoolBlock.setCellValueFactory(
                 new GenericNestedSelector<>("schoolBlock", "Sin bloque"));
         colSection.setCellValueFactory(

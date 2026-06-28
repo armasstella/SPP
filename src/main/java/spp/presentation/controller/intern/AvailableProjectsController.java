@@ -20,7 +20,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.businesslogic.dao.PrioritizedProjectDAO;
 import spp.presentation.controller.coordinator.ProjectDetailController;
-import spp.utils.view.AlertHelper;
+import spp.utils.view.alert.AlertHelper;
 import spp.utils.view.GenericNestedSelector;
 import spp.utils.view.StatusLabel;
 import spp.utils.view.ViewConstant;

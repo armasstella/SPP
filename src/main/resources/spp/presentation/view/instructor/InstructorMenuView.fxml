@@ -37,28 +37,39 @@
     </top>
 
     <center>
-        <VBox styleClass="options-container">
-            <HBox styleClass="options-container" alignment="CENTER" spacing="16">
-                <VBox alignment="CENTER" spacing="16">
-                    <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
 
-                    <Button text="Subir Plantilla Presentación"
-                            styleClass="option-btn, btn-inactivate"
-                            onAction="#goToPresentationTemplateUploadView"
-                    />
+        <VBox fx:id="vbShowedElementsForCourseStatus" HBox.hgrow="ALWAYS">
+            <VBox fx:id="vbAvailableOptions" visible="false" VBox.vgrow="ALWAYS"
+                  managed="${vbAvailableOptions.visible}" styleClass="options-container">
+                <HBox styleClass="options-container" alignment="CENTER" spacing="16">
+                    <VBox alignment="CENTER" spacing="16">
+                        <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
 
-                    <Button text="Evaluar Reporte Parcial"
-                            styleClass="option-btn, btn-inactivate"
-                            onAction="#goToPartialReportEvaluationView"
-                    />
+                        <Button text="Subir Plantilla Presentación"
+                                styleClass="option-btn, btn-inactivate"
+                                onAction="#goToPresentationTemplateUploadView"
+                        />
 
-                    <Button text="Evaluar Reporte Final"
-                            styleClass="option-btn, btn-inactivate"
-                            onAction="#goToFinalReportEvaluationView"
-                    />
+                        <Button text="Evaluar Reporte Parcial"
+                                styleClass="option-btn, btn-inactivate"
+                                onAction="#goToPartialReportEvaluationView"
+                        />
 
+                        <Button text="Evaluar Reporte Final"
+                                styleClass="option-btn, btn-inactivate"
+                                onAction="#goToFinalReportEvaluationView"
+                        />
+
+                    </VBox>
+                </HBox>
+            </VBox>
+            <VBox fx:id="vbErrorStatusMessage" visible="false" managed="${vbErrorStatusMessage.visible}" spacing="15">
+                <VBox spacing="5">
+                    <Label fx:id="lblStatus" text="NO CUENTA CON UNA EXPERIENCIA EDUCATIVA ASIGNADA" styleClass="field-description"/>
                 </VBox>
-            </HBox>
+            </VBox>
         </VBox>
+
+
     </center>
 </BorderPane>
