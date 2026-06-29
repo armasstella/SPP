@@ -14,9 +14,6 @@ import java.sql.Timestamp;
 
 public class ActivityScheduleDAO implements IActivityScheduleDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-
-
     @Override
     public boolean saveActivitySchedule(ActivityScheduleDTO activityScheduleDTO, int projectId) throws DAOException {
         final String INSERT_DOCUMENT = "INSERT INTO calendarizaciones_actividades (nombre_original, " +
@@ -34,7 +31,7 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
                 preparedStatement.setString(5, activityScheduleDTO.getExtension());
                 preparedStatement.setTimestamp(6, Timestamp.valueOf(activityScheduleDTO.getUploadDate()));
                 preparedStatement.setInt(7, projectId);
-                isSaveSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isSaveSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
 
             }
 

@@ -23,7 +23,6 @@ import java.sql.Statement;
 
 public class UserDAO implements IUserDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
     private final PasswordHasher passwordHasher = new PasswordHasher();
 
     public UserDAO() {
@@ -50,7 +49,7 @@ public class UserDAO implements IUserDAO {
                 preparedStatement.setString(5,
                         passwordHasher.hashPassword(userDTO.getPassword()));
 
-                if (preparedStatement.executeUpdate() == NO_ROWS_AFFECTED) {
+                if (preparedStatement.executeUpdate() == BaseDAO.NO_ROWS_AFFECTED) {
                     throw new DAOException("Fallo al insertar usuario. No se afectaron filas.");
                 }
 

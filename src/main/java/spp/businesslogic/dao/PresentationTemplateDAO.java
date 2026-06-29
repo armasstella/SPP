@@ -14,8 +14,6 @@ import java.sql.Timestamp;
 
 public class PresentationTemplateDAO implements IPresentationTemplateDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-
     @Override
     public boolean saveDocument(String personalNumber, PresentationTemplateDTO presentationTemplateDTO) throws DAOException {
         final String INSERT_DOCUMENT = " INSERT INTO plantillas_presentaciones (nombre_original, " +
@@ -34,7 +32,7 @@ public class PresentationTemplateDAO implements IPresentationTemplateDAO {
                 preparedStatement.setString(5, presentationTemplateDTO.getExtension());
                 preparedStatement.setTimestamp(6, Timestamp.valueOf(presentationTemplateDTO.getUploadDate()));
                 preparedStatement.setString(7, personalNumber);
-                isSaveSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isSaveSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {

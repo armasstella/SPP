@@ -20,8 +20,6 @@ import java.util.List;
 
 public class ProjectManagerDAO implements IProjectManagerDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-
     public ProjectManagerDAO() {
     }
 
@@ -49,7 +47,7 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                 preparedStatement.setInt(6,
                         linkedOrganizationId);
 
-                isInsertSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isInsertSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {

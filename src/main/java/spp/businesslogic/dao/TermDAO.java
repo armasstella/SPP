@@ -21,8 +21,6 @@ import java.util.List;
 
 public class TermDAO implements ITermDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-
     @Override
     public List<String> findTermNames() throws DAOException {
         List<String> periods = new ArrayList<>();
@@ -134,7 +132,7 @@ public class TermDAO implements ITermDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_DEACTIVATE_TERM)) {
                 int affectedRows = preparedStatement.executeUpdate();
-                deactivationSuccesful = affectedRows != NO_ROWS_AFFECTED;
+                deactivationSuccesful = affectedRows != BaseDAO.NO_ROWS_AFFECTED;
             }
         } catch (SQLTransactionRollbackException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
@@ -170,7 +168,7 @@ public class TermDAO implements ITermDAO {
             try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_TERM)) {
                 preparedStatement.setString(1, termName);
                 int affectedRows = preparedStatement.executeUpdate();
-                isInsertSuccessful = affectedRows != NO_ROWS_AFFECTED;
+                isInsertSuccessful = affectedRows != BaseDAO.NO_ROWS_AFFECTED;
             }
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.logError(ExceptionLevel.WARN, e);

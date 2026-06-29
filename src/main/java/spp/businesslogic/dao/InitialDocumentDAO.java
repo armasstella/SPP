@@ -16,8 +16,6 @@ import java.sql.ResultSet;
 
 public class InitialDocumentDAO implements IInitialDocumentDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-
     @Override
     public boolean saveDocument(String studentNumber, InitialDocumentDTO initialDocumentDTO) throws DAOException {
         final String INSERT_DOCUMENT = " INSERT INTO documentos_practicantes (nombre_original, " +
@@ -37,7 +35,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
                 preparedStatement.setTimestamp(6, Timestamp.valueOf(initialDocumentDTO.getUploadDate()));
                 preparedStatement.setString(7, initialDocumentDTO.getDocumentType());
                 preparedStatement.setString(8, studentNumber);
-                isSaveSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isSaveSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {

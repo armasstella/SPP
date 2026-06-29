@@ -21,8 +21,6 @@ import java.util.List;
 
 public class CourseDAO implements ICourseDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-
     public CourseDAO() {
 
     }
@@ -52,7 +50,7 @@ public class CourseDAO implements ICourseDAO {
                 preparedStatement.setInt(8, activeTermId);
 
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows != NO_ROWS_AFFECTED) {
+                if (affectedRows != BaseDAO.NO_ROWS_AFFECTED) {
                     isInsertSuccessful = true;
                 }
 
@@ -151,7 +149,7 @@ public class CourseDAO implements ICourseDAO {
                 preparedStatement.setString(2, courseDTO.getInstructorDTO().getPersonalNumber());
                 preparedStatement.setInt(3, courseDTO.getIdCourse());
 
-                isUpdateSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isUpdateSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
 
             }
 

@@ -23,8 +23,6 @@ import java.util.List;
 
 public class ProjectDAO implements IProjectDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-
     public ProjectDAO() {
     }
 
@@ -91,7 +89,7 @@ public class ProjectDAO implements IProjectDAO {
             try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PROJECT)) {
                 preparedStatement.setInt(1, projectDTO.getId());
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows != NO_ROWS_AFFECTED) {
+                if (affectedRows != BaseDAO.NO_ROWS_AFFECTED) {
                     isDeletionSuccesful = true;
                 }
             }
@@ -123,7 +121,7 @@ public class ProjectDAO implements IProjectDAO {
                 preparedStatement.setInt(3, projectDTO.getPlacesAvailable());
                 preparedStatement.setInt(4, projectDTO.getId());
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows != NO_ROWS_AFFECTED) {
+                if (affectedRows != BaseDAO.NO_ROWS_AFFECTED) {
                     isUpdateSuccesful = true;
                 }
             }

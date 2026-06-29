@@ -21,9 +21,6 @@ import java.util.List;
 
 public class InstructorDAO implements IInstructorDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-    private final UserDAO userDAO = new UserDAO();
-
     public InstructorDAO() {
     }
 
@@ -35,6 +32,7 @@ public class InstructorDAO implements IInstructorDAO {
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             MySQLConnectionManager.getInstance().disableAutoCommitConnection();
+            UserDAO userDAO = new UserDAO();
             int generatedId = userDAO.registerUser(instructorDTO);
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INSTRUCTOR)) {
@@ -42,7 +40,7 @@ public class InstructorDAO implements IInstructorDAO {
                 preparedStatement.setString(2, instructorDTO.getPersonalNumber());
                 preparedStatement.setString(3, instructorDTO.getShift());
 
-                if (preparedStatement.executeUpdate() != NO_ROWS_AFFECTED) {
+                if (preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED) {
                     isInsertSuccessful = true;
                     connection.commit();
                 }
@@ -102,7 +100,7 @@ public class InstructorDAO implements IInstructorDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(INACTIVATE_INSTRUCTOR)) {
                 preparedStatement.setString(1, instructorDTO.getPersonalNumber());
-                isDeactivationSuccesful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isDeactivationSuccesful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLTransactionRollbackException e) {

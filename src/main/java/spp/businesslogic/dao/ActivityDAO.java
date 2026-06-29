@@ -18,10 +18,7 @@ import java.util.List;
 
 public class ActivityDAO implements IActivityDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-
     public ActivityDAO() {
-
     }
 
     @Override
@@ -46,7 +43,7 @@ public class ActivityDAO implements IActivityDAO {
                 preparedStatement.setString(8, activityDTO.getObservations());
                 preparedStatement.setString(9, studentNumber);
 
-                isInsertSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isInsertSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
 
             }
 
@@ -120,7 +117,7 @@ public class ActivityDAO implements IActivityDAO {
                 preparedStatement.setInt(7, activity.getProgress());
                 preparedStatement.setString(8, activity.getObservations());
                 preparedStatement.setInt(9, activity.getId());
-                isActivityUpdated = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isActivityUpdated = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {
@@ -141,7 +138,7 @@ public class ActivityDAO implements IActivityDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ACTIVITY)) {
                 preparedStatement.setInt(1, idActivity);
-                isActivityDeleted = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isActivityDeleted = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {

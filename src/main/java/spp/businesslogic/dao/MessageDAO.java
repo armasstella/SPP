@@ -18,11 +18,7 @@ import java.util.List;
 
 public class MessageDAO implements IMessageDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-    private final UserDAO userDAO = new UserDAO();
-
     public MessageDAO() {
-
     }
 
     @Override
@@ -42,7 +38,7 @@ public class MessageDAO implements IMessageDAO {
                 preparedStatement.setString(2, messageDTO.getContent());
                 preparedStatement.setString(3, messageDTO.getEmailSender());
                 preparedStatement.setString(4, messageDTO.getEmailReceiver());
-                isMessageSent = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isMessageSent = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {

@@ -23,9 +23,6 @@ import java.util.List;
 
 public class InternDAO implements IInternDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-    private final UserDAO userDAO = new UserDAO();
-
     public InternDAO() {
     }
 
@@ -40,6 +37,7 @@ public class InternDAO implements IInternDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             MySQLConnectionManager.getInstance().disableAutoCommitConnection();
 
+            UserDAO userDAO = new UserDAO();
             int generatedId = userDAO.registerUser(internDTO);
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INTERN)) {
@@ -51,7 +49,7 @@ public class InternDAO implements IInternDAO {
                 preparedStatement.setTimestamp(6, Timestamp.valueOf(internDTO.getBirthDate()));
 
                 int rowsAffected = preparedStatement.executeUpdate();
-                if (rowsAffected != NO_ROWS_AFFECTED) {
+                if (rowsAffected != BaseDAO.NO_ROWS_AFFECTED) {
                     isInsertSuccessful = true;
                     connection.commit();
                 }
@@ -205,7 +203,7 @@ public class InternDAO implements IInternDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(INACTIVATE_INTERN)) {
                 preparedStatement.setString(1, internDTO.getStudentNumber());
-                isDeactivationSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isDeactivationSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
             }
         } catch (SQLTransactionRollbackException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);

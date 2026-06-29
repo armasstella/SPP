@@ -285,14 +285,18 @@ public class UploadDocumentsController {
     private boolean areInitialDocumentsQualified() {
         // boolean qualified = false;
         // try {
-        //    qualified = internDAO.checkInitialDocsStatus(ActiveSessionDTO.get().getEmail());
+        //    qualified = documentDAO.checkInitialDocsStatus(ActiveSessionDTO.get().getEmail());
         // } catch(...)
         // return qualified;
         return true;
     }
 
     private boolean arePracticeDocumentsQualified() {
-        // Misma lógica consultando a la base de datos
+        // boolean qualified = false;
+        // try {
+        //    qualified = documentDAO.checkPracticelDocsStatus(ActiveSessionDTO.get().getEmail());
+        // } catch(...)
+        // return qualified;
         return true;
     }
 }

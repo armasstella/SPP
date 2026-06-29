@@ -19,8 +19,6 @@ import java.util.List;
 
 public class PrioritizedProjectDAO implements IPrioritizedProjectDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-
     @Override
     public boolean savePrioritizedProjects(String email, List<ProjectDTO> prioritizedProjectsList) throws DAOException {
         final String SAVE_PRIORITIZED_PROJECT =
@@ -49,7 +47,7 @@ public class PrioritizedProjectDAO implements IPrioritizedProjectDAO {
 
                 boolean isBatchSuccessful = true;
                 for (int rows : affectedRowsPerStatement) {
-                    if (rows == Statement.EXECUTE_FAILED || rows == NO_ROWS_AFFECTED) {
+                    if (rows == Statement.EXECUTE_FAILED || rows == BaseDAO.NO_ROWS_AFFECTED) {
                         isBatchSuccessful = false;
                         break;
                     }

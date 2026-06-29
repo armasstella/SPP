@@ -22,9 +22,6 @@ import java.util.List;
 
 public class CoordinatorDAO implements ICoordinatorDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-    private final UserDAO userDAO = new UserDAO();
-
     public CoordinatorDAO() {
     }
 
@@ -37,13 +34,14 @@ public class CoordinatorDAO implements ICoordinatorDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             MySQLConnectionManager.getInstance().disableAutoCommitConnection();
 
+            UserDAO userDAO = new UserDAO();
             int generatedId = userDAO.registerUser(coordinatorDTO);
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_COORDINATOR)) {
                 preparedStatement.setInt(1, generatedId);
                 preparedStatement.setString(2, coordinatorDTO.getPersonalNumber());
 
-                if (preparedStatement.executeUpdate() != NO_ROWS_AFFECTED) {
+                if (preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED) {
                     isInsertSuccessful = true;
                     connection.commit();
                 }
@@ -103,7 +101,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(INACTIVATE_COORDINATOR)) {
                 preparedStatement.setString(1, coordinatorDTO.getPersonalNumber());
-                isDeactivationSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isDeactivationSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLTransactionRollbackException e) {

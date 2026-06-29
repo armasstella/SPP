@@ -15,10 +15,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeEnrollmentDAO {
 
-    private static final int NO_ROWS_AFFECTED = 0;
-
     public ProfessionalPracticeEnrollmentDAO() {
-
     }
 
     @Override
@@ -45,7 +42,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
                 preparedStatement.setInt(6,
                         professionalPracticeEnrollmentDTO.getCoveredHours());
 
-                isInsertSuccessful = preparedStatement.executeUpdate() != NO_ROWS_AFFECTED;
+                isInsertSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
 
             }
 
@@ -76,7 +73,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
                 preparedStatement.setInt(1, idProject);
                 preparedStatement.setString(2, studentNumber);
                 int rowsAffected = preparedStatement.executeUpdate();
-                isProjectAssigned = rowsAffected != NO_ROWS_AFFECTED;
+                isProjectAssigned = rowsAffected != BaseDAO.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {
@@ -101,7 +98,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
                 preparedStatement.setInt(1, courseId);
                 preparedStatement.setString(2, studentNumber);
                 int rowsAffected = preparedStatement.executeUpdate();
-                isCourseAssigned = rowsAffected != NO_ROWS_AFFECTED;
+                isCourseAssigned = rowsAffected != BaseDAO.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {
