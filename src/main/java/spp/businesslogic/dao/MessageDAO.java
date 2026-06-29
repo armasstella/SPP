@@ -6,15 +6,18 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IMessageDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.ResultSet;
+import java.sql.SQLInvalidAuthorizationSpecException;
+import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class MessageDAO implements IMessageDAO {
 
@@ -43,10 +46,26 @@ public class MessageDAO implements IMessageDAO {
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.log(ExceptionLevel.WARN, e);
-            throw new DAOException("Verifique los datos ingresados", e);
+            throw new DAOException("No se pudo enviar el mensaje. Verifique que los correos del remitente y destinatario sean válidos y estén registrados.");
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al intentar enviar el mensaje.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al intentar enviar el mensaje.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al guardar el mensaje", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al guardar el mensaje.");
+            } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
+                throw new DAOException(e.getMessage());
+            } else {
+                throw new DAOException("Ocurrió un error interno al intentar guardar el mensaje.");
+            }
         }
 
         return isMessageSent;
@@ -65,6 +84,7 @@ public class MessageDAO implements IMessageDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_MESSAGES)) {
                 preparedStatement.setString(1, email);
+
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         MessageDTO messageDTO = new MessageDTO();
@@ -77,9 +97,22 @@ public class MessageDAO implements IMessageDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al obtener la bandeja de mensajes.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al consultar los mensajes.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al obtener mensajes");
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al obtener los mensajes.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al consultar la bandeja de mensajes.");
+            }
         }
 
         return messagesList;

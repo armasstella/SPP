@@ -7,22 +7,23 @@ import spp.businesslogic.dto.TermDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ICourseDAO;
 import spp.dataaccess.connection.MySQLConnection;
-import spp.dataaccess.connection.MySQLConnectionManager;
 import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLInvalidAuthorizationSpecException;
+import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class CourseDAO implements ICourseDAO {
 
     public CourseDAO() {
-
     }
 
     @Override
@@ -34,12 +35,13 @@ public class CourseDAO implements ICourseDAO {
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
 
-            try(PreparedStatement preparedStatement = connection.prepareStatement(INSERT_COURSE)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_COURSE)) {
                 preparedStatement.setInt(1, courseDTO.getCourseCode());
                 preparedStatement.setInt(2, courseDTO.getSchoolBlock());
                 preparedStatement.setInt(3, courseDTO.getSection());
                 preparedStatement.setInt(4, courseDTO.getCapacity());
                 preparedStatement.setString(5, courseDTO.getCourseDetails());
+
                 if (courseDTO.getInstructorDTO() != null) {
                     preparedStatement.setInt(6, courseDTO.getInstructorDTO().getId());
                     preparedStatement.setString(7, courseDTO.getInstructorDTO().getPersonalNumber());
@@ -58,13 +60,26 @@ public class CourseDAO implements ICourseDAO {
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.log(ExceptionLevel.WARN, e);
-            throw new DAOException("No puede haber dos EE con el mismo NRC para este periodo", e);
+            throw new DAOException("No se pudo registrar la Experiencia Educativa. Es probable que el NRC ya esté registrado en este periodo escolar.");
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al intentar registrar el curso.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al registrar el curso.");
 
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al insertar curso", e);
-        } finally {
-            MySQLConnectionManager.getInstance().enableAutoCommitConnection();
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al registrar el curso.");
+            } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
+                throw new DAOException(e.getMessage());
+            } else {
+                throw new DAOException("Ocurrió un error interno al intentar registrar el curso.");
+            }
         }
 
         return isInsertSuccessful;
@@ -73,26 +88,37 @@ public class CourseDAO implements ICourseDAO {
     @Override
     public boolean existsRegisteredCourses() throws DAOException {
         boolean coursesExist = false;
-
         final String SEARCH_COURSES = "SELECT f_hay_experiencias_periodo_activo()";
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            try(PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_COURSES)) {
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    if (resultSet.next()) {
-                        coursesExist = resultSet.getBoolean(1);
-                    }
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_COURSES);
+                 ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    coursesExist = resultSet.getBoolean(1);
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de autenticación al verificar la existencia de cursos.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al consultar la existencia de cursos.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar cursos", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar cursos registrados.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al consultar la disponibilidad de cursos.");
+            }
         }
 
         return coursesExist;
-
     }
 
     @Override
@@ -102,7 +128,7 @@ public class CourseDAO implements ICourseDAO {
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-            try(PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_COURSES)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_COURSES)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         coursesList.add(buildCourseDTOFromResultSet(resultSet));
@@ -112,26 +138,35 @@ public class CourseDAO implements ICourseDAO {
 
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al obtener cursos", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al obtener estadísticas de cursos.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al obtener las estadísticas de los cursos.");
+            }
         }
 
         return coursesList;
-
     }
 
     private static CourseDTO buildCourseDTOFromResultSet(ResultSet resultSet) throws SQLException {
         CourseDTO courseDTO = new CourseDTO();
         courseDTO.setIdCourse(resultSet.getInt("id_experiencia_educativa"));
         courseDTO.setCourseCode(Integer.parseInt(resultSet.getString("nrc")));
+
         TermDTO termDTO = new TermDTO();
         termDTO.setName(resultSet.getString("periodo"));
         courseDTO.setTermDTO(termDTO);
+
         courseDTO.setSchoolBlock(resultSet.getInt("bloque"));
         courseDTO.setSection(resultSet.getInt("seccion"));
+
         InstructorDTO instructorDTO = new InstructorDTO();
         instructorDTO.setFirstName(resultSet.getString("nombreProfesor"));
         courseDTO.setInstructorDTO(instructorDTO);
+
         courseDTO.setNumberOfInterns(resultSet.getInt("cantidadPracticantes"));
+
         return courseDTO;
     }
 
@@ -143,7 +178,6 @@ public class CourseDAO implements ICourseDAO {
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
-
             try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_COURSE_INSTRUCTOR)) {
                 preparedStatement.setInt(1, courseDTO.getInstructorDTO().getId());
                 preparedStatement.setString(2, courseDTO.getInstructorDTO().getPersonalNumber());
@@ -153,9 +187,28 @@ public class CourseDAO implements ICourseDAO {
 
             }
 
+        } catch (SQLIntegrityConstraintViolationException e) {
+            AppLogger.log(ExceptionLevel.WARN, e);
+            throw new DAOException("No se pudo asignar el profesor al curso. Verifique la información ingresada.");
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al asignar profesor al curso.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al intentar asignar profesor al curso.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al asignar profesor", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al asignar profesor.");
+            } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
+                throw new DAOException(e.getMessage());
+            } else {
+                throw new DAOException("Ocurrió un error interno al intentar asignar el profesor al curso.");
+            }
         }
 
         return isUpdateSuccessful;
@@ -183,11 +236,14 @@ public class CourseDAO implements ICourseDAO {
 
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar nrc de cursos", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar NRC de cursos.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al consultar los cursos del periodo activo.");
+            }
         }
 
         return coursesList;
-
     }
-
 }
