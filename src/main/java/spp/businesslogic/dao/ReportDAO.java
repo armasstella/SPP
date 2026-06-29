@@ -5,13 +5,21 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IReportDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLInvalidAuthorizationSpecException;
+import java.sql.SQLTimeoutException;
 
 public class ReportDAO implements IReportDAO {
+
+    public ReportDAO() {
+    }
 
     @Override
     public ReportDTO getReportDetailByStudentNumber(String studentNumber) throws DAOException {
@@ -22,6 +30,7 @@ public class ReportDAO implements IReportDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_REPORT_DATA)) {
                 preparedStatement.setString(1, studentNumber);
+
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         reportDTO.setNrc(resultSet.getString("nrc"));
@@ -35,9 +44,22 @@ public class ReportDAO implements IReportDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al consultar los detalles del reporte.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al consultar los datos del reporte.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error al obtener los datos del reporte", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al obtener los datos del reporte.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al intentar obtener los detalles del reporte.");
+            }
         }
 
         return reportDTO;
@@ -60,9 +82,28 @@ public class ReportDAO implements IReportDAO {
                 isGradeAssigned = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
             }
 
+        } catch (SQLIntegrityConstraintViolationException e) {
+            AppLogger.log(ExceptionLevel.WARN, e);
+            throw new DAOException("No se pudo asignar la calificación. Es posible que el reporte ya haya sido evaluado o el profesor no sea válido.");
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al asignar la calificación del reporte.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al intentar guardar la calificación.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al asignar la calificación del reporte", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al asignar la calificación del reporte.");
+            } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
+                throw new DAOException(e.getMessage());
+            } else {
+                throw new DAOException("Ocurrió un error interno al asignar la calificación del reporte.");
+            }
         }
 
         return isGradeAssigned;
@@ -81,12 +122,30 @@ public class ReportDAO implements IReportDAO {
                 isGradeUpdated = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
             }
 
+        } catch (SQLIntegrityConstraintViolationException e) {
+            AppLogger.log(ExceptionLevel.WARN, e);
+            throw new DAOException("No se pudo actualizar la calificación. Verifique los datos ingresados.");
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al actualizar la calificación del reporte.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al procesar la actualización de la calificación.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al actualizar la calificación del reporte", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al actualizar la calificación del reporte.");
+            } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
+                throw new DAOException(e.getMessage());
+            } else {
+                throw new DAOException("Ocurrió un error interno al intentar actualizar la calificación del reporte.");
+            }
         }
 
         return isGradeUpdated;
     }
-
 }

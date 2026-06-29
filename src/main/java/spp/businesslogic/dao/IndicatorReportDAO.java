@@ -1,23 +1,28 @@
 package spp.businesslogic.dao;
 
-
 import spp.businesslogic.dto.IndicatorFilterDTO;
 import spp.businesslogic.dto.IndicatorReportDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IIndicatorReportDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
 import spp.utils.query.IndicatorReportQueryBuilder;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLInvalidAuthorizationSpecException;
+import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class IndicatorReportDAO implements IIndicatorReportDAO {
+
+    public IndicatorReportDAO() {
+    }
 
     @Override
     public IndicatorReportDTO getStaticsByIndicators(IndicatorFilterDTO filters) throws DAOException {
@@ -30,6 +35,7 @@ public class IndicatorReportDAO implements IIndicatorReportDAO {
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(dynamicQuery)) {
+
                 for (int i = 0; i < filterValues.size(); i++) {
                     preparedStatement.setObject(i + 1, filterValues.get(i));
                 }
@@ -45,12 +51,24 @@ public class IndicatorReportDAO implements IIndicatorReportDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al intentar calcular las métricas.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al calcular las métricas de los indicadores.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al calcular las métricas de los indicadores", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al calcular las métricas de los indicadores.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al intentar procesar las estadísticas.");
+            }
         }
 
         return indicatorReportDTO;
     }
-
 }

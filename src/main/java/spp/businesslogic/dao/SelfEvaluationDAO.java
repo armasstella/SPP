@@ -1,19 +1,24 @@
 package spp.businesslogic.dao;
 
-
 import spp.businesslogic.dto.SelfEvaluationDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ISelfEvaluationDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import java.sql.SQLInvalidAuthorizationSpecException;
+import java.sql.SQLTimeoutException;
 
 public class SelfEvaluationDAO implements ISelfEvaluationDAO {
+
+    public SelfEvaluationDAO() {
+    }
 
     @Override
     public SelfEvaluationDTO findEvaluationHeaderByStudentNumber(String studentNumber) throws DAOException {
@@ -30,10 +35,12 @@ public class SelfEvaluationDAO implements ISelfEvaluationDAO {
                         "INNER JOIN encargados_proyectos ep ON pr.id_encargado_proyecto = ep.id_encargado_proyecto " +
                         "WHERE p.matricula = ? LIMIT 1";
         SelfEvaluationDTO evaluationHeader = null;
+
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_HEADER_DATA)) {
                 preparedStatement.setString(1, studentNumber);
+
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         evaluationHeader = new SelfEvaluationDTO();
@@ -47,13 +54,24 @@ public class SelfEvaluationDAO implements ISelfEvaluationDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al obtener los datos de la autoevaluación.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al consultar los datos del alumno.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar datos del alumno", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar datos del alumno.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al consultar los datos de la autoevaluación.");
+            }
         }
 
         return evaluationHeader;
-
     }
-
 }
