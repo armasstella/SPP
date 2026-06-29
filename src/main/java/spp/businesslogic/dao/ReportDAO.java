@@ -36,7 +36,7 @@ public class ReportDAO implements IReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error al obtener los datos del reporte", e);
         }
 
@@ -61,7 +61,7 @@ public class ReportDAO implements IReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al asignar la calificación del reporte", e);
         }
 
@@ -82,7 +82,7 @@ public class ReportDAO implements IReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al actualizar la calificación del reporte", e);
         }
 

@@ -9,10 +9,10 @@ import javafx.scene.control.TextField;
 import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.CoordinatorDAO;
-import spp.utils.view.InputFilter;
-import spp.utils.view.StatusLabel;
+import spp.utils.view.inputdata.InputFilter;
+import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 import java.net.URL;
 import java.util.ResourceBundle;
 

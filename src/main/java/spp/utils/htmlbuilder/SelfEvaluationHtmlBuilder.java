@@ -2,43 +2,55 @@ package spp.utils.htmlbuilder;
 
 import spp.businesslogic.dto.SelfEvaluationDTO;
 import spp.businesslogic.exceptions.FileGenerationException;
+import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.file.TemplateRenderer;
+import spp.utils.logger.AppLogger;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class SelfEvaluationHtmlBuilder {
 
-    private static final String TEMPLATE = "/spp/presentation/templates/self-evaluation.html";
+    private static final String TEMPLATE_PATH = "/spp/presentation/templates/self-evaluation.html";
 
     private SelfEvaluationHtmlBuilder() {
-
     }
 
     public static String buildSelfEvaluation(SelfEvaluationDTO evaluation) throws FileGenerationException {
-        Map<String, String> values = new HashMap<>();
-        values.put("studentName", TemplateRenderer.escape(evaluation.getStudentName()));
-        values.put("studentNumber", TemplateRenderer.escape(evaluation.getStudentNumber()));
-        values.put("linkedOrganization", TemplateRenderer.escape(evaluation.getLinkedOrganization()));
-        values.put("department", TemplateRenderer.escape(evaluation.getDepartment()));
-        values.put("projectManager", TemplateRenderer.escape(evaluation.getProjectManager()));
-        values.put("projectName", TemplateRenderer.escape(evaluation.getProjectName()));
-        values.put("finalScore", String.valueOf(evaluation.getFinalScore()));
+        String templateRenderized = "";
+        Map<String, String> templateValues = new HashMap<>();
 
-        values.put("evaluationRows", buildEvaluationRows(evaluation.getScores()));
-        String templateRenderized = null;
+        String escapedStudentName = TemplateRenderer.escape(evaluation.getStudentName());
+        String escapedStudentNumber = TemplateRenderer.escape(evaluation.getStudentNumber());
+        String escapedLinkedOrganization = TemplateRenderer.escape(evaluation.getLinkedOrganization());
+        String escapedDepartment = TemplateRenderer.escape(evaluation.getDepartment());
+        String escapedProjectManager = TemplateRenderer.escape(evaluation.getProjectManager());
+        String escapedProjectName = TemplateRenderer.escape(evaluation.getProjectName());
+        String finalScoreString = String.valueOf(evaluation.getFinalScore());
+        String evaluationRowsHtml = buildEvaluationRows(evaluation.getScores());
+
+        templateValues.put("studentName", escapedStudentName);
+        templateValues.put("studentNumber", escapedStudentNumber);
+        templateValues.put("linkedOrganization", escapedLinkedOrganization);
+        templateValues.put("department", escapedDepartment);
+        templateValues.put("projectManager", escapedProjectManager);
+        templateValues.put("projectName", escapedProjectName);
+        templateValues.put("finalScore", finalScoreString);
+        templateValues.put("evaluationRows", evaluationRowsHtml);
 
         try {
-            templateRenderized = TemplateRenderer.render(TEMPLATE, values);
+            templateRenderized = TemplateRenderer.render(TEMPLATE_PATH, templateValues);
         } catch (IOException e) {
-            throw new FileGenerationException("Error generando archivo de autoevaluación");
+            AppLogger.log(ExceptionLevel.ERROR, e);
+            throw new FileGenerationException("Error generando archivo de autoevaluación", e);
         }
 
         return templateRenderized;
     }
 
     private static String buildEvaluationRows(int[] scores) {
-        String[] statements = {
+        String[] evaluationStatements = {
                 "1. Mi participación en la Organización Vinculada fue productiva.",
                 "2. Logré la aplicación de los conocimientos teórico-prácticos adquiridos.",
                 "3. Me sentí seguro al realizar las actividades encomendadas.",
@@ -51,22 +63,29 @@ public final class SelfEvaluationHtmlBuilder {
                 "10. Considero que las prácticas son importantes para mi formación profesional."
         };
 
-        StringBuilder rows = new StringBuilder();
-        for (int i = 0; i < statements.length; i++) {
-            rows.append("<tr>")
-                    .append("<td class='statement'>").append(TemplateRenderer.escape(statements[i])).append("</td>");
+        StringBuilder rowsBuilder = new StringBuilder();
 
-            for (int value = 1; value <= 5; value++) {
-                if (scores[i] == value) {
-                    rows.append("<td class='center'>X</td>");
+        for (int index = 0; index < evaluationStatements.length; index++) {
+            String currentStatement = evaluationStatements[index];
+            String escapedStatement = TemplateRenderer.escape(currentStatement);
+
+            rowsBuilder.append("<tr>");
+            rowsBuilder.append("<td class='statement'>");
+            rowsBuilder.append(escapedStatement);
+            rowsBuilder.append("</td>");
+
+            for (int possibleValue = 1; possibleValue <= 5; possibleValue++) {
+                if (scores[index] == possibleValue) {
+                    rowsBuilder.append("<td class='center'>X</td>");
                 } else {
-                    rows.append("<td></td>");
+                    rowsBuilder.append("<td></td>");
                 }
             }
-            rows.append("</tr>");
+
+            rowsBuilder.append("</tr>");
         }
-        return rows.toString();
 
+        String finalRows = rowsBuilder.toString();
+        return finalRows;
     }
-
 }

@@ -14,10 +14,10 @@ import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.dto.ProjectManagerDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectManagerDAO;
-import spp.utils.view.InputFilter;
-import spp.utils.view.StatusLabel;
+import spp.utils.view.inputdata.InputFilter;
+import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -49,7 +49,7 @@ public class NewProjectManagerController implements Initializable {
             cmbLinkedOrganizations.setItems(linkedOrganizationsObservableList);
 
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al cargar organizaciones vinculadas");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }
@@ -159,7 +159,7 @@ public class NewProjectManagerController implements Initializable {
                     clearInputFields();
                 }
             } catch (DAOException e) {
-                StatusLabel.showError(lblStatus, "No se pudo registrar el encargado.");
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
         }
     }

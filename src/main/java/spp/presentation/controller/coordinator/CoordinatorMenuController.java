@@ -9,7 +9,7 @@ import spp.businesslogic.dao.ProjectManagerDAO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.presentation.controller.user.MessageCenterController;
 import spp.utils.view.alert.AlertHelper;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 
 
 public class CoordinatorMenuController {

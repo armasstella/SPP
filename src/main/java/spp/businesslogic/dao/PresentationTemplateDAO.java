@@ -36,7 +36,7 @@ public class PresentationTemplateDAO implements IPresentationTemplateDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al guardar documento", e);
         }
 

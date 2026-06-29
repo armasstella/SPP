@@ -1,19 +1,21 @@
 package spp.presentation.controller.intern;
 
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
-import spp.utils.view.StatusLabel;
+import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.logger.AppLogger;
+import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
+import spp.utils.view.window.WindowCloser;
 
+import java.time.LocalDate;
 
 public class ActivityEditController {
 
@@ -31,97 +33,135 @@ public class ActivityEditController {
 
     public void setActivity(ActivityDTO activity) {
         this.activity = activity;
-        txtTitle.setText(activity.getTitle());
-        taDescription.setText(activity.getDescription());
-        dpStartDate.setValue(activity.getStartDate());
-        dpEndDate.setValue(activity.getEndDate());
-        txtEstimatedTime.setText(String.valueOf(activity.getEstimatedTime()));
-        txtEffectiveTime.setText(String.valueOf(activity.getEffectiveTime()));
-        txtProgress.setText(String.valueOf(activity.getProgress()));
-        taObservations.setText(activity.getObservations());
 
+        String title = activity.getTitle();
+        String description = activity.getDescription();
+        LocalDate startDate = activity.getStartDate();
+        LocalDate endDate = activity.getEndDate();
+        String estimatedTimeString = String.valueOf(activity.getEstimatedTime());
+        String effectiveTimeString = String.valueOf(activity.getEffectiveTime());
+        String progressString = String.valueOf(activity.getProgress());
+        String observations = activity.getObservations();
+
+        txtTitle.setText(title);
+        taDescription.setText(description);
+        dpStartDate.setValue(startDate);
+        dpEndDate.setValue(endDate);
+        txtEstimatedTime.setText(estimatedTimeString);
+        txtEffectiveTime.setText(effectiveTimeString);
+        txtProgress.setText(progressString);
+        taObservations.setText(observations);
     }
 
     public boolean isUpdated() {
         return updated;
-
     }
 
     @FXML
     private void saveChanges(ActionEvent event) {
-        if (!validateInputs()) {
+        boolean hasInputFieldsErrors = hasValidationErrors();
+
+        if (!hasInputFieldsErrors) {
             ActivityDTO editedActivity = readForm();
             ActivityDAO activityDAO = new ActivityDAO();
+
             try {
-                if (activityDAO.updateActivity(editedActivity)) {
+                boolean isUpdatedSuccessfully = activityDAO.updateActivity(editedActivity);
+
+                if (isUpdatedSuccessfully) {
                     copyInto(activity, editedActivity);
                     updated = true;
-                    closeWindow(event);
+                    WindowCloser.closeWindowFromEvent(event);
                 }
             } catch (DAOException e) {
-                StatusLabel.showError(lblStatus, "Error al actualizar la actividad");
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
         }
     }
 
-    private boolean validateInputs() {
-        if (txtTitle.getText().trim().isEmpty()
-                || taDescription.getText().trim().isEmpty()
-                || taObservations.getText().trim().isEmpty()
-                || dpStartDate.getValue() == null
-                || dpEndDate.getValue() == null
-                || txtEstimatedTime.getText().trim().isEmpty()
-                || txtEffectiveTime.getText().trim().isEmpty()
-                || txtProgress.getText().trim().isEmpty()) {
+    private boolean hasValidationErrors() {
+        boolean hasErrors = false;
+
+        String title = txtTitle.getText().trim();
+        String description = taDescription.getText().trim();
+        String observations = taObservations.getText().trim();
+        String estimatedTimeString = txtEstimatedTime.getText().trim();
+        String effectiveTimeString = txtEffectiveTime.getText().trim();
+        String progressString = txtProgress.getText().trim();
+        LocalDate startDate = dpStartDate.getValue();
+        LocalDate endDate = dpEndDate.getValue();
+
+        boolean areFieldsEmpty = title.isEmpty() || description.isEmpty() || observations.isEmpty() ||
+                estimatedTimeString.isEmpty() || effectiveTimeString.isEmpty() || progressString.isEmpty() ||
+                startDate == null || endDate == null;
+
+        if (areFieldsEmpty) {
             StatusLabel.showError(lblStatus, "Complete todos los campos.");
-            return true;
-        }
-
-        if (dpEndDate.getValue().isBefore(dpStartDate.getValue())) {
+            hasErrors = true;
+        } else if (endDate.isBefore(startDate)) {
             StatusLabel.showError(lblStatus, "La fecha fin no puede ser anterior a la fecha inicio.");
-            return true;
+            hasErrors = true;
+        } else {
+            Integer estimatedTime = parseNonNegativeInt(estimatedTimeString);
+            Integer effectiveTime = parseNonNegativeInt(effectiveTimeString);
+            Integer progress = parseNonNegativeInt(progressString);
+
+            boolean hasInvalidNumbers = estimatedTime == null || effectiveTime == null || progress == null;
+
+            if (hasInvalidNumbers) {
+                StatusLabel.showError(lblStatus, "Tiempo estimado, tiempo efectivo y avance deben ser números válidos.");
+                hasErrors = true;
+            } else if (progress > ViewConstant.MAX_PROGRESS) {
+                StatusLabel.showError(lblStatus, "El avance debe estar entre 0 y 100.");
+                hasErrors = true;
+            }
         }
 
-        Integer estimatedTime = parseNonNegativeInt(txtEstimatedTime.getText());
-        Integer effectiveTime = parseNonNegativeInt(txtEffectiveTime.getText());
-        Integer progress = parseNonNegativeInt(txtProgress.getText());
-        if (estimatedTime == null || effectiveTime == null || progress == null) {
-            StatusLabel.showError(lblStatus, "Tiempo estimado, tiempo efectivo y avance deben ser números válidos.");
-            return true;
-        }
-
-        if (progress > ViewConstant.MAX_PROGRESS) {
-            StatusLabel.showError(lblStatus, "El avance debe estar entre 0 y 100.");
-            return true;
-        }
-
-        return false;
-
+        return hasErrors;
     }
 
     private Integer parseNonNegativeInt(String text) {
+        Integer parsedValue = null;
+
         try {
-            int value = Integer.parseInt(text.trim());
-            return (value >= 0) ? value : null;
+            int numericValue = Integer.parseInt(text);
+            if (numericValue >= 0) {
+                parsedValue = numericValue;
+            }
         } catch (NumberFormatException e) {
-            return null;
+            AppLogger.log(ExceptionLevel.WARN, e);
         }
 
+        return parsedValue;
     }
 
     private ActivityDTO readForm() {
         ActivityDTO editedActivity = new ActivityDTO();
-        editedActivity.setId(activity.getId());
-        editedActivity.setTitle(txtTitle.getText().trim());
-        editedActivity.setDescription(taDescription.getText().trim());
-        editedActivity.setStartDate(dpStartDate.getValue());
-        editedActivity.setEndDate(dpEndDate.getValue());
-        editedActivity.setEstimatedTime(Integer.parseInt(txtEstimatedTime.getText().trim()));
-        editedActivity.setEffectiveTime(Integer.parseInt(txtEffectiveTime.getText().trim()));
-        editedActivity.setProgress(Integer.parseInt(txtProgress.getText().trim()));
-        editedActivity.setObservations(taObservations.getText().trim());
-        return editedActivity;
 
+        int currentId = activity.getId();
+        String title = txtTitle.getText().trim();
+        String description = taDescription.getText().trim();
+        LocalDate startDate = dpStartDate.getValue();
+        LocalDate endDate = dpEndDate.getValue();
+        String estimatedTimeString = txtEstimatedTime.getText().trim();
+        int estimatedTime = Integer.parseInt(estimatedTimeString);
+        String effectiveTimeString = txtEffectiveTime.getText().trim();
+        int effectiveTime = Integer.parseInt(effectiveTimeString);
+        String progressString = txtProgress.getText().trim();
+        int progress = Integer.parseInt(progressString);
+        String observations = taObservations.getText().trim();
+
+        editedActivity.setId(currentId);
+        editedActivity.setTitle(title);
+        editedActivity.setDescription(description);
+        editedActivity.setStartDate(startDate);
+        editedActivity.setEndDate(endDate);
+        editedActivity.setEstimatedTime(estimatedTime);
+        editedActivity.setEffectiveTime(effectiveTime);
+        editedActivity.setProgress(progress);
+        editedActivity.setObservations(observations);
+
+        return editedActivity;
     }
 
     private void copyInto(ActivityDTO target, ActivityDTO source) {
@@ -133,19 +173,11 @@ public class ActivityEditController {
         target.setEffectiveTime(source.getEffectiveTime());
         target.setProgress(source.getProgress());
         target.setObservations(source.getObservations());
-
     }
 
     @FXML
     private void cancelEdit(ActionEvent event) {
-        closeWindow(event);
-
-    }
-
-    private void closeWindow(ActionEvent event) {
-        Stage currentStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-        currentStage.close();
-
+        WindowCloser.closeWindowFromEvent(event);
     }
 
 }

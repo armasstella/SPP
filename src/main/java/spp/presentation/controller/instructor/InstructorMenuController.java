@@ -11,7 +11,7 @@ import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.presentation.controller.user.MessageCenterController;
 import spp.utils.view.alert.AlertHelper;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 
 import java.net.URL;
 import java.util.ResourceBundle;

@@ -47,11 +47,11 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(ExceptionLevel.WARN, e);
+            AppLogger.log(ExceptionLevel.WARN, e);
             throw new DAOException("Verifique los datos ingresados", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al insertar inscripción", e);
         }
 
@@ -77,7 +77,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error al asignar el proyecto al practicante", e);
         }
 
@@ -102,7 +102,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("wError de conexión al asignar la experiencia educativa al practicante", e);
         }
 

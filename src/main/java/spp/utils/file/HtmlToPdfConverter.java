@@ -20,7 +20,7 @@ public final class HtmlToPdfConverter {
         try (OutputStream outputStream = new FileOutputStream(outputFile)) {
             convert(html, outputStream);
         } catch (IOException e) {
-            AppLogger.logError(ExceptionLevel.ERROR, e);
+            AppLogger.log(ExceptionLevel.ERROR, e);
             throw new FileGenerationException("Error generando archivo");
         }
 
@@ -34,7 +34,7 @@ public final class HtmlToPdfConverter {
             builder.toStream(outputStream);
             builder.run();
         } catch (IOException e) {
-            AppLogger.logError(ExceptionLevel.ERROR, e);
+            AppLogger.log(ExceptionLevel.ERROR, e);
             throw new FileGenerationException("Error generando archivo");
         }
 

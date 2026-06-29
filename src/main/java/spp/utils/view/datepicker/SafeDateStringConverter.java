@@ -41,7 +41,7 @@ public class SafeDateStringConverter extends StringConverter<LocalDate> {
                     parsedDate = tempDate;
                 }
             } catch (DateTimeParseException e) {
-                AppLogger.logError(ExceptionLevel.WARN, e);
+                AppLogger.log(ExceptionLevel.WARN, e);
             }
         }
 

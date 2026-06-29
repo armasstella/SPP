@@ -36,15 +36,15 @@ public class TermDAO implements ITermDAO {
                 }
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de comunicación con el servidor al intentar obtener la lista de periodos.", e);
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar los periodos escolares.", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de red al intentar cargar los periodos escolares.", e);
             } else {
@@ -70,15 +70,15 @@ public class TermDAO implements ITermDAO {
                 }
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de comunicación con el servidor al verificar el periodo activo.");
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar el periodo activo.");
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener el periodo escolar actual.");
             } else {
@@ -104,15 +104,15 @@ public class TermDAO implements ITermDAO {
                 }
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de comunicación con el servidor al verificar el identificador del periodo.");
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar el identificador del periodo.");
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener el identificador del periodo escolar.");
             } else {
@@ -135,19 +135,19 @@ public class TermDAO implements ITermDAO {
                 deactivationSuccesful = affectedRows != BaseDAO.NO_ROWS_AFFECTED;
             }
         } catch (SQLTransactionRollbackException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de concurrencia al desactivar el periodo escolar.");
 
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de comunicación con el servidor al intentar desactivar el periodo escolar.");
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al procesar la desactivación del periodo.");
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión con el servidor al desactivar el periodo escolar.");
             } else {
@@ -171,27 +171,27 @@ public class TermDAO implements ITermDAO {
                 isInsertSuccessful = affectedRows != BaseDAO.NO_ROWS_AFFECTED;
             }
         } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(ExceptionLevel.WARN, e);
+            AppLogger.log(ExceptionLevel.WARN, e);
             throw new DAOException("El periodo escolar que intenta registrar ya existe en el sistema.");
 
         } catch (SQLDataException e) {
-            AppLogger.logError(ExceptionLevel.WARN, e);
+            AppLogger.log(ExceptionLevel.WARN, e);
             throw new DAOException("El formato o la longitud del nombre del periodo no es compatible.");
 
         } catch (SQLTransactionRollbackException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de concurrencia al registrar el periodo escolar.");
 
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de comunicación con el servidor al registrar un nuevo periodo escolar.");
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al intentar registrar el periodo.");
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             String sqlStateMessage = e.getSQLState();
             if (sqlStateMessage != null && sqlStateMessage.startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión con el servidor al registrar el nuevo periodo escolar.");

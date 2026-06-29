@@ -12,9 +12,9 @@ import javafx.scene.control.TableView;
 import spp.businesslogic.dao.CourseDAO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.utils.view.GenericNestedSelector;
-import spp.utils.view.StatusLabel;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.table.GenericNestedSelector;
+import spp.utils.view.label.StatusLabel;
+import spp.utils.view.window.ViewNavigator;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -63,7 +63,7 @@ public class CourseInformationController implements Initializable {
             tblCourses.setItems(coursesObservableList);
 
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener lista de cursos");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }

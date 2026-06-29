@@ -46,7 +46,7 @@ public class PartialReportDAO implements IPartialReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error al obtener los reportes finales del alumno.", e);
         }
 

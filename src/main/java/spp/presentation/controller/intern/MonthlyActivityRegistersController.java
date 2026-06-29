@@ -13,9 +13,9 @@ import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
-import spp.utils.view.GenericNestedSelector;
-import spp.utils.view.StatusLabel;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.table.GenericNestedSelector;
+import spp.utils.view.label.StatusLabel;
+import spp.utils.view.window.ViewNavigator;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -38,10 +38,14 @@ public class MonthlyActivityRegistersController implements Initializable {
     }
 
     private void setUpColumns() {
-        colTitle.setCellValueFactory(new GenericNestedSelector<>("title", "Sin título"));
-        colDescription.setCellValueFactory(new GenericNestedSelector<>("description", "Sin descripción"));
-        colStartDate.setCellValueFactory(new GenericNestedSelector<>("startDateText", ""));
-        colEndDate.setCellValueFactory(new GenericNestedSelector<>("endDateText", ""));
+        colTitle.setCellValueFactory(
+                new GenericNestedSelector<>("title", "Sin título"));
+        colDescription.setCellValueFactory(
+                new GenericNestedSelector<>("description", "Sin descripción"));
+        colStartDate.setCellValueFactory(
+                new GenericNestedSelector<>("startDateText", ""));
+        colEndDate.setCellValueFactory(
+                new GenericNestedSelector<>("endDateText", ""));
 
     }
 
@@ -53,7 +57,7 @@ public class MonthlyActivityRegistersController implements Initializable {
             List<ActivityDTO> activityList = activityDAO.findActivitiesByStudentNumber(studentNumber);
             tblActivities.setItems(FXCollections.observableArrayList(activityList));
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener actividades");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }

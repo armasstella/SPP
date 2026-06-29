@@ -15,9 +15,8 @@ import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.dto.ReportDocumentFileDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.utils.logger.AppLogger;
-import spp.utils.view.StatusLabel;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.label.StatusLabel;
+import spp.utils.view.window.ViewNavigator;
 
 import java.io.File;
 import java.net.URL;
@@ -43,8 +42,6 @@ public class PartialReportEvaluationController implements Initializable {
 
     }
 
-
-
     private void loadInternsForProfessor() {
         try {
             InternDAO internDAO = new InternDAO();
@@ -54,7 +51,7 @@ public class PartialReportEvaluationController implements Initializable {
                 cmbInterns.getItems().add(intern);
             }
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al cargar la lista de estudiantes.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -84,7 +81,7 @@ public class PartialReportEvaluationController implements Initializable {
             StatusLabel.showSuccess(lblStatus, "Reportes cargados. Seleccione uno para evaluar.");
 
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al cargar los documentos.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }
@@ -146,7 +143,7 @@ public class PartialReportEvaluationController implements Initializable {
 
             StatusLabel.showSuccess(lblStatus, "Calificación asignada correctamente.");
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al guardar la calificación.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -169,7 +166,7 @@ public class PartialReportEvaluationController implements Initializable {
             }
 
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al actualizar la calificación.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -187,7 +184,7 @@ public class PartialReportEvaluationController implements Initializable {
             }
             return true;
         } catch (NumberFormatException e) {
-            StatusLabel.showError(lblStatus, "La calificación debe ser un número entero.");
+            StatusLabel.showError(lblStatus, e.getMessage());
             return false;
         }
     }

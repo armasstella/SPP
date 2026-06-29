@@ -50,7 +50,7 @@ public class FinalReportDAO implements IFinalReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error al obtener los reportes finales del alumno.", e);
         }
 
@@ -77,7 +77,7 @@ public class FinalReportDAO implements IFinalReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al verificar la existencia del reporte final.", e);
         }
 

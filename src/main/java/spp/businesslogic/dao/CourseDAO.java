@@ -57,11 +57,11 @@ public class CourseDAO implements ICourseDAO {
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(ExceptionLevel.WARN, e);
+            AppLogger.log(ExceptionLevel.WARN, e);
             throw new DAOException("No puede haber dos EE con el mismo NRC para este periodo", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al insertar curso", e);
         } finally {
             MySQLConnectionManager.getInstance().enableAutoCommitConnection();
@@ -87,7 +87,7 @@ public class CourseDAO implements ICourseDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al buscar cursos", e);
         }
 
@@ -111,7 +111,7 @@ public class CourseDAO implements ICourseDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al obtener cursos", e);
         }
 
@@ -154,7 +154,7 @@ public class CourseDAO implements ICourseDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al asignar profesor", e);
         }
 
@@ -182,7 +182,7 @@ public class CourseDAO implements ICourseDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al buscar nrc de cursos", e);
         }
 

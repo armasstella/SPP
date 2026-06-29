@@ -44,20 +44,20 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(ExceptionLevel.WARN, e);
+            AppLogger.log(ExceptionLevel.WARN, e);
             throw new DAOException("La organización vinculada que intenta registrar ya existe. Verifique que el RFC " +
                     "o el correo no estén duplicados.", e);
 
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de comunicación con el servidor al registrar la organización vinculada.", e);
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al registrar la organización vinculada.", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
 
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al registrar la organización vinculada.", e);
@@ -92,16 +92,16 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
             }
 
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de comunicación con el servidor al obtener las organizaciones " +
                     "vinculadas.", e);
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar la lista de organizaciones vinculadas.", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
 
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al buscar organizaciones vinculadas.", e);
@@ -129,17 +129,17 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
             }
 
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de autenticación al verificar la existencia de organizaciones " +
                     "vinculadas.", e);
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar la disponibilidad de organizaciones " +
                     "vinculadas.", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
 
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al verificar si existen organizaciones vinculadas.", e);

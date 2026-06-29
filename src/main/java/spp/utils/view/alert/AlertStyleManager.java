@@ -20,7 +20,7 @@ public class AlertStyleManager {
             dialogPane.getStylesheets().add(cssExternalForm);
             dialogPane.getStyleClass().add(CUSTOM_ALERT_CLASS);
         } catch (Exception exception) {
-            AppLogger.logError(ExceptionLevel.WARN, exception);
+            AppLogger.log(ExceptionLevel.WARN, exception);
         }
     }
 

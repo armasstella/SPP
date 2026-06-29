@@ -63,7 +63,7 @@ public class PrioritizedProjectDAO implements IPrioritizedProjectDAO {
 
         } catch (SQLException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de base de datos al guardar los proyectos priorizados", e);
 
         } finally {
@@ -91,7 +91,7 @@ public class PrioritizedProjectDAO implements IPrioritizedProjectDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al buscar proyectos priorizados", e);
         }
 
@@ -123,7 +123,7 @@ public class PrioritizedProjectDAO implements IPrioritizedProjectDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("FATAL: Error al obtener proyectos del practicante", e);
         }
         return selectedProjectList;

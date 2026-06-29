@@ -1,6 +1,5 @@
 package spp.presentation.controller.coordinator;
 
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,15 +17,16 @@ import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.InternDAO;
-import spp.utils.view.GenericNestedSelector;
-import spp.utils.view.StatusLabel;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.table.DoubleClickListener;
+import spp.utils.view.table.GenericNestedSelector;
+import spp.utils.view.label.StatusLabel;
+import spp.utils.view.table.TableViewConfigurator;
+import spp.utils.view.window.ViewNavigator;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
-public class ProjectAssignmentController implements Initializable {
+public class ProjectAssignmentController implements Initializable, DoubleClickListener<InternDTO> {
 
     @FXML private Label lblStatus;
     @FXML private TableView<InternDTO> tblInterns;
@@ -37,6 +37,7 @@ public class ProjectAssignmentController implements Initializable {
     @FXML private ToggleButton tglFirstSelectedProject;
     @FXML private ToggleButton tglSecondSelectedProject;
     @FXML private ToggleButton tglThirdSelectedProject;
+
     private List<ToggleButton> projectToggleButtons;
     private InternDTO selectedIntern;
 
@@ -45,31 +46,31 @@ public class ProjectAssignmentController implements Initializable {
         setUpColumns();
         setUpProjectToggleButtons();
         obtainInterns();
-        setUpDoubleClickOnIntern();
+        TableViewConfigurator.enableDoubleClickSelection(tblInterns, this);
+    }
 
+    @Override
+    public void onItemSelected(InternDTO clickedIntern) {
+        this.selectedIntern = clickedIntern;
+        displaySelectedProjects(clickedIntern);
     }
 
     private void setUpColumns() {
-        colStudentNumber.setCellValueFactory(
-                new GenericNestedSelector<>("studentNumber", "Sin matrícula"));
-        colName.setCellValueFactory(
-                new GenericNestedSelector<>("fullName", "Sin nombre"));
+        GenericNestedSelector<InternDTO> studentNumberSelector =
+                new GenericNestedSelector<>("studentNumber", "Sin matrícula");
+        GenericNestedSelector<InternDTO> fullNameSelector =
+                new GenericNestedSelector<>("fullName", "Sin nombre");
 
+        colStudentNumber.setCellValueFactory(studentNumberSelector);
+        colName.setCellValueFactory(fullNameSelector);
     }
 
     private void setUpProjectToggleButtons() {
-        projectToggleButtons = List.of(tglFirstSelectedProject, tglSecondSelectedProject, tglThirdSelectedProject);
-
-    }
-
-    private void setUpDoubleClickOnIntern() {
-        tblInterns.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2 && tblInterns.getSelectionModel().getSelectedItem() != null) {
-                selectedIntern = tblInterns.getSelectionModel().getSelectedItem();
-                displaySelectedProjects(selectedIntern);
-            }
-        });
-
+        projectToggleButtons = List.of(
+                tglFirstSelectedProject,
+                tglSecondSelectedProject,
+                tglThirdSelectedProject
+        );
     }
 
     @FXML
@@ -80,18 +81,19 @@ public class ProjectAssignmentController implements Initializable {
             ObservableList<InternDTO> internsObservableList = FXCollections.observableArrayList(internList);
             tblInterns.setItems(internsObservableList);
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener practicantes");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
-
     }
 
     private void displaySelectedProjects(InternDTO intern) {
         clearProjectSelection();
         lblStatus.setText("");
+
         PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
         try {
+            String studentNumber = intern.getStudentNumber();
             List<ProjectDTO> selectedProjectList =
-                    prioritizedProjectDAO.findPrioritizedProjectsIdentifiersByStudentNumber(intern.getStudentNumber());
+                    prioritizedProjectDAO.findPrioritizedProjectsIdentifiersByStudentNumber(studentNumber);
 
             if (selectedProjectList.isEmpty()) {
                 hideAllProjectCards();
@@ -101,21 +103,25 @@ public class ProjectAssignmentController implements Initializable {
             } else {
                 lblNoSelection.setVisible(false);
                 lblNoSelection.setManaged(false);
-                fillProjectCards(selectedProjectList);   
+                fillProjectCards(selectedProjectList);
             }
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener proyectos del practicante");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
-
     }
 
     private void fillProjectCards(List<ProjectDTO> selectedProjectList) {
+        int totalProjects = selectedProjectList.size();
+
         for (int index = 0; index < projectToggleButtons.size(); index++) {
             ToggleButton projectToggleButton = projectToggleButtons.get(index);
-            if (index < selectedProjectList.size()) {
-                ProjectDTO project = selectedProjectList.get(index);
-                projectToggleButton.setText((index + 1) + ". " + project.getName());
-                projectToggleButton.setUserData(project);
+
+            if (index < totalProjects) {
+                ProjectDTO currentProject = selectedProjectList.get(index);
+                String displayTitle = (index + 1) + ". " + currentProject.getName();
+
+                projectToggleButton.setText(displayTitle);
+                projectToggleButton.setUserData(currentProject);
                 projectToggleButton.setVisible(true);
                 projectToggleButton.setManaged(true);
             } else {
@@ -124,7 +130,6 @@ public class ProjectAssignmentController implements Initializable {
                 projectToggleButton.setManaged(false);
             }
         }
-
     }
 
     private void hideAllProjectCards() {
@@ -133,15 +138,14 @@ public class ProjectAssignmentController implements Initializable {
             projectToggleButton.setVisible(false);
             projectToggleButton.setManaged(false);
         }
-
     }
 
     private void clearProjectSelection() {
         Toggle currentSelection = projectToggleGroup.getSelectedToggle();
+
         if (currentSelection != null) {
             currentSelection.setSelected(false);
         }
-
     }
 
     @FXML
@@ -150,31 +154,36 @@ public class ProjectAssignmentController implements Initializable {
             StatusLabel.showError(lblStatus, "Selecciona un practicante.");
         } else {
             Toggle selectedToggle = projectToggleGroup.getSelectedToggle();
+
             if (selectedToggle == null) {
                 StatusLabel.showError(lblStatus, "Selecciona un proyecto para asignar.");
             } else {
                 ProjectDTO selectedProject = (ProjectDTO) selectedToggle.getUserData();
-                try {
-                    ProfessionalPracticeEnrollmentDAO professionalPracticeEnrollmentDAO =
-                            new ProfessionalPracticeEnrollmentDAO();
-                    if (professionalPracticeEnrollmentDAO.assignProjectByStudentNumber(selectedIntern.getStudentNumber(),
-                            selectedProject.getId())) {
-                        StatusLabel.showSuccess(lblStatus, "Proyecto asignado correctamente.");
-                        obtainInterns();
-                    }
-                } catch (DAOException e) {
-                    StatusLabel.showError(lblStatus, "Error al asignar el proyecto");
-                }
+                executeProjectAssignment(selectedProject);
             }
         }
+    }
 
+    private void executeProjectAssignment(ProjectDTO selectedProject) {
+        ProfessionalPracticeEnrollmentDAO enrollmentDAO = new ProfessionalPracticeEnrollmentDAO();
+        String studentNumber = selectedIntern.getStudentNumber();
+        int projectId = selectedProject.getId();
+
+        try {
+            boolean isAssigned = enrollmentDAO.assignProjectByStudentNumber(studentNumber, projectId);
+
+            if (isAssigned) {
+                StatusLabel.showSuccess(lblStatus, "Proyecto asignado correctamente.");
+                obtainInterns();
+            }
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, e.getMessage());
+        }
     }
 
     @FXML
     private void goToCoordinatorMenuView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/coordinator/CoordinatorMenuView.fxml",
                 "Menú Coordinador", event);
-
     }
-
 }

@@ -1,4 +1,4 @@
-package spp.utils.view;
+package spp.utils.view.inputdata;
 
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextInputControl;

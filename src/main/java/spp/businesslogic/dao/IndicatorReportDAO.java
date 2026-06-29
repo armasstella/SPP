@@ -46,7 +46,7 @@ public class IndicatorReportDAO implements IIndicatorReportDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al calcular las métricas de los indicadores", e);
         }
 

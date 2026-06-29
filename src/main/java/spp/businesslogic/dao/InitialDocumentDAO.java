@@ -39,7 +39,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al guardar documento", e);
         }
 
@@ -66,7 +66,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al buscar horario.", e);
         }
 
@@ -94,7 +94,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al buscar calendarización.", e);
         }
 
@@ -119,7 +119,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al buscar psp.", e);
         }
 
@@ -146,7 +146,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al buscar reporte parcial.", e);
         }
 
@@ -171,7 +171,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al buscar reporte mensual.", e);
         }
 
@@ -198,7 +198,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al buscar autoevaluación.", e);
         }
 
@@ -225,7 +225,7 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al buscar evaluación de organización vinculada.", e);
         }
 

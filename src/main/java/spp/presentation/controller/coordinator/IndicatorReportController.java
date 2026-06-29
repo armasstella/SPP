@@ -17,13 +17,12 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.utils.file.HtmlToPdfConverter;
 import spp.utils.htmlbuilder.IndicatorReportHtmlBuilder;
 import spp.utils.view.filechooser.FileChooserUtil;
-import spp.utils.view.InputFilter;
-import spp.utils.view.StatusLabel;
+import spp.utils.view.inputdata.InputFilter;
+import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -73,7 +72,7 @@ public class IndicatorReportController implements Initializable {
             cmbFilterPeriod.getSelectionModel().selectFirst();
 
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "No se pudieron cargar los periodos.");
+            StatusLabel.showError(lblStatus, e.getMessage());
             cmbFilterPeriod.getItems().add("Todos");
             cmbFilterPeriod.getSelectionModel().selectFirst();
         }
@@ -98,10 +97,7 @@ public class IndicatorReportController implements Initializable {
 
             }
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "No se pudo acceder a la base de datos. Intente más tarde.");
-
-        } catch (IOException e) {
-            StatusLabel.showError(lblStatus, "No se pudo generar el reporte en formato PDF. Intente nuevamente.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }

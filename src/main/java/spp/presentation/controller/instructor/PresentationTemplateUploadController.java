@@ -3,6 +3,7 @@ package spp.presentation.controller.instructor;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Window;
@@ -14,122 +15,153 @@ import spp.businesslogic.enums.DocumentType;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.exceptions.FileManagementException;
 import spp.utils.file.FileUtils;
-import spp.utils.view.filechooser.FileChooserUtil;
-import spp.utils.view.StatusLabel;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.filechooser.AllowedExtension;
+import spp.utils.view.filechooser.FileChooserHelper;
+import spp.utils.view.label.StatusLabel;
+import spp.utils.view.window.ViewNavigator;
 import java.io.File;
 import java.time.LocalDateTime;
 
 public class PresentationTemplateUploadController {
 
-    @FXML
-    private Label lblStatus;
+    @FXML private Label lblStatus;
     @FXML private Label lblSelectedDocument;
     @FXML private Button btnUploadPresentationTemplate;
+
     private File selectedDocument;
     private String currentFolder;
     private String currentPrefix;
+
     private final PresentationTemplateDTO presentationTemplateDTO = new PresentationTemplateDTO();
     private final PresentationTemplateDAO presentationTemplateDAO = new PresentationTemplateDAO();
 
     @FXML
     private void cancel(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/instructor/InstructorMenuView.fxml",
-                "Menú Profesor", event);
-
+        ViewNavigator.loadView(
+                "/spp/presentation/view/instructor/InstructorMenuView.fxml",
+                "Menú Profesor",
+                event
+        );
     }
 
     @FXML
     private void uploadPresentationTemplate(ActionEvent event) {
-        if (selectFile(event, "Seleccionar horario")) {
-            presentationTemplateDTO.setDocumentType(String.valueOf(DocumentType.PRESENTATION_TEMPLATE));
+        boolean isFileSelected = selectFile(event, "Seleccionar horario");
+
+        if (isFileSelected) {
+            String documentTypeString = String.valueOf(DocumentType.PRESENTATION_TEMPLATE);
+            presentationTemplateDTO.setDocumentType(documentTypeString);
             currentFolder = "./documents/instructor_documents/presentationTemplates/";
             currentPrefix = "presentationTemplate";
         }
-
     }
 
-
     private boolean selectFile(ActionEvent event, String dialogTitle) {
-        Window window = ((Node) event.getSource()).getScene().getWindow();
-        File file = FileChooserUtil.selectSingleFile(window, dialogTitle);
+        boolean isFileSelected = false;
+
+        Node sourceNode = (Node) event.getSource();
+        Scene currentScene = sourceNode.getScene();
+        Window currentWindow = currentScene.getWindow();
+
+        File file = FileChooserHelper.selectSingleFile(
+                currentWindow,
+                dialogTitle,
+                AllowedExtension.PDF,
+                AllowedExtension.DOCX
+        );
 
         if (file != null) {
             selectedDocument = file;
-            lblSelectedDocument.setText("Archivo seleccionado: " + selectedDocument.getName());
+            String fileName = selectedDocument.getName();
+
+            lblSelectedDocument.setText("Archivo seleccionado: " + fileName);
             StatusLabel.showSuccess(lblStatus, "Archivo listo para subir.");
-            return true;
+
+            isFileSelected = true;
         }
-        return false;
+
+        return isFileSelected;
     }
 
     @FXML
     private void confirm() {
-        if (validateFileInputs()) {
-            return;
-        }
+        boolean hasErrors = hasValidationErrors();
 
-        if (setFileMetadata()) {
-            if (!saveDataDocument()) {
-                return;
+        if (!hasErrors) {
+            boolean isMetadataSet = setFileMetadata();
+
+            if (isMetadataSet) {
+                boolean isDataSaved = saveDataDocument();
+
+                if (isDataSaved) {
+                    StatusLabel.showSuccess(lblStatus, "Archivo cargado exitosamente");
+                    lblSelectedDocument.setText("Ningún archivo seleccionado");
+                    selectedDocument = null;
+                    currentFolder = null;
+                    currentPrefix = null;
+                }
             }
-        } else {
-            return;
         }
-
-        StatusLabel.showSuccess(lblStatus, "Archivo cargado exitosamente");
-        lblSelectedDocument.setText("Ningún archivo seleccionado");
-        selectedDocument = null;
-        currentFolder = null;
-        currentPrefix = null;
     }
 
-    private boolean validateFileInputs() {
-        boolean areInputFieldsEmpty = false;
+    private boolean hasValidationErrors() {
+        boolean hasErrors = false;
+
         if (selectedDocument == null) {
             StatusLabel.showError(lblStatus, "No se ha elegido un archivo.");
-            areInputFieldsEmpty = true;
+            hasErrors = true;
+        } else {
+            String fileName = selectedDocument.getName();
+            String extension = FileUtils.getExtension(fileName);
+            long fileLength = selectedDocument.length();
+
+            if (!FileUtils.ALLOWED_EXTENSIONS.contains(extension)) {
+                StatusLabel.showError(lblStatus, "Formato invalido. Solo se acepta PDF o DOCX.");
+                hasErrors = true;
+            } else if (fileLength == 0) {
+                StatusLabel.showError(lblStatus, "El documento está vacío y no puede guardarse.");
+                hasErrors = true;
+            } else if (fileLength > FileUtils.MAX_BYTES) {
+                StatusLabel.showError(lblStatus, "El tamaño de archivo excede el permitido.");
+                hasErrors = true;
+            }
         }
 
-        String extension = FileUtils.getExtension(selectedDocument.getName());
-
-        if (!FileUtils.ALLOWED_EXTENSIONS.contains(extension)) {
-            StatusLabel.showError(lblStatus, "Formato invalido. Solo se acepta PDF o DOCX.");
-            areInputFieldsEmpty = true;
-        }
-        if (selectedDocument.length() == 0) {
-            StatusLabel.showError(lblStatus, "El documento está vacío y no puede guardarse.");
-            areInputFieldsEmpty = true;
-        }
-        if (selectedDocument.length() > FileUtils.MAX_BYTES) {
-            StatusLabel.showError(lblStatus, "El tamaño de archivo excede el permitido.");
-            areInputFieldsEmpty = true;
-        }
-
-        return areInputFieldsEmpty;
+        return hasErrors;
     }
 
     private boolean setFileMetadata() {
         boolean saveStatus = false;
-        String extension = FileUtils.getExtension(selectedDocument.getName());
 
-        try {
-            InstructorDAO instructorDAO = new InstructorDAO();
-            String personalNumber = instructorDAO.findActivePersonalNumberByEmail(
-                    ActiveSessionDTO.get().getEmail());
-            String uniqueName = FileUtils.generateUniqueName(personalNumber, extension, currentPrefix);
-            String finalPath = FileUtils.copyFile(selectedDocument, currentFolder, uniqueName);
+        if (selectedDocument != null) {
+            String fileName = selectedDocument.getName();
+            String extension = FileUtils.getExtension(fileName);
 
-            presentationTemplateDTO.setOriginalName(selectedDocument.getName());
-            presentationTemplateDTO.setSavedName(uniqueName);
-            presentationTemplateDTO.setFilePath(finalPath);
-            presentationTemplateDTO.setSizeMb(selectedDocument.length() / FileUtils.BYTES_PER_MB);
-            presentationTemplateDTO.setExtension(extension);
-            presentationTemplateDTO.setUploadDate(LocalDateTime.now());
-            saveStatus = true;
+            try {
+                InstructorDAO instructorDAO = new InstructorDAO();
 
-        } catch (FileManagementException | DAOException  e) {
-            StatusLabel.showError(lblStatus, "No se puede guardar el archivo. Intente de nuevo.");
+                String userEmail = ActiveSessionDTO.get().getEmail();
+                String personalNumber = instructorDAO.findActivePersonalNumberByEmail(userEmail);
+
+                String uniqueName = FileUtils.generateUniqueName(personalNumber, extension, currentPrefix);
+                String finalPath = FileUtils.copyFile(selectedDocument, currentFolder, uniqueName);
+
+                long fileLength = selectedDocument.length();
+                double sizeInMb = (double) fileLength / FileUtils.BYTES_PER_MB;
+                LocalDateTime currentDateTime = LocalDateTime.now();
+
+                presentationTemplateDTO.setOriginalName(fileName);
+                presentationTemplateDTO.setSavedName(uniqueName);
+                presentationTemplateDTO.setFilePath(finalPath);
+                presentationTemplateDTO.setSizeMb(sizeInMb);
+                presentationTemplateDTO.setExtension(extension);
+                presentationTemplateDTO.setUploadDate(currentDateTime);
+
+                saveStatus = true;
+
+            } catch (FileManagementException | DAOException e) {
+                StatusLabel.showError(lblStatus, e.getMessage());
+            }
         }
 
         return saveStatus;
@@ -137,13 +169,17 @@ public class PresentationTemplateUploadController {
 
     private boolean saveDataDocument() {
         boolean success = false;
+
         try {
             InstructorDAO instructorDAO = new InstructorDAO();
-            String personalNumber = instructorDAO.findActivePersonalNumberByEmail(
-                    ActiveSessionDTO.get().getEmail());
+
+            String userEmail = ActiveSessionDTO.get().getEmail();
+            String personalNumber = instructorDAO.findActivePersonalNumberByEmail(userEmail);
+
             success = presentationTemplateDAO.saveDocument(personalNumber, presentationTemplateDTO);
+
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al guardar documento");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
         if (!success) {
@@ -152,5 +188,4 @@ public class PresentationTemplateUploadController {
 
         return success;
     }
-
 }

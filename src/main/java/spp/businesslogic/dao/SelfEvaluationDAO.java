@@ -48,7 +48,7 @@ public class SelfEvaluationDAO implements ISelfEvaluationDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al buscar datos del alumno", e);
         }
 

@@ -15,8 +15,8 @@ import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.utils.view.alert.AlertHelper;
-import spp.utils.view.StatusLabel;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.label.StatusLabel;
+import spp.utils.view.window.ViewNavigator;
 
 import java.net.URL;
 import java.util.List;
@@ -74,7 +74,7 @@ public class GroupAssignationToInstructorController implements Initializable {
                 }
 
             } catch (DAOException e) {
-                StatusLabel.showError(lblStatus, "Error al asignar profesor a curso");
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
         }
     }
@@ -95,7 +95,7 @@ public class GroupAssignationToInstructorController implements Initializable {
             cmbInstructor.setItems(instructorObservableList);
 
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al cargar lista de profesores");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }

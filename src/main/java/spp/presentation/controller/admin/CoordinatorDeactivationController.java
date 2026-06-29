@@ -13,9 +13,9 @@ import spp.businesslogic.dto.CoordinatorDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.CoordinatorDAO;
 import spp.utils.view.alert.AlertHelper;
-import spp.utils.view.GenericNestedSelector;
-import spp.utils.view.StatusLabel;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.table.GenericNestedSelector;
+import spp.utils.view.label.StatusLabel;
+import spp.utils.view.window.ViewNavigator;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -58,7 +58,7 @@ public class CoordinatorDeactivationController implements Initializable {
                     FXCollections.observableArrayList(coordinatorsList);
             tblCoordinators.setItems(coordinatorsObservableList);
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener lista de coordinadores");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }
@@ -77,7 +77,7 @@ public class CoordinatorDeactivationController implements Initializable {
                         StatusLabel.showSuccess(lblStatus, "Coordinador inactivado exitosamente.");
                     }
                 } catch (DAOException e) {
-                    StatusLabel.showError(lblStatus, "Error al inactivar coordinador.");
+                    StatusLabel.showError(lblStatus, e.getMessage());
                 }
             }
         }

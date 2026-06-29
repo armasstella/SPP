@@ -12,23 +12,21 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.DatePicker;
 import javafx.scene.layout.VBox;
-import javafx.util.StringConverter;
 import spp.businesslogic.dao.CourseDAO;
 import spp.businesslogic.dao.ProfessionalPracticeEnrollmentDAO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.InternDAO;
-import spp.utils.view.InputFilter;
-import spp.utils.view.StatusLabel;
+import spp.utils.view.inputdata.InputFilter;
+import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 import spp.utils.view.datepicker.DatePickerConfigurator;
 import spp.utils.view.datepicker.DateValidationMode;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -233,7 +231,7 @@ public class NewInternController implements Initializable {
             cmbCourseCode.setItems(courseObservableList);
 
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al cargar la lista de cursos.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 

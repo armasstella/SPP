@@ -16,7 +16,7 @@ public class AppLogger {
 
     private static final String LOG_DIRECTORY = "logs/";
 
-    public static void logError(ExceptionLevel levelException, Exception exception) {
+    public static void log(ExceptionLevel levelException, Exception exception) {
         String currentDate = LocalDate.now().toString();
         String fileName = "log_" + currentDate + ".txt";
         Path path = Paths.get(LOG_DIRECTORY + fileName);
@@ -29,7 +29,7 @@ public class AppLogger {
             }
 
         } catch (IOException e) {
-            AppLogger.logError(ExceptionLevel.WARN, e);
+            AppLogger.log(ExceptionLevel.WARN, e);
         }
 
     }

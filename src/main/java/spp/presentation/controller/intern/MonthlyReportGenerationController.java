@@ -1,6 +1,5 @@
 package spp.presentation.controller.intern;
 
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,7 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -21,15 +19,22 @@ import spp.businesslogic.dao.ReportDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.dto.ReportDTO;
+import spp.businesslogic.enums.DocumentType;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
+import spp.businesslogic.exceptions.FileGenerationException;
+import spp.presentation.controller.intern.listener.ActivityInclusionListener;
+import spp.presentation.controller.intern.listener.IncludedActivityModificationListener;
 import spp.utils.htmlbuilder.FinalReportHtmlBuilder;
 import spp.utils.file.HtmlToPdfConverter;
+import spp.utils.view.filechooser.AllowedExtension;
+import spp.utils.view.filechooser.FileChooserHelper;
+import spp.utils.view.table.TableViewConfigurator;
 import spp.utils.view.alert.AlertHelper;
-import spp.utils.view.GenericNestedSelector;
-import spp.utils.view.StatusLabel;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.table.GenericNestedSelector;
+import spp.utils.view.label.StatusLabel;
+import spp.utils.view.window.ViewNavigator;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -38,7 +43,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-
 
 public class MonthlyReportGenerationController implements Initializable {
 
@@ -74,105 +78,116 @@ public class MonthlyReportGenerationController implements Initializable {
         obtainActivities();
         setUpClicks();
         updateCounter();
-
     }
 
     private void setUpColumns() {
-        colTitle.setCellValueFactory(new GenericNestedSelector<>("title", "Sin título"));
-        colDescription.setCellValueFactory(new GenericNestedSelector<>("description", "Sin descripción"));
-        colStartDate.setCellValueFactory(new GenericNestedSelector<>("startDateText", ""));
-        colEndDate.setCellValueFactory(new GenericNestedSelector<>("endDateText", ""));
-        colEstimatedTime.setCellValueFactory(new GenericNestedSelector<>("estimatedTime", "0"));
-        colEffectiveTime.setCellValueFactory(new GenericNestedSelector<>("effectiveTime", "0"));
-        colProgress.setCellValueFactory(new GenericNestedSelector<>("progress", "0"));
-        colObservations.setCellValueFactory(new GenericNestedSelector<>("observations", "Sin observaciones"));
+        GenericNestedSelector<ActivityDTO> titleSelector =
+                new GenericNestedSelector<>("title", "Sin título");
+        GenericNestedSelector<ActivityDTO> descriptionSelector =
+                new GenericNestedSelector<>("description", "Sin descripción");
+        GenericNestedSelector<ActivityDTO> startDateSelector =
+                new GenericNestedSelector<>("startDateText", "");
+        GenericNestedSelector<ActivityDTO> endDateSelector =
+                new GenericNestedSelector<>("endDateText", "");
+        GenericNestedSelector<ActivityDTO> estimatedTimeSelector =
+                new GenericNestedSelector<>("estimatedTime", "0");
+        GenericNestedSelector<ActivityDTO> effectiveTimeSelector =
+                new GenericNestedSelector<>("effectiveTime", "0");
+        GenericNestedSelector<ActivityDTO> progressSelector =
+                new GenericNestedSelector<>("progress", "0");
+        GenericNestedSelector<ActivityDTO> observationsSelector =
+                new GenericNestedSelector<>("observations", "Sin observaciones");
 
-        colChosenActivityTitle.setCellValueFactory(new GenericNestedSelector<>("title", "Sin título"));
-        colChosenActivityDescription.setCellValueFactory(new GenericNestedSelector<>("description", "Sin descripción"));
-        colChosenActivityStartDate.setCellValueFactory(new GenericNestedSelector<>("startDateText", ""));
-        colChosenActivityEndDate.setCellValueFactory(new GenericNestedSelector<>("endDateText", ""));
-        colChosenActivityEstimatedTime.setCellValueFactory(new GenericNestedSelector<>("estimatedTime", "0"));
-        colChosenActivityEffectiveTime.setCellValueFactory(new GenericNestedSelector<>("effectiveTime", "0"));
-        colChosenActivityProgress.setCellValueFactory(new GenericNestedSelector<>("progress", "0"));
-        colChosenActivityObservations.setCellValueFactory(new GenericNestedSelector<>("observations", "Sin observaciones"));
+        colTitle.setCellValueFactory(titleSelector);
+        colDescription.setCellValueFactory(descriptionSelector);
+        colStartDate.setCellValueFactory(startDateSelector);
+        colEndDate.setCellValueFactory(endDateSelector);
+        colEstimatedTime.setCellValueFactory(estimatedTimeSelector);
+        colEffectiveTime.setCellValueFactory(effectiveTimeSelector);
+        colProgress.setCellValueFactory(progressSelector);
+        colObservations.setCellValueFactory(observationsSelector);
 
+        colChosenActivityTitle.setCellValueFactory(titleSelector);
+        colChosenActivityDescription.setCellValueFactory(descriptionSelector);
+        colChosenActivityStartDate.setCellValueFactory(startDateSelector);
+        colChosenActivityEndDate.setCellValueFactory(endDateSelector);
+        colChosenActivityEstimatedTime.setCellValueFactory(estimatedTimeSelector);
+        colChosenActivityEffectiveTime.setCellValueFactory(effectiveTimeSelector);
+        colChosenActivityProgress.setCellValueFactory(progressSelector);
+        colChosenActivityObservations.setCellValueFactory(observationsSelector);
     }
 
     private void setUpIncludedActivities() {
         includedActivitiesObservableList = FXCollections.observableArrayList();
         tblIncludedActivities.setItems(includedActivitiesObservableList);
-
     }
 
     private void obtainActivities() {
         try {
-            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
+            String userEmail = ActiveSessionDTO.get().getEmail();
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(userEmail);
+
             List<ActivityDTO> activityList = activityDAO.findActivitiesByStudentNumber(studentNumber);
             availableActivitiesObservableList = FXCollections.observableArrayList(activityList);
             tblActivities.setItems(availableActivitiesObservableList);
-        } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener actividades");
-        }
 
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, e.getMessage());
+        }
     }
 
     private void setUpClicks() {
-        tblActivities.setOnMouseClicked(event -> {
-            ActivityDTO selectedActivity = tblActivities.getSelectionModel().getSelectedItem();
-            if (event.getClickCount() == 1 && selectedActivity != null) {
-                includeActivity(selectedActivity);
-            }
-        });
-        tblIncludedActivities.setOnMouseClicked(event -> {
-            ActivityDTO selectedActivity = tblIncludedActivities.getSelectionModel().getSelectedItem();
-            if (event.getClickCount() == 1 && selectedActivity != null) {
-                handleIncludedActivityClick(selectedActivity);
-            }
-        });
+        ActivityInclusionListener activityInclusionListener =
+                new ActivityInclusionListener(this);
+        IncludedActivityModificationListener includedActivityModificationListener =
+                new IncludedActivityModificationListener(this);
 
+        TableViewConfigurator.enableDoubleClickSelection(tblActivities, activityInclusionListener);
+        TableViewConfigurator.enableDoubleClickSelection(tblIncludedActivities, includedActivityModificationListener);
     }
 
-    private void includeActivity(ActivityDTO activity) {
+    public void includeActivity(ActivityDTO activity) {
         availableActivitiesObservableList.remove(activity);
         includedActivitiesObservableList.add(activity);
         updateCounter();
-
     }
 
-    private void handleIncludedActivityClick(ActivityDTO activity) {
+    public void processActivityModificationAction(ActivityDTO activity) {
         AlertHelper.Option choice = AlertHelper.showTwoOptions(
                 "Actividad incluida",
                 "¿Qué deseas hacer con esta actividad?",
                 "Actualizarla",
-                "Sacarla del reporte");
+                "Sacarla del reporte"
+        );
 
         if (choice == AlertHelper.Option.FIRST) {
             openActivityEdit(activity);
         } else if (choice == AlertHelper.Option.SECOND) {
             excludeActivity(activity);
         }
-
     }
 
     private void excludeActivity(ActivityDTO activity) {
         includedActivitiesObservableList.remove(activity);
         availableActivitiesObservableList.add(activity);
         updateCounter();
-
     }
 
     private void openActivityEdit(ActivityDTO activity) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/spp/presentation/view/intern/ActivityEditView.fxml"));
+            URL fxmlResource = getClass().getResource("/spp/presentation/view/intern/ActivityEditView.fxml");
+            FXMLLoader loader = new FXMLLoader(fxmlResource);
             Parent editRoot = loader.load();
+
             ActivityEditController editController = loader.getController();
             editController.setActivity(activity);
 
             Stage editStage = new Stage();
             editStage.setTitle("Editar actividad");
             editStage.initModality(Modality.APPLICATION_MODAL);
-            editStage.setScene(new Scene(editRoot));
+
+            Scene editScene = new Scene(editRoot);
+            editStage.setScene(editScene);
             editStage.showAndWait();
 
             if (editController.isUpdated()) {
@@ -182,87 +197,113 @@ public class MonthlyReportGenerationController implements Initializable {
         } catch (IOException e) {
             StatusLabel.showError(lblStatus, "Error al abrir la edición de la actividad");
         }
-
     }
 
     private void updateCounter() {
-        lblCounter.setText(includedActivitiesObservableList.size() + " actividades incluidas.");
-
+        int activitiesCount = includedActivitiesObservableList.size();
+        String counterText = activitiesCount + " actividades incluidas.";
+        lblCounter.setText(counterText);
     }
 
     @FXML
     private void generateReport(ActionEvent event) {
-        if (includedActivitiesObservableList.isEmpty()) {
+        boolean isListEmpty = includedActivitiesObservableList.isEmpty();
+
+        if (isListEmpty) {
             StatusLabel.showError(lblStatus, "Incluye al menos una actividad.");
-        }
-        else {
-            if (!AlertHelper.showConfirmation("Generar reporte",
-                    "¿Seguro que desea generar el reporte con las actividades incluidas?")) {
-            } else {
-                ReportDAO reportDAO = new ReportDAO();
-                String career = "Licenciatura en Ingeniería de Software";
-                DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                String REPORT_TYPE = "MENSUAL";
+        } else {
+            boolean isConfirmed = AlertHelper.showConfirmation(
+                    "Generar reporte",
+                    "¿Seguro que desea generar el reporte con las actividades incluidas?"
+            );
 
-                try {
-                    String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
-                    ReportDTO reportDTO = reportDAO.getReportDetailByStudentNumber(studentNumber);
-                    reportDTO.setCareer(career);
-                    reportDTO.setReportType(REPORT_TYPE);
-                    reportDTO.setReportDate(LocalDate.now().format(DATE_FORMAT));
-                    reportDTO.setTotalHours(String.valueOf(sumIncludedEffectiveTime()));
-
-                    String html = FinalReportHtmlBuilder.buildFinalReport(reportDTO,
-                            new ArrayList<>(includedActivitiesObservableList));
-
-                    File outputFile = chooseOutputFile(event, studentNumber);
-                    if (outputFile != null) {
-                        HtmlToPdfConverter.convertToFile(html, outputFile);
-                        deleteIncludedActivities();
-                        AlertHelper.showMessage("Reporte generado",
-                                "El reporte se generó y guardó correctamente.");
-                    }
-                } catch (DAOException e) {
-                    StatusLabel.showError(lblStatus, "Error al generar el reporte");
-                } catch (IOException e) {
-                    StatusLabel.showError(lblStatus, "Error al generar el PDF");
-                }   
+            if (isConfirmed) {
+                executeReportGeneration(event);
             }
+        }
+    }
+
+    private void executeReportGeneration(ActionEvent event) {
+        ReportDAO reportDAO = new ReportDAO();
+        String career = "Licenciatura en Ingeniería de Software";
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String reportType = "MENSUAL";
+
+        try {
+            String userEmail = ActiveSessionDTO.get().getEmail();
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(userEmail);
+
+            ReportDTO reportDTO = reportDAO.getReportDetailByStudentNumber(studentNumber);
+            reportDTO.setCareer(career);
+            reportDTO.setReportType(reportType);
+
+            LocalDate currentDate = LocalDate.now();
+            String formattedDate = currentDate.format(dateFormatter);
+            reportDTO.setReportDate(formattedDate);
+
+            int effectiveTimeSum = sumIncludedEffectiveTime();
+            reportDTO.setTotalHours(String.valueOf(effectiveTimeSum));
+
+            List<ActivityDTO> activitiesList = new ArrayList<>(includedActivitiesObservableList);
+            String generatedHtml = FinalReportHtmlBuilder.buildFinalReport(reportDTO, activitiesList);
+
+            File outputFile = chooseOutputFileFromHelper(event, studentNumber);
+
+            if (outputFile != null) {
+                HtmlToPdfConverter.convertToFile(generatedHtml, outputFile);
+                deleteIncludedActivities();
+                AlertHelper.showMessage("Reporte generado", "El reporte se generó y guardó correctamente.");
+            }
+        } catch (DAOException | FileGenerationException e) {
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
     private void deleteIncludedActivities() throws DAOException {
         for (ActivityDTO activity : includedActivitiesObservableList) {
-            activityDAO.deleteActivity(activity.getId());
+            int activityId = activity.getId();
+            activityDAO.deleteActivity(activityId);
         }
         includedActivitiesObservableList.clear();
         updateCounter();
-
     }
 
     private int sumIncludedEffectiveTime() {
         int totalEffectiveTime = 0;
-        for (ActivityDTO activity : includedActivitiesObservableList) {
-            totalEffectiveTime += activity.getEffectiveTime();
-        }
-        return totalEffectiveTime;
 
+        for (ActivityDTO activity : includedActivitiesObservableList) {
+            int currentEffectiveTime = activity.getEffectiveTime();
+            totalEffectiveTime += currentEffectiveTime;
+        }
+
+        return totalEffectiveTime;
     }
 
-    private File chooseOutputFile(ActionEvent event, String studentNumber) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Guardar reporte");
-        fileChooser.setInitialFileName("reporte_" + studentNumber + ".pdf");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF", "*.pdf"));
-        Window window = ((Node) event.getSource()).getScene().getWindow();
-        return fileChooser.showSaveDialog(window);
+    private File chooseOutputFileFromHelper(ActionEvent event, String studentNumber) {
+        File selectedOutputFile = null;
 
+        Node sourceNode = (Node) event.getSource();
+        Scene currentScene = sourceNode.getScene();
+        Window currentWindow = currentScene.getWindow();
+
+        DocumentType reportType = DocumentType.MONTHLY_REPORT;
+        AllowedExtension pdfExtension = AllowedExtension.PDF;
+
+        selectedOutputFile = FileChooserHelper.chooseOutputFile(
+                currentWindow,
+                reportType,
+                pdfExtension
+        );
+
+        return selectedOutputFile;
     }
 
     @FXML
     private void goToInternMenuView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyActivityRegistersView.fxml",
-                "Menú Practicante", event);
-
+        ViewNavigator.loadView(
+                "/spp/presentation/view/intern/MonthlyActivityRegistersView.fxml",
+                "Menú Practicante",
+                event
+        );
     }
 }

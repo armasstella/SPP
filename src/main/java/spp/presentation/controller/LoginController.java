@@ -12,12 +12,11 @@ import spp.businesslogic.dto.LoginResultDTO;
 import spp.businesslogic.dto.SessionDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.UserDAO;
-import spp.utils.logger.AppLogger;
 import spp.utils.term.TermCalculator;
-import spp.utils.view.InputFilter;
-import spp.utils.view.StatusLabel;
+import spp.utils.view.inputdata.InputFilter;
+import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 import java.net.URL;
 import java.util.ResourceBundle;
 

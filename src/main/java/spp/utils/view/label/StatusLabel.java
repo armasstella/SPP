@@ -1,4 +1,4 @@
-package spp.utils.view;
+package spp.utils.view.label;
 
 
 import javafx.animation.PauseTransition;

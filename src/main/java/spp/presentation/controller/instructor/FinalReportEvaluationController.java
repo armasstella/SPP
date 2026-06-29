@@ -16,10 +16,10 @@ import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.dto.ReportDocumentFileDTO;
 import spp.businesslogic.exceptions.DAOException;
-import spp.utils.view.InputFilter;
-import spp.utils.view.StatusLabel;
+import spp.utils.view.inputdata.InputFilter;
+import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 
 import java.io.File;
 import java.net.URL;
@@ -58,7 +58,7 @@ public class FinalReportEvaluationController implements Initializable {
             }
 
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al cargar la lista de estudiantes.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -88,7 +88,7 @@ public class FinalReportEvaluationController implements Initializable {
             }
 
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al cargar los documentos.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -176,7 +176,7 @@ public class FinalReportEvaluationController implements Initializable {
                     StatusLabel.showSuccess(lblStatus, "Calificación asignada correctamente.");
                 }
             } catch (DAOException e) {
-                StatusLabel.showError(lblStatus, "Error al guardar la calificación.");
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
         }
     }

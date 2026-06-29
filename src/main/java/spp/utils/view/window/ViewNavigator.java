@@ -1,4 +1,4 @@
-package spp.utils.view;
+package spp.utils.view.window;
 
 
 import javafx.event.ActionEvent;
@@ -32,7 +32,7 @@ public class ViewNavigator {
 
             return loader.getController();
         } catch (IOException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             return null;
         }
     }

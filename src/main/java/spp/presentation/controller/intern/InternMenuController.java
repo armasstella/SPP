@@ -6,9 +6,10 @@ import javafx.fxml.FXML;
 import spp.businesslogic.dao.PrioritizedProjectDAO;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
+import spp.businesslogic.exceptions.DAOException;
 import spp.presentation.controller.user.MessageCenterController;
 import spp.utils.view.alert.AlertHelper;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 
 
 public class InternMenuController {
@@ -54,9 +55,8 @@ public class InternMenuController {
                 AlertHelper.showErrorMessage("Operación no disponible",
                         "Ya has seleccionado tres proyectos");
             }
-        } catch (Exception e) {
-            AlertHelper.showErrorMessage("Error", "Error al realizar operación.\n" +
-                    "Intente más tarde.");
+        } catch (DAOException e) {
+            AlertHelper.showErrorMessage("Error", e.getMessage());
         }
 
         return hasPrioritizedProjects;
@@ -72,9 +72,8 @@ public class InternMenuController {
                 AlertHelper.showErrorMessage("Error", "No hay suficientes proyectos disponibles\n" +
                         "Revise después.");
             }
-        } catch (Exception e) {
-            AlertHelper.showErrorMessage("Error", "Error al realizar operación.\n" +
-                    "Intente más tarde.");
+        } catch (DAOException e) {
+            AlertHelper.showErrorMessage("Error", e.getMessage());
         }
 
         return hasMinimumProjectsForActiveTerm;

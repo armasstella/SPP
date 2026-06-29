@@ -57,27 +57,27 @@ public class UserDAO implements IUserDAO {
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("El Usuario que usted está intentando registrar ya existe y está activo.", e);
 
         } catch (SQLDataException e) {
-            AppLogger.logError(ExceptionLevel.WARN, e);
+            AppLogger.log(ExceptionLevel.WARN, e);
             throw new DAOException("El formato o la longitud de los datos ingresados no es compatible.", e);
 
         } catch (SQLTransactionRollbackException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de concurrencia: la transacción fue abortada por el servidor.", e);
 
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de comunicación con el servidor de datos.", e);
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al conectar con el servidor.", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al insertar usuario", e);
             } else {
@@ -94,7 +94,7 @@ public class UserDAO implements IUserDAO {
             return resultSet.getInt(1);
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de comunicación con el servidor al finalizar el registro. Por favor, vuelva a intentarlo.", e);
         }
     }
@@ -117,15 +117,15 @@ public class UserDAO implements IUserDAO {
                 }
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de comunicación con el servidor al obtener id usuario", e);
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar id usuario", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener id usuario", e);
             } else {
@@ -159,15 +159,15 @@ public class UserDAO implements IUserDAO {
                 }
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de autenticación en el servidor al intentar iniciar sesión.", e);
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al verificar credenciales.", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al intentar iniciar sesión", e);
             } else {
@@ -196,15 +196,15 @@ public class UserDAO implements IUserDAO {
                 }
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de autenticación al buscar disponibilidad del email.", e);
 
         } catch (SQLTimeoutException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar el email.", e);
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error en conexión al buscar email", e);
             } else {

@@ -25,10 +25,10 @@ import spp.businesslogic.dao.ProjectDAO;
 import spp.businesslogic.exceptions.FileManagementException;
 import spp.utils.file.FileUtils;
 import spp.utils.view.filechooser.FileChooserUtil;
-import spp.utils.view.InputFilter;
-import spp.utils.view.StatusLabel;
+import spp.utils.view.inputdata.InputFilter;
+import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 import java.io.File;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -114,7 +114,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
             cmbProjectManager.setItems(observableList);
             cmbProjectManager.setDisable(managers.isEmpty());
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al cargar encargados.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -182,7 +182,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
                     }
                 }
             } catch (DAOException e) {
-                StatusLabel.showError(lblStatus, "No se pudo registrar el proyecto");
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
         }
     }
@@ -204,7 +204,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
             saveStatus = true;
 
         } catch (FileManagementException e) {
-            StatusLabel.showError(lblStatus, "No se puede guardar el archivo. Intente de nuevo.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
         return saveStatus;
@@ -225,7 +225,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
             cmbProjectManager.setItems(projectManagerObservableList);
 
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al cargar la lista de encargados de proyecto.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 

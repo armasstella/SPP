@@ -13,9 +13,9 @@ import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.InternDAO;
 import spp.utils.view.alert.AlertHelper;
-import spp.utils.view.GenericNestedSelector;
-import spp.utils.view.StatusLabel;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.table.GenericNestedSelector;
+import spp.utils.view.label.StatusLabel;
+import spp.utils.view.window.ViewNavigator;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -43,7 +43,7 @@ public class InternDeactivationController implements Initializable {
             ObservableList<InternDTO> internsObservableList = FXCollections.observableArrayList(internsList);
             tblInterns.setItems(internsObservableList);
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener lista de practicantes");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }
@@ -79,7 +79,7 @@ public class InternDeactivationController implements Initializable {
                         StatusLabel.showSuccess(lblStatus, "Practicante inactivado exitosamente.");
                     }
                 } catch (DAOException e) {
-                    StatusLabel.showError(lblStatus, "Error al inactivar practicante.");
+                    StatusLabel.showError(lblStatus, e.getMessage());
                 }
             }
         }

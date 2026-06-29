@@ -13,9 +13,9 @@ import spp.businesslogic.dto.ProjectDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.utils.view.alert.AlertHelper;
-import spp.utils.view.GenericNestedSelector;
-import spp.utils.view.StatusLabel;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.table.GenericNestedSelector;
+import spp.utils.view.label.StatusLabel;
+import spp.utils.view.window.ViewNavigator;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -54,7 +54,7 @@ public class ProjectDeletionController implements Initializable {
                         StatusLabel.showSuccess(lblStatus, "Proyecto eliminado exitosamente.");
                     }
                 } catch (DAOException e) {
-                    StatusLabel.showError(lblStatus, "Error al eliminar proyecto.");
+                    StatusLabel.showError(lblStatus, e.getMessage());
                 }
             }
         }
@@ -67,7 +67,7 @@ public class ProjectDeletionController implements Initializable {
             ObservableList<ProjectDTO> projectsObservableList = FXCollections.observableArrayList(projectsList);
             tblProjects.setItems(projectsObservableList);
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener lista de proyectos.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }

@@ -13,9 +13,9 @@ import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
-import spp.utils.view.StatusLabel;
+import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 import spp.utils.view.datepicker.DatePickerConfigurator;
 import spp.utils.view.datepicker.DateValidationMode;
 

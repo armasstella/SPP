@@ -3,7 +3,7 @@ package spp.presentation.controller.admin;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 
 
 public class AdminMenuController {

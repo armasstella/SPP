@@ -8,10 +8,10 @@ import javafx.scene.control.TextField;
 import spp.businesslogic.dto.LinkedOrganizationDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.LinkedOrganizationDAO;
-import spp.utils.view.InputFilter;
-import spp.utils.view.StatusLabel;
+import spp.utils.view.inputdata.InputFilter;
+import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
-import spp.utils.view.ViewNavigator;
+import spp.utils.view.window.ViewNavigator;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -130,7 +130,7 @@ public class NewLinkedOrganizationController implements Initializable {
                         clearInputFields();
                     }
                 } catch (DAOException e) {
-                    StatusLabel.showError(lblStatus, "No se pudo registrar la organización.");
+                    StatusLabel.showError(lblStatus, e.getMessage());
                 }
             } else {
                 String errorMessages = String.join("\n• ", linkedOrganizationDTO.getErrors());

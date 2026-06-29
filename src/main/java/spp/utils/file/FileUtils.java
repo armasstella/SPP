@@ -43,7 +43,7 @@ public class FileUtils {
             fileDestination = destination.toString();
             Files.copy(source.toPath(), destination, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException | InvalidPathException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new FileManagementException("Error al guardar archivo ", e);
         }
         return fileDestination;

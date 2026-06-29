@@ -31,7 +31,7 @@ public class MySQLConnectionManager {
                 this.connection.rollback();
             }
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
         }
 
     }
@@ -43,7 +43,7 @@ public class MySQLConnectionManager {
                 this.connection.setAutoCommit(true);
             }
         } catch (SQLException e){
-                AppLogger.logError(ExceptionLevel.FATAL, e);
+                AppLogger.log(ExceptionLevel.FATAL, e);
         }
 
     }
@@ -55,7 +55,7 @@ public class MySQLConnectionManager {
                 this.connection.setAutoCommit(false);
             }
         } catch (SQLException e){
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
         }
 
     }

@@ -48,7 +48,7 @@ public class ActivityDAO implements IActivityDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al registrar la actividad", e);
         }
 
@@ -75,7 +75,7 @@ public class ActivityDAO implements IActivityDAO {
                 }
             }
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión al obtener actividades de practicante", e);
         }
         return activityList;
@@ -121,7 +121,7 @@ public class ActivityDAO implements IActivityDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión actualizar la actividad", e);
         }
 
@@ -142,7 +142,7 @@ public class ActivityDAO implements IActivityDAO {
             }
 
         } catch (SQLException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de conexión eliminar la actividad", e);
         }
 
