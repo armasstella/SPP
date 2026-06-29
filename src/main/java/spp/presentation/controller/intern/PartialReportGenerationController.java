@@ -87,7 +87,7 @@ public class PartialReportGenerationController implements Initializable {
         InputFilter.applyFormatFilter(taObservations,
                 ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
         InputFilter.applyFormatFilter(txtActivityName,
-                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_ACTIVITY_TITLE);
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_INTERN_ACTIVITY_TITLE);
         InputFilter.applyFormatFilter(taActivityDescription,
                 ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
         InputFilter.applyFormatFilter(txtPlannedTime,

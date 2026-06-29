@@ -8,6 +8,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.DisplayName;
 import spp.businesslogic.dto.ActivityDTO;
+import spp.businesslogic.enums.ActivityType;
 import spp.businesslogic.exceptions.DAOException;
 
 import java.time.LocalDate;
@@ -30,6 +31,8 @@ public class ActivityDAOTest {
     private int generatedActivityId = -1;
     private String uniqueTitle;
 
+    private ActivityType activityType;
+
     @BeforeAll
     void setupAll() {
         activityDAO = new ActivityDAO();
@@ -46,21 +49,22 @@ public class ActivityDAOTest {
         testActivity.setEffectiveTime(5);
         testActivity.setProgress(50);
         testActivity.setObservations("Observación de prueba.");
+        activityType = ActivityType.MONTHLY;
     }
 
     @Test
     @Order(1)
     @DisplayName("Flujo Normal: Debe registrar una actividad exitosamente")
     void testSaveActivityForInternSuccess() throws DAOException {
-        boolean result = activityDAO.saveActivityForIntern(VALID_STUDENT_NUMBER, testActivity);
+        boolean result = activityDAO.saveActivityForIntern(VALID_STUDENT_NUMBER, testActivity, activityType);
         assertTrue(result);
     }
 
     @Test
     @Order(2)
     @DisplayName("Flujo Normal: Debe obtener la lista y comparar que los datos exactos estén en la BD")
-    void testFindActivitiesByStudentNumberEquals() throws DAOException {
-        List<ActivityDTO> activities = activityDAO.findActivitiesByStudentNumber(VALID_STUDENT_NUMBER);
+    void testFindMonthlyActivitiesByStudentNumberEquals() throws DAOException {
+        List<ActivityDTO> activities = activityDAO.findMonthlyActivitiesByStudentNumber(VALID_STUDENT_NUMBER);
 
         assertNotNull(activities);
         assertFalse(activities.isEmpty());
@@ -96,7 +100,7 @@ public class ActivityDAOTest {
         boolean updateResult = activityDAO.updateActivity(testActivity);
         assertTrue(updateResult);
 
-        List<ActivityDTO> activities = activityDAO.findActivitiesByStudentNumber(VALID_STUDENT_NUMBER);
+        List<ActivityDTO> activities = activityDAO.findMonthlyActivitiesByStudentNumber(VALID_STUDENT_NUMBER);
         ActivityDTO updatedActivity = activities.stream()
                 .filter(activity -> activity.getId() == generatedActivityId)
                 .findFirst()
@@ -115,7 +119,7 @@ public class ActivityDAOTest {
         boolean result = activityDAO.deleteActivity(generatedActivityId);
         assertTrue(result);
 
-        List<ActivityDTO> activities = activityDAO.findActivitiesByStudentNumber(VALID_STUDENT_NUMBER);
+        List<ActivityDTO> activities = activityDAO.findMonthlyActivitiesByStudentNumber(VALID_STUDENT_NUMBER);
         boolean exists = activities.stream().anyMatch(activity -> activity.getId() == generatedActivityId);
         assertFalse(exists);
     }
@@ -124,7 +128,7 @@ public class ActivityDAOTest {
     @Order(5)
     @DisplayName("Flujo Alterno: Registrar actividad a una matrícula que no existe devuelve false")
     void testSaveActivityForInternAlternate() throws DAOException {
-        boolean result = activityDAO.saveActivityForIntern("S00000000", testActivity);
+        boolean result = activityDAO.saveActivityForIntern("S00000000", testActivity, activityType);
         assertFalse(result);
     }
 
