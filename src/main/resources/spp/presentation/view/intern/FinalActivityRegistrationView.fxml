@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.DatePicker?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.intern.FinalActivityRegistrationController"
+            minWidth="720" minHeight="520"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <top>
+        <VBox styleClass="header">
+            <Label text="REGISTRAR NUEVA ACTIVIDAD FINAL" styleClass="header-title"/>
+            <Label text="Nueva actividad final para reporte final" styleClass="header-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <StackPane>
+            <VBox spacing="14" maxWidth="420" alignment="TOP_CENTER">
+                <padding>
+                    <Insets top="24" bottom="20" left="48" right="48"/>
+                </padding>
+                <ScrollPane>
+                    <content>
+                        <VBox spacing="14">
+                            <padding>
+                                <Insets left="5" right="5" top="5" bottom="5"/>
+                            </padding>
+                            <Label text="Título *" styleClass="field-label"/>
+                            <TextField fx:id="txtTitle" promptText="Título de la actividad" styleClass="field-input"/>
+
+                            <Label text="Descripción *" styleClass="field-label"/>
+                            <TextArea fx:id="taDescription" promptText="Descripción de la actividad"
+                                      styleClass="field-input"/>
+
+                            <Label text="Fecha inicio *" styleClass="field-label"/>
+                            <DatePicker fx:id="dpStartDate" promptText="dd/mm/aaaa"
+                                        styleClass="field-input, date-picker-custom" maxWidth="Infinity"/>
+
+                            <Label text="Fecha fin *" styleClass="field-label"/>
+                            <DatePicker fx:id="dpEndDate" promptText="dd/mm/aaaa"
+                                        styleClass="field-input, date-picker-custom" maxWidth="Infinity"/>
+
+                            <Label text="Tiempo estimado (horas) *" styleClass="field-label"/>
+                            <TextField fx:id="txtEstimatedTime" promptText="Ej. 8" styleClass="field-input"/>
+
+                            <Label text="Tiempo efectivo (horas) *" styleClass="field-label"/>
+                            <TextField fx:id="txtEffectiveTime" promptText="Ej. 6" styleClass="field-input"/>
+
+                            <Label text="Avance (%) *" styleClass="field-label"/>
+                            <TextField fx:id="txtProgress" promptText="0 - 100" styleClass="field-input"/>
+
+                            <Label text="Observaciones del trabajo realizado *" styleClass="field-label"/>
+                            <TextArea fx:id="taObservations" promptText="Observaciones de la actividad"
+                                      styleClass="field-input"/>
+
+                        </VBox>
+                    </content>
+                </ScrollPane>
+
+                <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" alignment="CENTER"/>
+            </VBox>
+        </StackPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding>
+                <Insets top="12" bottom="16" left="48" right="48"/>
+            </padding>
+            <Button text="Cancelar" styleClass="btn-back" onAction="#cancel"/>
+            <Button text="Añadir" styleClass="btn-primary" onAction="#saveActivity"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -1,5 +1,6 @@
 package spp.businesslogic.dao;
 
+import spp.businesslogic.dto.PartialReportDTO;
 import spp.businesslogic.dto.ReportDocumentFileDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IPartialReportDAO;
@@ -20,6 +21,44 @@ import java.util.List;
 public class PartialReportDAO implements IPartialReportDAO {
 
     public PartialReportDAO() {
+    }
+
+    public PartialReportDTO findReportHeaderByStudentNumber(String studentNumber) throws DAOException {
+        final String SELECT_REPORT_HEADER = "SELECT nrc, profesor, periodo, alumno, organizacion, proyecto, horas_cubiertas " +
+                "FROM view_detalle_reporte " +
+                "WHERE matricula = ? LIMIT 1";
+        PartialReportDTO partialReport = null;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_REPORT_HEADER)) {
+                preparedStatement.setString(1, studentNumber);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        partialReport = buildReportHeaderFromResultSet(resultSet, studentNumber);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.ERROR, e);
+            throw new DAOException("Error al información para informe parcial", e);
+        }
+
+        return partialReport;
+    }
+
+    private PartialReportDTO buildReportHeaderFromResultSet(ResultSet resultSet, String studentNumber)
+            throws SQLException {
+        PartialReportDTO partialReport = new PartialReportDTO();
+        partialReport.setStudentNumber(studentNumber);
+        partialReport.setNrc(resultSet.getString("nrc"));
+        partialReport.setProfessorName(resultSet.getString("profesor"));
+        partialReport.setSchoolPeriod(resultSet.getString("periodo"));
+        partialReport.setStudentName(resultSet.getString("alumno"));
+        partialReport.setLinkedOrganization(resultSet.getString("organizacion"));
+        partialReport.setProjectName(resultSet.getString("proyecto"));
+        partialReport.setCoveredHours(String.valueOf(resultSet.getInt("horas_cubiertas")));
+        return partialReport;
     }
 
     @Override

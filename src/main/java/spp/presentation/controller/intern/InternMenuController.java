@@ -102,13 +102,13 @@ public class InternMenuController {
 
     @FXML
     private void goToPartialReportView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/PartialReporteView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/intern/PartialReportGenerationView.fxml",
                 "Reporte Parcial", event);
     }
 
     @FXML
-    private void goToFinalReportView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/FinalReporteView.fxml",
+    private void goToFinalActivityRegistrationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/intern/FinalActivityRegistersView.fxml",
                 "Reporte Final", event);
     }
 

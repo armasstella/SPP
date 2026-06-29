@@ -46,7 +46,7 @@
                     <padding>
                         <Insets top="28" bottom="28" left="48" right="48"/>
                     </padding>
-                    <Button text="Registrar Actividad"
+                    <Button text="Reporte Mensual"
                             styleClass="option-btn, btn-add"
                             onAction="#goToMonthlyActivityRegistrationView"
                     />
@@ -58,7 +58,7 @@
 
                     <Button text="Reporte Final"
                             styleClass="option-btn, btn-add"
-                            onAction="#goToFinalReportView"
+                            onAction="#goToFinalActivityRegistrationView"
                     />
 
                     <Button text="Subir Documento"

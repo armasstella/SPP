@@ -50,11 +50,6 @@
                                 onAction="#goToPresentationTemplateUploadView"
                         />
 
-                        <Button text="Evaluar Reporte Parcial"
-                                styleClass="option-btn, btn-inactivate"
-                                onAction="#goToPartialReportEvaluationView"
-                        />
-
                         <Button text="Evaluar Reporte Final"
                                 styleClass="option-btn, btn-inactivate"
                                 onAction="#goToFinalReportEvaluationView"
