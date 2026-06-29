@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class MonthlyActivityRegistrationControllerTest extends ControllerTestBase {
+class MonthlyMonthlyActivityRegistrationControllerTest extends ControllerTestBase {
 
     private MonthlyActivityRegistrationController controller;
     private TextField titleTextField;

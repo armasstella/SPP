@@ -11,6 +11,7 @@ import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.ActivityDTO;
+import spp.businesslogic.enums.ActivityType;
 import spp.businesslogic.exceptions.DAOException;
 import spp.utils.view.ViewConstant;
 import spp.utils.view.datepicker.DatePickerConfigurator;
@@ -23,7 +24,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
-public class ActivityRegistrationController implements Initializable {
+public class MonthlyActivityRegistrationController implements Initializable {
 
     @FXML private Label lblStatus;
     @FXML private TextField txtTitle;
@@ -134,7 +135,7 @@ public class ActivityRegistrationController implements Initializable {
 
             try {
                 String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
-                if (activityDAO.saveActivityForIntern(studentNumber, buildActivityDTO())) {
+                if (activityDAO.saveActivityForIntern(studentNumber, buildActivityDTO(), ActivityType.MONTHLY)) {
                     StatusLabel.showSuccess(lblStatus, "Actividad registrada correctamente.");
                     clearFields();
                 }
