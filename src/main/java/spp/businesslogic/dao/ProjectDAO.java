@@ -56,7 +56,8 @@ public class ProjectDAO implements IProjectDAO {
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.logError(ExceptionLevel.WARN, e);
-            throw new DAOException("El proyecto no pudo ser registrado. Verifique que los datos no estén duplicados o que la organización y el encargado existan.");
+            throw new DAOException("El proyecto no pudo ser registrado. Verifique que los datos no estén duplicados " +
+                    "o que la organización y el encargado existan.");
 
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
@@ -89,10 +90,16 @@ public class ProjectDAO implements IProjectDAO {
             try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PROJECT)) {
                 preparedStatement.setInt(1, projectDTO.getId());
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows != NO_ROWS_AFFECTED) {
-                    isDeletionSuccesful = true;
-                }
+                isDeletionSuccesful = affectedRows != NO_ROWS_AFFECTED;
             }
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al eliminar el proyecto.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al eliminar el proyecto.");
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);

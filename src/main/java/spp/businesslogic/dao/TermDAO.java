@@ -136,9 +136,6 @@ public class TermDAO implements ITermDAO {
                 int affectedRows = preparedStatement.executeUpdate();
                 deactivationSuccesful = affectedRows != NO_ROWS_AFFECTED;
             }
-        } catch (SQLTransactionRollbackException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de concurrencia al desactivar el periodo escolar.");
 
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
@@ -179,10 +176,6 @@ public class TermDAO implements ITermDAO {
         } catch (SQLDataException e) {
             AppLogger.logError(ExceptionLevel.WARN, e);
             throw new DAOException("El formato o la longitud del nombre del periodo no es compatible.");
-
-        } catch (SQLTransactionRollbackException e) {
-            AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de concurrencia al registrar el periodo escolar.");
 
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
