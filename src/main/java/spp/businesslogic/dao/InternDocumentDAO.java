@@ -1,20 +1,26 @@
 package spp.businesslogic.dao;
 
-
 import spp.businesslogic.dto.InternDocumentDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IInitialDocumentDAO;
 import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.sql.ResultSet;
-
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLInvalidAuthorizationSpecException;
+import java.sql.SQLTimeoutException;
+import java.sql.Timestamp;
 
 public class InternDocumentDAO implements IInitialDocumentDAO {
+
+    public InternDocumentDAO() {
+    }
 
     @Override
     public boolean saveDocument(String studentNumber, InternDocumentDTO internDocumentDTO) throws DAOException {
@@ -35,16 +41,35 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 preparedStatement.setTimestamp(6, Timestamp.valueOf(internDocumentDTO.getUploadDate()));
                 preparedStatement.setString(7, internDocumentDTO.getDocumentType());
                 preparedStatement.setString(8, studentNumber);
+
                 isSaveSuccessful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
+        } catch (SQLIntegrityConstraintViolationException e) {
+            AppLogger.log(ExceptionLevel.WARN, e);
+            throw new DAOException("No se pudo guardar el documento. Verifique que los datos ingresados sean válidos y que el practicante exista en el sistema.");
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación al intentar guardar el documento.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al guardar el documento.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al guardar documento", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al guardar el documento.");
+            } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
+                throw new DAOException(e.getMessage());
+            } else {
+                throw new DAOException("Ocurrió un error interno al intentar guardar el documento.");
+            }
         }
 
         return isSaveSuccessful;
-
     }
 
     @Override
@@ -65,13 +90,25 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al verificar el horario del estudiante.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al buscar el horario.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar horario.", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar horario.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al verificar el horario del estudiante.");
+            }
         }
 
         return hasClassSchedule;
-
     }
 
     @Override
@@ -92,13 +129,25 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al verificar el plan de actividades.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al buscar la calendarización.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar calendarización.", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar calendarización.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al verificar el plan de actividades.");
+            }
         }
 
         return hasActivitiesSchedule;
-
     }
 
     @Override
@@ -117,13 +166,25 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al verificar el PSP.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al buscar el PSP.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar psp.", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar psp.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al verificar la existencia del PSP.");
+            }
         }
 
         return hasPSP;
-
     }
 
     @Override
@@ -144,17 +205,29 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al verificar el reporte parcial.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al buscar el reporte parcial.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar reporte parcial.", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar reporte parcial.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al verificar el reporte parcial.");
+            }
         }
 
         return hasPartialReport;
-
     }
 
     public boolean hasMonthlyReportByInternEmail(String email) throws DAOException {
-        final String CHECK_MONTHLY_REPORT = "SELECT f_existe_reporte_mensual(?)";
+        final String CHECK_MONTHLY_REPORT = "SELECT f_existe_reporte_mensual(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
         boolean hasMonthlyReport = false;
 
         try {
@@ -169,13 +242,25 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al verificar el reporte mensual.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al buscar el reporte mensual.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar reporte mensual.", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar reporte mensual.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al verificar el reporte mensual.");
+            }
         }
 
         return hasMonthlyReport;
-
     }
 
     @Override
@@ -196,13 +281,25 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al verificar la autoevaluación.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al buscar la autoevaluación.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar autoevaluación.", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar autoevaluación.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al verificar la autoevaluación.");
+            }
         }
 
         return hasSelfEvaluation;
-
     }
 
     @Override
@@ -223,15 +320,24 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al verificar la evaluación de la organización vinculada.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al buscar la evaluación de la organización vinculada.");
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar evaluación de organización vinculada.", e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar evaluación de organización vinculada.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al verificar la evaluación de la organización vinculada.");
+            }
         }
 
         return hasLinkedOrganizationEvaluation;
-
     }
-
-
-
 }

@@ -29,9 +29,14 @@ public class ProjectDAOTest {
     private ProjectDTO testProject;
 
     @BeforeAll
-    void setupAll() {
+    void setupAll() throws DAOException {
         projectDAO = new ProjectDAO();
         testProject = new ProjectDTO();
+
+        spp.businesslogic.dao.TermDAO termDAO = new spp.businesslogic.dao.TermDAO();
+        if (termDAO.findActiveTermId() == -1) {
+            termDAO.insertTerm("FEBRERO - JULIO 26");
+        }
     }
 
     @BeforeEach
@@ -47,6 +52,8 @@ public class ProjectDAOTest {
         ProjectManagerDTO projectManager = new ProjectManagerDTO();
         int EXISTING_PROJECT_MANAGER_ID = 1;
         projectManager.setId(EXISTING_PROJECT_MANAGER_ID);
+
+        testProject.setAvailability("Disponible");
 
         testProject.setName(uniqueName);
         testProject.setDescription(uniqueDescription);

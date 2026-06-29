@@ -19,6 +19,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.exceptions.FileManagementException;
 import spp.utils.file.DocumentUploadConfiguration;
 import spp.utils.file.FileUtils;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.alert.AlertHelper;
 import spp.utils.view.filechooser.AllowedExtension;
 import spp.utils.view.filechooser.FileChooserHelper;
@@ -241,7 +242,7 @@ public class UploadDocumentsController {
 
             if (!isAllowedExtension) {
                 StatusLabel.showError(lblStatus, "Formato invalido. Solo se acepta PDF o DOCX.");
-            } else if (fileLength == 0) {
+            } else if (fileLength == ViewConstant.EMPTY_FILE) {
                 StatusLabel.showError(lblStatus, "El documento está vacío y no puede guardarse.");
             } else if (fileLength > FileUtils.MAX_BYTES) {
                 StatusLabel.showError(lblStatus, "El tamaño de archivo excede el permitido.");

@@ -41,11 +41,11 @@ public class ProjectManagerDAOTest {
     }
 
     private int getExistingOrganizationId() throws SQLException {
-        String sql = "SELECT id_organizacion_vinculada FROM organizaciones_vinculadas LIMIT 1";
-        try (Statement stmt = MySQLConnection.getInstance().getConnection().createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            if (rs.next()) {
-                return rs.getInt(1);
+        String sqlQuery = "SELECT id_organizacion_vinculada FROM organizaciones_vinculadas LIMIT 1";
+        try (Statement statement = MySQLConnection.getInstance().getConnection().createStatement();
+             ResultSet resultSet = statement.executeQuery(sqlQuery)) {
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
             }
         }
         throw new IllegalStateException("No hay organizaciones vinculadas en la BD. Insertar una primero.");

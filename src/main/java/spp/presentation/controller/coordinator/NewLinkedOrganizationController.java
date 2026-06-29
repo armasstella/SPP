@@ -42,7 +42,7 @@ public class NewLinkedOrganizationController implements Initializable {
         InputFilter.applyFormatFilter(txtFiscalAddress,
                 ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_ADDRESS);
         InputFilter.applyFormatFilter(txtBusiness,
-                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_CATEGORY );
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_BUSINESS);
         InputFilter.applyFormatFilter(txtEmail,
                 ViewConstant.PATTERN_EMAIL_CHARS, ViewConstant.MAX_LENGTH_EMAIL);
         InputFilter.applyFormatFilter(txtPhoneNumber,

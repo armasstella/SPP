@@ -55,7 +55,7 @@ public class NewCourseController implements Initializable {
         InputFilter.applyFormatFilter(txtCapacity,
                 ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
         InputFilter.applyFormatFilter(taCourseDetails,
-                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_COURSE_DETAILS);
     }
 
     private void setAllCourse(CourseDTO courseDTO) {

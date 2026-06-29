@@ -77,7 +77,7 @@ public class NewInternController implements Initializable {
         InputFilter.applyFormatFilter(txtPassword,
                 ViewConstant.PATTERN_PASSWORD_CHARS, ViewConstant.MAX_LENGTH_PASSWORD);
         InputFilter.applyFormatFilter(txtIndigenousLanguage,
-                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_CATEGORY);
+                ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_INDIGENOUS_LANGUAGE);
     }
 
     private void setAllIntern(InternDTO internDTO) {

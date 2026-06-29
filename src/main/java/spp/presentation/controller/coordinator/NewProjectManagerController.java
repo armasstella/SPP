@@ -64,9 +64,9 @@ public class NewProjectManagerController implements Initializable {
         InputFilter.applyFormatFilter(txtSecondLastName,
                 ViewConstant.PATTERN_ALPHABETIC, ViewConstant.MAX_LENGTH_NAME_PART);
         InputFilter.applyFormatFilter(txtResponsibility,
-                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_CATEGORY);
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_MANAGER_RESPONSIBILITY);
         InputFilter.applyFormatFilter(txtRole,
-                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_CATEGORY);
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_MANAGER_ROLE);
         InputFilter.applyFormatFilter(txtPhoneNumber,
                 ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_PHONE);
     }

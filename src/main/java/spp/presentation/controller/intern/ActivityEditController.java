@@ -12,9 +12,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
-import spp.utils.view.datepicker.DatePickerConfigurator;
-import spp.utils.view.datepicker.DateValidationMode;
-import spp.utils.view.datepicker.DateValidator;
+import spp.utils.view.inputdata.InputFilter;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
 import spp.utils.view.window.WindowCloser;
@@ -39,30 +37,35 @@ public class ActivityEditController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        DatePickerConfigurator.configureSmartDatePicker(dpStartDate, DateValidationMode.ANY_DATE);
-        DatePickerConfigurator.configureSmartDatePicker(dpEndDate, DateValidationMode.ANY_DATE);
+        setUpFields();
+    }
+
+    private void setUpFields() {
+        InputFilter.applyFormatFilter(txtTitle,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_INTERN_ACTIVITY_TITLE);
+        InputFilter.applyFormatFilter(taDescription,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_ACTIVITY_DESCRIPTION);
+        InputFilter.applyFormatFilter(txtEstimatedTime,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
+        InputFilter.applyFormatFilter(txtEffectiveTime,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
+        InputFilter.applyFormatFilter(txtProgress,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_PROGRESS);
+        InputFilter.applyFormatFilter(taObservations,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_INTERN_ACTIVITY_DESCRIPTION);
     }
 
     public void setActivity(ActivityDTO activity) {
         this.activity = activity;
 
-        String title = activity.getTitle();
-        String description = activity.getDescription();
-        LocalDate startDate = activity.getStartDate();
-        LocalDate endDate = activity.getEndDate();
-        String estimatedTimeString = String.valueOf(activity.getEstimatedTime());
-        String effectiveTimeString = String.valueOf(activity.getEffectiveTime());
-        String progressString = String.valueOf(activity.getProgress());
-        String observations = activity.getObservations();
-
-        txtTitle.setText(title);
-        taDescription.setText(description);
-        dpStartDate.setValue(startDate);
-        dpEndDate.setValue(endDate);
-        txtEstimatedTime.setText(estimatedTimeString);
-        txtEffectiveTime.setText(effectiveTimeString);
-        txtProgress.setText(progressString);
-        taObservations.setText(observations);
+        txtTitle.setText(activity.getTitle());
+        taDescription.setText(activity.getDescription());
+        dpStartDate.setValue(activity.getStartDate());
+        dpEndDate.setValue(activity.getEndDate());
+        txtEstimatedTime.setText(String.valueOf(activity.getEstimatedTime()));
+        txtEffectiveTime.setText(String.valueOf(activity.getEffectiveTime()));
+        txtProgress.setText(String.valueOf(activity.getProgress()));
+        taObservations.setText(activity.getObservations());
     }
 
     public boolean isUpdated() {
@@ -107,8 +110,6 @@ public class ActivityEditController implements Initializable {
                 estimatedTimeString.isEmpty() || effectiveTimeString.isEmpty() || progressString.isEmpty() ||
                 startDate == null || endDate == null;
 
-
-
         if (areFieldsEmpty) {
             StatusLabel.showError(lblStatus, "Complete todos los campos.");
             hasErrors = true;
@@ -116,26 +117,18 @@ public class ActivityEditController implements Initializable {
             StatusLabel.showError(lblStatus, "La fecha fin no puede ser anterior a la fecha inicio.");
             hasErrors = true;
         } else {
-            LocalDate selectedStartDate = dpStartDate.getValue();
-            LocalDate selectedFinalDate = dpStartDate.getValue();
-            if (!DateValidator.isDateValid(selectedStartDate, DateValidationMode.ANY_DATE)
-                    || !DateValidator.isDateValid(selectedFinalDate, DateValidationMode.ANY_DATE)) {
-                StatusLabel.showError(lblStatus, "La fecha ingresada es errónea");
+            Integer estimatedTime = parseNonNegativeInt(estimatedTimeString);
+            Integer effectiveTime = parseNonNegativeInt(effectiveTimeString);
+            Integer progress = parseNonNegativeInt(progressString);
+
+            boolean hasInvalidNumbers = estimatedTime == null || effectiveTime == null || progress == null;
+
+            if (hasInvalidNumbers) {
+                StatusLabel.showError(lblStatus, "Tiempo estimado, tiempo efectivo y avance deben ser números válidos.");
                 hasErrors = true;
-            } else {
-                Integer estimatedTime = parseNonNegativeInt(estimatedTimeString);
-                Integer effectiveTime = parseNonNegativeInt(effectiveTimeString);
-                Integer progress = parseNonNegativeInt(progressString);
-
-                boolean hasInvalidNumbers = estimatedTime == null || effectiveTime == null || progress == null;
-
-                if (hasInvalidNumbers) {
-                    StatusLabel.showError(lblStatus, "Tiempo estimado, tiempo efectivo y avance deben ser números válidos.");
-                    hasErrors = true;
-                } else if (progress > ViewConstant.MAX_PROGRESS) {
-                    StatusLabel.showError(lblStatus, "El avance debe estar entre 0 y 100.");
-                    hasErrors = true;
-                }
+            } else if (progress > ViewConstant.MAX_PROGRESS) {
+                StatusLabel.showError(lblStatus, "El avance debe estar entre 0 y 100.");
+                hasErrors = true;
             }
         }
 
@@ -147,7 +140,7 @@ public class ActivityEditController implements Initializable {
 
         try {
             int numericValue = Integer.parseInt(text);
-            if (numericValue >= 0) {
+            if (numericValue >= ViewConstant.ALLOWED_POSITIVE_NUMERIC_VALUE) {
                 parsedValue = numericValue;
             }
         } catch (NumberFormatException e) {
@@ -165,12 +158,9 @@ public class ActivityEditController implements Initializable {
         String description = taDescription.getText().trim();
         LocalDate startDate = dpStartDate.getValue();
         LocalDate endDate = dpEndDate.getValue();
-        String estimatedTimeString = txtEstimatedTime.getText().trim();
-        int estimatedTime = Integer.parseInt(estimatedTimeString);
-        String effectiveTimeString = txtEffectiveTime.getText().trim();
-        int effectiveTime = Integer.parseInt(effectiveTimeString);
-        String progressString = txtProgress.getText().trim();
-        int progress = Integer.parseInt(progressString);
+        int estimatedTime = Integer.parseInt(txtEstimatedTime.getText().trim());
+        int effectiveTime = Integer.parseInt(txtEffectiveTime.getText().trim());
+        int progress = Integer.parseInt(txtProgress.getText().trim());
         String observations = taObservations.getText().trim();
 
         editedActivity.setId(currentId);
@@ -201,5 +191,4 @@ public class ActivityEditController implements Initializable {
     private void cancelEdit(ActionEvent event) {
         WindowCloser.closeWindowFromEvent(event);
     }
-
 }
