@@ -3,23 +3,28 @@ package spp.presentation.controller.intern;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Window;
-import spp.businesslogic.dao.FinalReportDAO;
+import spp.businesslogic.compliance.document.DocumentationRegistry;
+import spp.businesslogic.compliance.document.DocumentationWorkflowManager;
+import spp.businesslogic.dao.InternDocumentDAO;
+import spp.businesslogic.dao.InternDAO;
+import spp.businesslogic.dao.UserDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
-import spp.businesslogic.dto.InitialDocumentDTO;
+import spp.businesslogic.dto.InternDocumentDTO;
 import spp.businesslogic.enums.DocumentType;
 import spp.businesslogic.enums.DocumentationPhase;
 import spp.businesslogic.exceptions.DAOException;
-import spp.businesslogic.dao.InitialDocumentDAO;
-import spp.businesslogic.dao.InternDAO;
 import spp.businesslogic.exceptions.FileManagementException;
 import spp.utils.file.DocumentUploadConfiguration;
 import spp.utils.file.FileUtils;
+import spp.utils.view.alert.AlertHelper;
+import spp.utils.view.filechooser.AllowedExtension;
+import spp.utils.view.filechooser.FileChooserHelper;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.window.ViewNavigator;
-import spp.utils.view.filechooser.FileChooserHelper;
-import spp.utils.view.filechooser.AllowedExtension;
+
 import java.io.File;
 import java.time.LocalDateTime;
 
@@ -27,18 +32,23 @@ public class UploadDocumentsController {
 
     @FXML private Label lblStatus;
     @FXML private Label lblSelectedDocument;
+
     private File selectedDocument;
     private String currentFolder;
     private String currentPrefix;
-    private final InitialDocumentDTO initialDocumentDTO = new InitialDocumentDTO();
-    private final InitialDocumentDAO initialDocumentDAO = new InitialDocumentDAO();
+
+    private final InternDocumentDTO internDocumentDTO = new InternDocumentDTO();
+    private final InternDocumentDAO internDocumentDAO = new InternDocumentDAO();
     private final InternDAO internDAO = new InternDAO();
-    private final FinalReportDAO finalReportDAO = new FinalReportDAO();
+    private final DocumentationRegistry documentationRegistry = new DocumentationRegistry();
 
     @FXML
     private void cancel(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/InternMenuView.fxml",
-                "Menú Practicante", event);
+        ViewNavigator.loadView(
+                "/spp/presentation/view/intern/InternMenuView.fxml",
+                "Menú Practicante",
+                event
+        );
     }
 
     @FXML
@@ -58,7 +68,7 @@ public class UploadDocumentsController {
                 DocumentType.PSP,
                 "./documents/intern_documents/psp/",
                 "psp",
-                DocumentationPhase.CLOSURE
+                DocumentationPhase.PRACTICE
         );
         processDocumentSelection(event, documentConfiguration);
     }
@@ -77,7 +87,7 @@ public class UploadDocumentsController {
     @FXML
     private void uploadPartialReport(ActionEvent event) {
         DocumentUploadConfiguration documentConfiguration = new DocumentUploadConfiguration(
-                DocumentType.PSP,
+                DocumentType.PARTIAL_REPORT,
                 "./documents/intern_documents/partial_reports/",
                 "partial",
                 DocumentationPhase.PRACTICE
@@ -94,7 +104,6 @@ public class UploadDocumentsController {
                 DocumentationPhase.PRACTICE
         );
         processDocumentSelection(event, documentConfiguration);
-
     }
 
     @FXML
@@ -131,80 +140,86 @@ public class UploadDocumentsController {
     }
 
     private void processDocumentSelection(ActionEvent event, DocumentUploadConfiguration documentConfiguration) {
-        if (canUploadPhase(documentConfiguration.getPhase())) {
-            if (documentExists(documentConfiguration.getType())) {
-                StatusLabel.showError(lblStatus, "Ya ha subido este documento.\nComuníquese con el coordinador.");
-            } else {
-                Window currentWindow = ((Node) event.getSource()).getScene().getWindow();
-                File file = FileChooserHelper.selectSingleFile(currentWindow, "SELECCIONAR DOCUMENTO",
-                        AllowedExtension.PDF, AllowedExtension.DOCX);
-
-                if (file != null) {
-                    selectedDocument = file;
-                    initialDocumentDTO.setDocumentType(String.valueOf(documentConfiguration.getType()));
-                    currentFolder = documentConfiguration.getFolder();
-                    currentPrefix = documentConfiguration.getPrefix();
-
-                    lblSelectedDocument.setText("Archivo seleccionado: " + selectedDocument.getName());
-                    StatusLabel.showSuccess(lblStatus, "Archivo listo para subir.");
-                }
-            }
-        }
-    }
-
-    private boolean canUploadPhase(DocumentationPhase documentationPhasephase) {
-        boolean isAllowed = false;
-
-        if (documentationPhasephase == DocumentationPhase.INITIAL) {
-            isAllowed = true;
-        } else if (documentationPhasephase == DocumentationPhase.PRACTICE) {
-            // Aquí llamas a tu DAO (idealmente una vista/procedimiento SQL) para saber si los iniciales están calificados
-            isAllowed = areInitialDocumentsQualified();
-        } else if (documentationPhasephase == DocumentationPhase.CLOSURE) {
-            // Aquí verificas si los de prácticas están calificados
-            isAllowed = arePracticeDocumentsQualified();
+        UserDAO  userDAO = new UserDAO();
+        int internId = -1;
+        try {
+            internId = userDAO.obtainId(ActiveSessionDTO.get().getEmail());
+        } catch (DAOException e) {
+            AlertHelper.showErrorMessage("Error", e.getMessage());
         }
 
-        if (!isAllowed) {
+        DocumentationWorkflowManager workflowManager = new DocumentationWorkflowManager(internId);
+        DocumentType targetType = documentConfiguration.getType();
+        boolean isUploadAllowed = workflowManager.isUploadAllowed(targetType);
+
+        if (!isUploadAllowed) {
             StatusLabel.showError(lblStatus, "No puedes subir este documento aún. Completa y aprueba la fase anterior.");
+        } else {
+            verifyExistenceAndSelectDocument(event, documentConfiguration);
         }
-
-        return isAllowed;
     }
 
-    private boolean documentExists(DocumentType type) {
-        boolean exists = false;
-        String email = ActiveSessionDTO.get().getEmail();
+    private void verifyExistenceAndSelectDocument(ActionEvent event, DocumentUploadConfiguration documentConfiguration) {
+        String userEmail = ActiveSessionDTO.get().getEmail();
+        DocumentType targetType = documentConfiguration.getType();
 
         try {
-            if (type == DocumentType.CLASS_SCHEDULE) {
-                exists = initialDocumentDAO.hasClassScheduleByInternEmail(email);
-            } else if (type == DocumentType.ACTIVITIES_SCHEDULE) {
-                exists = initialDocumentDAO.hasActivitiesScheduleByInternEmail(email);
-            } else if (type == DocumentType.PSP) {
-                exists = initialDocumentDAO.hasPSPByInternEmail(email);
-            } else if (type == DocumentType.INDICATOR_REPORT) {
-                exists = initialDocumentDAO.hasPartialReportByInternEmail(email);
-            } else if (type == DocumentType.SELF_EVALUATION) {
-                exists = initialDocumentDAO.hasSelfEvaluationByInternEmail(email);
-            } else if (type == DocumentType.EVALUATION_LINKED_ORGANIZATION) {
-                exists = initialDocumentDAO.hasEvaluationLinkedOrganizationByInternEmail(email);
-            } else if (type == DocumentType.FINAL_REPORT) {
-                exists = finalReportDAO.hasFinalReportByInternEmail(email);
+            boolean documentExists = documentationRegistry.isDocumentAlreadyUploaded(targetType, userEmail);
+
+            if (documentExists) {
+                StatusLabel.showError(lblStatus, "Ya ha subido este documento.\nComuníquese con el coordinador.");
+            } else {
+                openFileChooser(event, documentConfiguration);
             }
-            // Agrega aquí los else if faltantes (Reporte Mensual, Plan Actividades) según tus métodos DAO
-        } catch (DAOException e) {
+        } catch (DAOException exception) {
             StatusLabel.showError(lblStatus, "Error al buscar el documento en la base de datos.");
         }
+    }
 
-        return exists;
+    private void openFileChooser(ActionEvent event, DocumentUploadConfiguration documentConfiguration) {
+        Object eventSource = event.getSource();
+        Node sourceNode = (Node) eventSource;
+        Scene currentScene = sourceNode.getScene();
+        Window currentWindow = currentScene.getWindow();
+
+        String dialogTitle = "SELECCIONAR DOCUMENTO";
+        AllowedExtension pdfExtension = AllowedExtension.PDF;
+        AllowedExtension docxExtension = AllowedExtension.DOCX;
+
+        File chosenFile = FileChooserHelper.selectSingleFile(
+                currentWindow,
+                dialogTitle,
+                pdfExtension,
+                docxExtension
+        );
+
+        if (chosenFile != null) {
+            selectedDocument = chosenFile;
+
+            DocumentType configurationType = documentConfiguration.getType();
+            String documentTypeString = String.valueOf(configurationType);
+            internDocumentDTO.setDocumentType(documentTypeString);
+
+            currentFolder = documentConfiguration.getFolder();
+            currentPrefix = documentConfiguration.getPrefix();
+
+            String fileName = selectedDocument.getName();
+            String statusMessage = "Archivo seleccionado: " + fileName;
+
+            lblSelectedDocument.setText(statusMessage);
+            StatusLabel.showSuccess(lblStatus, "Archivo listo para subir.");
+        }
     }
 
     @FXML
     private void confirm() {
-        if (isValidDocument()) {
-            if (setFileMetadata()) {
-                if (saveDataDocument()) {
+        boolean isDocumentValid = isValidDocument();
+
+        if (isDocumentValid) {
+            boolean isMetadataConfigured = setFileMetadata();
+            if (isMetadataConfigured) {
+                boolean isDataSaved = saveDataDocument();
+                if (isDataSaved) {
                     StatusLabel.showSuccess(lblStatus, "Archivo cargado exitosamente");
                     resetSelection();
                 }
@@ -218,13 +233,17 @@ public class UploadDocumentsController {
         if (selectedDocument == null) {
             StatusLabel.showError(lblStatus, "No se ha elegido un archivo.");
         } else {
-            String extension = FileUtils.getExtension(selectedDocument.getName());
+            String fileName = selectedDocument.getName();
+            String extension = FileUtils.getExtension(fileName);
+            long fileLength = selectedDocument.length();
 
-            if (!FileUtils.ALLOWED_EXTENSIONS.contains(extension)) {
+            boolean isAllowedExtension = FileUtils.ALLOWED_EXTENSIONS.contains(extension);
+
+            if (!isAllowedExtension) {
                 StatusLabel.showError(lblStatus, "Formato invalido. Solo se acepta PDF o DOCX.");
-            } else if (selectedDocument.length() == 0) {
+            } else if (fileLength == 0) {
                 StatusLabel.showError(lblStatus, "El documento está vacío y no puede guardarse.");
-            } else if (selectedDocument.length() > FileUtils.MAX_BYTES) {
+            } else if (fileLength > FileUtils.MAX_BYTES) {
                 StatusLabel.showError(lblStatus, "El tamaño de archivo excede el permitido.");
             } else {
                 isValid = true;
@@ -236,23 +255,33 @@ public class UploadDocumentsController {
 
     private boolean setFileMetadata() {
         boolean saveStatus = false;
-        String extension = FileUtils.getExtension(selectedDocument.getName());
 
-        try {
-            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
-            String uniqueName = FileUtils.generateUniqueName(studentNumber, extension, currentPrefix);
-            String finalPath = FileUtils.copyFile(selectedDocument, currentFolder, uniqueName);
+        if (selectedDocument != null) {
+            String fileName = selectedDocument.getName();
+            String extension = FileUtils.getExtension(fileName);
 
-            initialDocumentDTO.setOriginalName(selectedDocument.getName());
-            initialDocumentDTO.setSavedName(uniqueName);
-            initialDocumentDTO.setFilePath(finalPath);
-            initialDocumentDTO.setSizeMb(selectedDocument.length() / FileUtils.BYTES_PER_MB);
-            initialDocumentDTO.setExtension(extension);
-            initialDocumentDTO.setUploadDate(LocalDateTime.now());
+            try {
+                String userEmail = ActiveSessionDTO.get().getEmail();
+                String studentNumber = internDAO.findActiveStudentNumberByEmail(userEmail);
 
-            saveStatus = true;
-        } catch (FileManagementException | DAOException e) {
-            StatusLabel.showError(lblStatus, "No se puede guardar el archivo. Intente de nuevo.");
+                String uniqueName = FileUtils.generateUniqueName(studentNumber, extension, currentPrefix);
+                String finalPath = FileUtils.copyFile(selectedDocument, currentFolder, uniqueName);
+
+                long fileLengthBytes = selectedDocument.length();
+                double fileLengthMb = (double) fileLengthBytes / FileUtils.BYTES_PER_MB;
+                LocalDateTime currentDateTime = LocalDateTime.now();
+
+                internDocumentDTO.setOriginalName(fileName);
+                internDocumentDTO.setSavedName(uniqueName);
+                internDocumentDTO.setFilePath(finalPath);
+                internDocumentDTO.setSizeMb(fileLengthMb);
+                internDocumentDTO.setExtension(extension);
+                internDocumentDTO.setUploadDate(currentDateTime);
+
+                saveStatus = true;
+            } catch (FileManagementException | DAOException exception) {
+                StatusLabel.showError(lblStatus, "No se puede guardar el archivo. Intente de nuevo.");
+            }
         }
 
         return saveStatus;
@@ -262,13 +291,17 @@ public class UploadDocumentsController {
         boolean success = false;
 
         try {
-            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
-            success = initialDocumentDAO.saveDocument(studentNumber, initialDocumentDTO);
+            String userEmail = ActiveSessionDTO.get().getEmail();
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(userEmail);
 
-            if (!success) {
+            boolean isDocumentSaved = internDocumentDAO.saveDocument(studentNumber, internDocumentDTO);
+
+            if (isDocumentSaved) {
+                success = true;
+            } else {
                 StatusLabel.showError(lblStatus, "Error al guardar documento. Intenta de nuevo.");
             }
-        } catch (DAOException e) {
+        } catch (DAOException exception) {
             StatusLabel.showError(lblStatus, "Error al guardar documento");
         }
 
@@ -282,21 +315,4 @@ public class UploadDocumentsController {
         currentPrefix = null;
     }
 
-    private boolean areInitialDocumentsQualified() {
-        // boolean qualified = false;
-        // try {
-        //    qualified = documentDAO.checkInitialDocsStatus(ActiveSessionDTO.get().getEmail());
-        // } catch(...)
-        // return qualified;
-        return true;
-    }
-
-    private boolean arePracticeDocumentsQualified() {
-        // boolean qualified = false;
-        // try {
-        //    qualified = documentDAO.checkPracticelDocsStatus(ActiveSessionDTO.get().getEmail());
-        // } catch(...)
-        // return qualified;
-        return true;
-    }
 }

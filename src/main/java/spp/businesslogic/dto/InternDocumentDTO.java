@@ -4,7 +4,7 @@ package spp.businesslogic.dto;
 import java.time.LocalDateTime;
 
 
-public class InitialDocumentDTO {
+public class InternDocumentDTO {
 
     private String originalName;
     private String savedName;

@@ -1,6 +1,7 @@
 package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.InternDTO;
+import spp.businesslogic.enums.DocumentationPhase;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IInternDAO;
 import spp.dataaccess.connection.MySQLConnection;
@@ -300,4 +301,35 @@ public class InternDAO implements IInternDAO {
         }
         return internsList;
     }
+
+    public DocumentationPhase findCurrentPhaseById(int internId) throws DAOException {
+        String CHECK_PHASE = "SELECT f_obtener_fase_documental_practicante(?) as 'fase'";
+        DocumentationPhase currentPhase = null;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_PHASE)) {
+                preparedStatement.setInt(1, internId);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        String phaseValue = resultSet.getString("fase");
+                        if (phaseValue != null) {
+                            currentPhase = DocumentationPhase.valueOf(phaseValue);
+                        }
+                    }
+                }
+            }
+
+        } catch (IllegalArgumentException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error con datos al obtener la fase de documentación.", e);
+
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error al consultar la fase documental del practicante.", e);
+        }
+
+        return currentPhase;
+    }
+
 }

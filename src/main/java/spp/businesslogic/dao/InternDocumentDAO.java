@@ -1,7 +1,7 @@
 package spp.businesslogic.dao;
 
 
-import spp.businesslogic.dto.InitialDocumentDTO;
+import spp.businesslogic.dto.InternDocumentDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IInitialDocumentDAO;
 import spp.dataaccess.connection.MySQLConnection;
@@ -14,10 +14,10 @@ import java.sql.Timestamp;
 import java.sql.ResultSet;
 
 
-public class InitialDocumentDAO implements IInitialDocumentDAO {
+public class InternDocumentDAO implements IInitialDocumentDAO {
 
     @Override
-    public boolean saveDocument(String studentNumber, InitialDocumentDTO initialDocumentDTO) throws DAOException {
+    public boolean saveDocument(String studentNumber, InternDocumentDTO internDocumentDTO) throws DAOException {
         final String INSERT_DOCUMENT = " INSERT INTO documentos_practicantes (nombre_original, " +
                 "nombre_almacenado, ruta_archivo, tamaño_mb, extension, fecha_subida," +
                 "tipo, id_usuario_practicante, matricula) SELECT ?, ?, ?, ?, ?, ?, ?, p.id_usuario, p.matricula " +
@@ -27,13 +27,13 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_DOCUMENT)) {
-                preparedStatement.setString(1, initialDocumentDTO.getOriginalName());
-                preparedStatement.setString(2, initialDocumentDTO.getSavedName());
-                preparedStatement.setString(3, initialDocumentDTO.getFilePath());
-                preparedStatement.setDouble(4, initialDocumentDTO.getSizeMb());
-                preparedStatement.setString(5, initialDocumentDTO.getExtension());
-                preparedStatement.setTimestamp(6, Timestamp.valueOf(initialDocumentDTO.getUploadDate()));
-                preparedStatement.setString(7, initialDocumentDTO.getDocumentType());
+                preparedStatement.setString(1, internDocumentDTO.getOriginalName());
+                preparedStatement.setString(2, internDocumentDTO.getSavedName());
+                preparedStatement.setString(3, internDocumentDTO.getFilePath());
+                preparedStatement.setDouble(4, internDocumentDTO.getSizeMb());
+                preparedStatement.setString(5, internDocumentDTO.getExtension());
+                preparedStatement.setTimestamp(6, Timestamp.valueOf(internDocumentDTO.getUploadDate()));
+                preparedStatement.setString(7, internDocumentDTO.getDocumentType());
                 preparedStatement.setString(8, studentNumber);
                 isSaveSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
             }
@@ -75,9 +75,9 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
     }
 
     @Override
-    public boolean hasActivitiesScheduleByInternEmail(String email) throws DAOException {
+    public boolean hasActivitiesPlanByInternEmail(String email) throws DAOException {
         final String CHECK_SCHEDULE =
-                "SELECT f_existe_calendarizacion_actividades_estudiante(u.id_usuario) FROM usuarios u WHERE " +
+                "SELECT f_existe_plan_actividades_estudiante(u.id_usuario) FROM usuarios u WHERE " +
                         "u.correo_electronico = ?";
         boolean hasActivitiesSchedule = false;
 
@@ -85,7 +85,6 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_SCHEDULE)) {
                 preparedStatement.setString(1, email);
-
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         hasActivitiesSchedule = resultSet.getBoolean(1);
