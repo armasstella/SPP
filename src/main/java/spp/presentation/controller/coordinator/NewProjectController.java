@@ -61,7 +61,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
         InputFilter.applyFormatFilter(txtName,
                 ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_TITLE);
         InputFilter.applyFormatFilter(taDescription,
-                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_PROJECT_DESCRIPTION);
         InputFilter.applyFormatFilter(txtPlacesAvailable,
                 ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
     }

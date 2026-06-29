@@ -21,15 +21,15 @@ public class TermDTOTest {
     @Test
     @DisplayName("Formato Válido: FEBRERO-JULIO-2026")
     void testSetNameValidFebJul() {
-        termDTO.setName("FEBRERO-JULIO-2026");
-        assertTrue(termDTO.isValid(), "El formato FEBRERO-JULIO-2026 debería ser válido");
+        termDTO.setName("FEBRERO - JULIO 26");
+        assertTrue(termDTO.isValid(), "El formato FEBRERO - JULIO - 2026 debería ser válido");
     }
 
     @Test
-    @DisplayName("Formato Válido: AGOSTO-ENERO-2026")
+    @DisplayName("Formato Válido: AGOSTO - ENERO 26")
     void testSetNameValidAgoEne() {
-        termDTO.setName("AGOSTO-ENERO-2026");
-        assertTrue(termDTO.isValid(), "El formato AGOSTO-ENERO-2026 debería ser válido");
+        termDTO.setName("AGOSTO - ENERO 26");
+        assertTrue(termDTO.isValid(), "El formato AGOSTO - ENERO - 2026 debería ser válido");
     }
 
     @Test

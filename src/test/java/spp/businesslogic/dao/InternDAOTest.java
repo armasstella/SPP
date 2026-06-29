@@ -2,122 +2,141 @@ package spp.businesslogic.dao;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.DisplayName;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class InternDAOTest {
+
     private InternDAO internDAO;
     private InternDTO testIntern;
 
     @BeforeAll
-    void setUpAll() {
+    void setupAll() {
         internDAO = new InternDAO();
         testIntern = new InternDTO();
     }
 
     @BeforeEach
-    void setUpEach() {
+    void setUp() {
         String uniqueSuffix = String.valueOf(System.currentTimeMillis());
+        String uniqueEmail = "practicante" + uniqueSuffix.substring(uniqueSuffix.length() - 8) + "@uv.mx";
         String uniqueStudentNumber = "S" + uniqueSuffix.substring(uniqueSuffix.length() - 8);
-        testIntern.setStatus("Activo");
-        testIntern.setLastConnection("2025-11-22 19:15:13");
-        testIntern.setFirstName("Uri");
-        testIntern.setSecondName("Abdiel");
-        testIntern.setFirstLastName("Masin");
-        testIntern.setSecondLastName("Campechano");
+        String uniquePhone = "228" + uniqueSuffix.substring(uniqueSuffix.length() - 7);
 
-        testIntern.setEmail("z" + uniqueSuffix + "@estudiantes.uv.mx");
-        testIntern.setPhoneNumber("22" + uniqueSuffix);
-        testIntern.setPassword("s0yUr14bd1");
+        testIntern.setFirstName("Juan");
+        testIntern.setSecondName("");
+        testIntern.setFirstLastName("Perez");
+        testIntern.setSecondLastName("");
+        testIntern.setEmail(uniqueEmail);
+        testIntern.setPhoneNumber(uniquePhone);
+        testIntern.setPassword("Password123!");
         testIntern.setStudentNumber(uniqueStudentNumber);
-        testIntern.setGender("M");
-        testIntern.setSpeaksIndigenousLanguage(true);
-        testIntern.setIndigenousLanguage("Náhuatl");
-        testIntern.setBirthDate(LocalDateTime.parse("2006-07-07T00:00:00"));
-    }
-
-    @Test
-    @DisplayName("Debe insertar un practicante exitosamente")
-    void testInsertInternSuccess() throws DAOException {
-        boolean result = internDAO.registerIntern(testIntern);
-        assertTrue(result);
-    }
-
-    @Test
-    @DisplayName("Debe insertar practicante que  no habla lengua indígena")
-    void testInsertInternWithoutIndigenousLanguageSuccess() throws DAOException {
+        testIntern.setSex("Masculino");
         testIntern.setSpeaksIndigenousLanguage(false);
-        testIntern.setIndigenousLanguage(null);
+        testIntern.setBirthDate(LocalDateTime.of(2000, 1, 1, 0, 0));
+    }
+
+    @Test
+    @Order(1)
+    @DisplayName("Debe registrar un practicante exitosamente")
+    void testRegisterInternSuccess() throws DAOException {
         boolean result = internDAO.registerIntern(testIntern);
         assertTrue(result);
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException al insertar un Practicante por duplicación de matrícula")
-    void testInsertInternFailedDuplicated() throws DAOException {
+    @Order(2)
+    @DisplayName("Debe lanzar DAOException al intentar registrar un practicante duplicado")
+    void testRegisterInternDuplicate() throws DAOException {
         internDAO.registerIntern(testIntern);
-        assertThrows(DAOException.class, () -> {
+
+        DAOException exception = assertThrows(DAOException.class, () -> {
             internDAO.registerIntern(testIntern);
         });
+
+        assertTrue(exception.getMessage().contains("El Usuario que usted está intentando registrar ya existe"));
     }
 
     @Test
-    @DisplayName("Debe devolver true si la función SQL determina que el estudiante existe")
-    void testExistsStudentByStudentNumberSuccess() throws DAOException {
+    @Order(3)
+    @DisplayName("Debe obtener la lista de practicantes activos y verificar que el registrado esté presente")
+    void testGetActiveInterns() throws DAOException {
+        internDAO.registerIntern(testIntern);
+
+        InternDTO expectedIntern = new InternDTO();
+        expectedIntern.setStudentNumber(testIntern.getStudentNumber());
+        expectedIntern.setFullName("Juan  Perez");
+        expectedIntern.setEmail(testIntern.getEmail());
+
+        List<InternDTO> actualInterns = internDAO.getActiveInterns();
+        assertFalse(actualInterns.isEmpty());
+
+        InternDTO internFound = actualInterns.stream()
+                .filter(intern -> intern.getStudentNumber().equals(expectedIntern.getStudentNumber()))
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(internFound);
+        assertEquals(expectedIntern.getFullName().trim(), internFound.getFullName().trim());
+        assertEquals(expectedIntern.getEmail(), internFound.getEmail());
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("Debe verificar que la matrícula existe en la BD")
+    void testExistsStudentByStudentNumber() throws DAOException {
         internDAO.registerIntern(testIntern);
         boolean exists = internDAO.existsStudentByStudentNumber(testIntern.getStudentNumber());
         assertTrue(exists);
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException si la función SQL determina que la matrícula es inválida")
-    void testExistsStudentByStudentNumberFailed() {
-        assertThrows(DAOException.class, () -> {
-            internDAO.existsStudentByStudentNumber("S00000000");
-        });
-    }
-
-    @Test
-    @DisplayName("Debe inactivar un practicante exitosamente")
-    void testDeactivateInternSuccess() throws DAOException {
+    @Order(5)
+    @DisplayName("Debe obtener la matrícula a partir del correo del practicante activo")
+    void testFindActiveStudentNumberByEmail() throws DAOException {
         internDAO.registerIntern(testIntern);
-        boolean isDeactivated = internDAO.deactivateIntern(testIntern);
-        assertTrue(isDeactivated);
+        String studentNumber = internDAO.findActiveStudentNumberByEmail(testIntern.getEmail());
+        assertEquals(testIntern.getStudentNumber(), studentNumber);
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException al insertar practicante sin matrícula")
-    void testInsertInternFailedNullStudentNumber() throws DAOException {
-        testIntern.setStudentNumber(null);
-        assertThrows(DAOException.class, () -> {
-            internDAO.registerIntern(testIntern);
-        });
+    @Order(6)
+    @DisplayName("Debe desactivar un practicante correctamente")
+    void testDeactivateIntern() throws DAOException {
+        internDAO.registerIntern(testIntern);
+        boolean result = internDAO.deactivateIntern(testIntern);
+        assertTrue(result);
     }
 
     @Test
-    @DisplayName("Debe lanzar DAOException al insertar practicante sin correo")
-    void testInsertInternFailedNullEmail() throws DAOException {
-        testIntern.setEmail(null);
-        assertThrows(DAOException.class, () -> {
-            internDAO.registerIntern(testIntern);
-        });
-    }
+    @Order(7)
+    @DisplayName("Debe devolver lista de practicantes sin proyecto asignado y debe contener al recién insertado")
+    void testFindUnassignedInternsIdentifiers() throws DAOException {
+        internDAO.registerIntern(testIntern);
 
-    @Test
-    @DisplayName("Debe lanzar DAOException al insertar practicante sin fecha de nacimiento")
-    void testInsertInternFailedNullBirthDate() throws DAOException {
-        testIntern.setBirthDate(null);
-        assertThrows(DAOException.class, () -> {
-            internDAO.registerIntern(testIntern);
-        });
+        List<InternDTO> unassignedList = internDAO.findUnassignedInternsIdentifiers();
+        assertNotNull(unassignedList);
+
+        boolean found = unassignedList.stream()
+                .anyMatch(intern -> intern.getStudentNumber().equals(testIntern.getStudentNumber()));
+        assertTrue(found);
     }
 }

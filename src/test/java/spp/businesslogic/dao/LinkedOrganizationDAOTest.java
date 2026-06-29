@@ -37,28 +37,30 @@ public class LinkedOrganizationDAOTest {
 
     @BeforeEach
     void setUp() {
+        long currentTimestamp = System.currentTimeMillis();
         String uniqueId = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-        String uniqueName = "Organización " + uniqueId;
 
-        String rfcBase = "ABC";
+        String uniqueName = "Organización " + uniqueId;
+        String uniqueEmail = "org" + uniqueId + "@test.com";
+
+        String uniquePhoneSuffix = String.format("%07d", currentTimestamp % 10000000);
+        String uniquePhone = "228" + uniquePhoneSuffix;
+
+        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        StringBuilder firstThreeLetters = new StringBuilder();
+        StringBuilder lastThreeLetters = new StringBuilder();
+
+        for (int i = 0; i < 3; i++) {
+            firstThreeLetters.append(alphabet.charAt((int) (Math.random() * alphabet.length())));
+            lastThreeLetters.append(alphabet.charAt((int) (Math.random() * alphabet.length())));
+        }
 
         String year = String.format("%02d", (int)(Math.random() * 100));
         String month = String.format("%02d", (int)(Math.random() * 12) + 1);
-        String day = String.format("%02d", (int)(Math.random() * 31) + 1);
+        String day = String.format("%02d", (int)(Math.random() * 28) + 1);
+        String sixNumbers = year + month + day;
 
-        StringBuilder rnd = new StringBuilder();
-        for (int i = 0; i < 3; i++) {
-            if (Math.random() > 0.5) {
-                rnd.append((char) ('A' + (int)(Math.random() * 26)));
-            } else {
-                rnd.append((int)(Math.random() * 10));
-            }
-        }
-
-        String uniqueRfc = rfcBase + year + month + day + rnd.toString();
-
-        String uniqueEmail = "org" + uniqueId + "@test.com";
-        String uniquePhone = "228" + uniqueId;
+        String uniqueRfc = firstThreeLetters.toString() + sixNumbers + lastThreeLetters.toString();
 
         testOrganization.setName(uniqueName);
         testOrganization.setRfc(uniqueRfc);

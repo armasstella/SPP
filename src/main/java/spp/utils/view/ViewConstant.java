@@ -25,11 +25,6 @@ public final class ViewConstant {
     public static final int MAX_LENGTH_TERM = 10;
     public static final int MAX_LENGTH_CAPACITY = 2;
 
-    public static final int MAX_LENGTH_PROJECT_NAME = 50;
-    public static final int MAX_LENGTH_ORGANIZATION_NAME = 50;
-    public static final int MAX_LENGTH_PROJECT_MANAGER_NAME = 50;
-    public static final int MAX_LENGTH_PROJECT_MANAGER_LASTNAME = 50;
-    public static final int MAX_LENGTH_ACTIVITY_TITLE = 45;
     public static final int MAX_LENGTH_INTERN_ACTIVITY_TITLE = 100;
 
     public static final int MAX_LENGTH_COURSE_DETAILS = 45;
@@ -42,7 +37,6 @@ public final class ViewConstant {
     public static final int MAX_LENGTH_MANAGER_RESPONSIBILITY = 30;
     public static final int MAX_LENGTH_MANAGER_ROLE = 20;
 
-    public static final int MAX_LENGTH_CATEGORY = 20;
     public static final int MAX_LENGTH_TITLE = 50;
     public static final int MAX_LENGTH_DESCRIPTION = 45;
 
@@ -63,4 +57,6 @@ public final class ViewConstant {
     public static final int MIN_GRADE = 0;
 
     public static final int ID_ZERO_INVALID = 0;
+    public static final int ALLOWED_POSITIVE_NUMERIC_VALUE = 0;
+    public static final int EMPTY_FILE = 0;
 }

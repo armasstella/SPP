@@ -107,13 +107,13 @@ public class IndicatorReportController implements Initializable {
         filters.setGender(cmbFilterGender.getValue());
         filters.setIndigenousLanguage(cmbFilterLanguage.getValue());
         filters.setPeriod(cmbFilterPeriod.getValue());
-        String minAgeStr = txtFilterMinAge.getText().trim();
-        if (!minAgeStr.isEmpty()) {
-            filters.setMinAge(Integer.parseInt(minAgeStr));
+        String minimumAge = txtFilterMinAge.getText().trim();
+        if (!minimumAge.isEmpty()) {
+            filters.setMinAge(Integer.parseInt(minimumAge));
         }
-        String maxAgeStr = txtFilterMaxAge.getText().trim();
-        if (!maxAgeStr.isEmpty()) {
-            filters.setMaxAge(Integer.parseInt(maxAgeStr));
+        String maximumAge = txtFilterMaxAge.getText().trim();
+        if (!maximumAge.isEmpty()) {
+            filters.setMaxAge(Integer.parseInt(maximumAge));
         }
 
         return filters;
