@@ -47,7 +47,7 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                 preparedStatement.setInt(6,
                         linkedOrganizationId);
 
-                isInsertSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isInsertSuccessful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {

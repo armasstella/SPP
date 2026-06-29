@@ -41,7 +41,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
                 preparedStatement.setInt(1, generatedId);
                 preparedStatement.setString(2, coordinatorDTO.getPersonalNumber());
 
-                if (preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED) {
+                if (preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED) {
                     isInsertSuccessful = true;
                     connection.commit();
                 }
@@ -101,7 +101,7 @@ public class CoordinatorDAO implements ICoordinatorDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(INACTIVATE_COORDINATOR)) {
                 preparedStatement.setString(1, coordinatorDTO.getPersonalNumber());
-                isDeactivationSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isDeactivationSuccessful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLTransactionRollbackException e) {

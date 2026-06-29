@@ -50,7 +50,7 @@ public class InternDAO implements IInternDAO {
                 preparedStatement.setTimestamp(6, Timestamp.valueOf(internDTO.getBirthDate()));
 
                 int rowsAffected = preparedStatement.executeUpdate();
-                if (rowsAffected != BaseDAO.NO_ROWS_AFFECTED) {
+                if (rowsAffected != DAOResultConstant.NO_ROWS_AFFECTED) {
                     isInsertSuccessful = true;
                     connection.commit();
                 }
@@ -204,7 +204,7 @@ public class InternDAO implements IInternDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(INACTIVATE_INTERN)) {
                 preparedStatement.setString(1, internDTO.getStudentNumber());
-                isDeactivationSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isDeactivationSuccessful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
         } catch (SQLTransactionRollbackException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);

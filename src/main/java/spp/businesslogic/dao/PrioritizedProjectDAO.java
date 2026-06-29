@@ -47,7 +47,7 @@ public class PrioritizedProjectDAO implements IPrioritizedProjectDAO {
 
                 boolean isBatchSuccessful = true;
                 for (int rows : affectedRowsPerStatement) {
-                    if (rows == Statement.EXECUTE_FAILED || rows == BaseDAO.NO_ROWS_AFFECTED) {
+                    if (rows == Statement.EXECUTE_FAILED || rows == DAOResultConstant.NO_ROWS_AFFECTED) {
                         isBatchSuccessful = false;
                         break;
                     }

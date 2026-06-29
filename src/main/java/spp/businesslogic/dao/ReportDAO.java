@@ -57,7 +57,7 @@ public class ReportDAO implements IReportDAO {
                 preparedStatement.setInt(1, documentId);
                 preparedStatement.setInt(2, grade);
                 preparedStatement.setString(3, email);
-                isGradeAssigned = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isGradeAssigned = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {
@@ -78,7 +78,7 @@ public class ReportDAO implements IReportDAO {
             try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_GRADE)) {
                 preparedStatement.setInt(1, grade);
                 preparedStatement.setInt(2, documentId);
-                isGradeUpdated = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isGradeUpdated = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {

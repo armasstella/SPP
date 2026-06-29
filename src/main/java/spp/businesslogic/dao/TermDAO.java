@@ -132,7 +132,7 @@ public class TermDAO implements ITermDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_DEACTIVATE_TERM)) {
                 int affectedRows = preparedStatement.executeUpdate();
-                deactivationSuccesful = affectedRows != BaseDAO.NO_ROWS_AFFECTED;
+                deactivationSuccesful = affectedRows != DAOResultConstant.NO_ROWS_AFFECTED;
             }
         } catch (SQLTransactionRollbackException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -168,7 +168,7 @@ public class TermDAO implements ITermDAO {
             try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_TERM)) {
                 preparedStatement.setString(1, termName);
                 int affectedRows = preparedStatement.executeUpdate();
-                isInsertSuccessful = affectedRows != BaseDAO.NO_ROWS_AFFECTED;
+                isInsertSuccessful = affectedRows != DAOResultConstant.NO_ROWS_AFFECTED;
             }
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.log(ExceptionLevel.WARN, e);

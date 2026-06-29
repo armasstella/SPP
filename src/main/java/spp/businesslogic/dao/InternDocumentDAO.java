@@ -35,7 +35,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 preparedStatement.setTimestamp(6, Timestamp.valueOf(internDocumentDTO.getUploadDate()));
                 preparedStatement.setString(7, internDocumentDTO.getDocumentType());
                 preparedStatement.setString(8, studentNumber);
-                isSaveSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isSaveSuccessful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {

@@ -50,7 +50,7 @@ public class CourseDAO implements ICourseDAO {
                 preparedStatement.setInt(8, activeTermId);
 
                 int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows != BaseDAO.NO_ROWS_AFFECTED) {
+                if (affectedRows != DAOResultConstant.NO_ROWS_AFFECTED) {
                     isInsertSuccessful = true;
                 }
 
@@ -149,7 +149,7 @@ public class CourseDAO implements ICourseDAO {
                 preparedStatement.setString(2, courseDTO.getInstructorDTO().getPersonalNumber());
                 preparedStatement.setInt(3, courseDTO.getIdCourse());
 
-                isUpdateSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isUpdateSuccessful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
 
             }
 

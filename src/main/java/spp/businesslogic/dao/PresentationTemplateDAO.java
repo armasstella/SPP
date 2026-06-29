@@ -32,7 +32,7 @@ public class PresentationTemplateDAO implements IPresentationTemplateDAO {
                 preparedStatement.setString(5, presentationTemplateDTO.getExtension());
                 preparedStatement.setTimestamp(6, Timestamp.valueOf(presentationTemplateDTO.getUploadDate()));
                 preparedStatement.setString(7, personalNumber);
-                isSaveSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isSaveSuccessful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {

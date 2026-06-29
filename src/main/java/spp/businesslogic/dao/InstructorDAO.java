@@ -40,7 +40,7 @@ public class InstructorDAO implements IInstructorDAO {
                 preparedStatement.setString(2, instructorDTO.getPersonalNumber());
                 preparedStatement.setString(3, instructorDTO.getShift());
 
-                if (preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED) {
+                if (preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED) {
                     isInsertSuccessful = true;
                     connection.commit();
                 }
@@ -100,7 +100,7 @@ public class InstructorDAO implements IInstructorDAO {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(INACTIVATE_INSTRUCTOR)) {
                 preparedStatement.setString(1, instructorDTO.getPersonalNumber());
-                isDeactivationSuccesful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isDeactivationSuccesful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLTransactionRollbackException e) {

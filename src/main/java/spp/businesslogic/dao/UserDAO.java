@@ -49,7 +49,7 @@ public class UserDAO implements IUserDAO {
                 preparedStatement.setString(5,
                         passwordHasher.hashPassword(userDTO.getPassword()));
 
-                if (preparedStatement.executeUpdate() == BaseDAO.NO_ROWS_AFFECTED) {
+                if (preparedStatement.executeUpdate() == DAOResultConstant.NO_ROWS_AFFECTED) {
                     throw new DAOException("Fallo al insertar usuario. No se afectaron filas.");
                 }
 

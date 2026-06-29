@@ -42,7 +42,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
                 preparedStatement.setInt(6,
                         professionalPracticeEnrollmentDTO.getCoveredHours());
 
-                isInsertSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isInsertSuccessful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
 
             }
 
@@ -73,7 +73,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
                 preparedStatement.setInt(1, idProject);
                 preparedStatement.setString(2, studentNumber);
                 int rowsAffected = preparedStatement.executeUpdate();
-                isProjectAssigned = rowsAffected != BaseDAO.NO_ROWS_AFFECTED;
+                isProjectAssigned = rowsAffected != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {
@@ -98,7 +98,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
                 preparedStatement.setInt(1, courseId);
                 preparedStatement.setString(2, studentNumber);
                 int rowsAffected = preparedStatement.executeUpdate();
-                isCourseAssigned = rowsAffected != BaseDAO.NO_ROWS_AFFECTED;
+                isCourseAssigned = rowsAffected != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLException e) {

@@ -40,7 +40,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
                 preparedStatement.setString(5, linkedOrganizationDTO.getBusiness());
                 preparedStatement.setString(6, linkedOrganizationDTO.getPhoneNumber());
                 preparedStatement.setString(7, linkedOrganizationDTO.getEmail());
-                isInsertSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isInsertSuccessful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {

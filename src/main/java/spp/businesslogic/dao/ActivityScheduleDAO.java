@@ -31,7 +31,7 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
                 preparedStatement.setString(5, activityScheduleDTO.getExtension());
                 preparedStatement.setTimestamp(6, Timestamp.valueOf(activityScheduleDTO.getUploadDate()));
                 preparedStatement.setInt(7, projectId);
-                isSaveSuccessful = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isSaveSuccessful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
 
             }
 

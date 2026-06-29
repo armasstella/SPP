@@ -38,7 +38,7 @@ public class MessageDAO implements IMessageDAO {
                 preparedStatement.setString(2, messageDTO.getContent());
                 preparedStatement.setString(3, messageDTO.getEmailSender());
                 preparedStatement.setString(4, messageDTO.getEmailReceiver());
-                isMessageSent = preparedStatement.executeUpdate() != BaseDAO.NO_ROWS_AFFECTED;
+                isMessageSent = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
