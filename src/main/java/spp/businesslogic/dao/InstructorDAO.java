@@ -233,4 +233,30 @@ public class InstructorDAO implements IInstructorDAO {
 
         return personalNumber;
     }
+
+    @Override
+    public boolean hasInstructorCourseAssigned(int instructorId) throws DAOException {
+        final String CHECK_COURSE_ASSIGNATION = "SELECT f_profesor_tiene_experiencias_activas(?)";
+        boolean hasCourseAssigned = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_COURSE_ASSIGNATION)) {
+                preparedStatement.setInt(1, instructorId);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasCourseAssigned = resultSet.getBoolean(1);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            AppLogger.logError(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al buscar evaluación de organización vinculada.", e);
+        }
+
+        return hasCourseAssigned;
+
+    }
+
 }
