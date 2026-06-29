@@ -9,7 +9,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import spp.presentation.controller.intern.ActivityRegistrationController;
+import spp.presentation.controller.intern.MonthlyActivityRegistrationController;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ActivityRegistrationControllerTest extends ControllerTestBase {
+class MonthlyActivityRegistrationControllerTest extends ControllerTestBase {
 
-    private ActivityRegistrationController controller;
+    private MonthlyActivityRegistrationController controller;
     private TextField titleTextField;
     private TextArea descriptionTextArea;
     private DatePicker startDatePicker;
@@ -33,7 +33,7 @@ class ActivityRegistrationControllerTest extends ControllerTestBase {
 
     @BeforeEach
     void setUp() throws Exception {
-        controller = new ActivityRegistrationController();
+        controller = new MonthlyActivityRegistrationController();
 
         titleTextField = new TextField();
         descriptionTextArea = new TextArea();
@@ -55,13 +55,13 @@ class ActivityRegistrationControllerTest extends ControllerTestBase {
     }
 
     private void injectField(String fieldName, Object value) throws Exception {
-        Field field = ActivityRegistrationController.class.getDeclaredField(fieldName);
+        Field field = MonthlyActivityRegistrationController.class.getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(controller, value);
     }
 
     private Object invokePrivateMethod(String methodName) throws Exception {
-        Method method = ActivityRegistrationController.class.getDeclaredMethod(methodName);
+        Method method = MonthlyActivityRegistrationController.class.getDeclaredMethod(methodName);
         method.setAccessible(true);
         return method.invoke(controller);
     }
