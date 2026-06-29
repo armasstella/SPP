@@ -55,13 +55,6 @@ public class InstructorMenuController implements Initializable {
     }
 
     @FXML
-    private void goToPartialReportEvaluationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/instructor/PartialReportEvaluationView.fxml",
-                "Calificar reporte", event);
-
-    }
-
-    @FXML
     private void goToFinalReportEvaluationView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/instructor/FinalReportEvaluationView.fxml",
                 "Calificar reporte", event);

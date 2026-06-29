@@ -24,9 +24,11 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.exceptions.FileGenerationException;
 import spp.utils.file.HtmlToPdfConverter;
 import spp.utils.htmlbuilder.PartialReportHtmlBuilder;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.alert.AlertHelper;
 import spp.utils.view.filechooser.AllowedExtension;
 import spp.utils.view.filechooser.FileChooserHelper;
+import spp.utils.view.inputdata.InputFilter;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.window.ViewNavigator;
 import java.io.File;
@@ -68,6 +70,31 @@ public class PartialReportGenerationController implements Initializable {
         setUpActivitiesList();
         loadReportHeader();
         loadActiveTerm();
+        setUpFields();
+    }
+
+    private void setUpFields() {
+        InputFilter.applyFormatFilter(txtReportNumber,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
+        InputFilter.applyFormatFilter(txtTerm,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_TERM);
+        InputFilter.applyFormatFilter(taObjective,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
+        InputFilter.applyFormatFilter(taMethodology,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
+        InputFilter.applyFormatFilter(taResults,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
+        InputFilter.applyFormatFilter(taObservations,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
+        InputFilter.applyFormatFilter(txtActivityName,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_ACTIVITY_TITLE);
+        InputFilter.applyFormatFilter(taActivityDescription,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_DESCRIPTION);
+        InputFilter.applyFormatFilter(txtPlannedTime,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
+        InputFilter.applyFormatFilter(txtRealTime,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
+
     }
 
     private void loadActiveTerm() {
