@@ -1,27 +1,24 @@
 package spp.utils.htmlbuilder;
 
 import spp.businesslogic.dto.ActivityDTO;
-import spp.businesslogic.dto.DeliverableProductDTO;
 import spp.businesslogic.dto.ReportDTO;
 import spp.businesslogic.exceptions.FileGenerationException;
 import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.file.TemplateRenderer;
 import spp.utils.logger.AppLogger;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class FinalReportHtmlBuilder {
+public final class MonthlyReportHtmlBuilder {
 
-    private static final String TEMPLATE_PATH = "/spp/presentation/templates/final-report.html";
+    private static final String TEMPLATE_PATH = "/spp/presentation/templates/monthly-report.html";
 
-    private FinalReportHtmlBuilder() {
+    private MonthlyReportHtmlBuilder() {
     }
 
-    public static String buildFinalReport(ReportDTO report, List<ActivityDTO> activities,
-                                          List<DeliverableProductDTO> deliverableProducts) throws FileGenerationException {
+    public static String buildMonthlyReport(ReportDTO report, List<ActivityDTO> activities) throws FileGenerationException {
         String finalRenderedReport = "";
         Map<String, String> templateValues = new HashMap<>();
 
@@ -37,7 +34,6 @@ public final class FinalReportHtmlBuilder {
         String escapedReportType = TemplateRenderer.escape(report.getReportType());
 
         String activityRowsHtml = buildActivityRows(activities);
-        String deliverableProductRowsHtml = builProductRows(deliverableProducts);
 
         templateValues.put("career", escapedCareer);
         templateValues.put("nrc", escapedNrc);
@@ -50,7 +46,6 @@ public final class FinalReportHtmlBuilder {
         templateValues.put("reportDate", escapedReportDate);
         templateValues.put("reportType", escapedReportType);
         templateValues.put("activityRows", activityRowsHtml);
-        templateValues.put("productRows", deliverableProductRowsHtml);
 
         try {
             finalRenderedReport = TemplateRenderer.render(TEMPLATE_PATH, templateValues);
@@ -94,43 +89,4 @@ public final class FinalReportHtmlBuilder {
         String finalRows = rowsBuilder.toString();
         return finalRows;
     }
-
-    private static String builProductRows(List<DeliverableProductDTO> products) {
-        StringBuilder rowsBuilder = new StringBuilder();
-
-        for (DeliverableProductDTO currentProduct : products) {
-            String escapedName = TemplateRenderer.escape(currentProduct.getName());
-
-            String escapedDescription = TemplateRenderer.escape(currentProduct.getDescription());
-
-            String progressString = String.valueOf(currentProduct.getProgress());
-            String escapedProgress = TemplateRenderer.escape(progressString);
-
-            String escapedObservations = TemplateRenderer.escape(currentProduct.getObservations());
-
-            rowsBuilder.append("<tr>");
-
-            rowsBuilder.append("<td>");
-            rowsBuilder.append(escapedName);
-            rowsBuilder.append("</td>");
-
-            rowsBuilder.append("<td>");
-            rowsBuilder.append(escapedDescription);
-            rowsBuilder.append("</td>");
-
-            rowsBuilder.append("<td>");
-            rowsBuilder.append(escapedProgress);
-            rowsBuilder.append("%</td>");
-
-            rowsBuilder.append("<td>");
-            rowsBuilder.append(escapedObservations);
-            rowsBuilder.append("</td>");
-
-            rowsBuilder.append("</tr>");
-        }
-
-        String finalRows = rowsBuilder.toString();
-        return finalRows;
-    }
-
 }

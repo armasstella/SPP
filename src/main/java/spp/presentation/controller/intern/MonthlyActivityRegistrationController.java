@@ -10,9 +10,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.ActivityDTO;
+import spp.businesslogic.enums.ActivityType;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
+import spp.utils.view.datepicker.DateValidator;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
 import spp.utils.view.window.ViewNavigator;
@@ -20,10 +22,11 @@ import spp.utils.view.datepicker.DatePickerConfigurator;
 import spp.utils.view.datepicker.DateValidationMode;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 
-public class ActivityRegistrationController implements Initializable {
+public class MonthlyActivityRegistrationController implements Initializable {
 
     @FXML private Label lblStatus;
     @FXML private TextField txtTitle;
@@ -49,7 +52,7 @@ public class ActivityRegistrationController implements Initializable {
 
             try {
                 String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
-                if (activityDAO.saveActivityForIntern(studentNumber, buildActivityDTO())) {
+                if (activityDAO.saveActivityForIntern(studentNumber, buildActivityDTO(), ActivityType.MONTHLY)) {
                     StatusLabel.showSuccess(lblStatus, "Actividad registrada correctamente.");
                     clearFields();
                 }
@@ -68,6 +71,19 @@ public class ActivityRegistrationController implements Initializable {
                 || txtEstimatedTime.getText().trim().isEmpty()
                 || txtEffectiveTime.getText().trim().isEmpty()
                 || txtProgress.getText().trim().isEmpty()) {
+            return true;
+        }
+
+        LocalDate selectedDate = null;
+        selectedDate = dpStartDate.getValue();
+        if (!DateValidator.isDateValid(selectedDate, DateValidationMode.ANY_DATE)) {
+            StatusLabel.showError(lblStatus, "La fecha ingresada es errónea");
+            return true;
+        }
+
+        selectedDate = dpEndDate.getValue();
+        if (!DateValidator.isDateValid(selectedDate, DateValidationMode.ANY_DATE)) {
+            StatusLabel.showError(lblStatus, "La fecha ingresada es errónea");
             return true;
         }
 
@@ -132,7 +148,7 @@ public class ActivityRegistrationController implements Initializable {
     @FXML
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyActivityRegistersView.fxml",
-                "Menú Practicante", event);
+                "Reporte Mensual", event);
 
     }
 

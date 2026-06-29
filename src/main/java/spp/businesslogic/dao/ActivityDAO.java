@@ -2,6 +2,7 @@ package spp.businesslogic.dao;
 
 
 import spp.businesslogic.dto.ActivityDTO;
+import spp.businesslogic.enums.ActivityType;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IActivityDAO;
 import spp.dataaccess.connection.MySQLConnection;
@@ -27,11 +28,11 @@ public class ActivityDAO implements IActivityDAO {
     }
 
     @Override
-    public boolean saveActivityForIntern(String studentNumber, ActivityDTO activityDTO) throws DAOException {
+    public boolean saveActivityForIntern(String studentNumber, ActivityDTO activityDTO, ActivityType activityType) throws DAOException {
         final String INSERT_ACTIVITY = "INSERT INTO actividades_practicante " +
                 "(titulo, descripcion, fecha_inicio, fecha_fin, tiempo_estimado, tiempo_efectivo, " +
-                "avance, observaciones, id_usuario_practicante, matricula) " +
-                "SELECT ?, ?, ?, ?, ?, ?, ?, ?, p.id_usuario, p.matricula " +
+                "avance, observaciones, id_usuario_practicante, matricula, tipo) " +
+                "SELECT ?, ?, ?, ?, ?, ?, ?, ?, p.id_usuario, p.matricula, ?" +
                 "FROM practicantes p WHERE p.matricula = ?";
         boolean isInsertSuccessful = false;
 
@@ -46,7 +47,9 @@ public class ActivityDAO implements IActivityDAO {
                 preparedStatement.setInt(6, activityDTO.getEffectiveTime());
                 preparedStatement.setInt(7, activityDTO.getProgress());
                 preparedStatement.setString(8, activityDTO.getObservations());
-                preparedStatement.setString(9, studentNumber);
+                preparedStatement.setString(9, activityType.getValue());
+                preparedStatement.setString(10, studentNumber);
+
 
                 isInsertSuccessful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
 
@@ -74,11 +77,54 @@ public class ActivityDAO implements IActivityDAO {
     }
 
     @Override
-    public List<ActivityDTO> findActivitiesByStudentNumber(String studentNumber) throws DAOException {
+    public List<ActivityDTO> findMonthlyActivitiesByStudentNumber(String studentNumber) throws DAOException {
         final String SELECT_ACTIVITIES =
                 "SELECT id_actividad_practicante, titulo, descripcion, fecha_inicio, fecha_fin, " +
                         "tiempo_estimado, tiempo_efectivo, avance, observaciones " +
-                        "FROM actividades_practicante WHERE matricula = ? ORDER BY fecha_inicio ASC";
+                        "FROM actividades_practicante ap WHERE matricula = ? AND ap.tipo = 'MENSUAL' " +
+                        "ORDER BY fecha_inicio ASC";
+        List<ActivityDTO> activityList = new ArrayList<>();
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ACTIVITIES)) {
+                preparedStatement.setString(1, studentNumber);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        activityList.add(buildActivityDTOFromResultSet(resultSet));
+                    }
+                }
+            }
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al obtener las actividades del practicante.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al consultar las actividades.");
+
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al obtener las actividades del practicante.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al consultar la lista de actividades.");
+            }
+        }
+
+        return activityList;
+    }
+
+    @Override
+    public List<ActivityDTO> findFinalActivitiesByStudentNumber(String studentNumber) throws DAOException {
+        final String SELECT_ACTIVITIES =
+                "SELECT id_actividad_practicante, titulo, descripcion, fecha_inicio, fecha_fin, " +
+                        "tiempo_estimado, tiempo_efectivo, avance, observaciones " +
+                        "FROM actividades_practicante ap WHERE matricula = ? AND ap.tipo = 'FINAL' " +
+                        "ORDER BY fecha_inicio ASC";
         List<ActivityDTO> activityList = new ArrayList<>();
 
         try {

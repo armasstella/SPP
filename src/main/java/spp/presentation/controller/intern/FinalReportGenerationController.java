@@ -15,19 +15,23 @@ import javafx.scene.control.TableView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import spp.businesslogic.dao.DeliverableProductDAO;
 import spp.businesslogic.dao.ReportDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.ActivityDTO;
+import spp.businesslogic.dto.DeliverableProductDTO;
 import spp.businesslogic.dto.ReportDTO;
 import spp.businesslogic.enums.DocumentType;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
 import spp.businesslogic.exceptions.FileGenerationException;
-import spp.presentation.controller.intern.listener.MonthlyActivityInclusionListener;
-import spp.presentation.controller.intern.listener.IncludeMonthlyActivityModificationListener;
+import spp.presentation.controller.intern.listener.DeliverableProductInclusionListener;
+import spp.presentation.controller.intern.listener.FinalActivityInclusionListener;
+import spp.presentation.controller.intern.listener.IncludeDeliverableProductModificationListener;
+import spp.presentation.controller.intern.listener.IncludeFinalActivityModificationListener;
 import spp.utils.file.HtmlToPdfConverter;
-import spp.utils.htmlbuilder.MonthlyReportHtmlBuilder;
+import spp.utils.htmlbuilder.FinalReportHtmlBuilder;
 import spp.utils.view.filechooser.AllowedExtension;
 import spp.utils.view.filechooser.FileChooserHelper;
 import spp.utils.view.table.TableViewConfigurator;
@@ -44,19 +48,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class MonthlyReportGenerationController implements Initializable {
+public class FinalReportGenerationController implements Initializable {
 
     @FXML private Label lblStatus;
-    @FXML private Label lblCounter;
+    @FXML private Label lblActivitiesCounter;
+    @FXML private Label lblProductsCounter;
     @FXML private TableView<ActivityDTO> tblActivities;
-    @FXML private TableColumn<ActivityDTO, String> colTitle;
-    @FXML private TableColumn<ActivityDTO, String> colDescription;
-    @FXML private TableColumn<ActivityDTO, String> colStartDate;
-    @FXML private TableColumn<ActivityDTO, String> colEndDate;
-    @FXML private TableColumn<ActivityDTO, String> colEstimatedTime;
-    @FXML private TableColumn<ActivityDTO, String> colEffectiveTime;
-    @FXML private TableColumn<ActivityDTO, String> colProgress;
-    @FXML private TableColumn<ActivityDTO, String> colObservations;
+    @FXML private TableColumn<ActivityDTO, String> colActivityTitle;
+    @FXML private TableColumn<ActivityDTO, String> colActivityDescription;
+    @FXML private TableColumn<ActivityDTO, String> colActivityStartDate;
+    @FXML private TableColumn<ActivityDTO, String> colActivityEndDate;
+    @FXML private TableColumn<ActivityDTO, String> colActivityEstimatedTime;
+    @FXML private TableColumn<ActivityDTO, String> colActivityEffectiveTime;
+    @FXML private TableColumn<ActivityDTO, String> colActivityProgress;
+    @FXML private TableColumn<ActivityDTO, String> colActivityObservations;
     @FXML private TableView<ActivityDTO> tblIncludedActivities;
     @FXML private TableColumn<ActivityDTO, String> colChosenActivityTitle;
     @FXML private TableColumn<ActivityDTO, String> colChosenActivityDescription;
@@ -66,21 +71,60 @@ public class MonthlyReportGenerationController implements Initializable {
     @FXML private TableColumn<ActivityDTO, String> colChosenActivityEffectiveTime;
     @FXML private TableColumn<ActivityDTO, String> colChosenActivityProgress;
     @FXML private TableColumn<ActivityDTO, String> colChosenActivityObservations;
+    @FXML private TableView<DeliverableProductDTO> tblDeliverableProducts;
+    @FXML private TableColumn<DeliverableProductDTO, String> colDeliverableProductName;
+    @FXML private TableColumn<DeliverableProductDTO, String> colDeliverableProductDescription;
+    @FXML private TableColumn<DeliverableProductDTO, String> colDeliverableProductProgress;
+    @FXML private TableColumn<DeliverableProductDTO, String> colDeliverableProductObservations;
+    @FXML private TableView<DeliverableProductDTO> tblIncludedDeliverableProducts;
+    @FXML private TableColumn<DeliverableProductDTO, String> colChosenDeliverableProductName;
+    @FXML private TableColumn<DeliverableProductDTO, String> colChosenDeliverableProductDescription;
+    @FXML private TableColumn<DeliverableProductDTO, String> colChosenDeliverableProductProgress;
+    @FXML private TableColumn<DeliverableProductDTO, String> colChosenDeliverableProductObservations;
     private final ActivityDAO activityDAO = new ActivityDAO();
+    private final DeliverableProductDAO deliverableProductDAO = new DeliverableProductDAO();
     private final InternDAO internDAO = new InternDAO();
     private ObservableList<ActivityDTO> availableActivitiesObservableList;
     private ObservableList<ActivityDTO> includedActivitiesObservableList;
+    private ObservableList<DeliverableProductDTO> availableDeliverableProductObservableList;
+    private ObservableList<DeliverableProductDTO> includedDeliverableProductObservableList;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setUpColumns();
+        setUpActivityTableColumns();
+        setUpDeliverableProductTableColumns();
         setUpIncludedActivities();
+        setUpIncludedDeliverableProducts();
         obtainActivities();
-        setUpClicks();
-        updateCounter();
+        obtainDeliverableProducts();
+        setUpActivitiesTablesClicks();
+        updateActivityCounter();
+        updateDeliverableProductCounter();
     }
 
-    private void setUpColumns() {
+    private void setUpDeliverableProductTableColumns() {
+        GenericNestedSelector<DeliverableProductDTO> nameSelector =
+                new GenericNestedSelector<>("name", "Sin nombre");
+        GenericNestedSelector<DeliverableProductDTO>  descriptionSelector =
+                new GenericNestedSelector<>("description", "Sin descripcion");
+        GenericNestedSelector<DeliverableProductDTO> progressSelector =
+                new GenericNestedSelector<>("progress", "Sin avance");
+        GenericNestedSelector<DeliverableProductDTO> observationsSelector =
+                new GenericNestedSelector<>("observations", "Sin observaciones");
+
+        colDeliverableProductName.setCellValueFactory(nameSelector);
+        colDeliverableProductDescription.setCellValueFactory(descriptionSelector);
+        colDeliverableProductProgress.setCellValueFactory(progressSelector);
+        colDeliverableProductObservations.setCellValueFactory(observationsSelector);
+
+        colChosenDeliverableProductName.setCellValueFactory(nameSelector);
+        colChosenDeliverableProductDescription.setCellValueFactory(descriptionSelector);
+        colChosenDeliverableProductProgress.setCellValueFactory(progressSelector);
+        colChosenDeliverableProductObservations.setCellValueFactory(observationsSelector);
+
+    }
+
+    private void setUpActivityTableColumns() {
         GenericNestedSelector<ActivityDTO> titleSelector =
                 new GenericNestedSelector<>("title", "Sin título");
         GenericNestedSelector<ActivityDTO> descriptionSelector =
@@ -98,14 +142,14 @@ public class MonthlyReportGenerationController implements Initializable {
         GenericNestedSelector<ActivityDTO> observationsSelector =
                 new GenericNestedSelector<>("observations", "Sin observaciones");
 
-        colTitle.setCellValueFactory(titleSelector);
-        colDescription.setCellValueFactory(descriptionSelector);
-        colStartDate.setCellValueFactory(startDateSelector);
-        colEndDate.setCellValueFactory(endDateSelector);
-        colEstimatedTime.setCellValueFactory(estimatedTimeSelector);
-        colEffectiveTime.setCellValueFactory(effectiveTimeSelector);
-        colProgress.setCellValueFactory(progressSelector);
-        colObservations.setCellValueFactory(observationsSelector);
+        colActivityTitle.setCellValueFactory(titleSelector);
+        colActivityDescription.setCellValueFactory(descriptionSelector);
+        colActivityStartDate.setCellValueFactory(startDateSelector);
+        colActivityEndDate.setCellValueFactory(endDateSelector);
+        colActivityEstimatedTime.setCellValueFactory(estimatedTimeSelector);
+        colActivityEffectiveTime.setCellValueFactory(effectiveTimeSelector);
+        colActivityProgress.setCellValueFactory(progressSelector);
+        colActivityObservations.setCellValueFactory(observationsSelector);
 
         colChosenActivityTitle.setCellValueFactory(titleSelector);
         colChosenActivityDescription.setCellValueFactory(descriptionSelector);
@@ -122,11 +166,14 @@ public class MonthlyReportGenerationController implements Initializable {
         tblIncludedActivities.setItems(includedActivitiesObservableList);
     }
 
+    private void setUpIncludedDeliverableProducts() {
+        includedDeliverableProductObservableList = FXCollections.observableArrayList();
+        tblIncludedDeliverableProducts.setItems(includedDeliverableProductObservableList);
+    }
+
     private void obtainActivities() {
         try {
-            String userEmail = ActiveSessionDTO.get().getEmail();
-            String studentNumber = internDAO.findActiveStudentNumberByEmail(userEmail);
-
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
             List<ActivityDTO> activityList = activityDAO.findMonthlyActivitiesByStudentNumber(studentNumber);
             availableActivitiesObservableList = FXCollections.observableArrayList(activityList);
             tblActivities.setItems(availableActivitiesObservableList);
@@ -136,20 +183,32 @@ public class MonthlyReportGenerationController implements Initializable {
         }
     }
 
-    private void setUpClicks() {
-        MonthlyActivityInclusionListener monthlyActivityInclusionListener =
-                new MonthlyActivityInclusionListener(this);
-        IncludeMonthlyActivityModificationListener includeMonthlyActivityModificationListener =
-                new IncludeMonthlyActivityModificationListener(this);
+    private void obtainDeliverableProducts() {
+        try {
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
+            List<DeliverableProductDTO> deliverableProductList = deliverableProductDAO.findDeliverableProductsByStudentNumber(studentNumber);
+            availableDeliverableProductObservableList = FXCollections.observableArrayList(deliverableProductList);
+            tblDeliverableProducts.setItems(FXCollections.observableArrayList(availableDeliverableProductObservableList));
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, e.getMessage());
+        }
 
-        TableViewConfigurator.enableDoubleClickSelection(tblActivities, monthlyActivityInclusionListener);
-        TableViewConfigurator.enableDoubleClickSelection(tblIncludedActivities, includeMonthlyActivityModificationListener);
+    }
+
+    private void setUpActivitiesTablesClicks() {
+        FinalActivityInclusionListener finalActivityInclusionListener =
+                new FinalActivityInclusionListener(this);
+        IncludeFinalActivityModificationListener includeFinalActivityModificationListener =
+                new IncludeFinalActivityModificationListener(this);
+
+        TableViewConfigurator.enableDoubleClickSelection(tblActivities, finalActivityInclusionListener);
+        TableViewConfigurator.enableDoubleClickSelection(tblIncludedActivities, includeFinalActivityModificationListener);
     }
 
     public void includeActivity(ActivityDTO activity) {
         availableActivitiesObservableList.remove(activity);
         includedActivitiesObservableList.add(activity);
-        updateCounter();
+        updateActivityCounter();
     }
 
     public void processActivityModificationAction(ActivityDTO activity) {
@@ -170,7 +229,39 @@ public class MonthlyReportGenerationController implements Initializable {
     private void excludeActivity(ActivityDTO activity) {
         includedActivitiesObservableList.remove(activity);
         availableActivitiesObservableList.add(activity);
-        updateCounter();
+        updateActivityCounter();
+    }
+
+    private void setUpDeliverableProductsTablesClicks() {
+        DeliverableProductInclusionListener deliverableProductInclusionListener =
+                new DeliverableProductInclusionListener(this);
+        IncludeDeliverableProductModificationListener includeDeliverableProductModificationListener =
+                new IncludeDeliverableProductModificationListener(this);
+
+        TableViewConfigurator.enableDoubleClickSelection(tblDeliverableProducts, deliverableProductInclusionListener);
+        TableViewConfigurator.enableDoubleClickSelection(tblIncludedDeliverableProducts, includeDeliverableProductModificationListener);
+    }
+
+    public void includeDeliverableProduct(DeliverableProductDTO deliverableProduct) {
+        availableDeliverableProductObservableList.remove(deliverableProduct);
+        includedDeliverableProductObservableList.add(deliverableProduct);
+        updateDeliverableProductCounter();
+    }
+
+    public void processProductModificationAction(DeliverableProductDTO deliverableProduct) {
+        boolean choice = AlertHelper.showConfirmation("Producto elegido",
+                "¿Desea sacar este producto entregable?");
+
+        if (choice) {
+            excludeDeliverableProduct(deliverableProduct);
+        }
+
+    }
+
+    private void excludeDeliverableProduct(DeliverableProductDTO deliverableProduct) {
+        includedDeliverableProductObservableList.remove(deliverableProduct);
+        availableDeliverableProductObservableList.add(deliverableProduct);
+        updateActivityCounter();
     }
 
     private void openActivityEdit(ActivityDTO activity) {
@@ -199,22 +290,29 @@ public class MonthlyReportGenerationController implements Initializable {
         }
     }
 
-    private void updateCounter() {
+    private void updateActivityCounter() {
         int activitiesCount = includedActivitiesObservableList.size();
         String counterText = activitiesCount + " actividades incluidas.";
-        lblCounter.setText(counterText);
+        lblActivitiesCounter.setText(counterText);
+    }
+
+    private void updateDeliverableProductCounter() {
+        int deliverableProductsCount = includedDeliverableProductObservableList.size();
+        String counterText = deliverableProductsCount + " productos entregables incluidos.";
+        lblProductsCounter.setText(counterText);
     }
 
     @FXML
     private void generateReport(ActionEvent event) {
-        boolean isListEmpty = includedActivitiesObservableList.isEmpty();
+        boolean isActivitiesListEmpty = includedActivitiesObservableList.isEmpty();
+        boolean isDeliverableProductsListEmpty = includedDeliverableProductObservableList.isEmpty();
 
-        if (isListEmpty) {
-            StatusLabel.showError(lblStatus, "Incluye al menos una actividad.");
+        if (isActivitiesListEmpty || isDeliverableProductsListEmpty) {
+            StatusLabel.showError(lblStatus, "Incluye al menos una actividad y un producto entregable.");
         } else {
             boolean isConfirmed = AlertHelper.showConfirmation(
                     "Generar reporte",
-                    "¿Seguro que desea generar el reporte con las actividades incluidas?"
+                    "¿Seguro que desea generar el reporte con las actividades y productos entregables incluidos?"
             );
 
             if (isConfirmed) {
@@ -227,7 +325,7 @@ public class MonthlyReportGenerationController implements Initializable {
         ReportDAO reportDAO = new ReportDAO();
         String career = "Licenciatura en Ingeniería de Software";
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String reportType = "MENSUAL";
+        String reportType = "FINAL";
 
         try {
             String userEmail = ActiveSessionDTO.get().getEmail();
@@ -241,17 +339,16 @@ public class MonthlyReportGenerationController implements Initializable {
             String formattedDate = currentDate.format(dateFormatter);
             reportDTO.setReportDate(formattedDate);
 
-            int effectiveTimeSum = sumIncludedEffectiveTime();
-            reportDTO.setTotalHours(String.valueOf(effectiveTimeSum));
-
             List<ActivityDTO> activitiesList = new ArrayList<>(includedActivitiesObservableList);
-            String generatedHtml = MonthlyReportHtmlBuilder.buildMonthlyReport(reportDTO, activitiesList);
+            List<DeliverableProductDTO> deliverableProductList = new ArrayList<>(includedDeliverableProductObservableList);
+            String generatedHtml = FinalReportHtmlBuilder.buildFinalReport(reportDTO, activitiesList, deliverableProductList);
 
             File outputFile = chooseOutputFileFromHelper(event, studentNumber);
 
             if (outputFile != null) {
                 HtmlToPdfConverter.convertToFile(generatedHtml, outputFile);
                 deleteIncludedActivities();
+                deleteIncludedDeliverableProjects();
                 AlertHelper.showMessage("Reporte generado", "El reporte se generó y guardó correctamente.");
             }
         } catch (DAOException | FileGenerationException e) {
@@ -265,18 +362,16 @@ public class MonthlyReportGenerationController implements Initializable {
             activityDAO.deleteActivity(activityId);
         }
         includedActivitiesObservableList.clear();
-        updateCounter();
+        updateActivityCounter();
     }
 
-    private int sumIncludedEffectiveTime() {
-        int totalEffectiveTime = 0;
-
-        for (ActivityDTO activity : includedActivitiesObservableList) {
-            int currentEffectiveTime = activity.getEffectiveTime();
-            totalEffectiveTime += currentEffectiveTime;
+    private void deleteIncludedDeliverableProjects() throws DAOException {
+        for (DeliverableProductDTO deliverableProduct : includedDeliverableProductObservableList) {
+            int deliverableProductId = deliverableProduct.getId();
+            deliverableProductDAO.deleteDeliverableProduct(deliverableProductId);
         }
-
-        return totalEffectiveTime;
+        includedDeliverableProductObservableList.clear();
+        updateDeliverableProductCounter();
     }
 
     private File chooseOutputFileFromHelper(ActionEvent event, String studentNumber) {

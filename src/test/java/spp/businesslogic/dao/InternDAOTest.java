@@ -39,7 +39,7 @@ public class InternDAOTest {
         testIntern.setPhoneNumber("22" + uniqueSuffix);
         testIntern.setPassword("s0yUr14bd1");
         testIntern.setStudentNumber(uniqueStudentNumber);
-        testIntern.setGender("M");
+        testIntern.setSex("M");
         testIntern.setSpeaksIndigenousLanguage(true);
         testIntern.setIndigenousLanguage("Náhuatl");
         testIntern.setBirthDate(LocalDateTime.parse("2006-07-07T00:00:00"));

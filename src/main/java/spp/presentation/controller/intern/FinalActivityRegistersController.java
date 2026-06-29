@@ -8,8 +8,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import spp.businesslogic.dao.DeliverableProductDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.ActivityDTO;
+import spp.businesslogic.dto.DeliverableProductDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
@@ -21,7 +23,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 
-public class MonthlyActivityRegistersController implements Initializable {
+public class FinalActivityRegistersController implements Initializable {
 
     @FXML private Label lblStatus;
     @FXML private TableView<ActivityDTO> tblActivities;
@@ -29,11 +31,15 @@ public class MonthlyActivityRegistersController implements Initializable {
     @FXML private TableColumn<ActivityDTO, String> colDescription;
     @FXML private TableColumn<ActivityDTO, String> colStartDate;
     @FXML private TableColumn<ActivityDTO, String> colEndDate;
+    @FXML private TableView<DeliverableProductDTO> tblDeliverableProducts;
+    @FXML private TableColumn<DeliverableProductDTO, String> colDeliverableProductName;
+    @FXML private TableColumn<DeliverableProductDTO, String> colDeliverableProductDescription;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpColumns();
         obtainActivities();
+        obtainDeliverableProducts();
 
     }
 
@@ -47,6 +53,11 @@ public class MonthlyActivityRegistersController implements Initializable {
         colEndDate.setCellValueFactory(
                 new GenericNestedSelector<>("endDateText", ""));
 
+        colDeliverableProductName.setCellValueFactory(
+                new GenericNestedSelector<>("name", ""));
+        colDeliverableProductDescription.setCellValueFactory(
+                new GenericNestedSelector<>("description", ""));
+
     }
 
     private void obtainActivities() {
@@ -54,8 +65,21 @@ public class MonthlyActivityRegistersController implements Initializable {
         InternDAO internDAO = new InternDAO();
         try {
             String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
-            List<ActivityDTO> activityList = activityDAO.findMonthlyActivitiesByStudentNumber(studentNumber);
+            List<ActivityDTO> activityList = activityDAO.findFinalActivitiesByStudentNumber(studentNumber);
             tblActivities.setItems(FXCollections.observableArrayList(activityList));
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, e.getMessage());
+        }
+
+    }
+
+    private void obtainDeliverableProducts() {
+        DeliverableProductDAO deliverableProductDAO = new DeliverableProductDAO();
+        InternDAO internDAO = new InternDAO();
+        try {
+            String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
+            List<DeliverableProductDTO> deliverableProductList = deliverableProductDAO.findDeliverableProductsByStudentNumber(studentNumber);
+            tblDeliverableProducts.setItems(FXCollections.observableArrayList(deliverableProductList));
         } catch (DAOException e) {
             StatusLabel.showError(lblStatus, e.getMessage());
         }
@@ -71,14 +95,21 @@ public class MonthlyActivityRegistersController implements Initializable {
 
     @FXML
     private void goToActivityRegistrationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyActivityRegistrationView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/intern/FinalActivityRegistrationView.fxml",
                 "Registro actividades", event);
 
     }
 
     @FXML
-    private void goToMonthlyReportGenerationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyReportGenerationView.fxml",
+    private void goToDeliverableProductRegistrationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/intern/DeliverableProductRegistrationView.fxml",
+                "Registro actividades", event);
+
+    }
+
+    @FXML
+    private void goToFinalReportGenerationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/intern/FinalReportGenerationView.fxml",
                 "Generar reporte mensual", event);
 
     }

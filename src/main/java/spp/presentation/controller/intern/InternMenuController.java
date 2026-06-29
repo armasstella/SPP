@@ -107,8 +107,8 @@ public class InternMenuController {
     }
 
     @FXML
-    private void goToFinalReportView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/FinalReporteView.fxml",
+    private void goToFinalActivityRegistrationView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/intern/FinalActivityRegistersView.fxml",
                 "Reporte Final", event);
     }
 

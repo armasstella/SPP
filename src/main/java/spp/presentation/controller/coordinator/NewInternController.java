@@ -18,6 +18,7 @@ import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.InternDAO;
+import spp.utils.view.datepicker.DateValidator;
 import spp.utils.view.inputdata.InputFilter;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
@@ -158,6 +159,11 @@ public class NewInternController implements Initializable {
         return validLengths;
     }
 
+    private boolean hasValidFormatDate() {
+        LocalDate selectedDate = dpBirthDate.getValue();
+        return DateValidator.isDateValid(selectedDate, DateValidationMode.LEGAL_AGE_BIRTHDATE);
+    }
+
     private boolean areValidFields() {
         boolean validFields = false;
 
@@ -165,7 +171,12 @@ public class NewInternController implements Initializable {
             StatusLabel.showError(lblStatus, "Completa todos los campos obligatorios.");
         } else {
             if (hasValidMinimumLengths()) {
-                validFields = true;
+                if (hasValidFormatDate()) {
+                    validFields = true;
+                } else {
+                    StatusLabel.showError(lblStatus, "La fecha no tiene un formato correcto.");
+                }
+
             } else {
                 StatusLabel.showError(lblStatus, "La longitud de los campos debe cumplir con el mínimo de caracteres.");
             }

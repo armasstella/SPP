@@ -2,6 +2,7 @@ package spp.presentation.controller.intern;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -11,13 +12,18 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.logger.AppLogger;
+import spp.utils.view.datepicker.DatePickerConfigurator;
+import spp.utils.view.datepicker.DateValidationMode;
+import spp.utils.view.datepicker.DateValidator;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
 import spp.utils.view.window.WindowCloser;
 
+import java.net.URL;
 import java.time.LocalDate;
+import java.util.ResourceBundle;
 
-public class ActivityEditController {
+public class ActivityEditController implements Initializable {
 
     @FXML private TextField txtTitle;
     @FXML private TextArea taDescription;
@@ -30,6 +36,12 @@ public class ActivityEditController {
     @FXML private Label lblStatus;
     private ActivityDTO activity;
     private boolean updated = false;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        DatePickerConfigurator.configureSmartDatePicker(dpStartDate, DateValidationMode.ANY_DATE);
+        DatePickerConfigurator.configureSmartDatePicker(dpEndDate, DateValidationMode.ANY_DATE);
+    }
 
     public void setActivity(ActivityDTO activity) {
         this.activity = activity;
@@ -95,6 +107,8 @@ public class ActivityEditController {
                 estimatedTimeString.isEmpty() || effectiveTimeString.isEmpty() || progressString.isEmpty() ||
                 startDate == null || endDate == null;
 
+
+
         if (areFieldsEmpty) {
             StatusLabel.showError(lblStatus, "Complete todos los campos.");
             hasErrors = true;
@@ -102,18 +116,26 @@ public class ActivityEditController {
             StatusLabel.showError(lblStatus, "La fecha fin no puede ser anterior a la fecha inicio.");
             hasErrors = true;
         } else {
-            Integer estimatedTime = parseNonNegativeInt(estimatedTimeString);
-            Integer effectiveTime = parseNonNegativeInt(effectiveTimeString);
-            Integer progress = parseNonNegativeInt(progressString);
-
-            boolean hasInvalidNumbers = estimatedTime == null || effectiveTime == null || progress == null;
-
-            if (hasInvalidNumbers) {
-                StatusLabel.showError(lblStatus, "Tiempo estimado, tiempo efectivo y avance deben ser números válidos.");
+            LocalDate selectedStartDate = dpStartDate.getValue();
+            LocalDate selectedFinalDate = dpStartDate.getValue();
+            if (!DateValidator.isDateValid(selectedStartDate, DateValidationMode.ANY_DATE)
+                    || !DateValidator.isDateValid(selectedFinalDate, DateValidationMode.ANY_DATE)) {
+                StatusLabel.showError(lblStatus, "La fecha ingresada es errónea");
                 hasErrors = true;
-            } else if (progress > ViewConstant.MAX_PROGRESS) {
-                StatusLabel.showError(lblStatus, "El avance debe estar entre 0 y 100.");
-                hasErrors = true;
+            } else {
+                Integer estimatedTime = parseNonNegativeInt(estimatedTimeString);
+                Integer effectiveTime = parseNonNegativeInt(effectiveTimeString);
+                Integer progress = parseNonNegativeInt(progressString);
+
+                boolean hasInvalidNumbers = estimatedTime == null || effectiveTime == null || progress == null;
+
+                if (hasInvalidNumbers) {
+                    StatusLabel.showError(lblStatus, "Tiempo estimado, tiempo efectivo y avance deben ser números válidos.");
+                    hasErrors = true;
+                } else if (progress > ViewConstant.MAX_PROGRESS) {
+                    StatusLabel.showError(lblStatus, "El avance debe estar entre 0 y 100.");
+                    hasErrors = true;
+                }
             }
         }
 

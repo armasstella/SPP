@@ -35,7 +35,6 @@ public class MessageDAOTest {
         ActiveSessionDTO.initialize(activeSession);
         testMessage.setSubject("Saludo");
         testMessage.setContent("Hola, cambia tu contraseña");
-        testMessage.setMessageStatus(MesaggeStatus.ENVIADO);
         testMessage.setReceiver(28);
         testMessage.setSender(31);
         testMessage.setEmailReceiver("zs24013261@estudiantes.uv.mx");
