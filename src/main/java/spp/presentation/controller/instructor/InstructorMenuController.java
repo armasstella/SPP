@@ -81,8 +81,6 @@ public class InstructorMenuController implements Initializable {
             AlertHelper.showErrorMessage("Error", e.getMessage());
         }
 
-        System.out.println("Soy el valor de la variable booleana: " + hasInstructorCourseAssigned);
-
         if (hasInstructorCourseAssigned) {
             vbAvailableOptions.setVisible(true);
             vbErrorStatusMessage.setVisible(false);
@@ -90,8 +88,6 @@ public class InstructorMenuController implements Initializable {
             vbAvailableOptions.setVisible(false);
             vbErrorStatusMessage.setVisible(true);
         }
-
-
 
     }
 
