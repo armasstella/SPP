@@ -45,8 +45,7 @@
                 </VBox>
 
                 <VBox fx:id="vbOptionSelected" HBox.hgrow="ALWAYS">
-                    <VBox fx:id="vbOptionAllMessages" visible="true" VBox.vgrow="ALWAYS"
-                          managed="${vbOptionAllMessages.visible}">
+                    <VBox fx:id="vbOptionAllMessages" visible="true" VBox.vgrow="ALWAYS">
                         <TableView fx:id="tblMessages" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="colSender" text="Correo remitente" prefWidth="200"
@@ -62,7 +61,7 @@
                         </TableView>
                     </VBox>
 
-                    <VBox fx:id="vbMessageDetail" visible="false" managed="${vbMessageDetail.visible}" spacing="15">
+                    <VBox fx:id="vbMessageDetail" visible="false" spacing="15">
                         <Label text="DETALLE DEL MENSAJE" styleClass="field-label"/>
 
                         <VBox spacing="5">
@@ -90,8 +89,7 @@
                         </HBox>
                     </VBox>
 
-                    <VBox fx:id="vbOptionNewMessage" visible="false" managed="${vbOptionNewMessage.visible}"
-                          spacing="20">
+                    <VBox fx:id="vbOptionNewMessage" visible="false" spacing="20">
                         <Label text="REDACTAR NUEVO MENSAJE" styleClass="field-label"/>
 
                         <VBox spacing="5">
