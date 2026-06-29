@@ -125,7 +125,7 @@ public class ActivityDAO implements IActivityDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión actualizar la actividad");
+            throw new DAOException("Error de conexión actualizar la actividad", e);
         }
 
         return isActivityUpdated;
@@ -146,7 +146,7 @@ public class ActivityDAO implements IActivityDAO {
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión eliminar la actividad");
+            throw new DAOException("Error de conexión eliminar la actividad", e);
         }
 
         return isActivityDeleted;

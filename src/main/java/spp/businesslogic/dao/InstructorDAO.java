@@ -56,31 +56,31 @@ public class InstructorDAO implements IInstructorDAO {
         } catch (SQLIntegrityConstraintViolationException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(ExceptionLevel.WARN, e);
-            throw new DAOException("El profesor ya se encuentra registrado en el sistema.");
+            throw new DAOException("El profesor ya se encuentra registrado en el sistema.", e);
 
         } catch (SQLTransactionRollbackException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de concurrencia: la transacción fue abortada. Intente de nuevo.");
+            throw new DAOException("Error de concurrencia: la transacción fue abortada. Intente de nuevo.", e);
 
         } catch (SQLInvalidAuthorizationSpecException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al registrar profesor.");
+            throw new DAOException("Error de comunicación con el servidor al registrar profesor.", e);
 
         } catch (SQLTimeoutException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al registrar profesor.");
+            throw new DAOException("Tiempo de espera agotado al registrar profesor.", e);
 
         } catch (SQLException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(ExceptionLevel.FATAL, e);
 
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
-                throw new DAOException("Error de conexión al registrar al profesor.");
+                throw new DAOException("Error de conexión al registrar al profesor.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar registrar al profesor.");
+                throw new DAOException("Ocurrió un error interno al intentar registrar al profesor.", e);
             }
         } finally {
             MySQLConnectionManager.getInstance().enableAutoCommitConnection();
@@ -120,9 +120,9 @@ public class InstructorDAO implements IInstructorDAO {
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
-                throw new DAOException("Error de conexión al desactivar profesor.");
+                throw new DAOException("Error de conexión al desactivar profesor.", e);
             } else {
-                throw new DAOException("Error interno de base de datos al desactivar profesor.");
+                throw new DAOException("Error interno de base de datos al desactivar profesor.", e);
             }
         }
 
@@ -151,15 +151,15 @@ public class InstructorDAO implements IInstructorDAO {
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al buscar profesores.");
+            throw new DAOException("Error de comunicación con el servidor al buscar profesores.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al buscar profesores.");
+            throw new DAOException("Tiempo de espera agotado al buscar profesores.", e);
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar profesores.");
+            throw new DAOException("Error de conexión al buscar profesores.", e);
         }
 
         return instructorsList;
@@ -188,15 +188,15 @@ public class InstructorDAO implements IInstructorDAO {
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al buscar identificadores.");
+            throw new DAOException("Error de comunicación con el servidor al buscar identificadores.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al buscar identificadores.");
+            throw new DAOException("Tiempo de espera agotado al buscar identificadores.", e);
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al buscar identificadores.");
+            throw new DAOException("Error de conexión al buscar identificadores.", e);
         }
 
         return instructorsList;
@@ -220,15 +220,15 @@ public class InstructorDAO implements IInstructorDAO {
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener número personal.");
+            throw new DAOException("Error de comunicación con el servidor al obtener número personal.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al obtener número personal.");
+            throw new DAOException("Tiempo de espera agotado al obtener número personal.", e);
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de conexión al obtener número personal.");
+            throw new DAOException("Error de conexión al obtener número personal.", e);
         }
 
         return personalNumber;

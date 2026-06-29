@@ -39,18 +39,18 @@ public class TermDAO implements ITermDAO {
             }
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al intentar obtener la lista de periodos.");
+            throw new DAOException("Error de comunicación con el servidor al intentar obtener la lista de periodos.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al consultar los periodos escolares.");
+            throw new DAOException("Tiempo de espera agotado al consultar los periodos escolares.", e);
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
-                throw new DAOException("Error de red al intentar cargar los periodos escolares.");
+                throw new DAOException("Error de red al intentar cargar los periodos escolares.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al obtener los periodos.");
+                throw new DAOException("Ocurrió un error interno al obtener los periodos.", e);
             }
         }
 

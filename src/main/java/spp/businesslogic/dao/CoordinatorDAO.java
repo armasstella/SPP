@@ -57,31 +57,32 @@ public class CoordinatorDAO implements ICoordinatorDAO {
         } catch (SQLIntegrityConstraintViolationException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(ExceptionLevel.WARN, e);
-            throw new DAOException("El coordinador ya se encuentra registrado en el sistema.");
+            throw new DAOException("El coordinador ya se encuentra registrado en el sistema.", e);
 
         } catch (SQLTransactionRollbackException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de concurrencia: la transacción fue abortada por el servidor. Intente la operación de nuevo.");
+            throw new DAOException("Error de concurrencia: la transacción fue abortada por el servidor. Intente la " +
+                    "operación de nuevo.", e);
 
         } catch (SQLInvalidAuthorizationSpecException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al registrar coordinador.");
+            throw new DAOException("Error de comunicación con el servidor al registrar coordinador.", e);
 
         } catch (SQLTimeoutException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al registrar coordinador.");
+            throw new DAOException("Tiempo de espera agotado al registrar coordinador.", e);
 
         } catch (SQLException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.logError(ExceptionLevel.FATAL, e);
 
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
-                throw new DAOException("Error de conexión al registrar al coordinador.");
+                throw new DAOException("Error de conexión al registrar al coordinador.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar registrar al coordinador.");
+                throw new DAOException("Ocurrió un error interno al intentar registrar al coordinador.", e);
             }
         } finally {
             MySQLConnectionManager.getInstance().enableAutoCommitConnection();
@@ -107,23 +108,24 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
         } catch (SQLTransactionRollbackException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de concurrencia: la transacción fue abortada por el servidor. Intente de nuevo.");
+            throw new DAOException("Error de concurrencia: la transacción fue abortada por el servidor. Intente de " +
+                    "nuevo.", e);
 
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al intentar desactivar el coordinador.");
+            throw new DAOException("Error de comunicación con el servidor al intentar desactivar el coordinador.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al procesar la desactivación.");
+            throw new DAOException("Tiempo de espera agotado al procesar la desactivación.", e);
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
 
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
-                throw new DAOException("Error de conexión al inactivar coordinador.");
+                throw new DAOException("Error de conexión al inactivar coordinador.", e);
             } else {
-                throw new DAOException("Error interno de base de datos al inactivar coordinador.");
+                throw new DAOException("Error interno de base de datos al inactivar coordinador.", e);
             }
         }
 
@@ -148,18 +150,18 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al buscar coordinadores.");
+            throw new DAOException("Error de comunicación con el servidor al buscar coordinadores.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al verificar la existencia del coordinador.");
+            throw new DAOException("Tiempo de espera agotado al verificar la existencia del coordinador.", e);
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
-                throw new DAOException("Error de conexión al buscar coordinadores.");
+                throw new DAOException("Error de conexión al buscar coordinadores.", e);
             } else {
-                throw new DAOException("Ocurrió un error al verificar la existencia del coordinador.");
+                throw new DAOException("Ocurrió un error al verificar la existencia del coordinador.", e);
             }
         }
     }
@@ -187,18 +189,18 @@ public class CoordinatorDAO implements ICoordinatorDAO {
 
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener la lista de coordinadores.");
+            throw new DAOException("Error de comunicación con el servidor al obtener la lista de coordinadores.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al consultar la lista de coordinadores.");
+            throw new DAOException("Tiempo de espera agotado al consultar la lista de coordinadores.", e);
 
         } catch (SQLException e) {
             AppLogger.logError(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
-                throw new DAOException("Error de conexión al buscar coordinadores activos.");
+                throw new DAOException("Error de conexión al buscar coordinadores activos.", e);
             } else {
-                throw new DAOException("Ocurrió un error al obtener la lista de coordinadores.");
+                throw new DAOException("Ocurrió un error al obtener la lista de coordinadores.", e);
             }
         }
 

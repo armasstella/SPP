@@ -79,7 +79,8 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
     @Override
     public boolean hasActivitiesScheduleByInternEmail(String email) throws DAOException {
         final String CHECK_SCHEDULE =
-                "SELECT f_existe_calendarizacion_actividades_estudiante(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
+                "SELECT f_existe_calendarizacion_actividades_estudiante(u.id_usuario) FROM usuarios u WHERE " +
+                        "u.correo_electronico = ?";
         boolean hasActivitiesSchedule = false;
 
         try {
@@ -130,7 +131,8 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
 
     @Override
     public boolean hasPartialReportByInternEmail(String email) throws DAOException {
-        final String CHECK_PARTIAL_REPORT = "SELECT f_existe_reporte_parcial(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
+        final String CHECK_PARTIAL_REPORT = "SELECT f_existe_reporte_parcial(u.id_usuario) FROM usuarios u WHERE " +
+                "u.correo_electronico = ?";
         boolean hasPartialReport = false;
 
         try {
@@ -181,7 +183,8 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
 
     @Override
     public boolean hasSelfEvaluationByInternEmail(String email) throws DAOException {
-        final String CHECK_SELF_EVALUATION = "SELECT f_existe_autoevaluacion(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
+        final String CHECK_SELF_EVALUATION = "SELECT f_existe_autoevaluacion(u.id_usuario) FROM usuarios u WHERE " +
+                "u.correo_electronico = ?";
         boolean hasSelfEvaluation = false;
 
         try {
@@ -207,7 +210,8 @@ public class InitialDocumentDAO implements IInitialDocumentDAO {
 
     @Override
     public boolean hasEvaluationLinkedOrganizationByInternEmail(String email) throws DAOException {
-        final String CHECK_EVALUATION = "SELECT f_existe_evaluacion_ov(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
+        final String CHECK_EVALUATION = "SELECT f_existe_evaluacion_ov(u.id_usuario) FROM usuarios u WHERE " +
+                "u.correo_electronico = ?";
         boolean hasLinkedOrganizationEvaluation = false;
 
         try {
