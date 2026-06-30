@@ -52,7 +52,6 @@ public class FinalReportActivitiesController implements Initializable {
     @FXML private TableColumn<ActivityDTO, String> colChosenActivityProgress;
     @FXML private TableColumn<ActivityDTO, String> colChosenActivityObservations;
     private final ActivityDAO activityDAO = new ActivityDAO();
-    private final InternDAO internDAO = new InternDAO();
     private ObservableList<ActivityDTO> availableActivitiesObservableList;
     private ObservableList<ActivityDTO> includedActivitiesObservableList;
 
@@ -125,6 +124,7 @@ public class FinalReportActivitiesController implements Initializable {
     }
 
     private void obtainActivities() {
+        InternDAO internDAO = new InternDAO();
         try {
             String userEmail = ActiveSessionDTO.get().getEmail();
             String studentNumber = internDAO.findActiveStudentNumberByEmail(userEmail);

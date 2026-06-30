@@ -10,8 +10,6 @@ import javafx.scene.control.TextField;
 import spp.businesslogic.dto.ActivityDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
-import spp.utils.exceptionmanager.ExceptionLevel;
-import spp.utils.logger.AppLogger;
 import spp.utils.view.inputdata.InputFilter;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
@@ -117,9 +115,9 @@ public class ActivityEditController implements Initializable {
             StatusLabel.showError(lblStatus, "La fecha fin no puede ser anterior a la fecha inicio.");
             hasErrors = true;
         } else {
-            Integer estimatedTime = parseNonNegativeInt(estimatedTimeString);
-            Integer effectiveTime = parseNonNegativeInt(effectiveTimeString);
-            Integer progress = parseNonNegativeInt(progressString);
+            Integer estimatedTime = Integer.parseInt(estimatedTimeString);
+            Integer effectiveTime = Integer.parseInt(effectiveTimeString);
+            Integer progress = Integer.parseInt(progressString);
 
             boolean hasInvalidNumbers = estimatedTime == null || effectiveTime == null || progress == null;
 
@@ -133,21 +131,6 @@ public class ActivityEditController implements Initializable {
         }
 
         return hasErrors;
-    }
-
-    private Integer parseNonNegativeInt(String text) {
-        Integer parsedValue = null;
-
-        try {
-            int numericValue = Integer.parseInt(text);
-            if (numericValue >= ViewConstant.ALLOWED_POSITIVE_NUMERIC_VALUE) {
-                parsedValue = numericValue;
-            }
-        } catch (NumberFormatException e) {
-            AppLogger.log(ExceptionLevel.WARN, e);
-        }
-
-        return parsedValue;
     }
 
     private ActivityDTO readForm() {

@@ -40,13 +40,11 @@ public final class ViewConstant {
     public static final int MAX_LENGTH_TITLE = 50;
     public static final int MAX_LENGTH_DESCRIPTION = 45;
 
-    public static final int MAX_GRADE = 10;
     public static final int MAX_PROGRESS = 100;
     public static final int MAX_CHOSEN_PROJECTS = 3;
 
     public static final int MIN_LENGTH_NAME = 3;
     public static final int MIN_LENGTH_INDIGENOUS_LANGUAGE_NAME = 4;
-    public static final int MIN_LENGTH_PASSWORD = 8;
     public static final int MIN_LENGTH_NRC = 5;
     public static final int MIN_LENGTH_TERM = 10;
     public static final int MIN_LENGTH_CATEGORY = 3;
@@ -54,9 +52,8 @@ public final class ViewConstant {
     public static final int MIN_LENGTH_ADDRESS = 6;
     public static final int MIN_LENGTH_MORAL_RFC = 12;
     public static final int MIN_LENGTH_PERSONAL_NUMBER = 5;
-    public static final int MIN_GRADE = 0;
+    public static final int MIN_PROGRESS = 0;
 
     public static final int ID_ZERO_INVALID = 0;
-    public static final int ALLOWED_POSITIVE_NUMERIC_VALUE = 0;
     public static final int EMPTY_FILE = 0;
 }

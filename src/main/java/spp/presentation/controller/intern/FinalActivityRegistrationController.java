@@ -1,6 +1,5 @@
 package spp.presentation.controller.intern;
 
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,6 +14,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ActivityDAO;
 import spp.businesslogic.dao.InternDAO;
 import spp.utils.view.datepicker.DateValidator;
+import spp.utils.view.inputdata.InputFilter;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
 import spp.utils.view.window.ViewNavigator;
@@ -24,7 +24,6 @@ import spp.utils.view.datepicker.DateValidationMode;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
-
 
 public class FinalActivityRegistrationController implements Initializable {
 
@@ -40,97 +39,116 @@ public class FinalActivityRegistrationController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        setUpFields();
+    }
+
+    private void setUpFields() {
         DatePickerConfigurator.configureSmartDatePicker(dpStartDate, DateValidationMode.ANY_DATE);
         DatePickerConfigurator.configureSmartDatePicker(dpEndDate, DateValidationMode.ANY_DATE);
+
+        InputFilter.applyFormatFilter(txtTitle,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_INTERN_ACTIVITY_TITLE);
+        InputFilter.applyFormatFilter(taDescription,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_ACTIVITY_DESCRIPTION);
+        InputFilter.applyFormatFilter(txtEstimatedTime,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
+        InputFilter.applyFormatFilter(txtEffectiveTime,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_CAPACITY);
+        InputFilter.applyFormatFilter(txtProgress,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_PROGRESS);
+        InputFilter.applyFormatFilter(taObservations,
+                ViewConstant.PATTERN_ALPHANUMERIC, ViewConstant.MAX_LENGTH_INTERN_ACTIVITY_DESCRIPTION);
     }
 
     @FXML
     private void saveActivity(ActionEvent event) {
-        if (!validateInputs()) {
+        boolean hasInputFieldsErrors = hasValidationErrors();
+
+        if (!hasInputFieldsErrors) {
             ActivityDAO activityDAO = new ActivityDAO();
             InternDAO internDAO = new InternDAO();
 
             try {
                 String studentNumber = internDAO.findActiveStudentNumberByEmail(ActiveSessionDTO.get().getEmail());
-                if (activityDAO.saveActivityForIntern(studentNumber, buildActivityDTO(), ActivityType.FINAL)) {
+                ActivityDTO finalActivity = buildActivityDTO();
+
+                if (activityDAO.saveActivityForIntern(studentNumber, finalActivity, ActivityType.FINAL)) {
                     StatusLabel.showSuccess(lblStatus, "Actividad final registrada correctamente.");
                     clearFields();
                 }
             } catch (DAOException e) {
-                StatusLabel.showError(lblStatus, "Error al registrar la actividad");
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
         }
     }
 
-    private boolean validateInputs() {
-        if (txtTitle.getText().trim().isEmpty()
-                || taDescription.getText().trim().isEmpty()
-                || taObservations.getText().trim().isEmpty()
-                || dpStartDate.getValue() == null
-                || dpEndDate.getValue() == null
-                || txtEstimatedTime.getText().trim().isEmpty()
-                || txtEffectiveTime.getText().trim().isEmpty()
-                || txtProgress.getText().trim().isEmpty()) {
-            return true;
-        }
+    private boolean hasValidationErrors() {
+        boolean hasErrors = false;
 
-        LocalDate selectedDate = null;
-        selectedDate = dpStartDate.getValue();
-        if (!DateValidator.isDateValid(selectedDate, DateValidationMode.ANY_DATE)) {
-            StatusLabel.showError(lblStatus, "La fecha ingresada es errónea");
-            return true;
-        }
+        String title = txtTitle.getText().trim();
+        String description = taDescription.getText().trim();
+        String observations = taObservations.getText().trim();
+        String estimatedTimeString = txtEstimatedTime.getText().trim();
+        String effectiveTimeString = txtEffectiveTime.getText().trim();
+        String progressString = txtProgress.getText().trim();
+        LocalDate startDate = dpStartDate.getValue();
+        LocalDate endDate = dpEndDate.getValue();
 
-        selectedDate = dpEndDate.getValue();
-        if (!DateValidator.isDateValid(selectedDate, DateValidationMode.ANY_DATE)) {
-            StatusLabel.showError(lblStatus, "La fecha ingresada es errónea");
-            return true;
-        }
+        boolean areFieldsEmpty = title.isEmpty() || description.isEmpty() || observations.isEmpty() ||
+                estimatedTimeString.isEmpty() || effectiveTimeString.isEmpty() || progressString.isEmpty() ||
+                startDate == null || endDate == null;
 
-        if (dpEndDate.getValue().isBefore(dpStartDate.getValue())) {
+        if (areFieldsEmpty) {
+            StatusLabel.showError(lblStatus, "Complete todos los campos.");
+            hasErrors = true;
+        } else if (!DateValidator.isDateValid(startDate, DateValidationMode.ANY_DATE) ||
+                !DateValidator.isDateValid(endDate, DateValidationMode.ANY_DATE)) {
+            StatusLabel.showError(lblStatus, "Una o ambas fechas ingresadas son inválidas.");
+            hasErrors = true;
+        } else if (endDate.isBefore(startDate)) {
             StatusLabel.showError(lblStatus, "La fecha fin no puede ser anterior a la fecha inicio.");
-            return true;
+            hasErrors = true;
+        } else {
+            Integer estimatedTime = Integer.parseInt(estimatedTimeString);
+            Integer effectiveTime = Integer.parseInt(effectiveTimeString);
+            Integer progress = Integer.parseInt(progressString);
+
+            boolean hasInvalidNumbers = estimatedTime == null || effectiveTime == null || progress == null;
+
+            if (hasInvalidNumbers) {
+                StatusLabel.showError(lblStatus, "Tiempo estimado, tiempo efectivo y avance deben ser números válidos.");
+                hasErrors = true;
+            } else if (progress > ViewConstant.MAX_PROGRESS) {
+                StatusLabel.showError(lblStatus, "El avance debe estar entre 0 y 100.");
+                hasErrors = true;
+            }
         }
 
-        Integer estimatedTime = parseNonNegativeInt(txtEstimatedTime.getText());
-        Integer effectiveTime = parseNonNegativeInt(txtEffectiveTime.getText());
-        Integer progress = parseNonNegativeInt(txtProgress.getText());
-        if (estimatedTime == null || effectiveTime == null || progress == null) {
-            StatusLabel.showError(lblStatus, "Tiempo estimado, tiempo efectivo y avance deben ser números válidos.");
-            return true;
-        }
-
-        if (progress > ViewConstant.MAX_PROGRESS) {
-            StatusLabel.showError(lblStatus, "El avance debe estar entre 0 y 100.");
-            return true;
-        }
-
-        return false;
-
-    }
-
-    private Integer parseNonNegativeInt(String text) {
-        try {
-            int value = Integer.parseInt(text.trim());
-            return (value >= 0) ? value : null;
-        } catch (NumberFormatException e) {
-            return null;
-        }
-
+        return hasErrors;
     }
 
     private ActivityDTO buildActivityDTO() {
         ActivityDTO activityDTO = new ActivityDTO();
-        activityDTO.setTitle(txtTitle.getText().trim());
-        activityDTO.setDescription(taDescription.getText().trim());
-        activityDTO.setStartDate(dpStartDate.getValue());
-        activityDTO.setEndDate(dpEndDate.getValue());
-        activityDTO.setEstimatedTime(Integer.parseInt(txtEstimatedTime.getText().trim()));
-        activityDTO.setEffectiveTime(Integer.parseInt(txtEffectiveTime.getText().trim()));
-        activityDTO.setProgress(Integer.parseInt(txtProgress.getText().trim()));
-        activityDTO.setObservations(taObservations.getText().trim());
-        return activityDTO;
 
+        String title = txtTitle.getText().trim();
+        String description = taDescription.getText().trim();
+        LocalDate startDate = dpStartDate.getValue();
+        LocalDate endDate = dpEndDate.getValue();
+        int estimatedTime = Integer.parseInt(txtEstimatedTime.getText().trim());
+        int effectiveTime = Integer.parseInt(txtEffectiveTime.getText().trim());
+        int progress = Integer.parseInt(txtProgress.getText().trim());
+        String observations = taObservations.getText().trim();
+
+        activityDTO.setTitle(title);
+        activityDTO.setDescription(description);
+        activityDTO.setStartDate(startDate);
+        activityDTO.setEndDate(endDate);
+        activityDTO.setEstimatedTime(estimatedTime);
+        activityDTO.setEffectiveTime(effectiveTime);
+        activityDTO.setProgress(progress);
+        activityDTO.setObservations(observations);
+
+        return activityDTO;
     }
 
     private void clearFields() {
@@ -142,15 +160,11 @@ public class FinalActivityRegistrationController implements Initializable {
         txtEffectiveTime.clear();
         txtProgress.clear();
         taObservations.clear();
-
     }
 
     @FXML
     private void cancel(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/intern/FinalReportMenu.fxml",
                 "Reporte Final", event);
-
     }
-
-
 }

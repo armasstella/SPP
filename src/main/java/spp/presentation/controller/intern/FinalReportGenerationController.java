@@ -35,8 +35,6 @@ public class FinalReportGenerationController implements Initializable {
     @FXML private Label lblStatus;
     @FXML private FinalReportActivitiesController activitiesSectionController;
     @FXML private FinalReportProductsController productsSectionController;
-    private final ReportDAO reportDAO = new ReportDAO();
-    private final InternDAO internDAO = new InternDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -74,8 +72,9 @@ public class FinalReportGenerationController implements Initializable {
 
         try {
             String userEmail = ActiveSessionDTO.get().getEmail();
+            InternDAO internDAO = new InternDAO();
             String studentNumber = internDAO.findActiveStudentNumberByEmail(userEmail);
-
+            ReportDAO reportDAO = new ReportDAO();
             ReportDTO reportDTO = reportDAO.getReportDetailByStudentNumber(studentNumber);
             reportDTO.setCareer(career);
             reportDTO.setReportType(reportType);

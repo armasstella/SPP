@@ -38,7 +38,6 @@ public class FinalReportProductsController implements Initializable {
     @FXML private TableColumn<DeliverableProductDTO, String> colChosenDeliverableProductProgress;
     @FXML private TableColumn<DeliverableProductDTO, String> colChosenDeliverableProductObservations;
     private final DeliverableProductDAO deliverableProductDAO = new DeliverableProductDAO();
-    private final InternDAO internDAO = new InternDAO();
     private ObservableList<DeliverableProductDTO> availableDeliverableProductObservableList;
     private ObservableList<DeliverableProductDTO> includedDeliverableProductObservableList;
 
@@ -95,6 +94,7 @@ public class FinalReportProductsController implements Initializable {
     }
 
     private void obtainDeliverableProducts() {
+        InternDAO internDAO = new InternDAO();
         try {
             String userEmail = ActiveSessionDTO.get().getEmail();
             String studentNumber = internDAO.findActiveStudentNumberByEmail(userEmail);

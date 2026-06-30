@@ -60,9 +60,6 @@ public class PartialReportGenerationController implements Initializable {
     @FXML private Button btnGenerate;
     private ObservableList<PartialReportActivityDTO> activitiesObservableList;
     private PartialReportDTO currentPartialReport;
-    private static final String CAREER = "Licenciatura en Ingeniería de Software";
-    private static final int TOTAL_WEEKS = 8;
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -103,8 +100,9 @@ public class PartialReportGenerationController implements Initializable {
     }
 
     private void populateWeekComboBox() {
+        int total_weeks = 8;
         ObservableList<Integer> weekNumbers = FXCollections.observableArrayList();
-        for (int weekNumber = 1; weekNumber <= TOTAL_WEEKS; weekNumber++) {
+        for (int weekNumber = 1; weekNumber <= total_weeks; weekNumber++) {
             weekNumbers.add(weekNumber);
         }
         cmbWeek.setItems(weekNumbers);
@@ -203,8 +201,10 @@ public class PartialReportGenerationController implements Initializable {
     }
 
     private PartialReportDTO buildPartialReportDTO() {
-        currentPartialReport.setCareer(CAREER);
-        currentPartialReport.setReportDate(LocalDate.now().format(DATE_FORMAT));
+        String career = "Licenciatura en Ingeniería de Software";
+        currentPartialReport.setCareer(career);
+        DateTimeFormatter date_format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        currentPartialReport.setReportDate(LocalDate.now().format(date_format));
         currentPartialReport.setReportNumber(txtReportNumber.getText().trim());
         currentPartialReport.setReportPeriod(txtTerm.getText().trim());
         currentPartialReport.setObjective(taObjective.getText().trim());
