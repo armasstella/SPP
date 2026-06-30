@@ -1,14 +1,14 @@
 package spp.presentation.controller.intern.listener;
 
 import spp.businesslogic.dto.ActivityDTO;
-import spp.presentation.controller.intern.FinalReportGenerationController;
+import spp.presentation.controller.intern.FinalReportActivitiesController;
 import spp.utils.view.table.DoubleClickListener;
 
 public class FinalActivityInclusionListener implements DoubleClickListener<ActivityDTO> {
 
-    private final FinalReportGenerationController controller;
+    private final FinalReportActivitiesController controller;
 
-    public FinalActivityInclusionListener(FinalReportGenerationController controller) {
+    public FinalActivityInclusionListener(FinalReportActivitiesController controller) {
         this.controller = controller;
     }
 
