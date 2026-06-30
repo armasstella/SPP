@@ -1,6 +1,10 @@
 package spp.utils.database;
 
 
+import spp.utils.exceptionmanager.ExceptionLevel;
+import spp.utils.logger.AppLogger;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -14,15 +18,12 @@ public class DatabaseConfiguration {
             InputStream input = DatabaseConfiguration.class.getClassLoader().getResourceAsStream(
                     "mysqlDatabase.properties");
 
-            if (input == null) {
-                System.out.println("Archivo de propiedades de base de datos no encontrado.");
-            } else  {
+            if (input != null) {
                 properties.load(input);
             }
 
-        } catch (Exception e) {
-            System.out.println("Error al cargar el archivo de propiedades.");
-
+        } catch (IOException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
         }
 
     }

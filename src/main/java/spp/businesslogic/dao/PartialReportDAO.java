@@ -13,7 +13,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,9 @@ public class PartialReportDAO implements IPartialReportDAO {
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_REPORT_HEADER)) {
+
                 preparedStatement.setString(1, studentNumber);
+
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         partialReport = buildReportHeaderFromResultSet(resultSet, studentNumber);
@@ -40,8 +41,12 @@ public class PartialReportDAO implements IPartialReportDAO {
                 }
             }
         } catch (SQLException e) {
-            AppLogger.log(ExceptionLevel.ERROR, e);
-            throw new DAOException("Error al información para informe parcial", e);
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al intentar recuperar el encabezado del reporte.", e);
+            } else {
+                throw new DAOException("Ocurrió un error al buscar la información del reporte.", e);
+            }
         }
 
         return partialReport;
@@ -93,10 +98,6 @@ public class PartialReportDAO implements IPartialReportDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener los reportes parciales.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar los reportes parciales.");
@@ -107,7 +108,7 @@ public class PartialReportDAO implements IPartialReportDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener los reportes parciales del alumno.");
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar obtener los reportes parciales.");
+                throw new DAOException("Ocurrió un error al intentar obtener los reportes parciales.");
             }
         }
 

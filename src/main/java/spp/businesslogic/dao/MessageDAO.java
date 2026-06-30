@@ -14,7 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +47,6 @@ public class MessageDAO implements IMessageDAO {
             AppLogger.log(ExceptionLevel.WARN, e);
             throw new DAOException("No se pudo enviar el mensaje. Verifique que los correos del remitente y destinatario sean válidos y estén registrados.");
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al intentar enviar el mensaje.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al intentar enviar el mensaje.");
@@ -60,11 +55,11 @@ public class MessageDAO implements IMessageDAO {
             AppLogger.log(ExceptionLevel.FATAL, e);
 
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
-                throw new DAOException("Error de conexión al guardar el mensaje.");
+                throw new DAOException("Error de conexión al envíar el mensaje.");
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar guardar el mensaje.");
+                throw new DAOException("Ocurrió un error al intentar envíar el mensaje.");
             }
         }
 
@@ -97,10 +92,6 @@ public class MessageDAO implements IMessageDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener la bandeja de mensajes.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar los mensajes.");
@@ -111,7 +102,7 @@ public class MessageDAO implements IMessageDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener los mensajes.");
             } else {
-                throw new DAOException("Ocurrió un error interno al consultar la bandeja de mensajes.");
+                throw new DAOException("Ocurrió un error al consultar la bandeja de mensajes.");
             }
         }
 

@@ -14,7 +14,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.sql.SQLTransactionRollbackException;
 import java.sql.Timestamp;
@@ -70,11 +69,6 @@ public class InternDAO implements IInternDAO {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de concurrencia: la operación fue abortada. Intente de nuevo.", e);
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            MySQLConnectionManager.getInstance().rollbackSafe();
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al registrar practicante.", e);
-
         } catch (SQLTimeoutException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -88,7 +82,7 @@ public class InternDAO implements IInternDAO {
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar registrar al practicante.", e);
+                throw new DAOException("Ocurrió un error al intentar registrar al practicante.", e);
             }
         } finally {
             MySQLConnectionManager.getInstance().enableAutoCommitConnection();
@@ -111,9 +105,6 @@ public class InternDAO implements IInternDAO {
                     }
                 }
             }
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar matrícula.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -146,9 +137,6 @@ public class InternDAO implements IInternDAO {
                     internsList.add(internDTO);
                 }
             }
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener la lista de practicantes.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -177,9 +165,6 @@ public class InternDAO implements IInternDAO {
                     }
                 }
             }
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al buscar matrícula.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -209,10 +194,6 @@ public class InternDAO implements IInternDAO {
         } catch (SQLTransactionRollbackException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de concurrencia al desactivar practicante.", e);
-
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al desactivar practicante.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -247,9 +228,6 @@ public class InternDAO implements IInternDAO {
                     internList.add(internDTO);
                 }
             }
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al buscar practicantes sin proyecto.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -287,9 +265,6 @@ public class InternDAO implements IInternDAO {
                     }
                 }
             }
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al buscar practicantes del profesor.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);

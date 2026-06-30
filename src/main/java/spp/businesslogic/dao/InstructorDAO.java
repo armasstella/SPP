@@ -13,7 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.sql.SQLTransactionRollbackException;
 import java.util.ArrayList;
@@ -61,11 +60,6 @@ public class InstructorDAO implements IInstructorDAO {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de concurrencia: la transacción fue abortada. Intente de nuevo.", e);
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            MySQLConnectionManager.getInstance().rollbackSafe();
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al registrar profesor.", e);
-
         } catch (SQLTimeoutException e) {
             MySQLConnectionManager.getInstance().rollbackSafe();
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -78,7 +72,7 @@ public class InstructorDAO implements IInstructorDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al registrar al profesor.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar registrar al profesor.", e);
+                throw new DAOException("Ocurrió un error al intentar registrar al profesor.", e);
             }
         } finally {
             MySQLConnectionManager.getInstance().enableAutoCommitConnection();
@@ -107,10 +101,6 @@ public class InstructorDAO implements IInstructorDAO {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de concurrencia al desactivar profesor.", e);
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al desactivar profesor.", e);
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al desactivar profesor.", e);
@@ -120,7 +110,7 @@ public class InstructorDAO implements IInstructorDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al desactivar profesor.", e);
             } else {
-                throw new DAOException("Error interno de base de datos al desactivar profesor.", e);
+                throw new DAOException("Error al desactivar profesor.", e);
             }
         }
 
@@ -147,9 +137,6 @@ public class InstructorDAO implements IInstructorDAO {
                     instructorsList.add(instructorDTO);
                 }
             }
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al buscar profesores.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -184,9 +171,6 @@ public class InstructorDAO implements IInstructorDAO {
                     instructorsList.add(instructor);
                 }
             }
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al buscar identificadores.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -216,9 +200,6 @@ public class InstructorDAO implements IInstructorDAO {
                     }
                 }
             }
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener número personal.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);

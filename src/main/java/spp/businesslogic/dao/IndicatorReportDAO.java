@@ -14,7 +14,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +50,6 @@ public class IndicatorReportDAO implements IIndicatorReportDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al intentar calcular las métricas.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al calcular las métricas de los indicadores.");
@@ -65,7 +60,7 @@ public class IndicatorReportDAO implements IIndicatorReportDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al calcular las métricas de los indicadores.");
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar procesar las estadísticas.");
+                throw new DAOException("Ocurrió un error al intentar procesar los indicadores.");
             }
         }
 

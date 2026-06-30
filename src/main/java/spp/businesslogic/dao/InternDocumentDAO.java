@@ -13,7 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.sql.Timestamp;
 
@@ -49,10 +48,6 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
             AppLogger.log(ExceptionLevel.WARN, e);
             throw new DAOException("No se pudo guardar el documento. Verifique que los datos ingresados sean válidos y que el practicante exista en el sistema.");
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación al intentar guardar el documento.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al guardar el documento.");
@@ -65,7 +60,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar guardar el documento.");
+                throw new DAOException("Ocurrió un error al intentar guardar el documento.");
             }
         }
 
@@ -90,10 +85,6 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar el horario del estudiante.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al buscar el horario.");
@@ -104,7 +95,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al buscar horario.");
             } else {
-                throw new DAOException("Ocurrió un error interno al verificar el horario del estudiante.");
+                throw new DAOException("Ocurrió un error al verificar el horario del estudiante.");
             }
         }
 
@@ -129,10 +120,6 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar el plan de actividades.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al buscar la calendarización.");
@@ -143,7 +130,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al buscar calendarización.");
             } else {
-                throw new DAOException("Ocurrió un error interno al verificar el plan de actividades.");
+                throw new DAOException("Ocurrió un error al verificar el plan de actividades.");
             }
         }
 
@@ -166,10 +153,6 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar el PSP.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al buscar el PSP.");
@@ -180,7 +163,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al buscar psp.");
             } else {
-                throw new DAOException("Ocurrió un error interno al verificar la existencia del PSP.");
+                throw new DAOException("Ocurrió un error al verificar la existencia del PSP.");
             }
         }
 
@@ -205,10 +188,6 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar el reporte parcial.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al buscar el reporte parcial.");
@@ -219,7 +198,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al buscar reporte parcial.");
             } else {
-                throw new DAOException("Ocurrió un error interno al verificar el reporte parcial.");
+                throw new DAOException("Ocurrió un error al verificar el reporte parcial.");
             }
         }
 
@@ -242,10 +221,6 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar el reporte mensual.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al buscar el reporte mensual.");
@@ -256,7 +231,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al buscar reporte mensual.");
             } else {
-                throw new DAOException("Ocurrió un error interno al verificar el reporte mensual.");
+                throw new DAOException("Ocurrió un error al verificar el reporte mensual.");
             }
         }
 
@@ -281,10 +256,6 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar la autoevaluación.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al buscar la autoevaluación.");
@@ -295,7 +266,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al buscar autoevaluación.");
             } else {
-                throw new DAOException("Ocurrió un error interno al verificar la autoevaluación.");
+                throw new DAOException("Ocurrió un error al verificar la autoevaluación.");
             }
         }
 
@@ -320,10 +291,6 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar la evaluación de la organización vinculada.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al buscar la evaluación de la organización vinculada.");
@@ -334,7 +301,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al buscar evaluación de organización vinculada.");
             } else {
-                throw new DAOException("Ocurrió un error interno al verificar la evaluación de la organización vinculada.");
+                throw new DAOException("Ocurrió un error al verificar la evaluación de la organización vinculada.");
             }
         }
 

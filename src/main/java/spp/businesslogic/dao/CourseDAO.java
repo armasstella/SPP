@@ -16,7 +16,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,11 +59,8 @@ public class CourseDAO implements ICourseDAO {
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.log(ExceptionLevel.WARN, e);
-            throw new DAOException("No se pudo registrar la Experiencia Educativa. Es probable que el NRC ya esté registrado en este periodo escolar.");
-
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al intentar registrar el curso.");
+            throw new DAOException("No se pudo registrar la Experiencia Educativa. " +
+                    "Es probable que el NRC ya esté registrado en este periodo escolar.");
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -78,7 +74,7 @@ public class CourseDAO implements ICourseDAO {
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar registrar el curso.");
+                throw new DAOException("Ocurrió un error al intentar registrar el curso.");
             }
         }
 
@@ -100,10 +96,6 @@ public class CourseDAO implements ICourseDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de autenticación al verificar la existencia de cursos.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar la existencia de cursos.");
@@ -114,7 +106,7 @@ public class CourseDAO implements ICourseDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al buscar cursos registrados.");
             } else {
-                throw new DAOException("Ocurrió un error interno al consultar la disponibilidad de cursos.");
+                throw new DAOException("Ocurrió un error al consultar la disponibilidad de cursos.");
             }
         }
 
@@ -142,7 +134,7 @@ public class CourseDAO implements ICourseDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener estadísticas de cursos.");
             } else {
-                throw new DAOException("Ocurrió un error interno al obtener las estadísticas de los cursos.");
+                throw new DAOException("Ocurrió un error al obtener las estadísticas de los cursos.");
             }
         }
 
@@ -191,10 +183,6 @@ public class CourseDAO implements ICourseDAO {
             AppLogger.log(ExceptionLevel.WARN, e);
             throw new DAOException("No se pudo asignar el profesor al curso. Verifique la información ingresada.");
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al asignar profesor al curso.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al intentar asignar profesor al curso.");
@@ -207,7 +195,7 @@ public class CourseDAO implements ICourseDAO {
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar asignar el profesor al curso.");
+                throw new DAOException("Ocurrió un error al intentar asignar el profesor al curso.");
             }
         }
 
@@ -240,7 +228,7 @@ public class CourseDAO implements ICourseDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al buscar NRC de cursos.");
             } else {
-                throw new DAOException("Ocurrió un error interno al consultar los cursos del periodo activo.");
+                throw new DAOException("Ocurrió un error al consultar los cursos del periodo activo.");
             }
         }
 

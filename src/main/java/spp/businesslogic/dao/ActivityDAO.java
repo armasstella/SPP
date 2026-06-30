@@ -16,7 +16,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,10 +58,6 @@ public class ActivityDAO implements IActivityDAO {
             AppLogger.log(ExceptionLevel.WARN, e);
             throw new DAOException("No se pudo registrar la actividad. Verifique que los datos ingresados sean válidos y que el practicante exista en el sistema.");
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al intentar registrar la actividad.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al registrar la actividad.");
@@ -97,10 +92,6 @@ public class ActivityDAO implements IActivityDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener las actividades del practicante.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar las actividades.");
@@ -111,7 +102,7 @@ public class ActivityDAO implements IActivityDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener las actividades del practicante.");
             } else {
-                throw new DAOException("Ocurrió un error interno al consultar la lista de actividades.");
+                throw new DAOException("Ocurrió un error al consultar la lista de actividades.");
             }
         }
 
@@ -139,10 +130,6 @@ public class ActivityDAO implements IActivityDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener las actividades del practicante.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar las actividades.");
@@ -153,7 +140,7 @@ public class ActivityDAO implements IActivityDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener las actividades del practicante.");
             } else {
-                throw new DAOException("Ocurrió un error interno al consultar la lista de actividades.");
+                throw new DAOException("Ocurrió un error al consultar la lista de actividades.");
             }
         }
 
@@ -202,10 +189,6 @@ public class ActivityDAO implements IActivityDAO {
             AppLogger.log(ExceptionLevel.WARN, e);
             throw new DAOException("No se pudo actualizar la actividad. Verifique que los datos ingresados sean correctos.");
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al actualizar la actividad.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al procesar la actualización de la actividad.");
@@ -218,7 +201,7 @@ public class ActivityDAO implements IActivityDAO {
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar actualizar la actividad.");
+                throw new DAOException("Ocurrió un error al intentar actualizar la actividad.");
             }
         }
 
@@ -239,10 +222,6 @@ public class ActivityDAO implements IActivityDAO {
                 isActivityDeleted = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al intentar eliminar la actividad.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al eliminar la actividad.");
@@ -255,7 +234,7 @@ public class ActivityDAO implements IActivityDAO {
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar eliminar la actividad.");
+                throw new DAOException("Ocurrió un error al intentar eliminar la actividad.");
             }
         }
 

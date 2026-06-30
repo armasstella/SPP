@@ -13,7 +13,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 
 public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeEnrollmentDAO {
@@ -44,11 +43,8 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.log(ExceptionLevel.WARN, e);
-            throw new DAOException("No se pudo registrar la inscripción. Verifique que los datos (NRC, matrícula, proyecto) sean correctos y no estén duplicados.");
-
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al registrar la inscripción.");
+            throw new DAOException("No se pudo registrar la inscripción. Verifique que los datos (NRC, matrícula, proyecto) " +
+                    "sean correctos y no estén duplicados.");
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -62,7 +58,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar registrar la inscripción.");
+                throw new DAOException("Ocurrió un error al intentar registrar la inscripción.");
             }
         }
 
@@ -85,10 +81,6 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
                 int rowsAffected = preparedStatement.executeUpdate();
                 isProjectAssigned = rowsAffected != DAOResultConstant.NO_ROWS_AFFECTED;
             }
-
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al asignar el proyecto.");
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -124,10 +116,6 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
                 isCourseAssigned = rowsAffected != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al asignar la experiencia educativa.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al asignar la experiencia educativa.");
@@ -138,7 +126,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al asignar la experiencia educativa.");
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar asignar la experiencia educativa al practicante.");
+                throw new DAOException("Ocurrió un error al intentar asignar la experiencia educativa al practicante.");
             }
         }
 

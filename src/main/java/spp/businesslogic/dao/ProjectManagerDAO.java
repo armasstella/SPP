@@ -13,7 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +54,6 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
             throw new DAOException("El encargado de proyecto ya existe o la organización vinculada no es válida. " +
                     "Verifique que los datos no estén duplicados.", e);
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al registrar el encargado de proyecto.", e);
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al registrar el encargado de proyecto.", e);
@@ -71,7 +66,7 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar registrar el encargado de proyecto.", e);
+                throw new DAOException("Ocurrió un error al intentar registrar el encargado de proyecto.", e);
             }
         }
 
@@ -97,11 +92,6 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener la lista de encargados de " +
-                    "proyectos.", e);
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar la lista de encargados de proyectos.", e);
@@ -112,7 +102,7 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al buscar encargados de proyectos.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al obtener los encargados de proyectos.", e);
+                throw new DAOException("Ocurrió un error al recuperar los encargados de proyectos.", e);
             }
         }
 
@@ -134,11 +124,6 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar la existencia de encargados de " +
-                    "proyectos.", e);
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar la disponibilidad de encargados de " +
@@ -150,7 +135,7 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al verificar si existen encargados de proyectos.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al consultar los encargados de proyectos.", e);
+                throw new DAOException("Ocurrió un error al consultar los encargados de proyectos.", e);
             }
         }
 
@@ -178,10 +163,6 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener los encargados por organización.", e);
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al filtrar encargados por organización.", e);
@@ -192,7 +173,7 @@ public class ProjectManagerDAO implements IProjectManagerDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al filtrar encargados por organización.", e);
             } else {
-                throw new DAOException("Error interno de base de datos al filtrar encargados por organización.", e);
+                throw new DAOException("Error al filtrar encargados por organización.", e);
             }
         }
 
