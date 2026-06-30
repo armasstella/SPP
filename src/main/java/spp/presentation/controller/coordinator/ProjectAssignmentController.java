@@ -175,6 +175,7 @@ public class ProjectAssignmentController implements Initializable, DoubleClickLi
             if (isAssigned) {
                 StatusLabel.showSuccess(lblStatus, "Proyecto asignado correctamente.");
                 obtainInterns();
+                hideAllProjectCards();
             }
         } catch (DAOException e) {
             StatusLabel.showError(lblStatus, e.getMessage());

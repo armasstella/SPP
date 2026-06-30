@@ -50,7 +50,7 @@
                                 onAction="#goToPresentationTemplateUploadView"
                         />
 
-                        <Button text="Revisión de Documentos"
+                        <Button text="Gestionar Practicantes"
                                 styleClass="option-btn, btn-inactivate"
                                 onAction="#goToReviewDocumentsView"
                         />

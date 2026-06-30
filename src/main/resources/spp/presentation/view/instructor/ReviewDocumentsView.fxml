@@ -14,7 +14,7 @@
 
     <top>
         <VBox styleClass="header" spacing="5">
-            <Label text="EVALUACIÓN DE DOCUMENTACIÓN" styleClass="header-title"/>
+            <Label text="GESTIÓN PRACTICANTES" styleClass="header-title"/>
         </VBox>
     </top>
 
