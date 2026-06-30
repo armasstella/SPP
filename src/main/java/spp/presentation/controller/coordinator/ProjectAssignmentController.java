@@ -159,7 +159,12 @@ public class ProjectAssignmentController implements Initializable, DoubleClickLi
                 StatusLabel.showError(lblStatus, "Selecciona un proyecto para asignar.");
             } else {
                 ProjectDTO selectedProject = (ProjectDTO) selectedToggle.getUserData();
-                executeProjectAssignment(selectedProject);
+                if (selectedProject == null) {
+                    StatusLabel.showError(lblStatus, "Selecciona un practicante.");
+                } else {
+                    executeProjectAssignment(selectedProject);
+                }
+
             }
         }
     }
