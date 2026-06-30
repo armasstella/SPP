@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Button?>
+<?import com.dlsc.pdfviewfx.PDFView?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="spp.presentation.controller.instructor.DocumentEvaluatorController"
+      spacing="15" HBox.hgrow="ALWAYS" styleClass="content-section">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <Label text="VISUALIZACIÓN Y EVALUACIÓN DE DOCUMENTO" styleClass="section-subtitle"/>
+
+    <VBox VBox.vgrow="ALWAYS" style="-fx-border-color: #cccccc; -fx-border-width: 1;">
+        <PDFView fx:id="pdfView" VBox.vgrow="ALWAYS"/>
+    </VBox>
+
+    <HBox spacing="20" alignment="CENTER_LEFT">
+        <VBox spacing="5">
+            <Label text="Calificación (1-10):" styleClass="field-description"/>
+            <ComboBox fx:id="cmbGrade" prefWidth="120"/>
+        </VBox>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Observaciones:" styleClass="field-description"/>
+            <TextArea fx:id="taObservations" prefHeight="80" wrapText="true" styleClass="field-input"/>
+        </VBox>
+    </HBox>
+</VBox>
