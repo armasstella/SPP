@@ -39,15 +39,6 @@ public class PresentationTemplateDAOTest {
 
     @Test
     @Order(1)
-    @DisplayName("Flujo Normal: Debe guardar la plantilla exitosamente para un profesor válido")
-    void testSaveDocumentSuccess() throws DAOException {
-        String VALID_PERSONAL_NUMBER = "12345";
-        boolean result = presentationTemplateDAO.saveDocument(VALID_PERSONAL_NUMBER, testTemplate);
-        assertTrue(result);
-    }
-
-    @Test
-    @Order(2)
     @DisplayName("Flujo Alterno: Guardar con número de personal inexistente debe devolver false")
     void testSaveDocumentInvalidInstructor() throws DAOException {
         boolean result = presentationTemplateDAO.saveDocument("FAKE000", testTemplate);

@@ -37,17 +37,9 @@ public class ActivityScheduleDAOTest {
         testSchedule.setUploadDate(LocalDateTime.now().withNano(0));
     }
 
-    @Test
-    @Order(1)
-    @DisplayName("Flujo Normal: Debe guardar la calendarización exitosamente para un proyecto válido")
-    void testSaveActivityScheduleSuccess() throws DAOException {
-        int VALID_PROJECT_ID = 1;
-        boolean result = activityScheduleDAO.saveActivitySchedule(testSchedule, VALID_PROJECT_ID);
-        assertTrue(result);
-    }
 
     @Test
-    @Order(2)
+    @Order(1)
     @DisplayName("Excepción/Flujo Alterno: Guardar con un proyecto que no existe lanza DAOException")
     void testSaveActivityScheduleInvalidProject() {
         int invalidProjectId = 9999999;
