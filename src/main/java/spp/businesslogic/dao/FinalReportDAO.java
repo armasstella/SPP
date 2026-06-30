@@ -12,7 +12,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,10 +53,6 @@ public class FinalReportDAO implements IFinalReportDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener los reportes finales.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar los reportes finales.");
@@ -68,7 +63,7 @@ public class FinalReportDAO implements IFinalReportDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener los reportes finales del alumno.");
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar obtener los reportes finales.");
+                throw new DAOException("Ocurrió un error al intentar obtener los reportes finales.");
             }
         }
 
@@ -93,10 +88,6 @@ public class FinalReportDAO implements IFinalReportDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar la existencia del reporte final.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al verificar el reporte final.");
@@ -107,7 +98,7 @@ public class FinalReportDAO implements IFinalReportDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al verificar la existencia del reporte final.");
             } else {
-                throw new DAOException("Ocurrió un error interno al consultar el reporte final.");
+                throw new DAOException("Ocurrió un error al consultar el reporte final.");
             }
         }
 

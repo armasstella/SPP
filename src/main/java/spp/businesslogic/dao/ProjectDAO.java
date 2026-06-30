@@ -15,7 +15,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -58,10 +57,6 @@ public class ProjectDAO implements IProjectDAO {
             throw new DAOException("El proyecto no pudo ser registrado. Verifique que los datos no estén duplicados " +
                     "o que la organización y el encargado existan.", e);
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al registrar el proyecto.", e);
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al registrar el proyecto.", e);
@@ -72,7 +67,7 @@ public class ProjectDAO implements IProjectDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al registrar el proyecto.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar registrar el proyecto.", e);
+                throw new DAOException("Ocurrió un error al intentar registrar el proyecto.", e);
             }
         }
 
@@ -100,7 +95,7 @@ public class ProjectDAO implements IProjectDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al eliminar el proyecto.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar eliminar el proyecto.", e);
+                throw new DAOException("Ocurrió un error al intentar eliminar el proyecto.", e);
             }
         }
 
@@ -131,10 +126,6 @@ public class ProjectDAO implements IProjectDAO {
             throw new DAOException("No se pudo actualizar el proyecto. Verifique que los datos ingresados sean válidos " +
                     "y no estén duplicados.", e);
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de autenticación al actualizar el proyecto.", e);
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al actualizar el proyecto.", e);
@@ -145,7 +136,7 @@ public class ProjectDAO implements IProjectDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al actualizar el proyecto.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar actualizar el proyecto.", e);
+                throw new DAOException("Ocurrió un error al intentar actualizar el proyecto.", e);
             }
         }
 
@@ -189,10 +180,6 @@ public class ProjectDAO implements IProjectDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de autenticación al obtener detalles de los proyectos.", e);
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar los proyectos.", e);
@@ -203,7 +190,7 @@ public class ProjectDAO implements IProjectDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener proyectos.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al consultar la lista de proyectos.", e);
+                throw new DAOException("Ocurrió un error al consultar la lista de proyectos.", e);
             }
         }
 
@@ -225,10 +212,6 @@ public class ProjectDAO implements IProjectDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de autenticación al verificar el mínimo de proyectos.", e);
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al verificar la cantidad de proyectos.", e);
@@ -239,7 +222,7 @@ public class ProjectDAO implements IProjectDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al contar proyectos.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al verificar el mínimo de proyectos.", e);
+                throw new DAOException("Ocurrió un error al verificar el mínimo de proyectos.", e);
             }
         }
 

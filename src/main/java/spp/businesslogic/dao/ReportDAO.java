@@ -44,10 +44,6 @@ public class ReportDAO implements IReportDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al consultar los detalles del reporte.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar los datos del reporte.");
@@ -58,7 +54,7 @@ public class ReportDAO implements IReportDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener los datos del reporte.");
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar obtener los detalles del reporte.");
+                throw new DAOException("Ocurrió un error al intentar obtener los detalles del reporte.");
             }
         }
 

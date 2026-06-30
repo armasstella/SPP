@@ -12,7 +12,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.sql.Timestamp;
 
@@ -45,11 +44,8 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.log(ExceptionLevel.WARN, e);
-            throw new DAOException("No se pudo guardar la calendarización. Es posible que el archivo ya exista o el proyecto asociado no sea válido.");
-
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al intentar guardar la calendarización de actividades.");
+            throw new DAOException("No se pudo guardar la calendarización. Es posible que el archivo ya exista o " +
+                    "el proyecto asociado no sea válido.");
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -63,7 +59,7 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar guardar el documento.");
+                throw new DAOException("Ocurrió un error al intentar guardar el documento.");
             }
         }
 

@@ -12,7 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLDataException;
 import java.sql.SQLTimeoutException;
 import java.sql.SQLTransactionRollbackException;
@@ -35,9 +34,6 @@ public class TermDAO implements ITermDAO {
                     periods.add(resultSet.getString("nombre_periodo"));
                 }
             }
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al intentar obtener la lista de periodos.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -46,9 +42,9 @@ public class TermDAO implements ITermDAO {
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
-                throw new DAOException("Error de red al intentar cargar los periodos escolares.", e);
+                throw new DAOException("Error de conexión al intentar cargar los periodos escolares.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al obtener los periodos.", e);
+                throw new DAOException("Ocurrió un error al obtener los periodos escolares.", e);
             }
         }
 
@@ -69,9 +65,6 @@ public class TermDAO implements ITermDAO {
                     activeTerm = resultSet.getString("nombre_periodo");
                 }
             }
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar el periodo activo.");
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -82,7 +75,7 @@ public class TermDAO implements ITermDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener el periodo escolar actual.");
             } else {
-                throw new DAOException("Ocurrió un error interno al verificar el periodo.");
+                throw new DAOException("Ocurrió un error interno al verificar el periodo escolar actual.");
             }
         }
 
@@ -103,20 +96,17 @@ public class TermDAO implements ITermDAO {
                     activeTermId = resultSet.getInt("id_periodo");
                 }
             }
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar el identificador del periodo.");
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al consultar el identificador del periodo.");
+            throw new DAOException("Tiempo de espera agotado al consultar el identificador del periodo escolar.");
 
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener el identificador del periodo escolar.");
             } else {
-                throw new DAOException("Ocurrió un error interno al verificar el identificador.");
+                throw new DAOException("Ocurrió un error al verificar el identificador del periodo escolar.");
             }
         }
 
@@ -138,10 +128,6 @@ public class TermDAO implements ITermDAO {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de concurrencia al desactivar el periodo escolar.");
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al intentar desactivar el periodo escolar.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al procesar la desactivación del periodo.");
@@ -151,7 +137,7 @@ public class TermDAO implements ITermDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión con el servidor al desactivar el periodo escolar.");
             } else {
-                throw new DAOException("Ocurrió un error interno al desactivar el periodo.");
+                throw new DAOException("Ocurrió un error al desactivar el periodo.");
             }
         }
 
@@ -182,10 +168,6 @@ public class TermDAO implements ITermDAO {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Error de concurrencia al registrar el periodo escolar.");
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al registrar un nuevo periodo escolar.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al intentar registrar el periodo.");
@@ -198,7 +180,7 @@ public class TermDAO implements ITermDAO {
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(sqlStateMessage)) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno en la base de datos al intentar registrar el periodo.");
+                throw new DAOException("Ocurrió un error al intentar registrar el periodo.");
             }
         }
 

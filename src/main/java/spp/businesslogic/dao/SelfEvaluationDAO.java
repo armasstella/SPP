@@ -12,7 +12,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 
 public class SelfEvaluationDAO implements ISelfEvaluationDAO {
@@ -54,10 +53,6 @@ public class SelfEvaluationDAO implements ISelfEvaluationDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener los datos de la autoevaluación.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar los datos del alumno.");
@@ -68,7 +63,7 @@ public class SelfEvaluationDAO implements ISelfEvaluationDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al buscar datos del alumno.");
             } else {
-                throw new DAOException("Ocurrió un error interno al consultar los datos de la autoevaluación.");
+                throw new DAOException("Ocurrió un error al consultar los datos de la autoevaluación.");
             }
         }
 

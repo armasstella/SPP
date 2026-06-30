@@ -13,7 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +45,6 @@ public class DeliverableProductDAO implements IDeliverableProductDAO {
             throw new DAOException("No se pudo registrar el producto entregable. Verifique que los datos ingresados " +
                     "sean válidos y que el practicante exista en el sistema.");
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al intentar registrar el producto entregable.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al registrar el producto entregable.");
@@ -81,11 +76,6 @@ public class DeliverableProductDAO implements IDeliverableProductDAO {
                 }
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al obtener los productos entregables " +
-                    "del practicante.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al consultar los productos entregables.");
@@ -96,7 +86,7 @@ public class DeliverableProductDAO implements IDeliverableProductDAO {
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al obtener los productos entregables del practicante.");
             } else {
-                throw new DAOException("Ocurrió un error interno al consultar la lista de productos entregables.");
+                throw new DAOException("Ocurrió un error al consultar la lista de productos entregables.");
             }
         }
 
@@ -126,10 +116,6 @@ public class DeliverableProductDAO implements IDeliverableProductDAO {
                 isDeliverableProductDeleted = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
             }
 
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al intentar eliminar producto entregable.");
-
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
             throw new DAOException("Tiempo de espera agotado al eliminar el producto entregable.");
@@ -142,7 +128,7 @@ public class DeliverableProductDAO implements IDeliverableProductDAO {
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar eliminar producto entregable.");
+                throw new DAOException("Ocurrió un error al intentar eliminar producto entregable.");
             }
         }
 

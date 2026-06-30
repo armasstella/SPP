@@ -4,6 +4,7 @@ package spp.dataaccess.connection;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.DriverManager;
+
 import spp.utils.database.DatabaseConfiguration;
 
 
@@ -17,7 +18,6 @@ public class MySQLConnection {
 
     private MySQLConnection() throws SQLException {
         this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
-
     }
 
     public static MySQLConnection getInstance() throws SQLException {
