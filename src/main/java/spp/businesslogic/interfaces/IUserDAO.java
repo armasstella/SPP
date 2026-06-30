@@ -20,7 +20,7 @@ public interface IUserDAO {
      *
      * @param userDTO Objeto UserDTO que contiene la información necesaria para el registro (nombre, correo, contraseña, rol, etc.).
      *                No debe ser null y debe contener los campos obligatorios.
-     * @return El identificador numérico (id) asignado al usuario recién creado. Un valor <= 0 puede indicar que no se creó el registro.
+     * @return El identificador numérico (id) asignado al usuario recién creado. Un valor menor o igual a 0 puede indicar que no se creó el registro.
      * @throws DAOException Si ocurre un error en la capa de acceso a datos (violación de restricciones, errores de conexión,
      * fallos SQL) durante el registro.
      */

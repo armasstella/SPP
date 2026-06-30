@@ -12,7 +12,18 @@ import java.util.List;
  */
 public interface IPartialReportDAO {
 
+    /**
+     * Obtiene el encabezado o información principal del informe parcial de un practicante identificado por su matrícula.
+     *
+     * Propósito: Recuperar los metadatos o resumen del informe parcial (fecha, estado, puntuaciones, observaciones preliminares)
+     * permitiendo su visualización antes de acceder a los archivos completos, facilitando revisiones rápidas.
+     *
+     * @param studentNumber Número de matrícula o identificador único del practicante cuyo informe parcial se desea obtener. No debe ser null ni vacío.
+     * @return PartialReportDTO con el encabezado e información principal del informe parcial; puede devolver null si no existe registro.
+     * @throws DAOException Si ocurre un error al consultar la persistencia o mapear los resultados.
+     */
     PartialReportDTO findReportHeaderByStudentNumber(String studentNumber) throws DAOException;
+
     /**
      * Recupera los archivos de informe parcial asociados a un practicante identificado por su número de matrícula.
      *
