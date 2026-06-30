@@ -9,7 +9,6 @@ import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
-
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;

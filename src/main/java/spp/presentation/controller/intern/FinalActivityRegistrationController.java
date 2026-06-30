@@ -147,7 +147,7 @@ public class FinalActivityRegistrationController implements Initializable {
 
     @FXML
     private void cancel(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/FinalActivityRegistersView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/intern/FinalReportMenu.fxml",
                 "Reporte Final", event);
 
     }

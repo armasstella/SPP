@@ -50,17 +50,17 @@
                                 onAction="#goToPresentationTemplateUploadView"
                         />
 
-                        <Button text="Evaluar Reporte Final"
+                        <Button text="Revisión de Documentos"
                                 styleClass="option-btn, btn-inactivate"
-                                onAction="#goToFinalReportEvaluationView"
+                                onAction="#goToReviewDocumentsView"
                         />
 
                     </VBox>
                 </HBox>
             </VBox>
             <VBox fx:id="vbErrorStatusMessage" visible="false" managed="${vbErrorStatusMessage.visible}" spacing="15">
-                <VBox spacing="5">
-                    <Label fx:id="lblStatus" text="NO CUENTA CON UNA EXPERIENCIA EDUCATIVA ASIGNADA" styleClass="field-description"/>
+                <VBox spacing="20">
+                    <Label fx:id="lblStatus" text="NO CUENTA CON UNA EXPERIENCIA EDUCATIVA ASIGNADA" styleClass="field-label"/>
                 </VBox>
             </VBox>
         </VBox>

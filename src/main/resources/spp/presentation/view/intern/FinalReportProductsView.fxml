@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="spp.presentation.controller.intern.FinalReportProductsController">
+
+    <VBox styleClass="content-container" spacing="10">
+        <padding><Insets top="20" right="32" bottom="16" left="32"/></padding>
+
+        <Label fx:id="lblProductsCounter" text="0 productos entregables incluidos." styleClass="counter-label"/>
+
+        <Label text="Productos entregables incluidos" styleClass="section-title"/>
+        <TableView fx:id="tblIncludedDeliverableProducts" styleClass="data-table" prefHeight="250">
+            <columns>
+                <TableColumn fx:id="colChosenDeliverableProductName" text="Nombre" prefWidth="120" reorderable="false"/>
+                <TableColumn fx:id="colChosenDeliverableProductDescription" text="Descripción" prefWidth="180" reorderable="false"/>
+                <TableColumn fx:id="colChosenDeliverableProductProgress" text="Avance %" prefWidth="80" reorderable="false"/>
+                <TableColumn fx:id="colChosenDeliverableProductObservations" text="Observaciones" prefWidth="180" reorderable="false"/>
+            </columns>
+        </TableView>
+
+        <Label text="Productos entregables cargados" styleClass="section-title"/>
+        <TableView fx:id="tblDeliverableProducts" styleClass="data-table" VBox.vgrow="ALWAYS">
+            <placeholder>
+                <Label text="Sin registros" styleClass="field-label"/>
+            </placeholder>
+            <columns>
+                <TableColumn fx:id="colDeliverableProductName" text="Nombre"
+                             prefWidth="120"
+                             reorderable="false"/>
+                <TableColumn fx:id="colDeliverableProductDescription" text="Descripción"
+                             prefWidth="180"
+                             reorderable="false"/>
+                <TableColumn fx:id="colDeliverableProductProgress" text="Avance %"
+                             prefWidth="80"
+                             reorderable="false"/>
+                <TableColumn fx:id="colDeliverableProductObservations" text="Observaciones"
+                             prefWidth="180"
+                             reorderable="false"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+</VBox>

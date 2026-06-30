@@ -33,11 +33,9 @@ public class UploadDocumentsController {
 
     @FXML private Label lblStatus;
     @FXML private Label lblSelectedDocument;
-
     private File selectedDocument;
     private String currentFolder;
     private String currentPrefix;
-
     private final InternDocumentDTO internDocumentDTO = new InternDocumentDTO();
     private final InternDocumentDAO internDocumentDAO = new InternDocumentDAO();
     private final InternDAO internDAO = new InternDAO();
@@ -140,8 +138,19 @@ public class UploadDocumentsController {
         processDocumentSelection(event, documentConfiguration);
     }
 
+    @FXML
+    private void uploadReleaseLetter(ActionEvent event) {
+        DocumentUploadConfiguration documentConfiguration = new DocumentUploadConfiguration(
+                DocumentType.RELEASE_LETTER,
+                "./documents/intern_documents/release_letters/",
+                "release_letter",
+                DocumentationPhase.CLOSURE
+        );
+        processDocumentSelection(event, documentConfiguration);
+    }
+
     private void processDocumentSelection(ActionEvent event, DocumentUploadConfiguration documentConfiguration) {
-        UserDAO  userDAO = new UserDAO();
+        UserDAO userDAO = new UserDAO();
         int internId = -1;
         try {
             internId = userDAO.obtainId(ActiveSessionDTO.get().getEmail());
@@ -150,11 +159,11 @@ public class UploadDocumentsController {
         }
 
         DocumentationWorkflowManager workflowManager = new DocumentationWorkflowManager(internId);
-        DocumentType targetType = documentConfiguration.getType();
-        boolean isUploadAllowed = workflowManager.isUploadAllowed(targetType);
+        DocumentType documentToUploadType = documentConfiguration.getType();
+        boolean isUploadAllowed = workflowManager.isUploadAllowed(documentToUploadType);
 
         if (!isUploadAllowed) {
-            StatusLabel.showError(lblStatus, "No puedes subir este documento aún. Completa y aprueba la fase anterior.");
+            StatusLabel.showError(lblStatus, "No puedes subir este documento. No corresponde a la fase de tus prácticas.");
         } else {
             verifyExistenceAndSelectDocument(event, documentConfiguration);
         }
@@ -198,8 +207,7 @@ public class UploadDocumentsController {
             selectedDocument = chosenFile;
 
             DocumentType configurationType = documentConfiguration.getType();
-            String documentTypeString = String.valueOf(configurationType);
-            internDocumentDTO.setDocumentType(documentTypeString);
+            internDocumentDTO.setDocumentType(configurationType);
 
             currentFolder = documentConfiguration.getFolder();
             currentPrefix = documentConfiguration.getPrefix();

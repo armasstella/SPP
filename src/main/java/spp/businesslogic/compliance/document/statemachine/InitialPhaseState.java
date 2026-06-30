@@ -1,8 +1,11 @@
 package spp.businesslogic.compliance.document.statemachine;
 
 import spp.businesslogic.enums.DocumentType;
+import spp.businesslogic.enums.DocumentationPhase;
 
 public class InitialPhaseState implements DocumentationState {
+
+    DocumentationPhase currentPhase = DocumentationPhase.INITIAL;
 
     @Override
     public boolean canUpload(DocumentType type) {
@@ -13,4 +16,11 @@ public class InitialPhaseState implements DocumentationState {
     public DocumentationState nextPhase() {
         return new PracticePhaseState();
     }
+
+    @Override
+    public DocumentationPhase getDocumentationPhase() {
+        return currentPhase;
+    }
+
+
 }

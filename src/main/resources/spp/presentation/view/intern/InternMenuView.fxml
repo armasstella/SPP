@@ -13,7 +13,8 @@
             fx:controller="spp.presentation.controller.intern.InternMenuController"
             minWidth="720" minHeight="520"
             styleClass="root-pane"
-            stylesheets="@/spp/presentation/css/MainStyle.css">
+            stylesheets="@/spp/presentation/css/MainStyle.css"
+            fx:id="rootMenuPane">
 
     <top>
         <VBox>
@@ -26,7 +27,7 @@
                 <javafx.scene.layout.Pane HBox.hgrow="ALWAYS" />
 
                 <VBox styleClass="right-element">
-                    <Button text="Salir" styleClass="btn-label" onAction="#goToLoginView"/>
+                    <Button text="Cerrar Sesión" styleClass="btn-label" onAction="#goToLoginView"/>
                 </VBox>
             </HBox>
             <VBox alignment="CENTER_RIGHT">

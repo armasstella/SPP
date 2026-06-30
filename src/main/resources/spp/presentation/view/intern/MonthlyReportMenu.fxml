@@ -13,7 +13,7 @@
 <?import javafx.scene.control.TableColumn?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="spp.presentation.controller.intern.MonthlyActivityRegistrationController"
+            fx:controller="spp.presentation.controller.intern.MonthlyReportMenuController"
             minWidth="720" minHeight="520"
             styleClass="root-pane"
             stylesheets="@/spp/presentation/css/MainStyle.css">
@@ -33,7 +33,7 @@
                 </padding>
                 <HBox spacing="15" alignment="CENTER_LEFT">
                     <Region HBox.hgrow="ALWAYS"/>
-                    <Button text="Registrar actividad" styleClass="btn-add" onAction="#goToActivityRegistrationView"/>
+                    <Button text="Registrar actividad" styleClass="btn-add" onAction="#goToMonthlyActivityRegistrationView"/>
                     <Button text="Generar reporte mensual" styleClass="btn-add" onAction="#goToMonthlyReportGenerationView"/>
                 </HBox>
 

@@ -171,7 +171,7 @@ public class MonthlyActivityRegistrationController implements Initializable {
 
     @FXML
     private void cancel(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyActivityRegistersView.fxml",
+        ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyReportMenu.fxml",
                 "Menú Practicante", event);
     }
 }

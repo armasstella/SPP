@@ -1,9 +1,14 @@
 package spp.presentation.controller.intern;
 
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import spp.businesslogic.dao.PrioritizedProjectDAO;
+import spp.businesslogic.dao.ProfessionalPracticeEnrollmentDAO;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.exceptions.DAOException;
@@ -11,8 +16,18 @@ import spp.presentation.controller.user.MessageCenterController;
 import spp.utils.view.alert.AlertHelper;
 import spp.utils.view.window.ViewNavigator;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class InternMenuController {
+
+public class InternMenuController implements Initializable {
+
+    @FXML private BorderPane rootMenuPane;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        Platform.runLater(this::enableViewByEnrollmentStatus);
+    }
 
     @FXML
     private void goToLoginView(ActionEvent event) {
@@ -23,8 +38,8 @@ public class InternMenuController {
 
     @FXML
     private void goToMonthlyActivityRegistrationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyActivityRegistersView.fxml",
-                "Registro de actividad", event);
+        ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyReportMenu.fxml",
+                "Menú de Reportes Mensuales", event);
     }
 
     @FXML
@@ -83,7 +98,7 @@ public class InternMenuController {
     @FXML
     private void goToSelfEvaluationView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/intern/SelfEvaluationGenerationView.fxml",
-                "Subir documentos", event);
+                "Generar Autoevaluación", event);
 
     }
 
@@ -103,13 +118,40 @@ public class InternMenuController {
     @FXML
     private void goToPartialReportView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/intern/PartialReportGenerationView.fxml",
-                "Reporte Parcial", event);
+                "Generar Reporte Parcial", event);
     }
 
     @FXML
     private void goToFinalActivityRegistrationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/FinalActivityRegistersView.fxml",
-                "Reporte Final", event);
+        ViewNavigator.loadView("/spp/presentation/view/intern/FinalReportMenu.fxml",
+                "Menú de Reporte Final", event);
     }
+
+    private void enableViewByEnrollmentStatus() {
+        if (hasEnrollmentConclude()) {
+            AlertHelper.showMessage("Prácticas finalizadas", "Ha concluido sus practicas profesionales");
+            Stage currentStage = (Stage) rootMenuPane.getScene().getWindow();
+            ViewNavigator.loadView("/spp/presentation/view/intern/EnrollmentConcludeSummaryView.fxml",
+                    "Prácticas Concluidas", currentStage);
+        }
+    }
+
+    private boolean hasEnrollmentConclude() {
+        boolean isEnrollmentConclude = false;
+
+        ProfessionalPracticeEnrollmentDAO professionalPracticeEnrollmentDAO
+                = new ProfessionalPracticeEnrollmentDAO();
+        try {
+            if (professionalPracticeEnrollmentDAO.isPracticeCompletedByInternEmail(
+                    ActiveSessionDTO.get().getEmail())) {
+                isEnrollmentConclude = true;
+            }
+        } catch (DAOException e) {
+            AlertHelper.showErrorMessage("Error", e.getMessage());
+        }
+
+        return isEnrollmentConclude;
+    }
+
 
 }

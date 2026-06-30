@@ -55,9 +55,9 @@ public class InstructorMenuController implements Initializable {
     }
 
     @FXML
-    private void goToFinalReportEvaluationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/instructor/FinalReportEvaluationView.fxml",
-                "Calificar reporte", event);
+    private void goToReviewDocumentsView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/instructor/ReviewDocumentsView.fxml",
+                "Revisión Documentos", event);
 
     }
 
@@ -68,7 +68,6 @@ public class InstructorMenuController implements Initializable {
             InstructorDAO instructorDAO = new InstructorDAO();
             UserDAO userDAO = new UserDAO();
             int instructorId = userDAO.obtainId(ActiveSessionDTO.get().getEmail());
-            System.out.println("Instructor ID: " + instructorId);
             hasInstructorCourseAssigned = instructorDAO.hasInstructorCourseAssigned(instructorId);
         } catch (DAOException e) {
             AlertHelper.showErrorMessage("Error", e.getMessage());

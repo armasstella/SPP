@@ -1,5 +1,6 @@
 package spp.businesslogic.interfaces;
 
+
 import spp.businesslogic.dto.ReportDTO;
 import spp.businesslogic.exceptions.DAOException;
 
@@ -36,18 +37,5 @@ public interface IReportDAO {
      * @throws DAOException Si ocurre un error en la capa de persistencia al insertar o actualizar la calificación.
      */
     boolean assignGrade(int documentId, String email, int grade) throws DAOException;
-
-    /**
-     * Actualiza la calificación de un documento ya calificado.
-     *
-     * Propósito: Modificar la nota previamente asignada a un documento (por ejemplo, para corregir errores o aplicar validaciones posteriores),
-     * preservando la trazabilidad y las reglas de negocio sobre cambios de calificación.
-     *
-     * @param documentId Identificador numérico del documento cuya calificación se actualizará.
-     * @param grade Nuevo valor numérico de la calificación. Debe respetar el rango y reglas de negocio definidas.
-     * @return true si la actualización de la calificación fue exitosa; false si el documento no existe o la operación incumple restricciones.
-     * @throws DAOException Si ocurre un error durante la operación de actualización en la capa de persistencia.
-     */
-    boolean updateGrade(int documentId, int grade) throws DAOException;
 
 }

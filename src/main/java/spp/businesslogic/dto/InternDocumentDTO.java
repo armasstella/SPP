@@ -1,18 +1,29 @@
 package spp.businesslogic.dto;
 
 
+import spp.businesslogic.enums.DocumentType;
+
 import java.time.LocalDateTime;
 
 
 public class InternDocumentDTO {
 
+    private int internDocumentId;
     private String originalName;
     private String savedName;
     private String filePath;
     private Double sizeMb;
     private String extension;
     private LocalDateTime uploadDate;
-    private String documentType;
+    private DocumentType documentType;
+
+    public int getInternDocumentId() {
+        return internDocumentId;
+    }
+
+    public void setInternDocumentId(int internDocumentId) {
+        this.internDocumentId = internDocumentId;
+    }
 
     public String getOriginalName() {
         return originalName;
@@ -62,12 +73,11 @@ public class InternDocumentDTO {
         this.uploadDate = uploadDate;
     }
 
-    public String getDocumentType() {
+    public DocumentType getDocumentType() {
         return documentType;
     }
 
-    public void setDocumentType(String documentType) {
+    public void setDocumentType(DocumentType documentType) {
         this.documentType = documentType;
     }
-
 }

@@ -24,109 +24,18 @@
     </top>
 
     <center>
-        <HBox>
-            <VBox>
-                <VBox styleClass="content-container" spacing="10">
-                    <padding><Insets top="20" right="32" bottom="16" left="32"/></padding>
+        <HBox spacing="20">
+            <fx:include fx:id="activitiesSection" source="FinalReportActivitiesView.fxml" />
 
-                    <Label fx:id="lblActivitiesCounter" text="0 actividades incluidas." styleClass="counter-label"/>
-
-                    <Label text="Actividades incluidas" styleClass="section-title"/>
-                    <TableView fx:id="tblIncludedActivities" styleClass="data-table" prefHeight="250">
-                        <columns>
-                            <TableColumn fx:id="colChosenActivityTitle" text="Título" prefWidth="120" reorderable="false"/>
-                            <TableColumn fx:id="colChosenActivityDescription" text="Descripción" prefWidth="180" reorderable="false"/>
-                            <TableColumn fx:id="colChosenActivityStartDate" text="Fecha Inicio" prefWidth="90" reorderable="false"/>
-                            <TableColumn fx:id="colChosenActivityEndDate" text="Fecha Fin" prefWidth="90" reorderable="false"/>
-                            <TableColumn fx:id="colChosenActivityEstimatedTime" text="T. Estimado" prefWidth="90" reorderable="false"/>
-                            <TableColumn fx:id="colChosenActivityEffectiveTime" text="T. Efectivo" prefWidth="90" reorderable="false"/>
-                            <TableColumn fx:id="colChosenActivityProgress" text="Avance %" prefWidth="80" reorderable="false"/>
-                            <TableColumn fx:id="colChosenActivityObservations" text="Observaciones" prefWidth="180" reorderable="false"/>
-                        </columns>
-                    </TableView>
-
-                    <Label text="Actividades realizadas" styleClass="section-title"/>
-                    <TableView fx:id="tblActivities" styleClass="data-table" VBox.vgrow="ALWAYS">
-                        <placeholder>
-                            <Label text="Sin registros" styleClass="field-label"/>
-                        </placeholder>
-                        <columns>
-                            <TableColumn fx:id="colActivityTitle" text="Título"
-                                         prefWidth="120"
-                                         reorderable="false"/>
-                            <TableColumn fx:id="colActivityDescription" text="Descripción"
-                                         prefWidth="180"
-                                         reorderable="false"/>
-                            <TableColumn fx:id="colActivityStartDate" text="Fecha Inicio"
-                                         prefWidth="90"
-                                         reorderable="false"/>
-                            <TableColumn fx:id="colActivityEndDate" text="Fecha Fin"
-                                         prefWidth="90"
-                                         reorderable="false"/>
-                            <TableColumn fx:id="colActivityEstimatedTime" text="T. Estimado"
-                                         prefWidth="90"
-                                         reorderable="false"/>
-                            <TableColumn fx:id="colActivityEffectiveTime" text="T. Efectivo"
-                                         prefWidth="90"
-                                         reorderable="false"/>
-                            <TableColumn fx:id="colActivityProgress" text="Avance %"
-                                         prefWidth="80"
-                                         reorderable="false"/>
-                            <TableColumn fx:id="colActivityObservations" text="Observaciones"
-                                         prefWidth="180"
-                                         reorderable="false"/>
-                        </columns>
-                    </TableView>
-                </VBox>
-            </VBox>
-            <VBox>
-                <VBox styleClass="content-container" spacing="10">
-                    <padding><Insets top="20" right="32" bottom="16" left="32"/></padding>
-
-                    <Label fx:id="lblProductsCounter" text="0 productos entregables incluidos." styleClass="counter-label"/>
-
-                    <Label text="Productos entregables incluidos" styleClass="section-title"/>
-                    <TableView fx:id="tblIncludedDeliverableProducts" styleClass="data-table" prefHeight="250">
-                        <columns>
-                            <TableColumn fx:id="colChosenDeliverableProductName" text="Nombre" prefWidth="120" reorderable="false"/>
-                            <TableColumn fx:id="colChosenDeliverableProductDescription" text="Descripción" prefWidth="180" reorderable="false"/>
-                            <TableColumn fx:id="colChosenDeliverableProductProgress" text="Avance %" prefWidth="80" reorderable="false"/>
-                            <TableColumn fx:id="colChosenDeliverableProductObservations" text="Observaciones" prefWidth="180" reorderable="false"/>
-                        </columns>
-                    </TableView>
-
-                    <Label text="Productos entregables cargados" styleClass="section-title"/>
-                    <TableView fx:id="tblDeliverableProducts" styleClass="data-table" VBox.vgrow="ALWAYS">
-                        <placeholder>
-                            <Label text="Sin registros" styleClass="field-label"/>
-                        </placeholder>
-                        <columns>
-                            <TableColumn fx:id="colDeliverableProductName" text="Nombre"
-                                         prefWidth="120"
-                                         reorderable="false"/>
-                            <TableColumn fx:id="colDeliverableProductDescription" text="Descripción"
-                                         prefWidth="180"
-                                         reorderable="false"/>
-                            <TableColumn fx:id="colDeliverableProductProgress" text="Avance %"
-                                         prefWidth="80"
-                                         reorderable="false"/>
-                            <TableColumn fx:id="colDeliverableProductObservations" text="Observaciones"
-                                         prefWidth="180"
-                                         reorderable="false"/>
-                        </columns>
-                    </TableView>
-                </VBox>
-            </VBox>
+            <fx:include fx:id="productsSection" source="FinalReportProductsView.fxml" />
         </HBox>
-
     </center>
 
     <bottom>
         <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
-            <padding><Insets top="12" right="32" bottom="16" left="32"/></padding>
             <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" HBox.hgrow="ALWAYS"/>
-            <Button text="Regresar" styleClass="btn-back" onAction="#goToInternMenuView"/>
-            <Button text="Generar reporte" styleClass="btn-add" onAction="#generateReport"/>
+            <Button text="Cancelar" onAction="#goToInternMenuView" styleClass="btn-danger"/>
+            <Button text="Generar Reporte" onAction="#generateReport" styleClass="btn-primary"/>
         </HBox>
     </bottom>
 

@@ -2,6 +2,7 @@ package spp.businesslogic.interfaces;
 
 
 import spp.businesslogic.dto.InternDTO;
+import spp.businesslogic.enums.DocumentationPhase;
 import spp.businesslogic.exceptions.DAOException;
 import java.util.List;
 
@@ -93,6 +94,7 @@ public interface IInternDAO{
      * @throws DAOException Si ocurre un error en la capa de persistencia al realizar la consulta.
      */
     List<InternDTO> getAssignedInternsByProfessorEmail(String email) throws DAOException;
+    DocumentationPhase findCurrentDocumentationPhaseById(int internId) throws DAOException;
 
 }
 

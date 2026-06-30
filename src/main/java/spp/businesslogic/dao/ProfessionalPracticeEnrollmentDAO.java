@@ -1,6 +1,7 @@
 package spp.businesslogic.dao;
 
 
+import spp.businesslogic.dto.InternEnrollmentConcludeDTO;
 import spp.businesslogic.dto.ProfessionalPracticeEnrollmentDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IProfessionalPracticeEnrollmentDAO;
@@ -11,6 +12,7 @@ import spp.utils.logger.AppLogger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLTimeoutException;
@@ -132,4 +134,62 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
 
         return isCourseAssigned;
     }
+
+    @Override
+    public boolean isPracticeCompletedByInternEmail(String email) throws DAOException {
+        final String CHECK_COMPLETED = "SELECT f_estudiante_concluyo_periodo_activo(?)";
+        boolean isCompleted = false;
+
+        try (Connection connection = MySQLConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(CHECK_COMPLETED)) {
+
+            preparedStatement.setString(1, email);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    isCompleted = resultSet.getBoolean(1);
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error al verificar si la práctica está concluida.", e);
+        }
+        return isCompleted;
+    }
+
+    public InternEnrollmentConcludeDTO getEnrollmentConcludeDatayByInternEmail(String email) throws DAOException {
+        String query = "SELECT * FROM view_resumen_inscripcion_concluida WHERE correo_electronico = ?";
+        InternEnrollmentConcludeDTO enrollmentConcludeDTO = null;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        enrollmentConcludeDTO = new InternEnrollmentConcludeDTO();
+
+                        enrollmentConcludeDTO.setStudentEmail(resultSet.getString("correo_electronico"));
+                        enrollmentConcludeDTO.setStudentName(resultSet.getString("nombre_alumno"));
+                        enrollmentConcludeDTO.setStudentNumber(resultSet.getString("matricula"));
+                        enrollmentConcludeDTO.setProjectName(resultSet.getString("nombre_proyecto"));
+                        enrollmentConcludeDTO.setCompanyName(resultSet.getString("nombre_empresa"));
+                        enrollmentConcludeDTO.setInstructorName(resultSet.getString("nombre_profesor"));
+
+                        int grade = resultSet.getInt("calificacion_final");
+                        if (!resultSet.wasNull()) {
+                            enrollmentConcludeDTO.setFinalGrade(grade);
+                        } else {
+                            enrollmentConcludeDTO.setFinalGrade(null);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error al obtener resumen de inscripción concluida ", e);
+        }
+
+        return enrollmentConcludeDTO;
+    }
+
 }

@@ -7,8 +7,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import spp.businesslogic.dao.ProfessionalPracticeEnrollmentDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
+import spp.businesslogic.dto.InternEnrollmentConcludeDTO;
 import spp.businesslogic.dto.ReportDocumentFileDTO;
+import spp.businesslogic.exceptions.DAOException;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.window.ViewNavigator;
 
@@ -18,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class EnrollmentCompletionSummaryController implements Initializable {
+public class EnrollmentConcludeSummaryController implements Initializable {
 
     @FXML private Label lblStudentName;
     @FXML private Label lblStudentNumber;
@@ -26,63 +29,40 @@ public class EnrollmentCompletionSummaryController implements Initializable {
     @FXML private Label lblCompanyName;
     @FXML private Label lblInstructorName;
     @FXML private Label lblFinalGrade;
-
     @FXML private ComboBox<String> cmbDocumentCategory;
     @FXML private ComboBox<ReportDocumentFileDTO> cmbUploadedDocuments;
     @FXML private PDFView pdfView;
     @FXML private Label lblStatus;
 
-    // Aquí irían las instancias de los DAOs (ProjectDAO, InternDAO, FinalReportDAO, etc.)
-    // private final ProjectDAO projectDAO = new ProjectDAO();
-    // private final DocumentDAO documentDAO = new DocumentDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        loadInternInformation();
-        loadProjectInformation();
-        loadFinalGrade();
+        loadSummaryInformation();
         loadDocumentCategories();
         resetDocumentSelectionArea();
     }
 
-    private void loadInternInformation() {
-        // Supuesta llamada al DAO para obtener la información básica del estudiante:
-        // try {
-        //     InternDTO intern = internDAO.getInternByEmail(ActiveSessionDTO.get().getEmail());
-        //     lblStudentName.setText("Nombre: " + intern.getFullName());
-        //     lblStudentNumber.setText("Matrícula: " + intern.getStudentNumber());
-        // } catch (DAOException e) {
-        //     StatusLabel.showError(lblStatus, e.getMessage());
-        // }
+    private void loadSummaryInformation() {
+        String activeEmail = ActiveSessionDTO.get().getEmail();
+        ProfessionalPracticeEnrollmentDAO professionalPracticeEnrollmentDAO = new ProfessionalPracticeEnrollmentDAO();
+        try {
+            InternEnrollmentConcludeDTO enrollmentConcludeDTO = professionalPracticeEnrollmentDAO.getEnrollmentConcludeDatayByInternEmail(activeEmail);
+            if (enrollmentConcludeDTO != null) {
+                lblStudentName.setText("Nombre: " + enrollmentConcludeDTO.getStudentName());
+                lblStudentNumber.setText("Matrícula: " + enrollmentConcludeDTO.getStudentNumber());
+                lblProjectName.setText("Proyecto: " + enrollmentConcludeDTO.getProjectName());
+                lblCompanyName.setText("Empresa: " + enrollmentConcludeDTO.getCompanyName());
+                lblInstructorName.setText("Profesor: " + enrollmentConcludeDTO.getInstructorName());
 
-        lblStudentName.setText("Email: " + ActiveSessionDTO.get().getEmail());
-        lblStudentNumber.setText("Matrícula: " + "Recuperando de BD...");
-    }
-
-    private void loadProjectInformation() {
-        // Supuesta llamada al DAO para obtener los detalles del proyecto ligado al estudiante:
-        // try {
-        //     ProjectDTO project = projectDAO.getAssignedProjectByStudent(ActiveSessionDTO.get().getEmail());
-        //     lblProjectName.setText("Proyecto: " + project.getName());
-        //     lblCompanyName.setText("Empresa: " + project.getCompanyName());
-        //     lblInstructorName.setText("Profesor asignado: " + project.getInstructorName());
-        // } catch (DAOException e) {
-        //     StatusLabel.showError(lblStatus, e.getMessage());
-        // }
-    }
-
-    private void loadFinalGrade() {
-        // Supuesta llamada al DAO para obtener la calificación final o del reporte final:
-        // try {
-        //     FinalGradeDTO grade = finalReportDAO.getFinalGrade(ActiveSessionDTO.get().getEmail());
-        //     if (grade != null && grade.isAssigned()) {
-        //         lblFinalGrade.setText("Calificación: " + grade.getValue());
-        //     } else {
-        //         lblFinalGrade.setText("Calificación: Pendiente");
-        //     }
-        // } catch (DAOException e) {
-        //     StatusLabel.showError(lblStatus, e.getMessage());
-        // }
+                if (enrollmentConcludeDTO.getFinalGrade() != null) {
+                    lblFinalGrade.setText("Calificación Final: " + enrollmentConcludeDTO.getFinalGrade());
+                } else {
+                    lblFinalGrade.setText("Calificación Final: Pendiente");
+                }
+            }
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, e.getMessage());
+        }
     }
 
     private void loadDocumentCategories() {
@@ -150,8 +130,9 @@ public class EnrollmentCompletionSummaryController implements Initializable {
     }
 
     @FXML
-    public void goToInternMenuView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/InternMenuView.fxml",
-                "Menú Practicante", event);
+    private void goToLoginView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/LoginView.fxml",
+                "Inicia sesión", event);
+
     }
 }

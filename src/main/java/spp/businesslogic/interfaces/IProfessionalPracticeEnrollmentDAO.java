@@ -1,6 +1,7 @@
 package spp.businesslogic.interfaces;
 
 
+import spp.businesslogic.dto.InternEnrollmentConcludeDTO;
 import spp.businesslogic.dto.ProfessionalPracticeEnrollmentDTO;
 import spp.businesslogic.exceptions.DAOException;
 
@@ -52,5 +53,7 @@ public interface IProfessionalPracticeEnrollmentDAO {
      * @throws DAOException Si ocurre un error en la capa de persistencia al ejecutar la actualización.
      */
     boolean assignCourseByStudentNumber(String studentNumber, int courseId) throws DAOException;
+    boolean isPracticeCompletedByInternEmail(String email) throws DAOException;
+    InternEnrollmentConcludeDTO getEnrollmentConcludeDatayByInternEmail(String email) throws DAOException;
 
 }

@@ -23,7 +23,7 @@ public class DeliverableProductDAO implements IDeliverableProductDAO {
     public boolean saveDeliverableProductForIntern(String studentNumber, DeliverableProductDTO deliverableProductDTO) throws DAOException {
         final String INSERT_PRODUCT = "INSERT INTO productos_entregables " +
                 "(nombre, descripcion, avance, observaciones, id_usuario_practicante, matricula) " +
-                "SELECT ?, ?, ?, ?, p.id_usuario, p.matricula" +
+                "SELECT ?, ?, ?, ?, p.id_usuario, p.matricula " +
                 "FROM practicantes p WHERE p.matricula = ?";
         boolean isInsertSuccessful = false;
 

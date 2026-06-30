@@ -24,4 +24,10 @@ public class PasswordHasher {
 
     }
 
+    public static  void main(String[] args) {
+        PasswordHasher passwordHasher = new PasswordHasher();
+        String hashedPassword = passwordHasher.hashPassword("CONTRASEa123!");
+        System.out.println(hashedPassword);
+    }
+
 }
