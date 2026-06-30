@@ -53,8 +53,43 @@ public interface IProfessionalPracticeEnrollmentDAO {
      * @throws DAOException Si ocurre un error en la capa de persistencia al ejecutar la actualización.
      */
     boolean assignCourseByStudentNumber(String studentNumber, int courseId) throws DAOException;
+
+    /**
+     * Verifica si la práctica profesional de un practicante identificado por su correo ha sido completada.
+     *
+     * Propósito: Determinar si el practicante ha finalizó exitosamente todos los requisitos de la práctica profesional,
+     * incluyendo entrega de documentos, calificaciones y cumplimiento de todas las fases.
+     *
+     * @param email Correo electrónico del practicante a verificar. No debe ser null ni vacío.
+     * @return true si la práctica está completada; false si aún está en proceso o no cumple los requisitos.
+     * @throws DAOException Si ocurre un error al consultar la persistencia.
+     */
     boolean isPracticeCompletedByInternEmail(String email) throws DAOException;
+
+    /**
+     * Obtiene los datos necesarios para concluir o finalizar la inscripción de un practicante identificado por su correo.
+     *
+     * Propósito: Recuperar toda la información requerida para cerrar o concluir una inscripción (calificación final,
+     * fecha de cierre, observaciones, estado de documentación, etc.), permitiendo procesar la liberación del practicante.
+     *
+     * @param email Correo electrónico del practicante cuya información de conclusión se desea obtener. No debe ser null ni vacío.
+     * @return InternEnrollmentConcludeDTO con los datos para la conclusión de la inscripción; puede devolver null si la inscripción no existe.
+     * @throws DAOException Si ocurre un error al acceder a la persistencia o mapear los resultados.
+     */
     InternEnrollmentConcludeDTO getEnrollmentConcludeDatayByInternEmail(String email) throws DAOException;
+
+    /**
+     * Asigna la calificación final a una inscripción de práctica identificada por el id del practicante y su matrícula.
+     *
+     * Propósito: Registrar la nota final que el practicante obtiene al completar su práctica profesional,
+     * consolidando todas las evaluaciones previas en una calificación definitiva para el cierre de la inscripción.
+     *
+     * @param internId Identificador numérico del practicante cuya calificación final se asignará.
+     * @param studentNumber Matrícula o identificador único del practicante (para validación y trazabilidad). No debe ser null ni vacío.
+     * @param finalGrade Valor numérico de la calificación final (respeta el rango definido por la lógica de negocio, por ejemplo 0-10 o 0-100).
+     * @return true si la asignación de la calificación final fue exitosa; false si no se pudo completar por restricciones.
+     * @throws DAOException Si ocurre un error en la capa de persistencia al guardar o actualizar la calificación final.
+     */
     boolean assignFinalGrade(int internId, String studentNumber, int finalGrade) throws DAOException;
 
 }

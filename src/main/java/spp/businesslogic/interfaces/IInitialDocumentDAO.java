@@ -120,7 +120,19 @@ public interface IInitialDocumentDAO {
      * @throws DAOException Si ocurre un error en la capa de persistencia al guardar o actualizar la calificación.
      */
     boolean assignGrade(int documentId, int grade, String comments) throws DAOException;
+
+    /**
+     * Recupera los documentos asociados a una inscripción ya concluida, identificada por el correo del practicante.
+     *
+     * Propósito: Obtener todos los documentos presentados por un practicante cuya inscripción ya ha sido finalizada,
+     * permitiendo generar un archivo histórico, reportes finales o auditorías de los entregables de la práctica.
+     *
+     * @param email Correo electrónico del practicante cuya inscripción concluida se asocia. No debe ser null ni vacío.
+     * @return Lista de InternDocumentDTO con todos los documentos vinculados a la inscripción concluida; devuelve una lista vacía si no hay documentos.
+     * @throws DAOException Si ocurre un error al acceder a la persistencia o al mapear los resultados.
+     */
     List<InternDocumentDTO> getDocumentsByConcludedEnrollment(String email) throws DAOException;
+
 
 }
 

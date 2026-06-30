@@ -36,6 +36,4 @@ public interface IReportDAO {
      * @return true si la asignación de la calificación fue exitosa; false si la operación no se pudo completar por reglas de negocio.
      * @throws DAOException Si ocurre un error en la capa de persistencia al insertar o actualizar la calificación.
      */
-    boolean assignGrade(int documentId, String email, int grade) throws DAOException;
-
 }

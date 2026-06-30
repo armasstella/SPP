@@ -94,8 +94,31 @@ public interface IInternDAO{
      * @throws DAOException Si ocurre un error en la capa de persistencia al realizar la consulta.
      */
     List<InternDTO> getAssignedInternsByProfessorEmail(String email) throws DAOException;
+
+    /**
+     * Obtiene la fase actual de documentación de un practicante identificado por su id.
+     *
+     * Propósito: Recuperar el estado o fase actual del proceso de documentación del practicante (por ejemplo, inicial, intermedia, final),
+     * permitiendo un seguimiento detallado del progreso en la entrega de documentos y facilitando decisiones sobre pasos siguientes.
+     *
+     * @param internId Identificador numérico del practicante cuya fase de documentación se desea recuperar.
+     * @return DocumentationPhase (enum) que representa la fase actual de documentación; puede devolver null si no existe fase registrada.
+     * @throws DAOException Si ocurre un error al consultar la persistencia.
+     */
     DocumentationPhase findCurrentDocumentationPhaseById(int internId) throws DAOException;
+
+    /**
+     * Recupera los practicantes listos para ser liberados (dados de alta) de un profesor identificado por su correo.
+     *
+     * Propósito: Obtener la lista de practicantes cuya documentación está completa y que cumplen con los requisitos para finalizar su práctica,
+     * permitiendo al profesor gestionar el proceso de liberación o cierre de inscripciones.
+     *
+     * @param email Correo electrónico del profesor cuyos practicantes listos para liberación se desean recuperar. No debe ser null ni vacío.
+     * @return Lista de InternDTO con los practicantes del profesor que cumplen criterios para liberación; devuelve una lista vacía si no hay candidatos.
+     * @throws DAOException Si ocurre un error en la capa de persistencia al realizar la consulta.
+     */
     List<InternDTO> getInternsReadyForReleaseByProfessorEmail(String email) throws DAOException;
+
 
 }
 
