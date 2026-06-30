@@ -25,7 +25,6 @@ public class ReviewDocumentController implements Initializable, InternSelectionL
     @FXML private DocumentEvaluatorController documentEvaluatorController;
 
     private InternDTO currentlySelectedIntern;
-    private final InternDAO internDAO = new InternDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -41,10 +40,6 @@ public class ReviewDocumentController implements Initializable, InternSelectionL
             InternDocumentManager internDocumentManager = new InternDocumentManager();
             List<InternDTO> prioritizedInterns = internDocumentManager.getPrioritizedInternsForProfessor(professorEmail);
 
-            String courseName = "Prácticas Profesionales";
-            String nrc = "84729";
-
-            internSelectorController.loadCourseInformation(courseName, nrc);
             internSelectorController.displayInterns(prioritizedInterns);
 
         } catch (DAOException exception) {
