@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectManagerDAO implements IProjectManagerDAO {
+public class ProjectManagerDAO implements IProjectManagerDAO {
 
     public ProjectManagerDAO() {
     }

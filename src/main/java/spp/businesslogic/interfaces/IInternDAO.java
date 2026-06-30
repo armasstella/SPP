@@ -95,6 +95,7 @@ public interface IInternDAO{
      */
     List<InternDTO> getAssignedInternsByProfessorEmail(String email) throws DAOException;
     DocumentationPhase findCurrentDocumentationPhaseById(int internId) throws DAOException;
+    List<InternDTO> getInternsReadyForReleaseByProfessorEmail(String email) throws DAOException;
 
 }
 

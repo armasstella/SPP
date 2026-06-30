@@ -308,6 +308,7 @@ public class InternDAO implements IInternDAO {
         return currentPhase;
     }
 
+    @Override
     public List<InternDTO> getInternsReadyForReleaseByProfessorEmail(String email) throws DAOException {
         List<InternDTO> assignedInterns = new ArrayList<InternDTO>();
         final String SELECT_ASSIGNED_INTERNS = "SELECT p.id_usuario, p.matricula, u.nombre, u.apellidos, " +

@@ -4,6 +4,8 @@ package spp.businesslogic.interfaces;
 import spp.businesslogic.dto.InternDocumentDTO;
 import spp.businesslogic.exceptions.DAOException;
 
+import java.util.List;
+
 
 public interface IInitialDocumentDAO {
 
@@ -16,5 +18,6 @@ public interface IInitialDocumentDAO {
     boolean hasSelfEvaluationByInternEmail(String email) throws DAOException;
     boolean hasEvaluationLinkedOrganizationByInternEmail(String email) throws DAOException;
     boolean assignGrade(int documentId, int grade, String comments) throws DAOException;
+    List<InternDocumentDTO> getDocumentsByConcludedEnrollment(String email) throws DAOException;
 
 }

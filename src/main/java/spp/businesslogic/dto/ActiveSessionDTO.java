@@ -18,9 +18,6 @@ public class ActiveSessionDTO {
     }
 
     public static SessionDTO get() {
-        if (sessionDTO == null) {
-            throw new IllegalStateException("No hay sesión activa");
-        }
         return sessionDTO;
     }
 

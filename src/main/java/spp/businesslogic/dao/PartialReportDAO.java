@@ -22,6 +22,7 @@ public class PartialReportDAO implements IPartialReportDAO {
     public PartialReportDAO() {
     }
 
+    @Override
     public PartialReportDTO findReportHeaderByStudentNumber(String studentNumber) throws DAOException {
         final String SELECT_REPORT_HEADER = "SELECT nrc, profesor, periodo, alumno, organizacion, proyecto, horas_cubiertas " +
                 "FROM view_detalle_reporte " +
@@ -51,6 +52,7 @@ public class PartialReportDAO implements IPartialReportDAO {
 
         return partialReport;
     }
+
 
     private PartialReportDTO buildReportHeaderFromResultSet(ResultSet resultSet, String studentNumber)
             throws SQLException {

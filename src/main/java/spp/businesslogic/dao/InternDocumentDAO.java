@@ -432,6 +432,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
         return hasReleaseLetter;
     }
 
+    @Override
     public List<InternDocumentDTO> getDocumentsByConcludedEnrollment(String email) throws DAOException {
         final String SELECT_DOCUMENTS = "SELECT dp.id_documentos_iniciales, dp.nombre_original, dp.nombre_almacenado, " +
                         "dp.ruta_archivo, dp.tamaño_mb, dp.extension, dp.fecha_subida, dp.tipo " +
