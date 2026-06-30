@@ -23,8 +23,8 @@ public class InternMenuController {
 
     @FXML
     private void goToMonthlyActivityRegistrationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyActivityRegistersView.fxml",
-                "Registro de actividad", event);
+        ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyReportMenu.fxml",
+                "Menú de Reportes Mensuales", event);
     }
 
     @FXML
@@ -83,7 +83,7 @@ public class InternMenuController {
     @FXML
     private void goToSelfEvaluationView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/intern/SelfEvaluationGenerationView.fxml",
-                "Subir documentos", event);
+                "Generar Autoevaluación", event);
 
     }
 
@@ -103,13 +103,13 @@ public class InternMenuController {
     @FXML
     private void goToPartialReportView(ActionEvent event) {
         ViewNavigator.loadView("/spp/presentation/view/intern/PartialReportGenerationView.fxml",
-                "Reporte Parcial", event);
+                "Generar Reporte Parcial", event);
     }
 
     @FXML
     private void goToFinalActivityRegistrationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/FinalActivityRegistersView.fxml",
-                "Reporte Final", event);
+        ViewNavigator.loadView("/spp/presentation/view/intern/FinalReportMenu.fxml",
+                "Menú de Reporte Final", event);
     }
 
 }

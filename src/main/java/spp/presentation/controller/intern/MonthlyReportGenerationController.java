@@ -175,7 +175,7 @@ public class MonthlyReportGenerationController implements Initializable {
 
     private void openActivityEdit(ActivityDTO activity) {
         try {
-            URL fxmlResource = getClass().getResource("/spp/presentation/view/intern/ActivityEditView.fxml");
+            URL fxmlResource = getClass().getResource("/spp/presentation/view/intern/ActivityEditionView.fxml");
             FXMLLoader loader = new FXMLLoader(fxmlResource);
             Parent editRoot = loader.load();
 
@@ -301,7 +301,7 @@ public class MonthlyReportGenerationController implements Initializable {
     @FXML
     private void goToInternMenuView(ActionEvent event) {
         ViewNavigator.loadView(
-                "/spp/presentation/view/intern/MonthlyActivityRegistersView.fxml",
+                "/spp/presentation/view/intern/MonthlyReportMenu.fxml",
                 "Menú Practicante",
                 event
         );

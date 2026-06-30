@@ -13,7 +13,7 @@
 <?import javafx.scene.control.TableColumn?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="spp.presentation.controller.intern.FinalActivityRegistersController"
+            fx:controller="spp.presentation.controller.intern.FinalReportMenuController"
             minWidth="720" minHeight="520"
             styleClass="root-pane"
             stylesheets="@/spp/presentation/css/MainStyle.css">

@@ -38,4 +38,9 @@ public class DocumentationWorkflowManager {
     public boolean isUploadAllowed(DocumentType type) {
         return currentState.canUpload(type);
     }
+
+    public DocumentationPhase getCurrentPhase() {
+        return currentState.getDocumentationPhase();
+    }
+
 }
