@@ -308,4 +308,50 @@ public class InternDAO implements IInternDAO {
         return currentPhase;
     }
 
+    public List<InternDTO> getInternsReadyForReleaseByProfessorEmail(String email) throws DAOException {
+        List<InternDTO> assignedInterns = new ArrayList<InternDTO>();
+        final String SELECT_ASSIGNED_INTERNS = "SELECT p.id_usuario, p.matricula, u.nombre, u.apellidos, " +
+                "i.calificacion_final " +
+                "FROM experiencias_educativas ee " +
+                "INNER JOIN usuarios up ON ee.id_usuario_profesor = up.id_usuario " +
+                "INNER JOIN inscripciones_practicas_profesionales i " +
+                "    ON i.id_experiencia_educativa = ee.id_experiencia_educativa " +
+                "INNER JOIN practicantes p " +
+                "    ON i.id_usuario_practicante = p.id_usuario AND i.matricula = p.matricula " +
+                "INNER JOIN usuarios u ON p.id_usuario = u.id_usuario " +
+                "WHERE up.correo_electronico = ?";
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ASSIGNED_INTERNS);
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                InternDTO intern = buildInternFromResultSet(resultSet);
+                assignedInterns.add(intern);
+            }
+            resultSet.close();
+        } catch (SQLException sqlException) {
+            AppLogger.log(ExceptionLevel.ERROR, sqlException);
+            throw new DAOException("Error al obtener los practicantes asignados");
+        }
+        return assignedInterns;
+    }
+
+    private InternDTO buildInternFromResultSet(ResultSet resultSet) throws SQLException {
+        InternDTO intern = new InternDTO();
+        intern.setId(resultSet.getInt("id_usuario"));
+        intern.setStudentNumber(resultSet.getString("matricula"));
+        intern.setFirstName(resultSet.getString("nombre"));
+        intern.setFirstLastName(resultSet.getString("apellidos"));
+        int gradeValue = resultSet.getInt("calificacion_final");
+        boolean gradeIsNull = resultSet.wasNull();
+        if (gradeIsNull) {
+            intern.setFinalGrade(null);
+        } else {
+            intern.setFinalGrade(gradeValue);
+        }
+
+        return intern;
+    }
+
 }

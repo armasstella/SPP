@@ -61,6 +61,13 @@ public class InstructorMenuController implements Initializable {
 
     }
 
+    @FXML
+    private void goToPracticeReleaseView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/instructor/PracticeReleaseView.fxml",
+                "Revisión Documentos", event);
+
+    }
+
     private void verifyCourseAssignation() {
         boolean hasInstructorCourseAssigned = false;
 

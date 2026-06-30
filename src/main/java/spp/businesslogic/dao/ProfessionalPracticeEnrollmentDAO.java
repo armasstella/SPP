@@ -192,4 +192,29 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
         return enrollmentConcludeDTO;
     }
 
+    @Override
+    public boolean assignFinalGrade(int internId, String studentNumber, int finalGrade) throws DAOException {
+        final String ASSIGN_FINAL_GRADE = "UPDATE inscripciones_practicas_profesionales " +
+                "SET calificacion_final = ?, estado = 'Concluida' " +
+                "WHERE id_usuario_practicante = ? AND matricula = ?";
+        boolean isGradeAssigned = false;
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(ASSIGN_FINAL_GRADE)) {
+                preparedStatement.setInt(1, finalGrade);
+                preparedStatement.setInt(2, internId);
+                preparedStatement.setString(3, studentNumber);
+                int affectedRows = preparedStatement.executeUpdate();
+                if (affectedRows > DAOResultConstant.NO_ROWS_AFFECTED) {
+                    isGradeAssigned = true;
+                }
+            }
+
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.ERROR, e);
+            throw new DAOException("Error al asignar la calificación final", e);
+        }
+        return isGradeAssigned;
+    }
+
 }

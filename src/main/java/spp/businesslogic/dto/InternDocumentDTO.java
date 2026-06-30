@@ -80,4 +80,11 @@ public class InternDocumentDTO {
     public void setDocumentType(DocumentType documentType) {
         this.documentType = documentType;
     }
+
+    @Override
+    public String toString() {
+        String typeName = (documentType != null) ? documentType.name() : "DOCUMENTO";
+        return typeName + " - " + originalName;
+    }
 }
+

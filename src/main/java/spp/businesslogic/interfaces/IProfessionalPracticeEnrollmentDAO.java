@@ -55,5 +55,6 @@ public interface IProfessionalPracticeEnrollmentDAO {
     boolean assignCourseByStudentNumber(String studentNumber, int courseId) throws DAOException;
     boolean isPracticeCompletedByInternEmail(String email) throws DAOException;
     InternEnrollmentConcludeDTO getEnrollmentConcludeDatayByInternEmail(String email) throws DAOException;
+    boolean assignFinalGrade(int internId, String studentNumber, int finalGrade) throws DAOException;
 
 }

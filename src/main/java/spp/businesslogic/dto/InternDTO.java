@@ -14,6 +14,7 @@ public class InternDTO extends UserDTO {
     private String indigenousLanguage;
     private LocalDateTime birthDate;
     private List<InternDocumentReviewDTO> documents;
+    private Integer finalGrade;
 
     public InternDTO() {
         super();
@@ -81,6 +82,14 @@ public class InternDTO extends UserDTO {
 
     public void setDocuments(List<InternDocumentReviewDTO> documents) {
         this.documents = documents;
+    }
+
+    public Integer getFinalGrade() {
+        return finalGrade;
+    }
+
+    public void setFinalGrade(Integer finalGrade) {
+        this.finalGrade = finalGrade;
     }
 
     @Override

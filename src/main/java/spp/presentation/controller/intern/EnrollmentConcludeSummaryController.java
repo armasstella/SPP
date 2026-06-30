@@ -7,17 +7,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.util.StringConverter;
+import spp.businesslogic.dao.InternDocumentDAO;
 import spp.businesslogic.dao.ProfessionalPracticeEnrollmentDAO;
+// Importa tu DAO de documentos aquí, ej: import spp.businesslogic.dao.DocumentDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.InternEnrollmentConcludeDTO;
-import spp.businesslogic.dto.ReportDocumentFileDTO;
+import spp.businesslogic.dto.InternDocumentDTO; // <-- DTO actualizado
 import spp.businesslogic.exceptions.DAOException;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.window.ViewNavigator;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -29,33 +31,30 @@ public class EnrollmentConcludeSummaryController implements Initializable {
     @FXML private Label lblCompanyName;
     @FXML private Label lblInstructorName;
     @FXML private Label lblFinalGrade;
-    @FXML private ComboBox<String> cmbDocumentCategory;
-    @FXML private ComboBox<ReportDocumentFileDTO> cmbUploadedDocuments;
+    @FXML private ComboBox<InternDocumentDTO> cmbUploadedDocuments;
     @FXML private PDFView pdfView;
     @FXML private Label lblStatus;
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadSummaryInformation();
-        loadDocumentCategories();
-        resetDocumentSelectionArea();
+        loadAllDocuments();
     }
 
     private void loadSummaryInformation() {
         String activeEmail = ActiveSessionDTO.get().getEmail();
-        ProfessionalPracticeEnrollmentDAO professionalPracticeEnrollmentDAO = new ProfessionalPracticeEnrollmentDAO();
+        ProfessionalPracticeEnrollmentDAO enrollmentDAO = new ProfessionalPracticeEnrollmentDAO();
         try {
-            InternEnrollmentConcludeDTO enrollmentConcludeDTO = professionalPracticeEnrollmentDAO.getEnrollmentConcludeDatayByInternEmail(activeEmail);
-            if (enrollmentConcludeDTO != null) {
-                lblStudentName.setText("Nombre: " + enrollmentConcludeDTO.getStudentName());
-                lblStudentNumber.setText("Matrícula: " + enrollmentConcludeDTO.getStudentNumber());
-                lblProjectName.setText("Proyecto: " + enrollmentConcludeDTO.getProjectName());
-                lblCompanyName.setText("Empresa: " + enrollmentConcludeDTO.getCompanyName());
-                lblInstructorName.setText("Profesor: " + enrollmentConcludeDTO.getInstructorName());
+            InternEnrollmentConcludeDTO enrollmentDTO = enrollmentDAO.getEnrollmentConcludeDatayByInternEmail(activeEmail);
+            if (enrollmentDTO != null) {
+                lblStudentName.setText("Nombre: " + enrollmentDTO.getStudentName());
+                lblStudentNumber.setText("Matrícula: " + enrollmentDTO.getStudentNumber());
+                lblProjectName.setText("Proyecto: " + enrollmentDTO.getProjectName());
+                lblCompanyName.setText("Empresa: " + enrollmentDTO.getCompanyName());
+                lblInstructorName.setText("Profesor: " + enrollmentDTO.getInstructorName());
 
-                if (enrollmentConcludeDTO.getFinalGrade() != null) {
-                    lblFinalGrade.setText("Calificación Final: " + enrollmentConcludeDTO.getFinalGrade());
+                if (enrollmentDTO.getFinalGrade() != null) {
+                    lblFinalGrade.setText("Calificación Final: " + enrollmentDTO.getFinalGrade());
                 } else {
                     lblFinalGrade.setText("Calificación Final: Pendiente");
                 }
@@ -65,49 +64,27 @@ public class EnrollmentConcludeSummaryController implements Initializable {
         }
     }
 
-    private void loadDocumentCategories() {
-        List<String> categories = new ArrayList<>();
-        categories.add("Documentos Iniciales");
-        categories.add("Documentos de Prácticas");
-        categories.add("Documentos de Cierre");
+    private void loadAllDocuments() {
+        String email = ActiveSessionDTO.get().getEmail();
+        InternDocumentDAO internDocumentDAO = new InternDocumentDAO();
 
-        cmbDocumentCategory.setItems(FXCollections.observableArrayList(categories));
-    }
+        try {
+            List<InternDocumentDTO> documents = internDocumentDAO.getDocumentsByConcludedEnrollment(email);
 
-    @FXML
-    public void onCategorySelected(ActionEvent event) {
-        String selectedCategory = cmbDocumentCategory.getValue();
-        if (selectedCategory != null) {
-            loadDocumentsByCategory(selectedCategory);
+            if (!documents.isEmpty()) {
+                cmbUploadedDocuments.setItems(FXCollections.observableArrayList(documents));
+                StatusLabel.showSuccess(lblStatus, "Documentos cargados correctamente.");
+            } else {
+                StatusLabel.showError(lblStatus, "No se encontraron documentos para esta inscripción.");
+            }
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus,  e.getMessage());
         }
-    }
-
-    private void loadDocumentsByCategory(String category) {
-        cmbUploadedDocuments.getItems().clear();
-        cmbUploadedDocuments.setDisable(true);
-        // Reseteamos el visor PDF por si había otro abierto
-        // pdfView.unload(); // Dependiendo de la API específica de pdfviewfx, puede haber un clear() o se deja vacío
-
-        // Supuesta llamada al DAO para recuperar la lista de documentos según la categoría elegida:
-        // try {
-        //     List<ReportDocumentFileDTO> documents = documentDAO.getDocumentsByCategoryAndIntern(category, ActiveSessionDTO.get().getEmail());
-        //     if (!documents.isEmpty()) {
-        //         for (ReportDocumentFileDTO doc : documents) {
-        //             cmbUploadedDocuments.getItems().add(doc);
-        //         }
-        //         cmbUploadedDocuments.setDisable(false);
-        //         StatusLabel.showSuccess(lblStatus, "Documentos cargados para la categoría: " + category);
-        //     } else {
-        //         StatusLabel.showError(lblStatus, "No hay documentos subidos en esta categoría.");
-        //     }
-        // } catch (DAOException e) {
-        //     StatusLabel.showError(lblStatus, e.getMessage());
-        // }
     }
 
     @FXML
     public void onDocumentSelected(ActionEvent event) {
-        ReportDocumentFileDTO selectedDocument = cmbUploadedDocuments.getValue();
+        InternDocumentDTO selectedDocument = cmbUploadedDocuments.getValue();
         if (selectedDocument != null) {
             displayPdf(selectedDocument.getFilePath());
         }
@@ -119,20 +96,12 @@ public class EnrollmentConcludeSummaryController implements Initializable {
             pdfView.load(pdfFile);
             StatusLabel.showSuccess(lblStatus, "Documento visualizado correctamente.");
         } else {
-            StatusLabel.showError(lblStatus, "El archivo PDF no se encontró en el servidor local.");
+            StatusLabel.showError(lblStatus, "El archivo PDF no se encontró en la ruta especificada.");
         }
-    }
-
-    private void resetDocumentSelectionArea() {
-        cmbDocumentCategory.getSelectionModel().clearSelection();
-        cmbUploadedDocuments.getItems().clear();
-        cmbUploadedDocuments.setDisable(true);
     }
 
     @FXML
     private void goToLoginView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/LoginView.fxml",
-                "Inicia sesión", event);
-
+        ViewNavigator.loadView("/spp/presentation/view/LoginView.fxml", "Inicia sesión", event);
     }
 }

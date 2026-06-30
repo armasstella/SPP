@@ -54,11 +54,9 @@
                 <Label fx:id="lblFinalGrade" text="Calificación: Pendiente" styleClass="field-label"/>
 
                 <Label text="Selección de Documentos" styleClass="section-title"/>
-                <Label text="Categoría de documento:" styleClass="field-label"/>
-                <ComboBox fx:id="cmbDocumentCategory" onAction="#onCategorySelected" styleClass="combo-box-custom" maxWidth="Infinity"/>
 
-                <Label text="Documento subido:" styleClass="field-label" />
-                <ComboBox fx:id="cmbUploadedDocuments" onAction="#onDocumentSelected" disable="true" styleClass="combo-box-custom" maxWidth="Infinity"/>
+                <Label text="Documentos subidos:" styleClass="field-label" />
+                <ComboBox fx:id="cmbUploadedDocuments" onAction="#onDocumentSelected" styleClass="combo-box-custom" maxWidth="Infinity"/>
             </VBox>
 
             <VBox spacing="15" HBox.hgrow="ALWAYS">

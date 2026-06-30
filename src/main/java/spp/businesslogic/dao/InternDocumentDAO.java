@@ -9,12 +9,12 @@ import spp.dataaccess.connection.MySQLConnection;
 import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -370,25 +370,25 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
 
         } catch (SQLIntegrityConstraintViolationException e) {
             AppLogger.log(ExceptionLevel.WARN, e);
-            throw new DAOException("No se pudo actualizar la calificación. Verifique los datos ingresados.");
+            throw new DAOException("No se pudo actualizar la calificación. Verifique los datos ingresados.", e);
 
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al actualizar la calificación del reporte.");
+            throw new DAOException("Error de comunicación con el servidor al actualizar la calificación del reporte.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al procesar la actualización de la calificación.");
+            throw new DAOException("Tiempo de espera agotado al procesar la actualización de la calificación.", e);
 
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
 
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
-                throw new DAOException("Error de conexión al actualizar la calificación del reporte.");
+                throw new DAOException("Error de conexión al actualizar la calificación del reporte.", e);
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar actualizar la calificación del reporte.");
+                throw new DAOException("Ocurrió un error interno al intentar actualizar la calificación del reporte.", e);
             }
         }
 
@@ -413,23 +413,66 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
 
         } catch (SQLInvalidAuthorizationSpecException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al verificar la carta de liberación.");
+            throw new DAOException("Error de comunicación con el servidor al verificar la carta de liberación.", e);
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al buscar la carta de liberacion.");
+            throw new DAOException("Tiempo de espera agotado al buscar la carta de liberacion.", e);
 
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
 
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
-                throw new DAOException("Error de conexión al buscar la carta de liberación.");
+                throw new DAOException("Error de conexión al buscar la carta de liberación.", e);
             } else {
-                throw new DAOException("Ocurrió un error interno al verificar la carta de liberación.");
+                throw new DAOException("Ocurrió un error interno al verificar la carta de liberación.", e);
             }
         }
 
         return hasReleaseLetter;
+    }
+
+    public List<InternDocumentDTO> getDocumentsByConcludedEnrollment(String email) throws DAOException {
+        final String SELECT_DOCUMENTS = "SELECT dp.id_documentos_iniciales, dp.nombre_original, dp.nombre_almacenado, " +
+                        "dp.ruta_archivo, dp.tamaño_mb, dp.extension, dp.fecha_subida, dp.tipo " +
+                        "FROM documentos_practicantes dp " +
+                        "INNER JOIN usuarios u ON dp.id_usuario_practicante = u.id_usuario " +
+                        "INNER JOIN inscripciones_practicas_profesionales ipp " +
+                        "ON dp.id_usuario_practicante = ipp.id_usuario_practicante AND dp.matricula = ipp.matricula " +
+                        "WHERE u.correo_electronico = ? AND ipp.estado = 'Concluida'";
+        List<InternDocumentDTO> documentsList = new ArrayList<>();
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_DOCUMENTS)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        InternDocumentDTO internDocumentDTO = new InternDocumentDTO();
+                        internDocumentDTO.setInternDocumentId(resultSet.getInt("id_documentos_iniciales"));
+                        internDocumentDTO.setOriginalName(resultSet.getString("nombre_original"));
+                        internDocumentDTO.setSavedName(resultSet.getString("nombre_almacenado"));
+                        internDocumentDTO.setFilePath(resultSet.getString("ruta_archivo"));
+                        internDocumentDTO.setSizeMb(resultSet.getDouble("tamaño_mb"));
+                        internDocumentDTO.setExtension(resultSet.getString("extension"));
+                        java.sql.Timestamp timestamp = resultSet.getTimestamp("fecha_subida");
+                        if (timestamp != null) {
+                            internDocumentDTO.setUploadDate(timestamp.toLocalDateTime());
+                        }
+                        String type = resultSet.getString("tipo");
+                        if (type != null) {
+                            internDocumentDTO.setDocumentType(DocumentType.valueOf(type));
+                        }
+
+                        documentsList.add(internDocumentDTO);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al obtener información de documentos", e);
+        }
+
+        return documentsList;
     }
 
 }

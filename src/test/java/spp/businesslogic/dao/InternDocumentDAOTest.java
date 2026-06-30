@@ -8,6 +8,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.DisplayName;
 import spp.businesslogic.dto.InternDocumentDTO;
+import spp.businesslogic.enums.DocumentType;
 import spp.businesslogic.exceptions.DAOException;
 
 import java.time.LocalDateTime;
@@ -37,7 +38,7 @@ public class InternDocumentDAOTest {
         testDocument.setSizeMb(1.2);
         testDocument.setExtension(".pdf");
         testDocument.setUploadDate(LocalDateTime.now().withNano(0));
-        testDocument.setDocumentType("CLASS_SCHEDULE");
+        testDocument.setDocumentType(DocumentType.CLASS_SCHEDULE);
     }
 
     @Test

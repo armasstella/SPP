@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.instructor.PracticeReleaseController"
+            prefWidth="720" prefHeight="480"
+            styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <top>
+        <VBox styleClass="header">
+            <Label text="Liberación de Prácticas" styleClass="header-title"/>
+            <Label text="Asigna la calificación final para liberar al practicante" styleClass="header-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox styleClass="content-container" spacing="16">
+            <padding><Insets top="28" right="40" bottom="20" left="40"/></padding>
+
+            <Label text="Alumnos que pueden liberarse" styleClass="section-title"/>
+            <ComboBox fx:id="cmbInterns" maxWidth="Infinity"/>
+
+            <Label text="Asignar calificación final" styleClass="section-title"/>
+            <Label text="Calificación (0 - 10)" styleClass="field-label"/>
+            <TextField fx:id="txtFinalGrade" styleClass="field-input" maxWidth="180"/>
+
+            <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding><Insets top="12" right="40" bottom="16" left="40"/></padding>
+            <Button text="Cancelar" styleClass="btn-back" onAction="#goToInstructorMenuView"/>
+            <Button text="Aceptar" styleClass="btn-add" onAction="#assignFinalGrade"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
