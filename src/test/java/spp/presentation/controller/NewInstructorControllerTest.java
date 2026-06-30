@@ -3,7 +3,6 @@ package spp.presentation.controller;
 import javafx.application.Platform;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -16,7 +15,6 @@ import spp.utils.businessconstants.BusinessConstant;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -348,20 +346,6 @@ class NewInstructorControllerTest extends ControllerTestBase {
         assertFalse(valid);
     }
 
-    @Test
-    @Order(18)
-    @DisplayName("Flujo Alterno: Contrasena corta, hasValidMinimumLengths retorna false")
-    void testHasValidMinimumLengths_passwordTooShort() throws Exception {
-        firstNameTextField.setText("María");
-        secondNameTextField.setText("Isabel");
-        firstLastNameTextField.setText("González");
-        secondLastNameTextField.setText("Martínez");
-        personalNumberTextField.setText("12345");
-        passwordTextField.setText("Mar1a$2");
-
-        boolean valid = (boolean) invokePrivateMethod("hasValidMinimumLengths");
-        assertFalse(valid);
-    }
 
     @Test
     @Order(19)

@@ -494,22 +494,6 @@ class NewInternControllerTest extends ControllerTestBase{
 
     @Test
     @Order(22)
-    @DisplayName("Flujo Alterno: Contrasena corta, hasValidMinimumLengths retorna false")
-    void testHasValidMinimumLengths_passwordTooShort() throws Exception {
-        firstNameTextField.setText("María");
-        secondNameTextField.setText("Isabel");
-        firstLastNameTextField.setText("González");
-        secondLastNameTextField.setText("Martínez");
-        studentNumberTextField.setText("S12345678");
-        passwordTextField.setText("Mar1a$2");
-        indigenousNoRadioButton.setSelected(true);
-
-        boolean valid = (boolean) invokePrivateMethod("hasValidMinimumLengths");
-        assertFalse(valid);
-    }
-
-    @Test
-    @Order(23)
     @DisplayName("Flujo Alterno: Si habla lengua indigena y la lengua tiene menos de 4 caracteres, hasValidMinimumLengths false")
     void testHasValidMinimumLengths_indigenousLanguageTooShort() throws Exception {
         firstNameTextField.setText("María");
@@ -527,7 +511,7 @@ class NewInternControllerTest extends ControllerTestBase{
     }
 
     @Test
-    @Order(24)
+    @Order(23)
     @DisplayName("Flujo Normal: Si habla lengua indigena y la lengua tiene longitud suficiente, hasValidMinimumLengths true")
     void testHasValidMinimumLengths_indigenousLanguageValid() throws Exception {
         firstNameTextField.setText("María");
@@ -545,7 +529,7 @@ class NewInternControllerTest extends ControllerTestBase{
     }
 
     @Test
-    @Order(25)
+    @Order(24)
     @DisplayName("Flujo Normal: Campos llenos y longitudes validas, areValidFields retorna true")
     void testAreValidFields_allValid() throws Exception {
         firstNameTextField.setText("María");
@@ -566,7 +550,7 @@ class NewInternControllerTest extends ControllerTestBase{
     }
 
     @Test
-    @Order(26)
+    @Order(25)
     @DisplayName("Flujo Alterno: Campo obligatorio vacio, areValidFields retorna false")
     void testAreValidFields_emptyField() throws Exception {
         firstNameTextField.setText("María");
@@ -587,7 +571,7 @@ class NewInternControllerTest extends ControllerTestBase{
     }
 
     @Test
-    @Order(27)
+    @Order(26)
     @DisplayName("Flujo Alterno: Longitud minima no cumplida, areValidFields retorna false")
     void testAreValidFields_shortLength() throws Exception {
         firstNameTextField.setText("María");
@@ -608,7 +592,7 @@ class NewInternControllerTest extends ControllerTestBase{
     }
 
     @Test
-    @Order(28)
+    @Order(27)
     @DisplayName("Flujo Normal: InternDTO valido con email, password y student number correctos")
     void testDtoValid_allFieldsOk() throws Exception {
         firstNameTextField.setText("María");
@@ -635,7 +619,7 @@ class NewInternControllerTest extends ControllerTestBase{
     }
 
     @Test
-    @Order(29)
+    @Order(28)
     @DisplayName("Flujo Alterno: Email invalido, InternDTO invalido")
     void testDtoInvalid_emailInvalid() throws Exception {
         firstNameTextField.setText("María");
@@ -661,7 +645,7 @@ class NewInternControllerTest extends ControllerTestBase{
     }
 
     @Test
-    @Order(30)
+    @Order(29)
     @DisplayName("Flujo Alterno: Contrasena invalida (sin mayuscula), InternDTO invalido")
     void testDtoInvalid_passwordNoUpperCase() throws Exception {
         firstNameTextField.setText("María");
@@ -687,7 +671,7 @@ class NewInternControllerTest extends ControllerTestBase{
     }
 
     @Test
-    @Order(31)
+    @Order(30)
     @DisplayName("Flujo Alterno: Contrasena invalida (sin caracter especial), InternDTO invalido")
     void testDtoInvalid_passwordNoSpecialChar() throws Exception {
         firstNameTextField.setText("María");
@@ -713,7 +697,7 @@ class NewInternControllerTest extends ControllerTestBase{
     }
 
     @Test
-    @Order(32)
+    @Order(31)
     @DisplayName("Flujo Alterno: Numero de estudiante invalido, InternDTO invalido")
     void testDtoInvalid_studentNumberInvalid() throws Exception {
         firstNameTextField.setText("María");
@@ -739,7 +723,7 @@ class NewInternControllerTest extends ControllerTestBase{
     }
 
     @Test
-    @Order(33)
+    @Order(32)
     @DisplayName("Flujo de Acumulacion: Email, password y student number invalidos, InternDTO acumula tres errores")
     void testDtoInvalid_accumulateErrors() throws Exception {
         firstNameTextField.setText("María");

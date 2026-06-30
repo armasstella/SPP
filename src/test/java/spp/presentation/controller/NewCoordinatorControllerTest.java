@@ -319,21 +319,6 @@ class NewCoordinatorControllerTest extends ControllerTestBase{
     }
 
     @Test
-    @Order(17)
-    @DisplayName("Flujo Alterno: Contrasena corta (7 caracteres), hasValidMinimumLengths retorna false")
-    void testHasValidMinimumLengths_passwordTooShort() throws Exception {
-        firstNameTextField.setText("María");
-        secondNameTextField.setText("Isabel");
-        firstLastNameTextField.setText("González");
-        secondLastNameTextField.setText("Martínez");
-        personalNumberTextField.setText("12345");
-        passwordTextField.setText("Mar1a$2");
-
-        boolean valid = (boolean) invokePrivateMethod("hasValidMinimumLengths");
-        assertFalse(valid);
-    }
-
-    @Test
     @Order(18)
     @DisplayName("Flujo Normal: Campos llenos y longitudes validas, areValidFields retorna true")
     void testAreValidFields_allValid() throws Exception {

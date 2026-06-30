@@ -14,9 +14,7 @@
     </padding>
 
     <VBox spacing="5" styleClass="info-box">
-        <Label text="CURSO / EXPERIENCIA EDUCATIVA" styleClass="section-subtitle"/>
-        <Label fx:id="lblCourseName" text="Cargando curso..." styleClass="field-label-bold"/>
-        <Label fx:id="lblCourseCode" text="NRC: ..." styleClass="field-description"/>
+        <Label text="SE DESPLIEGAN POR PRIORIDAD PRACTICANTES CON DOCUMENTACIÓN SUBIDA" styleClass="section-subtitle" wrapText="true"/>
     </VBox>
 
     <VBox spacing="5" VBox.vgrow="ALWAYS">

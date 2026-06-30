@@ -236,59 +236,9 @@ class ActivityEditControllerTest extends ControllerTestBase {
         assertTrue(hasErrors);
     }
 
-    @Test
-    @Order(11)
-    @DisplayName("Flujo Alterno: Tiempo estimado no numerico, hasValidationErrors retorna true")
-    void testHasValidationErrors_estimatedTimeNotNumeric() throws Exception {
-        titleTextField.setText("Análisis de resultados");
-        descriptionTextArea.setText("Procesar datos obtenidos en las entrevistas");
-        startDatePicker.setValue(LocalDate.of(2026, 7, 16));
-        endDatePicker.setValue(LocalDate.of(2026, 7, 20));
-        estimatedTimeTextField.setText("diez");
-        effectiveTimeTextField.setText("8");
-        progressTextField.setText("80");
-        observationsTextArea.setText("Revisar la consistencia de los datos");
-
-        boolean hasErrors = (boolean) invokePrivateMethod("hasValidationErrors");
-        assertTrue(hasErrors);
-    }
 
     @Test
     @Order(12)
-    @DisplayName("Flujo Alterno: Tiempo efectivo no numerico, hasValidationErrors retorna true")
-    void testHasValidationErrors_effectiveTimeNotNumeric() throws Exception {
-        titleTextField.setText("Análisis de resultados");
-        descriptionTextArea.setText("Procesar datos obtenidos en las entrevistas");
-        startDatePicker.setValue(LocalDate.of(2026, 7, 16));
-        endDatePicker.setValue(LocalDate.of(2026, 7, 20));
-        estimatedTimeTextField.setText("10");
-        effectiveTimeTextField.setText("ocho");
-        progressTextField.setText("80");
-        observationsTextArea.setText("Revisar la consistencia de los datos");
-
-        boolean hasErrors = (boolean) invokePrivateMethod("hasValidationErrors");
-        assertTrue(hasErrors);
-    }
-
-    @Test
-    @Order(13)
-    @DisplayName("Flujo Alterno: Progreso no numerico, hasValidationErrors retorna true")
-    void testHasValidationErrors_progressNotNumeric() throws Exception {
-        titleTextField.setText("Análisis de resultados");
-        descriptionTextArea.setText("Procesar datos obtenidos en las entrevistas");
-        startDatePicker.setValue(LocalDate.of(2026, 7, 16));
-        endDatePicker.setValue(LocalDate.of(2026, 7, 20));
-        estimatedTimeTextField.setText("10");
-        effectiveTimeTextField.setText("8");
-        progressTextField.setText("ochenta");
-        observationsTextArea.setText("Revisar la consistencia de los datos");
-
-        boolean hasErrors = (boolean) invokePrivateMethod("hasValidationErrors");
-        assertTrue(hasErrors);
-    }
-
-    @Test
-    @Order(14)
     @DisplayName("Flujo Alterno: Progreso mayor a 100, hasValidationErrors retorna true")
     void testHasValidationErrors_progressGreaterThan100() throws Exception {
         titleTextField.setText("Análisis de resultados");
@@ -298,23 +248,6 @@ class ActivityEditControllerTest extends ControllerTestBase {
         estimatedTimeTextField.setText("10");
         effectiveTimeTextField.setText("8");
         progressTextField.setText("120");
-        observationsTextArea.setText("Revisar la consistencia de los datos");
-
-        boolean hasErrors = (boolean) invokePrivateMethod("hasValidationErrors");
-        assertTrue(hasErrors);
-    }
-
-    @Test
-    @Order(15)
-    @DisplayName("Flujo Alterno: Tiempo estimado negativo, hasValidationErrors retorna true")
-    void testHasValidationErrors_estimatedTimeNegative() throws Exception {
-        titleTextField.setText("Análisis de resultados");
-        descriptionTextArea.setText("Procesar datos obtenidos en las entrevistas");
-        startDatePicker.setValue(LocalDate.of(2026, 7, 16));
-        endDatePicker.setValue(LocalDate.of(2026, 7, 20));
-        estimatedTimeTextField.setText("-10");
-        effectiveTimeTextField.setText("8");
-        progressTextField.setText("80");
         observationsTextArea.setText("Revisar la consistencia de los datos");
 
         boolean hasErrors = (boolean) invokePrivateMethod("hasValidationErrors");

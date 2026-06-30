@@ -20,8 +20,6 @@ import java.util.ResourceBundle;
 public class InternSelectorController implements Initializable {
 
     @FXML private Label lblStatus;
-    @FXML private Label lblCourseName;
-    @FXML private Label lblCourseCode;
     @FXML private TableView<InternDTO> tblInterns;
     @FXML private TableColumn<InternDTO, String> colName;
     @FXML private TableColumn<InternDTO, String> colStatus;
@@ -51,11 +49,6 @@ public class InternSelectorController implements Initializable {
 
     public void setInternSelectionListener(InternSelectionListener listener) {
         this.selectionListener = listener;
-    }
-
-    public void loadCourseInformation(String courseName, String nrc) {
-        lblCourseName.setText(courseName);
-        lblCourseCode.setText("NRC: " + nrc);
     }
 
     public void displayInterns(List<InternDTO> sortedInterns) {
