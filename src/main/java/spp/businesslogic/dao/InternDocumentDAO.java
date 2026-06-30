@@ -428,4 +428,41 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
         return isGradeUpdated;
     }
 
+    public boolean hasReleaseLetterByInternEmail(String email) throws DAOException {
+        final String CHECK_RELEASE_LETTER = "SELECT f_existe_carta_liberacion(u.id_usuario) FROM usuarios u WHERE " +
+                "u.correo_electronico = ?";
+        boolean hasReleaseLetter = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_RELEASE_LETTER)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasReleaseLetter = resultSet.getBoolean(1);
+                    }
+                }
+            }
+
+        } catch (SQLInvalidAuthorizationSpecException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de comunicación con el servidor al verificar la carta de liberación.");
+
+        } catch (SQLTimeoutException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Tiempo de espera agotado al buscar la carta de liberacion.");
+
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
+                throw new DAOException("Error de conexión al buscar la carta de liberación.");
+            } else {
+                throw new DAOException("Ocurrió un error interno al verificar la carta de liberación.");
+            }
+        }
+
+        return hasReleaseLetter;
+    }
+
 }

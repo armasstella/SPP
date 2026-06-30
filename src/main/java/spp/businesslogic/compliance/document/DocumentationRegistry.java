@@ -27,6 +27,8 @@ public class DocumentationRegistry {
                 return internDocumentDAO.hasEvaluationLinkedOrganizationByInternEmail(email);
             case FINAL_REPORT:
                 return finalReportDAO.hasFinalReportByInternEmail(email);
+            case RELEASE_LETTER:
+                return internDocumentDAO.hasReleaseLetterByInternEmail(email);
             default:
                 return false;
         }

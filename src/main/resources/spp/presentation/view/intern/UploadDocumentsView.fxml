@@ -97,6 +97,12 @@
                                         styleClass="option-btn, btn-add"
                                         onAction="#uploadFinalReport"
                                 />
+
+                                <Button fx:id="btnUploadReleaseLetter"
+                                        text="Reporte Final"
+                                        styleClass="option-btn, btn-add"
+                                        onAction="#uploadReleaseLetter"
+                                />
                             </VBox>
 
                         </HBox>

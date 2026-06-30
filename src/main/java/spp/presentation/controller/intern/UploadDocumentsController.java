@@ -138,6 +138,17 @@ public class UploadDocumentsController {
         processDocumentSelection(event, documentConfiguration);
     }
 
+    @FXML
+    private void uploadReleaseLetter(ActionEvent event) {
+        DocumentUploadConfiguration documentConfiguration = new DocumentUploadConfiguration(
+                DocumentType.RELEASE_LETTER,
+                "./documents/intern_documents/release_letters/",
+                "release_letter",
+                DocumentationPhase.CLOSURE
+        );
+        processDocumentSelection(event, documentConfiguration);
+    }
+
     private void processDocumentSelection(ActionEvent event, DocumentUploadConfiguration documentConfiguration) {
         UserDAO userDAO = new UserDAO();
         int internId = -1;
@@ -148,8 +159,8 @@ public class UploadDocumentsController {
         }
 
         DocumentationWorkflowManager workflowManager = new DocumentationWorkflowManager(internId);
-        DocumentType targetType = documentConfiguration.getType();
-        boolean isUploadAllowed = workflowManager.isUploadAllowed(targetType);
+        DocumentType documentToUploadType = documentConfiguration.getType();
+        boolean isUploadAllowed = workflowManager.isUploadAllowed(documentToUploadType);
 
         if (!isUploadAllowed) {
             StatusLabel.showError(lblStatus, "No puedes subir este documento. No corresponde a la fase de tus prácticas.");
