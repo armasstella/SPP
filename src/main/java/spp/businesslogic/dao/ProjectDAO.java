@@ -89,6 +89,10 @@ public class ProjectDAO implements IProjectDAO {
                 }
             }
 
+        } catch (SQLIntegrityConstraintViolationException e) {
+            AppLogger.log(ExceptionLevel.WARN, e);
+            throw new DAOException("El proyecto no puede ser eliminado. Ya ha sido elegido o priorizado por practicante(s).", e);
+
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
 

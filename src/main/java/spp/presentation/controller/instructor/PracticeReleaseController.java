@@ -15,7 +15,9 @@ import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.InternDTO;
 import spp.businesslogic.enums.DocumentationPhase;
 import spp.businesslogic.exceptions.DAOException;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.alert.AlertHelper;
+import spp.utils.view.inputdata.InputFilter;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.window.ViewNavigator;
 import java.net.URL;
@@ -33,6 +35,12 @@ public class PracticeReleaseController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadReleasableInterns();
+        setUpFields();
+    }
+
+    private void setUpFields() {
+        InputFilter.applyFormatFilter(txtFinalGrade,
+                ViewConstant.PATTERN_NUMERIC, ViewConstant.MAX_LENGTH_FINAL_GRADE);
     }
 
     private void loadReleasableInterns() {
@@ -86,7 +94,7 @@ public class PracticeReleaseController implements Initializable {
         } else {
             try {
                 int grade = Integer.parseInt(gradeText);
-                if (grade < MINIMUM_GRADE || grade > MAXIMUM_GRADE) {
+                if (grade < ViewConstant.MIN_FINAL_GRADE || grade > ViewConstant.MAX_FINAL_GRADE) {
                     isInvalid = true;
                 }
             } catch (NumberFormatException numberFormatException) {

@@ -24,6 +24,7 @@ public final class ViewConstant {
     public static final int MAX_LENGTH_ADDRESS = 50;
     public static final int MAX_LENGTH_TERM = 10;
     public static final int MAX_LENGTH_CAPACITY = 2;
+    public static final int MAX_LENGTH_FINAL_GRADE = 2;
 
     public static final int MAX_LENGTH_INTERN_ACTIVITY_TITLE = 100;
 
@@ -56,4 +57,7 @@ public final class ViewConstant {
 
     public static final int ID_ZERO_INVALID = 0;
     public static final int EMPTY_FILE = 0;
+
+    public static final int MIN_FINAL_GRADE = 0;
+    public static final int MAX_FINAL_GRADE = 10;
 }

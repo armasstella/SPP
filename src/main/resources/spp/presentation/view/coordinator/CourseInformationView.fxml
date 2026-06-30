@@ -33,7 +33,6 @@
                     <Insets top="24" bottom="20" left="48" right="48"/>
                 </padding>
                 <HBox spacing="15" alignment="CENTER_LEFT">
-                    <TextField fx:id="txtSearch" promptText="Buscar curso" styleClass="field-input" prefWidth="300"/>
                     <Region HBox.hgrow="ALWAYS"/>
                     <Button text="Asignar Profesor a Curso" styleClass="btn-add" onAction="#goToAssignInstructor"/>
                     <Button text="Registrar Curso" styleClass="btn-add" onAction="#goToNewCourseView"/>

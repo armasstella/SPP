@@ -24,6 +24,7 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.ProjectDAO;
 import spp.businesslogic.exceptions.FileManagementException;
 import spp.utils.file.FileUtils;
+import spp.utils.view.alert.AlertHelper;
 import spp.utils.view.filechooser.FileChooserUtil;
 import spp.utils.view.inputdata.InputFilter;
 import spp.utils.view.label.StatusLabel;
@@ -170,17 +171,30 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
 
             ProjectDAO projectDAO = new ProjectDAO();
             try {
+
+                if (selectedDocument == null) {
+                    AlertHelper.showMessage("Aviso",
+                            "Va a registrar un proyecto sin calendarización de actividades. Es opcional");
+                }
                 int projectIdInserted = projectDAO.registerProject(projectDTO);
                 if (projectIdInserted > ViewConstant.ID_ZERO_INVALID) {
+                    StatusLabel.showSuccess(lblStatus, "Proyecto registrado correctamente.");
+                } else {
+                    StatusLabel.showError(lblStatus, "Error al registrar proyecto.");
+                }
+
+                if (selectedDocument != null) {
                     ActivityScheduleDAO activityScheduleDAO = new ActivityScheduleDAO();
                     ActivityScheduleDTO activityScheduleDTO = new ActivityScheduleDTO();
-                    if (setMetaDataFile(activityScheduleDTO, projectIdInserted)) {
-                        if (activityScheduleDAO.saveActivitySchedule(activityScheduleDTO, projectIdInserted)) {
-                            StatusLabel.showSuccess(lblStatus, "Proyecto registrado correctamente.");
-                            clearInputFields();
-                        }
+                    setMetaDataFile(activityScheduleDTO, projectIdInserted);
+                    if (activityScheduleDAO.saveActivitySchedule(activityScheduleDTO, projectIdInserted)) {
+                        StatusLabel.showSuccess(lblStatus, "Proyecto y calendarización registrados correctamente.");
+                    } else {
+                        StatusLabel.showError(lblStatus, "Error al registrar calendarización de proyecto.");
                     }
+
                 }
+                clearInputFields();
             } catch (DAOException e) {
                 StatusLabel.showError(lblStatus, e.getMessage());
             }
