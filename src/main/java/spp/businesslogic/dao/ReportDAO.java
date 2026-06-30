@@ -109,43 +109,5 @@ public class ReportDAO implements IReportDAO {
         return isGradeAssigned;
     }
 
-    @Override
-    public boolean updateGrade(int documentId, int grade) throws DAOException {
-        final String UPDATE_GRADE = "UPDATE evaluaciones_reportes SET calificacion = ? WHERE id_documento = ?";
-        boolean isGradeUpdated = false;
 
-        try {
-            Connection connection = MySQLConnection.getInstance().getConnection();
-            try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_GRADE)) {
-                preparedStatement.setInt(1, grade);
-                preparedStatement.setInt(2, documentId);
-                isGradeUpdated = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
-            }
-
-        } catch (SQLIntegrityConstraintViolationException e) {
-            AppLogger.log(ExceptionLevel.WARN, e);
-            throw new DAOException("No se pudo actualizar la calificación. Verifique los datos ingresados.");
-
-        } catch (SQLInvalidAuthorizationSpecException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error de comunicación con el servidor al actualizar la calificación del reporte.");
-
-        } catch (SQLTimeoutException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al procesar la actualización de la calificación.");
-
-        } catch (SQLException e) {
-            AppLogger.log(ExceptionLevel.FATAL, e);
-
-            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
-                throw new DAOException("Error de conexión al actualizar la calificación del reporte.");
-            } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
-                throw new DAOException(e.getMessage());
-            } else {
-                throw new DAOException("Ocurrió un error interno al intentar actualizar la calificación del reporte.");
-            }
-        }
-
-        return isGradeUpdated;
-    }
 }

@@ -15,5 +15,6 @@ public interface IInitialDocumentDAO {
     boolean hasMonthlyReportByInternEmail(String email) throws DAOException;
     boolean hasSelfEvaluationByInternEmail(String email) throws DAOException;
     boolean hasEvaluationLinkedOrganizationByInternEmail(String email) throws DAOException;
+    boolean assignGrade(int documentId, int grade, String comments) throws DAOException;
 
 }

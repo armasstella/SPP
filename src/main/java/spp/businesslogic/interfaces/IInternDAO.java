@@ -2,6 +2,7 @@ package spp.businesslogic.interfaces;
 
 
 import spp.businesslogic.dto.InternDTO;
+import spp.businesslogic.enums.DocumentationPhase;
 import spp.businesslogic.exceptions.DAOException;
 import java.util.List;
 
@@ -15,5 +16,6 @@ public interface IInternDAO{
     String findActiveStudentNumberByEmail(String email) throws DAOException;
     List<InternDTO> findUnassignedInternsIdentifiers() throws DAOException;
     List<InternDTO> getAssignedInternsByProfessorEmail(String email) throws DAOException;
+    DocumentationPhase findCurrentDocumentationPhaseById(int internId) throws DAOException;
 
 }

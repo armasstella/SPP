@@ -11,6 +11,7 @@ import spp.utils.logger.AppLogger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLInvalidAuthorizationSpecException;
@@ -144,4 +145,26 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
 
         return isCourseAssigned;
     }
+
+    public boolean isPracticeCompletedByInternEmail(String email) throws DAOException {
+        final String CHECK_COMPLETED = "SELECT f_es_inscripcion_concluida(?)";
+        boolean isCompleted = false;
+
+        try (Connection connection = MySQLConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(CHECK_COMPLETED)) {
+
+            preparedStatement.setString(1, email);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    isCompleted = resultSet.getBoolean(1);
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error al verificar si la práctica está concluida.", e);
+        }
+        return isCompleted;
+    }
+
+
 }

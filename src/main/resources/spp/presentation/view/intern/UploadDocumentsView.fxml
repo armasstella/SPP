@@ -31,7 +31,7 @@
                     <Insets top="24" bottom="20" left="48" right="48"/>
                 </padding>
 
-                <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                <ScrollPane fitToWidth="true" >
                     <content>
                         <HBox spacing="40" alignment="TOP_CENTER">
                             <padding>

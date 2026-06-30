@@ -15,7 +15,7 @@ public class DocumentationWorkflowManager {
         DocumentationPhase phase = null;
         try {
             InternDAO internDAO = new InternDAO();
-            phase = internDAO.findCurrentPhaseById(internId);
+            phase = internDAO.findCurrentDocumentationPhaseById(internId);
         } catch (DAOException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
         }

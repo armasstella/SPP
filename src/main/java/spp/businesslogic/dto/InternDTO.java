@@ -3,6 +3,7 @@ package spp.businesslogic.dto;
 import spp.utils.validation.PatternDomainValidator;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class InternDTO extends UserDTO {
 
@@ -12,6 +13,7 @@ public class InternDTO extends UserDTO {
     private boolean speaksIndigenousLanguage;
     private String indigenousLanguage;
     private LocalDateTime birthDate;
+    private List<InternDocumentReviewDTO> documents;
 
     public InternDTO() {
         super();
@@ -67,6 +69,18 @@ public class InternDTO extends UserDTO {
 
     public LocalDateTime getBirthDate() {
         return birthDate;
+    }
+
+    public boolean isSpeaksIndigenousLanguage() {
+        return speaksIndigenousLanguage;
+    }
+
+    public List<InternDocumentReviewDTO> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<InternDocumentReviewDTO> documents) {
+        this.documents = documents;
     }
 
     @Override

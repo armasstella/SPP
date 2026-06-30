@@ -302,7 +302,8 @@ public class InternDAO implements IInternDAO {
         return internsList;
     }
 
-    public DocumentationPhase findCurrentPhaseById(int internId) throws DAOException {
+    @Override
+    public DocumentationPhase findCurrentDocumentationPhaseById(int internId) throws DAOException {
         String CHECK_PHASE = "SELECT f_obtener_fase_documental_practicante(?) as 'fase'";
         DocumentationPhase currentPhase = null;
 
