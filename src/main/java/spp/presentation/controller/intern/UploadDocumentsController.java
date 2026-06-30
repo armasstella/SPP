@@ -37,9 +37,7 @@ public class UploadDocumentsController {
     private String currentFolder;
     private String currentPrefix;
     private final InternDocumentDTO internDocumentDTO = new InternDocumentDTO();
-    private final InternDocumentDAO internDocumentDAO = new InternDocumentDAO();
     private final InternDAO internDAO = new InternDAO();
-    private final DocumentationRegistry documentationRegistry = new DocumentationRegistry();
 
     @FXML
     private void cancel(ActionEvent event) {
@@ -172,7 +170,7 @@ public class UploadDocumentsController {
     private void verifyExistenceAndSelectDocument(ActionEvent event, DocumentUploadConfiguration documentConfiguration) {
         String userEmail = ActiveSessionDTO.get().getEmail();
         DocumentType targetType = documentConfiguration.getType();
-
+        DocumentationRegistry documentationRegistry = new DocumentationRegistry();
         try {
             boolean documentExists = documentationRegistry.isDocumentAlreadyUploaded(targetType, userEmail);
 
@@ -302,7 +300,7 @@ public class UploadDocumentsController {
         try {
             String userEmail = ActiveSessionDTO.get().getEmail();
             String studentNumber = internDAO.findActiveStudentNumberByEmail(userEmail);
-
+            InternDocumentDAO internDocumentDAO = new InternDocumentDAO();
             boolean isDocumentSaved = internDocumentDAO.saveDocument(studentNumber, internDocumentDTO);
 
             if (isDocumentSaved) {

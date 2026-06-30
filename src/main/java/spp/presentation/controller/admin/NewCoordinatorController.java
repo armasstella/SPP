@@ -106,10 +106,7 @@ public class NewCoordinatorController implements Initializable {
                     ViewConstant.MIN_LENGTH_NAME);
         }
 
-        boolean validPassword = InputFilter.hasMinimumLength(txtPassword,
-                ViewConstant.MIN_LENGTH_PASSWORD);
-
-        if (validFirstName && validSecondName && validFirstLastName && validSecondLastName && validPassword && validPersonalNumber) {
+        if (validFirstName && validSecondName && validFirstLastName && validSecondLastName && validPersonalNumber) {
             validLengths = true;
         }
 

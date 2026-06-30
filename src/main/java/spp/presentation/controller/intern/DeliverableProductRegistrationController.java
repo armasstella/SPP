@@ -11,6 +11,7 @@ import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.DeliverableProductDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.dao.InternDAO;
+import spp.utils.view.ViewConstant;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.window.ViewNavigator;
 
@@ -42,21 +43,22 @@ public class DeliverableProductRegistrationController {
     }
 
     private boolean validateInputs() {
+        boolean isEmpty = false;
         if (txtName.getText().trim().isEmpty()
                 || taDescription.getText().trim().isEmpty()
                 || taObservations.getText().trim().isEmpty()
                 || txtProgress.getText().trim().isEmpty()) {
-            return true;
+            isEmpty = true;
         }
 
-        return false;
+        return isEmpty;
 
     }
 
     private Integer parseNonNegativeInt(String text) {
         try {
             int value = Integer.parseInt(text.trim());
-            return (value >= 0) ? value : null;
+            return (value >= ViewConstant.MIN_PROGRESS) ? value : null;
         } catch (NumberFormatException e) {
             return null;
         }

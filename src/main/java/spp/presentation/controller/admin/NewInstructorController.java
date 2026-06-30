@@ -104,13 +104,10 @@ public class NewInstructorController implements Initializable {
                     ViewConstant.MIN_LENGTH_NAME);
         }
 
-        boolean validPassword = InputFilter.hasMinimumLength(txtPassword,
-                ViewConstant.MIN_LENGTH_PASSWORD);
-
         boolean validPersonalNumber = InputFilter.hasMinimumLength(txtPersonalNumber,
                 ViewConstant.MIN_LENGTH_PERSONAL_NUMBER);
 
-        if (validFirstName && validSecondName && validFirstLastName && validSecondLastName && validPassword && validPersonalNumber) {
+        if (validFirstName && validSecondName && validFirstLastName && validSecondLastName && validPersonalNumber) {
             validLengths = true;
         }
 

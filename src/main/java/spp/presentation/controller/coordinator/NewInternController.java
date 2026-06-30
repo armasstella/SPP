@@ -130,8 +130,6 @@ public class NewInternController implements Initializable {
                 ViewConstant.MIN_LENGTH_NAME);
         boolean validStudentNumber = InputFilter.hasMinimumLength(txtStudentNumber,
                 ViewConstant.MAX_LENGTH_STUDENT_NUMBER);
-        boolean validPassword = InputFilter.hasMinimumLength(txtPassword,
-                ViewConstant.MIN_LENGTH_PASSWORD);
 
         boolean validSecondName = true;
         if (!txtSecondName.getText().isBlank()) {
@@ -151,7 +149,7 @@ public class NewInternController implements Initializable {
                     ViewConstant.MIN_LENGTH_INDIGENOUS_LANGUAGE_NAME);
         }
 
-        if (validFirstName && validFirstLastName && validStudentNumber && validPassword &&
+        if (validFirstName && validFirstLastName && validStudentNumber &&
                 validSecondName && validSecondLastName && validLanguage) {
             validLengths = true;
         }

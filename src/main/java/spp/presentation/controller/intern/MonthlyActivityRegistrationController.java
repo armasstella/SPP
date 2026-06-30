@@ -88,9 +88,9 @@ public class MonthlyActivityRegistrationController implements Initializable {
         }
 
         if (validFormats) {
-            Integer estimatedTime = parseNonNegativeInt(txtEstimatedTime.getText().trim());
-            Integer effectiveTime = parseNonNegativeInt(txtEffectiveTime.getText().trim());
-            Integer progress = parseNonNegativeInt(txtProgress.getText().trim());
+            Integer estimatedTime = Integer.parseInt(txtEstimatedTime.getText().trim());
+            Integer effectiveTime = Integer.parseInt(txtEffectiveTime.getText().trim());
+            Integer progress = Integer.parseInt(txtProgress.getText().trim());
 
             if (estimatedTime == null || effectiveTime == null || progress == null) {
                 StatusLabel.showError(lblStatus, "Tiempo estimado, tiempo efectivo y avance deben ser números válidos.");
@@ -102,15 +102,6 @@ public class MonthlyActivityRegistrationController implements Initializable {
         }
 
         return validFormats;
-    }
-
-    private Integer parseNonNegativeInt(String text) {
-        try {
-            int value = Integer.parseInt(text.trim());
-            return (value >= ViewConstant.ALLOWED_POSITIVE_NUMERIC_VALUE) ? value : null;
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     private boolean areValidFields() {

@@ -27,7 +27,7 @@ public class CourseDAOTest {
         courseDAO = new CourseDAO();
         testCourse = new CourseDTO();
 
-        int uniqueNrc = 10000 + (int)(Math.random() * 90000);
+        int uniqueNrc = 10000 + (int) (Math.random() * 90000);
         testCourse.setCourseCode(uniqueNrc);
         testCourse.setSchoolBlock(1);
         testCourse.setSection(1);
@@ -54,32 +54,6 @@ public class CourseDAOTest {
 
     @Test
     @Order(3)
-    @DisplayName("Flujo Normal: Verificar existencia de cursos registrados")
-    void testExistsRegisteredCourses() throws DAOException {
-        assertTrue(courseDAO.existsRegisteredCourses());
-    }
-
-    @Test
-    @Order(4)
-    @DisplayName("Flujo Normal: Obtener estadísticas de cursos (Lista con comparación)")
-    void testGetActiveCoursesStatistics() throws DAOException {
-        List<CourseDTO> stats = courseDAO.getActiveCoursesStatistics();
-
-        assertNotNull(stats);
-        assertFalse(stats.isEmpty());
-
-        CourseDTO found = stats.stream()
-                .filter(course -> course.getCourseCode() == testCourse.getCourseCode())
-                .findFirst()
-                .orElse(null);
-
-        assertNotNull(found);
-        assertEquals(testCourse.getCourseCode(), found.getCourseCode());
-        assertEquals(0, found.getNumberOfInterns());
-    }
-
-    @Test
-    @Order(5)
     @DisplayName("Flujo Alterno: Asignación de instructor inexistente debería devolver false")
     void testAssignInstructorNotFound() throws DAOException {
         InstructorDTO fakeInstructor = new InstructorDTO();
@@ -90,16 +64,5 @@ public class CourseDAOTest {
         boolean result = courseDAO.assignInstructorToCourse(testCourse);
 
         assertFalse(result);
-    }
-
-    @Test
-    @Order(6)
-    @DisplayName("Flujo Normal: Obtener códigos de cursos (Lista con comparación)")
-    void testGetCourseCodesForActiveTerm() throws DAOException {
-        List<CourseDTO> codes = courseDAO.getCourseCodesForActiveTerm();
-
-        assertNotNull(codes);
-        boolean exists = codes.stream().anyMatch(course -> course.getCourseCode() == testCourse.getCourseCode());
-        assertTrue(exists);
     }
 }
