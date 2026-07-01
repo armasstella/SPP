@@ -2,6 +2,7 @@ package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.InternDocumentDTO;
 import spp.businesslogic.dto.InternDocumentReviewDTO;
+import spp.businesslogic.dto.ReviewedDocumentDTO;
 import spp.businesslogic.enums.DocumentType;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.IInitialDocumentDAO;
@@ -17,6 +18,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLTimeoutException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -546,6 +548,47 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
         }
 
         return hasFinalReportRegistered;
+    }
+
+    public List<ReviewedDocumentDTO> findGradedDocumentsByInternEmail(String email) throws DAOException {
+        final String SELECT_DOCUMENTS = "SELECT " +
+                "rv.id_evaluacion, " +
+                "    rv.id_documento, " +
+                "    rv.id_usuario_profesor, " +
+                "    rv.estado, " +
+                "    COALESCE(rv.calificacion, 'Sin calificacion') AS 'calificacion', " +
+                "    rv.fecha_revision, " +
+                "COALESCE(rv.comentarios, 'Sin comentarios'), dp.ruta_archivo AS 'comentarios' " +
+                "FROM revision_documentos rv " +
+                "INNER JOIN documentos_practicantes dp " +
+                "ON rv.id_documento = dp.id_documentos_iniciales " +
+                "    WHERE dp.id_usuario_practicante = 9";
+        List<spp.businesslogic.dto.ReviewedDocumentDTO> documentsList = new ArrayList<>();
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_DOCUMENTS)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        ReviewedDocumentDTO reviewedDocumentDTO = new spp.businesslogic.dto.ReviewedDocumentDTO();
+                        reviewedDocumentDTO.setRevisionId(resultSet.getInt("id_evaluacion"));
+                        reviewedDocumentDTO.setDocumentId(resultSet.getInt("id_documento"));
+                        reviewedDocumentDTO.setInstructorId(resultSet.getInt("id_usuario_profesor"));
+                        reviewedDocumentDTO.setStatus(resultSet.getString("estado"));
+                        reviewedDocumentDTO.setGrade(resultSet.getString("calificacion"));
+                        reviewedDocumentDTO.setRevisionDate(resultSet.getString("fecha_revision"));
+                        reviewedDocumentDTO.setComments(resultSet.getString("comentarios"));
+                        documentsList.add(reviewedDocumentDTO);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al obtener documentos revisados", e);
+        }
+
+        return documentsList;
     }
 
 }
