@@ -87,8 +87,9 @@ public class ReviewDocumentController implements Initializable, InternSelectionL
 
                         if (isUpdated) {
                             StatusLabel.showSuccess(lblStatus, "Evaluación registrada correctamente.");
-                            this.loadInitialData();
-                            this.currentlySelectedIntern = null;
+                            documentEvaluatorController.clearEvaluationFields();
+                            loadInitialData();
+                            currentlySelectedIntern = null;
                             documentEvaluatorController.loadDocumentForIntern(null);
                         } else {
                             StatusLabel.showError(lblStatus, "No se pudo actualizar la calificación en la base de datos.");
