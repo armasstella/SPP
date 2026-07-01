@@ -572,6 +572,10 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         ReviewedDocumentDTO reviewedDocumentDTO = new spp.businesslogic.dto.ReviewedDocumentDTO();
+                        String documentTypeRaw = resultSet.getString("document_type");
+                        DocumentType documentType = DocumentType.valueOf(documentTypeRaw);
+                        String documentTypeForUser = documentType.getValue();
+                        reviewedDocumentDTO.setDocumentType(documentTypeForUser);
                         reviewedDocumentDTO.setRevisionId(resultSet.getInt("id_evaluacion"));
                         reviewedDocumentDTO.setDocumentId(resultSet.getInt("id_documento"));
                         reviewedDocumentDTO.setInstructorId(resultSet.getInt("id_usuario_profesor"));

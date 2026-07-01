@@ -15,8 +15,6 @@
 
     <Label text="VISUALIZACIÓN DE DOCUMENTO" styleClass="section-subtitle"/>
 
-    <VBox VBox.vgrow="ALWAYS" styleClass="vbox-with-border">
-        <PDFView fx:id="pdfUploadView" VBox.vgrow="ALWAYS"/>
-    </VBox>
+
 
 </VBox>

@@ -17,37 +17,7 @@
         <Label text="SE DESPLIEGA LA DOCUMENTACIÓN SUBIDA" styleClass="section-subtitle" wrapText="true"/>
     </VBox>
 
-    <VBox spacing="5" VBox.vgrow="ALWAYS">
-        <Label text="Practicantes Asignados" styleClass="section-subtitle"/>
-        <TableView fx:id="tblInternProgress" VBox.vgrow="ALWAYS" styleClass="custom-table">
-            <columnResizePolicy>
-                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-            </columnResizePolicy>
 
-            <placeholder>
-                <Label text="Sin registros de documentos" styleClass="field-label"/>
-            </placeholder>
-
-            <columns>
-
-                <TableColumn fx:id="colDocumentType" text="Documento"
-                             prefWidth="150"
-                             reorderable="false"/>
-
-                <TableColumn fx:id="colGrade" text="Calificación"
-                             prefWidth="150"
-                             reorderable="false"/>
-
-                <TableColumn fx:id="colObservations" text="Observaciones"
-                             prefWidth="150"
-                             reorderable="false"/>
-
-                <TableColumn fx:id="colRevisionDate" text="Fecha de revisión"
-                             prefWidth="150"
-                             reorderable="false"/>
-            </columns>
-        </TableView>
-    </VBox>
 </VBox>
 
 
