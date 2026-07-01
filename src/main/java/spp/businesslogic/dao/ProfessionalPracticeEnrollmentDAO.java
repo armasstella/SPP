@@ -217,6 +217,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
         return isGradeAssigned;
     }
 
+    @Override
     public boolean hasProjectAssignedInEnrollment(String email) throws DAOException {
         final String CHECK_PROJECT_ASSIGNED =
                 "SELECT f_tiene_proyecto_asignado(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
@@ -239,5 +240,31 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
 
         return hasProjectAssigned;
     }
+
+    @Override
+    public boolean hasMetMinimumHoursInPractice(String email) throws DAOException {
+        final String VERIFY_HOURS = "SELECT horas_cubiertas >= 180 FROM inscripciones_practicas_profesionales ipp " +
+                "INNER JOIN usuarios u ON ipp.id_usuario_practicante = u.id_usuario INNER JOIN periodos p " +
+                "ON ipp.id_periodo = p.id_periodo WHERE u.correo_electronico = ? AND p.periodoActual = 1";
+        boolean hasMetHours = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(VERIFY_HOURS)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasMetHours = resultSet.getBoolean(1);;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al verificar las horas realizadas por el practicante", e);
+        }
+
+        return hasMetHours;
+    }
+
 
 }

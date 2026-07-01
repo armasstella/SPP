@@ -311,9 +311,8 @@ public class InternDAO implements IInternDAO {
     @Override
     public List<InternDTO> getInternsReadyForReleaseByProfessorEmail(String email) throws DAOException {
         List<InternDTO> assignedInterns = new ArrayList<InternDTO>();
-        final String SELECT_ASSIGNED_INTERNS = "SELECT p.id_usuario, p.matricula, u.nombre, u.apellidos, " +
-                "i.calificacion_final " +
-                "FROM experiencias_educativas ee " +
+        final String SELECT_ASSIGNED_INTERNS = "SELECT p.id_usuario, p.matricula, CONCAT(u.nombre,' ' , u.apellidos) as " +
+                "'nombre_completo', i.calificacion_final FROM experiencias_educativas ee " +
                 "INNER JOIN usuarios up ON ee.id_usuario_profesor = up.id_usuario " +
                 "INNER JOIN inscripciones_practicas_profesionales i " +
                 "    ON i.id_experiencia_educativa = ee.id_experiencia_educativa " +
@@ -342,8 +341,7 @@ public class InternDAO implements IInternDAO {
         InternDTO intern = new InternDTO();
         intern.setId(resultSet.getInt("id_usuario"));
         intern.setStudentNumber(resultSet.getString("matricula"));
-        intern.setFirstName(resultSet.getString("nombre"));
-        intern.setFirstLastName(resultSet.getString("apellidos"));
+        intern.setFullName(resultSet.getString("nombre_completo"));
         int gradeValue = resultSet.getInt("calificacion_final");
         boolean gradeIsNull = resultSet.wasNull();
         if (gradeIsNull) {

@@ -81,11 +81,17 @@ public class InternMenuController implements Initializable {
     @FXML
     private void goToSelfEvaluationView(ActionEvent event) {
         if (searchInternProjectAssigned()) {
-            if (!searchSelfEvaluation()) {
-                ViewNavigator.loadView("/spp/presentation/view/intern/SelfEvaluationGenerationView.fxml",
-                        "Generar Autoevaluación", event);
+            if (searchFinalReport()) {
+                if (!searchSelfEvaluation()) {
+                    ViewNavigator.loadView("/spp/presentation/view/intern/SelfEvaluationGenerationView.fxml",
+                            "Generar Autoevaluación", event);
+                } else {
+                    AlertHelper.showMessage("Aviso", "Ya has realizado la autoevaluación");
+                }
+
             } else {
-                AlertHelper.showMessage("Aviso", "Ya has realizado la autoevaluación");
+                AlertHelper.showMessage("Aviso",
+                        "Debes cumplir primero con la entrega del reporte final");
             }
 
         } else {
@@ -110,11 +116,16 @@ public class InternMenuController implements Initializable {
     @FXML
     private void goToPartialReportView(ActionEvent event) {
         if (searchInternProjectAssigned()) {
-            if (!searchPartialReport()) {
-                ViewNavigator.loadView("/spp/presentation/view/intern/PartialReportGenerationView.fxml",
-                        "Generar Reporte Parcial", event);
+            if (hasCompletedMinimumHours()) {
+                if (!searchPartialReport()) {
+                    ViewNavigator.loadView("/spp/presentation/view/intern/PartialReportGenerationView.fxml",
+                            "Generar Reporte Parcial", event);
+                } else {
+                    AlertHelper.showMessage("Aviso", "Ya has subido al sistema tu reporte parcial.");
+                }
             } else {
-                AlertHelper.showMessage("Aviso", "Ya has subido al sistema tu reporte parcial.");
+                AlertHelper.showMessage("Aviso",
+                        "Debes cumplir con el mínimo de horas realizadas en prácticas: 180 horas");
             }
 
         } else {
@@ -126,11 +137,18 @@ public class InternMenuController implements Initializable {
     @FXML
     private void goToFinalActivityRegistrationView(ActionEvent event) {
         if (searchInternProjectAssigned()) {
-            if (!searchFinalReport()) {
-                ViewNavigator.loadView("/spp/presentation/view/intern/FinalReportMenu.fxml",
-                        "Menú de Reporte Final", event);
+            if (searchPartialReport()) {
+                if (!searchFinalReport()) {
+                    ViewNavigator.loadView("/spp/presentation/view/intern/FinalReportMenu.fxml",
+                            "Menú de Reporte Final", event);
+                } else {
+                    AlertHelper.showMessage("Aviso", "Ya has subido al sistema tu reporte final.");
+                }
+
             } else {
-                AlertHelper.showMessage("Aviso", "Ya has subido al sistema tu reporte final.");
+
+                AlertHelper.showMessage("Aviso",
+                        "Debes cumplir primero con la entrega del reporte parcial");
             }
 
         } else {
@@ -209,7 +227,6 @@ public class InternMenuController implements Initializable {
             AlertHelper.showErrorMessage("Error", e.getMessage());
         }
 
-        System.out.println("hasProjectAssigned: " + hasProjectAssigned);
         return hasProjectAssigned;
     }
 
@@ -269,6 +286,19 @@ public class InternMenuController implements Initializable {
         }
 
         return hasDoneSelfEvaluation;
+    }
+
+    private boolean hasCompletedMinimumHours() {
+        boolean hasCompletedMinimunHours = false;
+        try {
+            if (professionalPracticeEnrollmentDAO.hasMetMinimumHoursInPractice(ActiveSessionDTO.get().getEmail())) {
+                hasCompletedMinimunHours = true;
+            }
+        } catch (DAOException e) {
+            AlertHelper.showErrorMessage("Error", e.getMessage());
+        }
+
+        return hasCompletedMinimunHours;
     }
 
 

@@ -47,6 +47,11 @@
                     <padding>
                         <Insets top="28" bottom="28" left="48" right="48"/>
                     </padding>
+
+                    <Button text="Subir Documentación"
+                            styleClass="option-btn, btn-activate"
+                            onAction="#goToUploadDocumentsView"
+                    />
                     <Button text="Reporte Mensual"
                             styleClass="option-btn, btn-add"
                             onAction="#goToMonthlyActivityRegistrationView"
@@ -60,11 +65,6 @@
                     <Button text="Reporte Final"
                             styleClass="option-btn, btn-add"
                             onAction="#goToFinalActivityRegistrationView"
-                    />
-
-                    <Button text="Subir Documento"
-                            styleClass="option-btn, btn-add"
-                            onAction="#goToUploadDocumentsView"
                     />
 
                     <Button text="Generar Autoevaluación"

@@ -92,4 +92,8 @@ public interface IProfessionalPracticeEnrollmentDAO {
      */
     boolean assignFinalGrade(int internId, String studentNumber, int finalGrade) throws DAOException;
 
+    boolean hasProjectAssignedInEnrollment(String email) throws DAOException;
+
+    boolean hasMetMinimumHoursInPractice(String email) throws DAOException;
+
 }
