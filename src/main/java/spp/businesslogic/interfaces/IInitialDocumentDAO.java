@@ -2,6 +2,7 @@ package spp.businesslogic.interfaces;
 
 
 import spp.businesslogic.dto.InternDocumentDTO;
+import spp.businesslogic.dto.InternDocumentReviewDTO;
 import spp.businesslogic.exceptions.DAOException;
 
 import java.util.List;
@@ -132,6 +133,70 @@ public interface IInitialDocumentDAO {
      * @throws DAOException Si ocurre un error al acceder a la persistencia o al mapear los resultados.
      */
     List<InternDocumentDTO> getDocumentsByConcludedEnrollment(String email) throws DAOException;
+
+    /**
+     * Recupera los documentos del practicante junto con su estado de evaluación.
+     *
+     * Propósito: Obtener la lista de documentos asociados a un practicante, incluyendo
+     * la información necesaria para conocer si cada documento ha sido evaluado,
+     * calificado o permanece pendiente de revisión.
+     *
+     * @param studentNumber Número de matrícula o identificador único del practicante
+     *                      cuyos documentos se desean consultar. No debe ser null ni vacío.
+     * @return Lista de InternDocumentReviewDTO con los documentos y su estado de evaluación;
+     *         devuelve una lista vacía si el practicante no tiene documentos registrados.
+     * @throws DAOException Si ocurre un error al consultar la persistencia o mapear los resultados.
+     */
+    List<InternDocumentReviewDTO> findDocumentsWithEvaluationStatusByStudentNumber(String studentNumber) throws DAOException;
+
+    /**
+     * Verifica si el practicante ha entregado su carta de liberación.
+     *
+     * Propósito: Comprobar la existencia de la carta de liberación emitida al concluir
+     * las prácticas profesionales, requisito para finalizar el proceso administrativo.
+     *
+     * @param email Correo electrónico del practicante a consultar. No debe ser null ni vacío.
+     * @return true si existe una carta de liberación registrada; false en caso contrario.
+     * @throws DAOException Si ocurre un error durante la consulta a la capa de persistencia.
+     */
+    boolean hasReleaseLetterByInternEmail(String email) throws DAOException;
+
+    /**
+     * Verifica si el practicante ha entregado todos los informes mensuales requeridos.
+     *
+     * Propósito: Comprobar que se encuentren registrados todos los reportes mensuales
+     * establecidos por la normativa de prácticas profesionales antes de permitir
+     * avanzar a etapas posteriores del proceso.
+     *
+     * @param email Correo electrónico del practicante a consultar. No debe ser null ni vacío.
+     * @return true si todos los informes mensuales requeridos están registrados; false en caso contrario.
+     * @throws DAOException Si ocurre un error al consultar la persistencia.
+     */
+    boolean hasAllMonthlyReports(String email) throws DAOException;
+
+    /**
+     * Verifica si el practicante ha entregado el informe parcial.
+     *
+     * Propósito: Comprobar la existencia del informe parcial requerido como evidencia
+     * del avance de las prácticas profesionales.
+     *
+     * @param email Correo electrónico del practicante a consultar. No debe ser null ni vacío.
+     * @return true si existe un informe parcial registrado; false en caso contrario.
+     * @throws DAOException Si ocurre un error durante la consulta a la capa de datos.
+     */
+    boolean hasPartialReport(String email) throws DAOException;
+
+    /**
+     * Verifica si el practicante ha entregado el informe final.
+     *
+     * Propósito: Comprobar la existencia del informe final presentado por el practicante
+     * como parte del cierre del proceso de prácticas profesionales.
+     *
+     * @param email Correo electrónico del practicante a consultar. No debe ser null ni vacío.
+     * @return true si existe un informe final registrado; false en caso contrario.
+     * @throws DAOException Si ocurre un error al acceder a la capa de persistencia.
+     */
+    boolean hasFinalReport(String email) throws DAOException;
 
 
 }

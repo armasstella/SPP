@@ -209,6 +209,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
         return hasPartialReport;
     }
 
+    @Override
     public boolean hasMonthlyReportByInternEmail(String email) throws DAOException {
         final String CHECK_MONTHLY_REPORT = "SELECT f_tiene_subido_limite_reportes_mensuales(u.id_usuario) " +
                 "FROM usuarios u WHERE u.correo_electronico = ?";
@@ -313,6 +314,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
         return hasLinkedOrganizationEvaluation;
     }
 
+    @Override
     public List<InternDocumentReviewDTO> findDocumentsWithEvaluationStatusByStudentNumber(String studentNumber) throws DAOException {
         final String SELECT_DOCUMENTS_WITH_STATUS = "SELECT dp.id_documentos_iniciales, dp.nombre_original, dp.tipo, dp.ruta_archivo, rd.calificacion " +
                         "FROM documentos_practicantes dp " +
@@ -395,6 +397,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
         return isGradeUpdated;
     }
 
+    @Override
     public boolean hasReleaseLetterByInternEmail(String email) throws DAOException {
         final String CHECK_RELEASE_LETTER = "SELECT f_existe_carta_liberacion(u.id_usuario) FROM usuarios u WHERE " +
                 "u.correo_electronico = ?";
@@ -476,6 +479,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
         return documentsList;
     }
 
+    @Override
     public boolean hasAllMonthlyReports(String email) throws DAOException {
         final String CHECK_ALL_MONTHLY_REPORTS = "SELECT f_todos_reportes_mensuales_registrados(?)";
         boolean hasAllMonthlyReportsRegistered = false;
@@ -498,6 +502,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
         return hasAllMonthlyReportsRegistered;
     }
 
+    @Override
     public boolean hasPartialReport(String email) throws DAOException {
         final String CHECK_PARTIAL_REPORT = "SELECT f_reporte_parcial_registrado(?)";
         boolean hasPartialReportRegistered = false;
@@ -520,6 +525,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
         return hasPartialReportRegistered;
     }
 
+    @Override
     public boolean hasFinalReport(String email) throws DAOException {
         final String CHECK_FINAL_REPORT = "SELECT f_reporte_final_registrado(?)";
         boolean hasFinalReportRegistered = false;
