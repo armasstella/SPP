@@ -104,4 +104,10 @@ public class DocumentEvaluatorController implements Initializable {
         String comments = taObservations.getText().trim();
         return comments;
     }
+
+    public void clearEvaluationFields() {
+        cmbGrade.setValue(null);
+        taObservations.setText("");
+    }
+
 }
