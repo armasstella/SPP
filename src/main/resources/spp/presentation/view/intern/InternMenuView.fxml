@@ -52,6 +52,12 @@
                             styleClass="option-btn, btn-activate"
                             onAction="#goToUploadDocumentsView"
                     />
+
+                    <Button text="Documentación Subida"
+                            styleClass="option-btn, btn-activate"
+                            onAction="#goToInternProgressView"
+                    />
+
                     <Button text="Reporte Mensual"
                             styleClass="option-btn, btn-add"
                             onAction="#goToMonthlyActivityRegistrationView"
