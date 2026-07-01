@@ -131,7 +131,7 @@ public class MonthlyActivityRegistrationController implements Initializable {
                     clearFields();
                 }
             } catch (DAOException e) {
-                StatusLabel.showError(lblStatus, "Error al registrar la actividad");
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
         }
     }

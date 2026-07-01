@@ -180,7 +180,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
                 if (projectIdInserted > ViewConstant.ID_ZERO_INVALID) {
                     StatusLabel.showSuccess(lblStatus, "Proyecto registrado correctamente.");
                 } else {
-                    StatusLabel.showError(lblStatus, "Error al registrar proyecto.");
+                    StatusLabel.showError(lblStatus, "Error al registrar proyecto. Intente de nuevo.");
                 }
 
                 if (selectedDocument != null) {
@@ -190,7 +190,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
                     if (activityScheduleDAO.saveActivitySchedule(activityScheduleDTO, projectIdInserted)) {
                         StatusLabel.showSuccess(lblStatus, "Proyecto y calendarización registrados correctamente.");
                     } else {
-                        StatusLabel.showError(lblStatus, "Error al registrar calendarización de proyecto.");
+                        StatusLabel.showError(lblStatus, "Error al registrar calendarización de proyecto. Intente de nuevo.");
                     }
 
                 }
@@ -252,7 +252,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
             cmbLinkedOrganization.setItems(linkedOrganizationObservableList);
 
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al cargar la lista de organizaciones vinculadas.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 

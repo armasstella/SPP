@@ -26,8 +26,6 @@ import java.util.ResourceBundle;
 
 public class PracticeReleaseController implements Initializable {
 
-    private static final int MINIMUM_GRADE = 0;
-    private static final int MAXIMUM_GRADE = 10;
     @FXML private ComboBox<InternDTO> cmbInterns;
     @FXML private TextField txtFinalGrade;
     @FXML private Label lblStatus;

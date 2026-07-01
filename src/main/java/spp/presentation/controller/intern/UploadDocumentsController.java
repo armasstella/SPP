@@ -309,7 +309,7 @@ public class UploadDocumentsController {
                 StatusLabel.showError(lblStatus, "Error al guardar documento. Intenta de nuevo.");
             }
         } catch (DAOException exception) {
-            StatusLabel.showError(lblStatus, "Error al guardar documento");
+            StatusLabel.showError(lblStatus, exception.getMessage());
         }
 
         return success;

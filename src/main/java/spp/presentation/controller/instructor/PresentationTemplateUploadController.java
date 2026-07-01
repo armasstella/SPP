@@ -26,14 +26,12 @@ public class PresentationTemplateUploadController {
 
     @FXML private Label lblStatus;
     @FXML private Label lblSelectedDocument;
-    @FXML private Button btnUploadPresentationTemplate;
 
     private File selectedDocument;
     private String currentFolder;
     private String currentPrefix;
 
     private final PresentationTemplateDTO presentationTemplateDTO = new PresentationTemplateDTO();
-    private final PresentationTemplateDAO presentationTemplateDAO = new PresentationTemplateDAO();
 
     @FXML
     private void cancel(ActionEvent event) {
@@ -169,7 +167,7 @@ public class PresentationTemplateUploadController {
 
     private boolean saveDataDocument() {
         boolean success = false;
-
+        PresentationTemplateDAO presentationTemplateDAO = new PresentationTemplateDAO();
         try {
             InstructorDAO instructorDAO = new InstructorDAO();
 

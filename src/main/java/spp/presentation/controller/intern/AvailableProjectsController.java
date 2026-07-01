@@ -85,8 +85,8 @@ public class AvailableProjectsController implements Initializable, DoubleClickLi
             List<ProjectDTO> projectList = projectDAO.findProjectsDetailsForActiveTerm();
             availableProjectsObservableList = FXCollections.observableArrayList(projectList);
             tblProjects.setItems(availableProjectsObservableList);
-        } catch (DAOException exception) {
-            StatusLabel.showError(lblStatus, "Error al obtener proyectos");
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -116,8 +116,8 @@ public class AvailableProjectsController implements Initializable, DoubleClickLi
             if (isProjectSelected) {
                 moveProjectToChosen(project);
             }
-        } catch (IOException exception) {
-            StatusLabel.showError(lblStatus, "Error al abrir el detalle del proyecto");
+        } catch (IOException e) {
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 
@@ -158,8 +158,8 @@ public class AvailableProjectsController implements Initializable, DoubleClickLi
                 AlertHelper.showMessage("Elección finalizada", "Tu elección de proyectos se guardó correctamente.");
                 ViewNavigator.loadView("/spp/presentation/view/intern/InternMenuView.fxml", "Menú Practicante", event);
             }
-        } catch (DAOException exception) {
-            StatusLabel.showError(lblStatus, "Error al guardar la elección");
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 

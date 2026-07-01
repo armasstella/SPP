@@ -16,7 +16,7 @@ public class DatabaseConfiguration {
     static {
         try {
             InputStream input = DatabaseConfiguration.class.getClassLoader().getResourceAsStream(
-                    "mysqlDatabasePair.properties");
+                    "mysqlDatabase.properties");
 
             if (input != null) {
                 properties.load(input);

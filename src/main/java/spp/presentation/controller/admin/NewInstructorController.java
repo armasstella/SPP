@@ -144,7 +144,7 @@ public class NewInstructorController implements Initializable {
                         clearInputFields();
                     }
                 } catch (DAOException e) {
-                    StatusLabel.showError(lblStatus, "No se pudo registrar el profesor.");
+                    StatusLabel.showError(lblStatus, e.getMessage());
                 }
             } else {
                 String errorMessages = String.join("\n• ", instructorDTO.getErrors());

@@ -15,7 +15,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLInvalidAuthorizationSpecException;
 import java.sql.SQLDataException;
 import java.sql.SQLTimeoutException;
 import java.sql.SQLTransactionRollbackException;

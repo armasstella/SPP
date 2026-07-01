@@ -53,7 +53,7 @@ public class InstructorDeactivationController implements Initializable {
                         StatusLabel.showSuccess(lblStatus, "Profesor inactivado exitosamente.");
                     }
                 } catch (DAOException e) {
-                    StatusLabel.showError(lblStatus, "Error al inactivar profesor.");
+                    StatusLabel.showError(lblStatus, e.getMessage());
                 }
             }
         }
@@ -89,7 +89,7 @@ public class InstructorDeactivationController implements Initializable {
                     FXCollections.observableArrayList(instructorsList);
             tblInstructors.setItems(instructorsObservableList);
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener lista de profesores");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }

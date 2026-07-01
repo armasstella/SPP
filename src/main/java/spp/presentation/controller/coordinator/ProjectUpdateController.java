@@ -74,7 +74,7 @@ public class ProjectUpdateController implements Initializable {
             tblProjects.setItems(projectsObservableList);
 
         } catch (DAOException e) {
-            StatusLabel.showError(lblStatus, "Error al obtener lista de proyectos.");
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
 
     }
@@ -204,7 +204,7 @@ public class ProjectUpdateController implements Initializable {
                 }
 
             } catch (DAOException e) {
-                StatusLabel.showError(lblStatus, "Error al actualizar el proyecto.");
+                StatusLabel.showError(lblStatus, e.getMessage());
             }
         }
     }

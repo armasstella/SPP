@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import spp.businesslogic.compliance.document.InternDocumentManager;
-import spp.businesslogic.dao.InternDAO;
 import spp.businesslogic.dao.InternDocumentDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.InternDTO;
@@ -42,8 +41,8 @@ public class ReviewDocumentController implements Initializable, InternSelectionL
 
             internSelectorController.displayInterns(prioritizedInterns);
 
-        } catch (DAOException exception) {
-            StatusLabel.showError(lblStatus, "Error al cargar la lista de practicantes asignados.");
+        } catch (DAOException e) {
+            StatusLabel.showError(lblStatus, e.getMessage());
         }
     }
 

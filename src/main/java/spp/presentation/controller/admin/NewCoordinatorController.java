@@ -144,7 +144,7 @@ public class NewCoordinatorController implements Initializable {
                         clearInputFields();
                     }
                 } catch (DAOException e) {
-                    StatusLabel.showError(lblStatus, "No se pudo registrar el coordinador.");
+                    StatusLabel.showError(lblStatus, e.getMessage());
                 }
             } else {
                 String errorMessages = String.join("\n• ", coordinatorDTO.getErrors());

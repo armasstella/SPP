@@ -99,7 +99,7 @@ public class MessageCenterController implements Initializable, DoubleClickListen
             tblMessages.setItems(messagesObservableList);
 
         } catch (DAOException exception) {
-            StatusLabel.showError(lblStatus, "Error al obtener mensajes");
+            StatusLabel.showError(lblStatus, exception.getMessage());
         }
     }
 
