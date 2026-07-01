@@ -106,6 +106,7 @@ public class DocumentEvaluatorController implements Initializable {
     }
 
     public void clearEvaluationFields() {
+        pdfView.setDocument(null);
         cmbGrade.setValue(null);
         taObservations.setText("");
     }
