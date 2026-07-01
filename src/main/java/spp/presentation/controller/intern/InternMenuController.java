@@ -63,6 +63,13 @@ public class InternMenuController implements Initializable {
     }
 
     @FXML
+    private void goToInternProgressView(ActionEvent event) {
+        ViewNavigator.loadView("/spp/presentation/view/intern/InternProgressView.fxml",
+                "Visualizar documentos", event);
+
+    }
+
+    @FXML
     private void goToAvailableProjectsView(ActionEvent event) {
         if (!searchInternProjectAssigned()) {
             if (!searchPrioritizedProjects()) {
