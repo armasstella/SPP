@@ -33,4 +33,19 @@ public interface ISelfEvaluationDAO {
      */
     SelfEvaluationDTO findEvaluationHeaderByStudentNumber(String studentNumber) throws DAOException;
 
+    /**
+     * Verifica si el practicante ha realizado y registrado su autoevaluación.
+     *
+     * Propósito: Comprobar la existencia de una autoevaluación asociada al practicante,
+     * permitiendo determinar si este requisito del proceso de prácticas profesionales
+     * ya fue cumplido.
+     *
+     * @param email Correo electrónico institucional del practicante a consultar.
+     *              No debe ser null ni vacío.
+     * @return true si existe una autoevaluación registrada para el practicante;
+     *         false en caso contrario.
+     * @throws DAOException Si ocurre un error al consultar la capa de persistencia.
+     */
+    boolean hasSelfEvaluation(String email) throws DAOException;
+
 }

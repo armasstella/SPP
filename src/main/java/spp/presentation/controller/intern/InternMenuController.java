@@ -11,6 +11,7 @@ import spp.businesslogic.dao.InternDocumentDAO;
 import spp.businesslogic.dao.PrioritizedProjectDAO;
 import spp.businesslogic.dao.ProfessionalPracticeEnrollmentDAO;
 import spp.businesslogic.dao.ProjectDAO;
+import spp.businesslogic.dao.SelfEvaluationDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.presentation.controller.user.MessageCenterController;
@@ -80,8 +81,13 @@ public class InternMenuController implements Initializable {
     @FXML
     private void goToSelfEvaluationView(ActionEvent event) {
         if (searchInternProjectAssigned()) {
-            ViewNavigator.loadView("/spp/presentation/view/intern/SelfEvaluationGenerationView.fxml",
-                    "Generar Autoevaluación", event);
+            if (!searchSelfEvaluation()) {
+                ViewNavigator.loadView("/spp/presentation/view/intern/SelfEvaluationGenerationView.fxml",
+                        "Generar Autoevaluación", event);
+            } else {
+                AlertHelper.showMessage("Aviso", "Ya has realizado la autoevaluación");
+            }
+
         } else {
             showNoProjectAssignationMessage();
         }
@@ -249,6 +255,20 @@ public class InternMenuController implements Initializable {
         }
 
         return hasFinalReport;
+    }
+
+    private boolean searchSelfEvaluation() {
+        boolean hasDoneSelfEvaluation = false;
+        SelfEvaluationDAO selfEvaluationDAO = new SelfEvaluationDAO();
+        try {
+            if (selfEvaluationDAO.hasSelfEvaluation(ActiveSessionDTO.get().getEmail())){
+                hasDoneSelfEvaluation = true;
+            }
+        } catch (DAOException e) {
+            AlertHelper.showErrorMessage("Error", e.getMessage());
+        }
+
+        return hasDoneSelfEvaluation;
     }
 
 

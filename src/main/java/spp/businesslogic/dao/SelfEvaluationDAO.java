@@ -94,4 +94,28 @@ public class SelfEvaluationDAO implements ISelfEvaluationDAO {
 
         return evaluationHeader;
     }
+
+    @Override
+    public boolean hasSelfEvaluation(String email) throws DAOException {
+        final String CHECK_SELFEVALUATION = "SELECT f_realizo_autoevaluacion(?)";
+        boolean hasSelfevaluation = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_SELFEVALUATION)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasSelfevaluation = resultSet.getBoolean(1);;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al verificar autoevaluación de el practicante", e);
+        }
+
+        return hasSelfevaluation;
+    }
+
 }
