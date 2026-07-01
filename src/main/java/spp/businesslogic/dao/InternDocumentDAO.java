@@ -476,4 +476,70 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
         return documentsList;
     }
 
+    public boolean hasAllMonthlyReports(String email) throws DAOException {
+        final String CHECK_ALL_MONTHLY_REPORTS = "SELECT f_todos_reportes_mensuales_registrados(?)";
+        boolean hasAllMonthlyReportsRegistered = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_ALL_MONTHLY_REPORTS)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasAllMonthlyReportsRegistered = resultSet.getBoolean(1);;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al verificar reportes mensuales para el practicante", e);
+        }
+
+        return hasAllMonthlyReportsRegistered;
+    }
+
+    public boolean hasPartialReport(String email) throws DAOException {
+        final String CHECK_PARTIAL_REPORT = "SELECT f_reporte_parcial_registrado(?)";
+        boolean hasPartialReportRegistered = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_PARTIAL_REPORT)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasPartialReportRegistered = resultSet.getBoolean(1);;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al verificar reporte parcial para el practicante", e);
+        }
+
+        return hasPartialReportRegistered;
+    }
+
+    public boolean hasFinalReport(String email) throws DAOException {
+        final String CHECK_FINAL_REPORT = "SELECT f_reporte_final_registrado(?)";
+        boolean hasFinalReportRegistered = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_FINAL_REPORT)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasFinalReportRegistered = resultSet.getBoolean(1);;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al verificar reporte final para el practicante", e);
+        }
+
+        return hasFinalReportRegistered;
+    }
+
 }

@@ -138,11 +138,15 @@ public class AvailableProjectsController implements Initializable, DoubleClickLi
     private void finishSelection(ActionEvent event) {
         boolean isListEmpty = chosenProjectsObservableList.isEmpty();
 
-        if (isListEmpty) {
-            StatusLabel.showError(lblStatus, "Debes elegir al menos un proyecto.");
+        if (isListEmpty || !hasThreeProjectsSelected()) {
+            StatusLabel.showError(lblStatus, "Debes elegir tres proyectos.");
         } else {
             executeProjectSelection(event);
         }
+    }
+
+    private boolean hasThreeProjectsSelected() {
+        return chosenProjectsObservableList.size() == 3;
     }
 
     private void executeProjectSelection(ActionEvent event) {

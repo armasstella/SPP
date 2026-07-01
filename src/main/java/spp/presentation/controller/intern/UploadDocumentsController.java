@@ -96,7 +96,7 @@ public class UploadDocumentsController {
     private void uploadActivitiesPlan(ActionEvent event) {
         DocumentUploadConfiguration documentConfiguration = new DocumentUploadConfiguration(
                 DocumentType.ACTIVITIES_PLAN,
-                "./documents/intern_documents/activities_plan",
+                "./documents/intern_documents/activities_plan/",
                 "activities_plan",
                 DocumentationPhase.PRACTICE
         );

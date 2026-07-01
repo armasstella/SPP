@@ -25,7 +25,8 @@ import spp.businesslogic.dao.ProjectDAO;
 import spp.businesslogic.exceptions.FileManagementException;
 import spp.utils.file.FileUtils;
 import spp.utils.view.alert.AlertHelper;
-import spp.utils.view.filechooser.FileChooserUtil;
+import spp.utils.view.filechooser.AllowedExtension;
+import spp.utils.view.filechooser.FileChooserHelper;
 import spp.utils.view.inputdata.InputFilter;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
@@ -94,7 +95,7 @@ public class NewProjectController implements Initializable, ChangeListener<Linke
 
     private boolean selectFile(ActionEvent event, String dialogTitle) {
         Window window = ((Node) event.getSource()).getScene().getWindow();
-        File file = FileChooserUtil.selectSingleFile(window, dialogTitle);
+        File file = FileChooserHelper.selectSingleFile(window, dialogTitle, AllowedExtension.DOCX, AllowedExtension.PDF);
 
         if (file != null) {
             selectedDocument = file;

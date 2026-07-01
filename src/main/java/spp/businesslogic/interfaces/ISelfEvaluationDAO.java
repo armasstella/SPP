@@ -10,6 +10,18 @@ import spp.businesslogic.exceptions.DAOException;
 public interface ISelfEvaluationDAO {
 
     /**
+     * Vincula la realización de la autoevaluación para el practicante identificado por su correo electrónico.
+     *
+     * Propósito: Registrar la autoevaluación realizada por el practicante,
+     * permitiendo que posteriormente pueda ser buscado el registro realizado
+     *
+     * @param email Correo electrónico institucional del practicante para el que se creará
+     *              la autoevaluación. No debe ser null ni vacío.
+     * @return true si la autoevaluación se creó correctamente; false si no fue posible crearla.
+     * @throws DAOException Si ocurre un error durante la operación de persistencia.
+     */
+    boolean saveSelfEvaluation(String email) throws DAOException;
+    /**
      * Obtiene el encabezado o información principal de la autoevaluación de un practicante identificado por su matrícula.
      *
      * Propósito: Recuperar los metadatos o resumen de la autoevaluación (fecha, estado, puntuaciones resumidas, observaciones)

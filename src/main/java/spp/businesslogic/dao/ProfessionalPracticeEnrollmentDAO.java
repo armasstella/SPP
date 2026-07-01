@@ -60,7 +60,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             } else if (SQLStateConstant.TRIGGER_EXCEPTION_CODE.equals(e.getSQLState())) {
                 throw new DAOException(e.getMessage());
             } else {
-                throw new DAOException("Ocurrió un error al intentar registrar la inscripción.");
+                throw new DAOException("Ocurrió un error de conexión al intentar registrar la inscripción.");
             }
         }
 
@@ -94,7 +94,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al asignar el proyecto.");
             } else {
-                throw new DAOException("Ocurrió un error interno al intentar asignar el proyecto al practicante.");
+                throw new DAOException("Ocurrió un error de conexión interno al intentar asignar el proyecto al practicante.");
             }
         }
 
@@ -120,7 +120,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
 
         } catch (SQLTimeoutException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Tiempo de espera agotado al asignar la experiencia educativa.");
+            throw new DAOException("Error en conexión. Tiempo de espera agotado al asignar la experiencia educativa.");
 
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
@@ -128,7 +128,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.CONNECTION_ERROR_PREFIX)) {
                 throw new DAOException("Error de conexión al asignar la experiencia educativa.");
             } else {
-                throw new DAOException("Ocurrió un error al intentar asignar la experiencia educativa al practicante.");
+                throw new DAOException("Ocurrió un error de conexión al intentar asignar la experiencia educativa al practicante.");
             }
         }
 
@@ -151,7 +151,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             }
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error al verificar si la práctica está concluida.", e);
+            throw new DAOException("Error de conexión al verificar si la práctica está concluida.", e);
         }
         return isCompleted;
     }
@@ -186,7 +186,7 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
             }
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.FATAL, e);
-            throw new DAOException("Error al obtener resumen de inscripción concluida ", e);
+            throw new DAOException("Error de conexión al obtener resumen de inscripción concluida ", e);
         }
 
         return enrollmentConcludeDTO;
@@ -212,9 +212,32 @@ public class ProfessionalPracticeEnrollmentDAO implements IProfessionalPracticeE
 
         } catch (SQLException e) {
             AppLogger.log(ExceptionLevel.ERROR, e);
-            throw new DAOException("Error al asignar la calificación final", e);
+            throw new DAOException("Error de conexión al asignar la calificación final", e);
         }
         return isGradeAssigned;
+    }
+
+    public boolean hasProjectAssignedInEnrollment(String email) throws DAOException {
+        final String CHECK_PROJECT_ASSIGNED =
+                "SELECT f_tiene_proyecto_asignado(u.id_usuario) FROM usuarios u WHERE u.correo_electronico = ?";
+        boolean hasProjectAssigned = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_PROJECT_ASSIGNED)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        hasProjectAssigned = resultSet.getBoolean(1);;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al verificar asignación de proyecto de practicante", e);
+        }
+
+        return hasProjectAssigned;
     }
 
 }

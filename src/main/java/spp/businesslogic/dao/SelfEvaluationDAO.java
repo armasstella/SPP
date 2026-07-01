@@ -20,6 +20,31 @@ public class SelfEvaluationDAO implements ISelfEvaluationDAO {
     }
 
     @Override
+    public boolean saveSelfEvaluation(String email) throws DAOException {
+        final String INSERT_SELFEVALUATION = "INSERT INTO autoevaluaciones (id_usuario_practicante, matricula) " +
+                "SELECT p.id_usuario, p.matricula FROM usuarios u INNER JOIN practicantes p " +
+                "ON u.id_usuario = p.id_usuario WHERE u.correo_electronico = ?";
+        boolean isInsertSuccessful = false;
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SELFEVALUATION)) {
+                preparedStatement.setString(1, email);
+                isInsertSuccessful = preparedStatement.executeUpdate() != DAOResultConstant.NO_ROWS_AFFECTED;
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            if (e.getSQLState() != null && e.getSQLState().startsWith(SQLStateConstant.TRIGGER_EXCEPTION_CODE)) {
+                throw new DAOException("Error de conexión al buscar periodo activo para guardar autoevaluación.");
+            } else {
+                throw new DAOException("Ocurrió un error al guardar la autoevaluación");
+            }
+        }
+
+        return isInsertSuccessful;
+    }
+
+    @Override
     public SelfEvaluationDTO findEvaluationHeaderByStudentNumber(String studentNumber) throws DAOException {
         final String SELECT_HEADER_DATA =
                 "SELECT CONCAT(ua.nombre, ' ', ua.apellidos) AS nombre_completo, " +

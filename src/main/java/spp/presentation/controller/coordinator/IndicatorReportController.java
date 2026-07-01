@@ -3,9 +3,12 @@ package spp.presentation.controller.coordinator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Window;
 import spp.businesslogic.dao.IndicatorReportDAO;
 import spp.businesslogic.dao.TermDAO;
 import spp.businesslogic.dto.IndicatorFilterDTO;
@@ -16,12 +19,12 @@ import spp.businesslogic.enums.YesNoAllFilter;
 import spp.businesslogic.exceptions.DAOException;
 import spp.utils.file.HtmlToPdfConverter;
 import spp.utils.htmlbuilder.IndicatorReportHtmlBuilder;
-import spp.utils.view.filechooser.FileChooserUtil;
+import spp.utils.view.filechooser.AllowedExtension;
+import spp.utils.view.filechooser.FileChooserHelper;
 import spp.utils.view.inputdata.InputFilter;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.ViewConstant;
 import spp.utils.view.window.ViewNavigator;
-
 import java.io.File;
 import java.net.URL;
 import java.time.LocalDate;
@@ -90,7 +93,7 @@ public class IndicatorReportController implements Initializable {
 
             String html = IndicatorReportHtmlBuilder.buildIndicatorReport(reportData);
 
-            File outputFile = FileChooserUtil.chooseOutputFile(event, DocumentType.INDICATOR_REPORT);
+            File outputFile = chooseOutputFileFromHelper(event);
             if (outputFile != null) {
                 HtmlToPdfConverter.convertToFile(html, outputFile);
                 StatusLabel.showSuccess(lblStatus, "El reporte de indicadores ha sido generado exitosamente.");
@@ -100,6 +103,18 @@ public class IndicatorReportController implements Initializable {
             StatusLabel.showError(lblStatus, e.getMessage());
         }
 
+    }
+
+    private File chooseOutputFileFromHelper(ActionEvent event) {
+        Node sourceNode = (Node) event.getSource();
+        Scene currentScene = sourceNode.getScene();
+        Window currentWindow = currentScene.getWindow();
+
+        return FileChooserHelper.chooseOutputFile(
+                currentWindow,
+                DocumentType.INDICATOR_REPORT,
+                AllowedExtension.PDF
+        );
     }
 
     private IndicatorFilterDTO buildIndicatorFilterDTO() {

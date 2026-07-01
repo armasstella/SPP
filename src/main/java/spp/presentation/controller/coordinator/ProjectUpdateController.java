@@ -100,18 +100,16 @@ public class ProjectUpdateController implements Initializable {
         if (projectInEdition == null) {
             StatusLabel.showError(lblStatus, "Debe seleccionar un proyecto");
         } else {
-            lblStatus.setText("");
-            lblMessageBeforeEdition.setVisible(false);
-            vbShowAllProjects.setVisible(false);
-            hbContinueButtons.setVisible(false);
-            lblMessageInEdition.setVisible(true);
-            vbEditProject.setVisible(true);
-            hbEditionButtons.setVisible(true);
-            txtName.setText(projectInEdition.getName());
-            txtDescription.setText(projectInEdition.getDescription());
-            txtPlacesAvailable.setText(String.valueOf(projectInEdition.getPlacesAvailable()));
+            hideElementsForProjectsTable();
+            setDataForProjectInEdition();
 
         }
+    }
+
+    private void setDataForProjectInEdition() {
+        txtName.setText(projectInEdition.getName());
+        txtDescription.setText(projectInEdition.getDescription());
+        txtPlacesAvailable.setText(String.valueOf(projectInEdition.getPlacesAvailable()));
     }
 
     @FXML
@@ -122,26 +120,33 @@ public class ProjectUpdateController implements Initializable {
             if (AlertHelper.showConfirmation("¿Seguro que desea cancelar?",
                     "La información registrada se perderá")) {
 
-                clearInputFields();
-                lblStatus.setText("");
-                lblMessageInEdition.setVisible(false);
-                vbEditProject.setVisible(false);
-                hbEditionButtons.setVisible(false);
-                lblMessageBeforeEdition.setVisible(true);
-                vbShowAllProjects.setVisible(true);
-                hbContinueButtons.setVisible(true);
+                hideElementsForEditionForm();
             }
         } else {
-            clearInputFields();
-            lblStatus.setText("");
-            lblMessageInEdition.setVisible(false);
-            vbEditProject.setVisible(false);
-            hbEditionButtons.setVisible(false);
-            lblMessageBeforeEdition.setVisible(true);
-            vbShowAllProjects.setVisible(true);
-            hbContinueButtons.setVisible(true);
+            hideElementsForEditionForm();
         }
 
+    }
+
+    private void hideElementsForEditionForm() {
+        clearInputFields();
+        lblStatus.setText("");
+        lblMessageInEdition.setVisible(false);
+        vbEditProject.setVisible(false);
+        hbEditionButtons.setVisible(false);
+        lblMessageBeforeEdition.setVisible(true);
+        vbShowAllProjects.setVisible(true);
+        hbContinueButtons.setVisible(true);
+    }
+
+    private void hideElementsForProjectsTable() {
+        lblStatus.setText("");
+        lblMessageBeforeEdition.setVisible(false);
+        vbShowAllProjects.setVisible(false);
+        hbContinueButtons.setVisible(false);
+        lblMessageInEdition.setVisible(true);
+        vbEditProject.setVisible(true);
+        hbEditionButtons.setVisible(true);
     }
 
     private boolean hasEmptyFields() {

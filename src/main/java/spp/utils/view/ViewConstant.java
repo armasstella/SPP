@@ -29,7 +29,7 @@ public final class ViewConstant {
     public static final int MAX_LENGTH_INTERN_ACTIVITY_TITLE = 100;
 
     public static final int MAX_LENGTH_COURSE_DETAILS = 45;
-    public static final int MAX_LENGTH_PROJECT_DESCRIPTION = 100;
+    public static final int MAX_LENGTH_PROJECT_DESCRIPTION = 255;
     public static final int MAX_LENGTH_ACTIVITY_DESCRIPTION = 100;
     public static final int MAX_LENGTH_INTERN_ACTIVITY_DESCRIPTION = 255;
 
@@ -39,7 +39,7 @@ public final class ViewConstant {
     public static final int MAX_LENGTH_MANAGER_ROLE = 20;
 
     public static final int MAX_LENGTH_TITLE = 50;
-    public static final int MAX_LENGTH_DESCRIPTION = 45;
+    public static final int MAX_LENGTH_DESCRIPTION = 255;
 
     public static final int MAX_PROGRESS = 100;
     public static final int MAX_CHOSEN_PROJECTS = 3;

@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import spp.businesslogic.dao.InternDocumentDAO;
 import spp.businesslogic.dao.PrioritizedProjectDAO;
 import spp.businesslogic.dao.ProfessionalPracticeEnrollmentDAO;
 import spp.businesslogic.dao.ProjectDAO;
@@ -23,6 +24,8 @@ import java.util.ResourceBundle;
 public class InternMenuController implements Initializable {
 
     @FXML private BorderPane rootMenuPane;
+    ProfessionalPracticeEnrollmentDAO professionalPracticeEnrollmentDAO = new ProfessionalPracticeEnrollmentDAO();
+    InternDocumentDAO  internDocumentDAO = new InternDocumentDAO();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -38,8 +41,17 @@ public class InternMenuController implements Initializable {
 
     @FXML
     private void goToMonthlyActivityRegistrationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyReportMenu.fxml",
-                "Menú de Reportes Mensuales", event);
+        if (searchInternProjectAssigned()) {
+            if (!searchMonthlyReports()) {
+                ViewNavigator.loadView("/spp/presentation/view/intern/MonthlyReportMenu.fxml",
+                        "Menú de Reportes Mensuales", event);
+            } else {
+                AlertHelper.showMessage("Aviso", "Ya has subido al sistema tus reportes mensuales.");
+            }
+        } else {
+            showNoProjectAssignationMessage();
+        }
+
     }
 
     @FXML
@@ -51,11 +63,72 @@ public class InternMenuController implements Initializable {
 
     @FXML
     private void goToAvailableProjectsView(ActionEvent event) {
-        if (!searchPrioritizedProjects()) {
-            if (searchMinimumProjects()) {
-                ViewNavigator.loadView("/spp/presentation/view/intern/AvailableProjectsView.fxml",
-                        "Proyectos disponibles", event);
+        if (!searchInternProjectAssigned()) {
+            if (!searchPrioritizedProjects()) {
+                if (searchMinimumProjects()) {
+                    ViewNavigator.loadView("/spp/presentation/view/intern/AvailableProjectsView.fxml",
+                            "Proyectos disponibles", event);
+                }
             }
+        } else {
+            AlertHelper.showMessage("Aviso", "Ya tienes un proyecto asignado");
+        }
+
+
+    }
+
+    @FXML
+    private void goToSelfEvaluationView(ActionEvent event) {
+        if (searchInternProjectAssigned()) {
+            ViewNavigator.loadView("/spp/presentation/view/intern/SelfEvaluationGenerationView.fxml",
+                    "Generar Autoevaluación", event);
+        } else {
+            showNoProjectAssignationMessage();
+        }
+
+    }
+
+    @FXML
+    private void goToMessageCenter(ActionEvent event) {
+        MessageCenterController messageCenterController = ViewNavigator.loadView(
+                "/spp/presentation/view/user/MessageCenterView.fxml",
+                "Centro de mensajes", event);
+
+        if (messageCenterController != null) {
+            messageCenterController.setPreviousView("/spp/presentation/view/intern/InternMenuView.fxml",
+                    "Menú Practicante");
+        }
+
+    }
+
+    @FXML
+    private void goToPartialReportView(ActionEvent event) {
+        if (searchInternProjectAssigned()) {
+            if (!searchPartialReport()) {
+                ViewNavigator.loadView("/spp/presentation/view/intern/PartialReportGenerationView.fxml",
+                        "Generar Reporte Parcial", event);
+            } else {
+                AlertHelper.showMessage("Aviso", "Ya has subido al sistema tu reporte parcial.");
+            }
+
+        } else {
+            showNoProjectAssignationMessage();
+        }
+
+    }
+
+    @FXML
+    private void goToFinalActivityRegistrationView(ActionEvent event) {
+        if (searchInternProjectAssigned()) {
+            if (!searchFinalReport()) {
+                ViewNavigator.loadView("/spp/presentation/view/intern/FinalReportMenu.fxml",
+                        "Menú de Reporte Final", event);
+            } else {
+                AlertHelper.showMessage("Aviso", "Ya has subido al sistema tu reporte final.");
+            }
+
+        } else {
+            showNoProjectAssignationMessage();
         }
 
     }
@@ -67,7 +140,7 @@ public class InternMenuController implements Initializable {
             PrioritizedProjectDAO prioritizedProjectDAO = new PrioritizedProjectDAO();
             hasPrioritizedProjects = prioritizedProjectDAO.findPrioritizedProjectsByInternEmail(ActiveSessionDTO.get().getEmail());
             if (hasPrioritizedProjects) {
-                AlertHelper.showErrorMessage("Operación no disponible",
+                AlertHelper.showMessage("Operación no disponible",
                         "Ya has seleccionado tres proyectos");
             }
         } catch (DAOException e) {
@@ -95,38 +168,6 @@ public class InternMenuController implements Initializable {
 
     }
 
-    @FXML
-    private void goToSelfEvaluationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/SelfEvaluationGenerationView.fxml",
-                "Generar Autoevaluación", event);
-
-    }
-
-    @FXML
-    private void goToMessageCenter(ActionEvent event) {
-        MessageCenterController messageCenterController = ViewNavigator.loadView(
-                "/spp/presentation/view/user/MessageCenterView.fxml",
-                "Centro de mensajes", event);
-
-        if (messageCenterController != null) {
-            messageCenterController.setPreviousView("/spp/presentation/view/intern/InternMenuView.fxml",
-                    "Menú Practicante");
-        }
-
-    }
-
-    @FXML
-    private void goToPartialReportView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/PartialReportGenerationView.fxml",
-                "Generar Reporte Parcial", event);
-    }
-
-    @FXML
-    private void goToFinalActivityRegistrationView(ActionEvent event) {
-        ViewNavigator.loadView("/spp/presentation/view/intern/FinalReportMenu.fxml",
-                "Menú de Reporte Final", event);
-    }
-
     private void enableViewByEnrollmentStatus() {
         if (hasEnrollmentConclude()) {
             AlertHelper.showMessage("Prácticas finalizadas", "Ha concluido sus practicas profesionales");
@@ -139,8 +180,6 @@ public class InternMenuController implements Initializable {
     private boolean hasEnrollmentConclude() {
         boolean isEnrollmentConclude = false;
 
-        ProfessionalPracticeEnrollmentDAO professionalPracticeEnrollmentDAO
-                = new ProfessionalPracticeEnrollmentDAO();
         try {
             if (professionalPracticeEnrollmentDAO.isPracticeCompletedByInternEmail(
                     ActiveSessionDTO.get().getEmail())) {
@@ -151,6 +190,65 @@ public class InternMenuController implements Initializable {
         }
 
         return isEnrollmentConclude;
+    }
+
+    private boolean searchInternProjectAssigned() {
+        boolean hasProjectAssigned = false;
+        try {
+            if (professionalPracticeEnrollmentDAO.hasProjectAssignedInEnrollment(
+                    ActiveSessionDTO.get().getEmail())) {
+                hasProjectAssigned = true;
+            }
+        } catch (DAOException e) {
+            AlertHelper.showErrorMessage("Error", e.getMessage());
+        }
+
+        System.out.println("hasProjectAssigned: " + hasProjectAssigned);
+        return hasProjectAssigned;
+    }
+
+    private void showNoProjectAssignationMessage() {
+        AlertHelper.showMessage("Operación no disponible",
+                "No cuentas con un proyecto asignado.");
+    }
+
+    private boolean searchMonthlyReports() {
+        boolean hasMonthlyReports = false;
+        try {
+            if (internDocumentDAO.hasAllMonthlyReports(ActiveSessionDTO.get().getEmail())) {
+                hasMonthlyReports = true;
+            }
+        } catch (DAOException e) {
+            AlertHelper.showErrorMessage("Error", e.getMessage());
+        }
+
+        return hasMonthlyReports;
+    }
+
+    private boolean searchPartialReport() {
+        boolean hasPartialReport = false;
+        try {
+            if (internDocumentDAO.hasPartialReport(ActiveSessionDTO.get().getEmail())) {
+                hasPartialReport = true;
+            }
+        } catch (DAOException e) {
+            AlertHelper.showErrorMessage("Error", e.getMessage());
+        }
+
+        return hasPartialReport;
+    }
+
+    private boolean searchFinalReport() {
+        boolean hasFinalReport = false;
+        try {
+            if (internDocumentDAO.hasFinalReport(ActiveSessionDTO.get().getEmail())) {
+                hasFinalReport = true;
+            }
+        } catch (DAOException e) {
+            AlertHelper.showErrorMessage("Error", e.getMessage());
+        }
+
+        return hasFinalReport;
     }
 
 

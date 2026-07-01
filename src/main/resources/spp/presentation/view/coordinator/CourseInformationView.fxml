@@ -52,7 +52,7 @@
                                      reorderable="false"/>
 
                         <TableColumn fx:id="colTerm" text="Periodo"
-                                     prefWidth="180"
+                                     prefWidth="150"
                                      reorderable="false"/>
 
                         <TableColumn fx:id="colSchoolBlock" text="Bloque"
@@ -64,7 +64,7 @@
                                      reorderable="false"/>
 
                         <TableColumn fx:id="colInstructor" text="Profesor"
-                                     prefWidth="100" minWidth="100" maxWidth="100"
+                                     prefWidth="200"
                                      reorderable="false"/>
 
                         <TableColumn fx:id="colNumberOfInterns" text="Cant. Estudiantes"

@@ -19,12 +19,14 @@ import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.exceptions.FileGenerationException;
 import spp.utils.file.HtmlToPdfConverter;
 import spp.utils.htmlbuilder.SelfEvaluationHtmlBuilder;
+import spp.utils.view.alert.AlertHelper;
 import spp.utils.view.filechooser.AllowedExtension;
 import spp.utils.view.filechooser.FileChooserHelper;
 import spp.utils.view.label.StatusLabel;
 import spp.utils.view.window.ViewNavigator;
 import java.io.File;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -97,15 +99,34 @@ public class SelfEvaluationGenerationController implements Initializable {
             SelfEvaluationDTO evaluation = buildEvaluationDTO();
             String htmlContent = SelfEvaluationHtmlBuilder.buildSelfEvaluation(evaluation);
 
-            File outputFile = chooseOutputFileFromHelper(event, evaluation.getStudentNumber());
+            File outputFile = chooseOutputFileFromHelper(event);
 
             if (outputFile != null) {
                 HtmlToPdfConverter.convertToFile(htmlContent, outputFile);
-                StatusLabel.showSuccess(lblStatus, "Autoevaluación generada correctamente.");
+                if (persistSelfEvaluation()) {
+                    StatusLabel.showSuccess(lblStatus, "Autoevaluación generada correctamente.");
+                } else {
+                    StatusLabel.showError(lblStatus, "La autoevaluación no fue guardada. Intente nuevamente");
+                }
             }
         } catch (FileGenerationException e) {
             StatusLabel.showError(lblStatus, e.getMessage());
         }
+    }
+
+    private boolean persistSelfEvaluation() {
+        boolean isSelfEvaluationPersisted = false;
+        SelfEvaluationDAO selfEvaluationDAO = new SelfEvaluationDAO();
+        try {
+            if (selfEvaluationDAO.saveSelfEvaluation(ActiveSessionDTO.get().getEmail())){
+                isSelfEvaluationPersisted = true;
+            }
+        } catch (DAOException e) {
+            AlertHelper.showErrorMessage("Error", e.getMessage() + ". Genere nuevamente");
+        }
+
+        return isSelfEvaluationPersisted;
+
     }
 
     private boolean areAllQuestionsAnswered() {
@@ -137,7 +158,7 @@ public class SelfEvaluationGenerationController implements Initializable {
         return evaluationDTO;
     }
 
-    private File chooseOutputFileFromHelper(ActionEvent event, String studentNumber) {
+    private File chooseOutputFileFromHelper(ActionEvent event) {
         Node sourceNode = (Node) event.getSource();
         Scene currentScene = sourceNode.getScene();
         Window currentWindow = currentScene.getWindow();
