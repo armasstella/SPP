@@ -64,4 +64,11 @@
             </HBox>
         </VBox>
     </center>
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding>
+                <Insets top="28" bottom="28" left="48" right="48"/>
+            </padding>
+        </HBox>
+    </bottom>
 </BorderPane>

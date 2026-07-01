@@ -18,8 +18,8 @@
 
     <top>
         <VBox styleClass="header">
-            <Label text="Calificaación final" styleClass="header-title"/>
-            <Label text="Asigna la calificación final para los prácticantes" styleClass="header-subtitle"/>
+            <Label text="CALIFICACIÓN FINAL" styleClass="header-title"/>
+            <Label text="Selecciona a un Practicante y asigna la calificación final" styleClass="header-subtitle"/>
         </VBox>
     </top>
 
@@ -28,7 +28,8 @@
             <padding><Insets top="28" right="40" bottom="20" left="40"/></padding>
 
             <Label text="Alumnos" styleClass="section-title"/>
-            <ComboBox fx:id="cmbInterns" maxWidth="Infinity" style=""/>
+            <ComboBox fx:id="cmbInterns" maxWidth="Infinity" styleClass="field-input"/>
+
 
             <Label text="Asignar calificación final" styleClass="section-title"/>
             <Label text="Calificación (0 - 10)" styleClass="field-label"/>
@@ -40,7 +41,9 @@
 
     <bottom>
         <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
-            <padding><Insets top="12" right="40" bottom="16" left="40"/></padding>
+            <padding>
+                <Insets top="12" right="40" bottom="16" left="40"/>
+            </padding>
             <Button text="Cancelar" styleClass="btn-back" onAction="#goToInstructorMenuView"/>
             <Button text="Aceptar" styleClass="btn-add" onAction="#assignFinalGrade"/>
         </HBox>

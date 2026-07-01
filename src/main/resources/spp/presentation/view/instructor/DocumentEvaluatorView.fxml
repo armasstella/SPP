@@ -17,14 +17,14 @@
 
     <Label text="VISUALIZACIÓN Y EVALUACIÓN DE DOCUMENTO" styleClass="section-subtitle"/>
 
-    <VBox VBox.vgrow="ALWAYS" style="-fx-border-color: #cccccc; -fx-border-width: 1;">
+    <VBox VBox.vgrow="ALWAYS" styleClass="vbox-with-border">
         <PDFView fx:id="pdfView" VBox.vgrow="ALWAYS"/>
     </VBox>
 
     <HBox spacing="20" alignment="CENTER_LEFT">
         <VBox spacing="5">
             <Label text="Calificación (1-10):" styleClass="field-description"/>
-            <ComboBox fx:id="cmbGrade" prefWidth="120"/>
+            <ComboBox fx:id="cmbGrade" prefWidth="120" styleClass="field-input"/>
         </VBox>
         <VBox spacing="5" HBox.hgrow="ALWAYS">
             <Label text="Observaciones:" styleClass="field-description"/>

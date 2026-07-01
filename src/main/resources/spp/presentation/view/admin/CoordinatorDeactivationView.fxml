@@ -54,7 +54,7 @@
         <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
             <padding><Insets top="12" bottom="16" left="48" right="48"/></padding>
             <Button text="Cancelar" styleClass="btn-back" onAction="#cancel"/>
-            <Button text="Inactivar" styleClass="btn-danger" onAction="#deactivateCoordinator"/>
+            <Button text="Inactivar" styleClass="btn-primary" onAction="#deactivateCoordinator"/>
         </HBox>
     </bottom>
 

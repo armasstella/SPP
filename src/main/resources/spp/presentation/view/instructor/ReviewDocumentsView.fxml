@@ -36,8 +36,8 @@
                 <Insets top="10" right="20" bottom="15" left="20"/>
             </padding>
             <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" HBox.hgrow="ALWAYS"/>
-            <Button text="Cancelar" onAction="#cancel" styleClass="btn-danger"/>
-            <Button text="Registrar Evaluación" onAction="#saveEvaluation" styleClass="btn-primary"/>
+            <Button text="Cancelar" onAction="#cancel" styleClass="btn-back"/>
+            <Button text="Registrar Evaluación" onAction="#saveEvaluation" styleClass="btn-add"/>
         </HBox>
     </bottom>
 </BorderPane>
