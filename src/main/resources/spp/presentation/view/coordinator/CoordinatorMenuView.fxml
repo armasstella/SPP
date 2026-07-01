@@ -71,6 +71,10 @@
                 <Button text="Inactivar Practicante"
                         styleClass="option-btn, btn-inactivate"
                         onAction="#goToInternDeactivationView"/>
+
+                <Button text="Información de cursos"
+                        styleClass="option-btn, btn-add"
+                        onAction="#goToCourseInformationView"/>
             </VBox>
 
             <VBox alignment="TOP_CENTER" spacing="16">
@@ -93,29 +97,22 @@
                 <Button text="Eliminar Proyecto"
                         styleClass="option-btn, btn-inactivate"
                         onAction="#goToProjectDeletionView"/>
-            </VBox>
 
-            <VBox alignment="TOP_CENTER" spacing="16">
-                <padding>
-                    <Insets top="32"/>
-                </padding>
-
-                <Button text="Información de cursos"
-                        styleClass="option-btn, btn-add"
-                        onAction="#goToCourseInformationView"/>
 
                 <Button text="Generar Reporte"
                         styleClass="option-btn, btn-activate"
                         onAction="#goToIndicatorReportView"/>
-            </VBox>
 
+            </VBox>
         </HBox>
     </center>
 
-    <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
-        <padding>
-            <Insets top="28" bottom="28" left="48" right="48"/>
-        </padding>
-    </HBox>
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding>
+                <Insets top="28" bottom="28" left="48" right="48"/>
+            </padding>
+        </HBox>
+    </bottom>
 
 </BorderPane>
