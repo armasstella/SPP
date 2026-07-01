@@ -40,7 +40,7 @@
 
         <VBox fx:id="vbShowedElementsForCourseStatus" HBox.hgrow="ALWAYS">
             <VBox fx:id="vbAvailableOptions" visible="false" VBox.vgrow="ALWAYS"
-                  managed="${vbAvailableOptions.visible}" styleClass="options-container">
+                  managed="${vbAvailableOptions.visible}" styleClass="options-container" alignment="CENTER">
                 <HBox styleClass="options-container" alignment="CENTER" spacing="16">
                     <VBox alignment="CENTER" spacing="16">
                         <padding><Insets top="28" bottom="28" left="48" right="48"/></padding>
@@ -69,7 +69,13 @@
                 </VBox>
             </VBox>
         </VBox>
-
-
     </center>
+
+    <bottom>
+        <HBox styleClass="footer" alignment="CENTER_RIGHT" spacing="12">
+            <padding>
+                <Insets top="28" bottom="28" left="48" right="48"/>
+            </padding>
+        </HBox>
+    </bottom>
 </BorderPane>
