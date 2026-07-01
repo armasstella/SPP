@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="spp.presentation.controller.instructor.InternProgressController"
+            minWidth="900" minHeight="600" styleClass="root-pane"
+            stylesheets="@/spp/presentation/css/MainStyle.css">
+
+    <top>
+        <VBox styleClass="header" spacing="5">
+            <Label text="SEGUIMIENTO DE DOCUMENTOS SUBIDOS" styleClass="header-title"/>
+        </VBox>
+    </top>
+
+    <center>
+        <HBox spacing="15" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+
+            <fx:include fx:id="internDocumentsUploads" source="InternDocumentsUploadsView.fxml" />
+
+            <fx:include fx:id="documentUpload" source="DocumentUploadView.fxml" />
+        </HBox>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="15" styleClass="footer">
+            <padding>
+                <Insets top="10" right="20" bottom="15" left="20"/>
+            </padding>
+            <Label fx:id="lblStatus" text="" styleClass="lbl-status" wrapText="true" HBox.hgrow="ALWAYS"/>
+        </HBox>
+    </bottom>
+</BorderPane>
