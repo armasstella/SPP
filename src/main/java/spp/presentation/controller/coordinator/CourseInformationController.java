@@ -9,19 +9,24 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import spp.businesslogic.dao.CourseDAO;
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.exceptions.DAOException;
+import spp.utils.view.table.DoubleClickListener;
 import spp.utils.view.table.GenericNestedSelector;
 import spp.utils.view.label.StatusLabel;
+import spp.utils.view.table.TableViewConfigurator;
 import spp.utils.view.window.ViewNavigator;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 
-public class CourseInformationController implements Initializable {
+public class CourseInformationController implements Initializable, DoubleClickListener<CourseDTO> {
 
+    @FXML private BorderPane rootMenuPane;
     @FXML private Label lblStatus;
     @FXML private TableView<CourseDTO> tblCourses;
     @FXML private TableColumn<CourseDTO, String> colCourseCode;
@@ -31,11 +36,22 @@ public class CourseInformationController implements Initializable {
     @FXML private TableColumn<CourseDTO, String> colInstructor;
     @FXML private TableColumn<CourseDTO, String> colNumberOfInterns;
 
+    private CourseDTO selectedCourse;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpColumns();
         obtainCourses();
+        TableViewConfigurator.enableDoubleClickSelection(tblCourses, this);
+    }
 
+    @Override
+    public void onItemSelected(CourseDTO clickedCourse) {
+        this.selectedCourse = clickedCourse;
+        Stage currentStage = (Stage) rootMenuPane.getScene().getWindow();
+        InternTrackingController internTrackingController = ViewNavigator.loadView("/spp/presentation/view/coordinator/InternsTrackingView.fxml",
+                "Asignar Profesor", currentStage);
+        internTrackingController.setCourseData(clickedCourse.getIdCourse());
     }
 
     private void setUpColumns() {

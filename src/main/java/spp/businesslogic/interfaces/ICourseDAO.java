@@ -2,6 +2,7 @@ package spp.businesslogic.interfaces;
 
 
 import spp.businesslogic.dto.CourseDTO;
+import spp.businesslogic.dto.InternTrackingCourseEnrollmentDTO;
 import spp.businesslogic.exceptions.DAOException;
 import java.util.List;
 
@@ -70,5 +71,7 @@ public interface ICourseDAO {
      * @throws DAOException Si ocurre un error durante la consulta a la persistencia.
      */
     List<CourseDTO> getCourseCodesForActiveTerm() throws DAOException;
+
+    List<InternTrackingCourseEnrollmentDTO> getTrackingByCourseId(int courseId) throws DAOException;
 
 }

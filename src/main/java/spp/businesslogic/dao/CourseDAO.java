@@ -3,6 +3,7 @@ package spp.businesslogic.dao;
 
 import spp.businesslogic.dto.CourseDTO;
 import spp.businesslogic.dto.InstructorDTO;
+import spp.businesslogic.dto.InternTrackingCourseEnrollmentDTO;
 import spp.businesslogic.dto.TermDTO;
 import spp.businesslogic.exceptions.DAOException;
 import spp.businesslogic.interfaces.ICourseDAO;
@@ -11,6 +12,7 @@ import spp.utils.exceptionmanager.ExceptionLevel;
 import spp.utils.exceptionmanager.SQLStateConstant;
 import spp.utils.logger.AppLogger;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -234,4 +236,37 @@ public class CourseDAO implements ICourseDAO {
 
         return coursesList;
     }
+
+    @Override
+    public List<InternTrackingCourseEnrollmentDTO> getTrackingByCourseId(int courseId) throws DAOException {
+        final String CALL_COURSE_DETAIL_TRACKING = "CALL sp_obtener_seguimiento_practicantes(?)";
+        List<InternTrackingCourseEnrollmentDTO> internTrackinList = new ArrayList<>();
+
+        try {
+            Connection connection = MySQLConnection.getInstance().getConnection();
+            CallableStatement callableStatement = connection.prepareCall(CALL_COURSE_DETAIL_TRACKING);
+            callableStatement.setInt(1, courseId);
+            try (ResultSet resultSet = callableStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    InternTrackingCourseEnrollmentDTO internTrackin = new InternTrackingCourseEnrollmentDTO();
+                    internTrackin.setInternId(resultSet.getInt("id_practicante"));
+                    internTrackin.setStudentNumber(resultSet.getString("matricula"));
+                    internTrackin.setFullName(resultSet.getString("nombre_completo"));
+                    internTrackin.setEmail(resultSet.getString("correo_electronico"));
+                    internTrackin.setNameProjectAssigned(resultSet.getString("proyecto_asignado"));
+                    internTrackin.setAddressProject(resultSet.getString("direccion_proyecto"));
+                    internTrackin.setCompletedHours(resultSet.getInt("horas_realizadas"));
+                    internTrackin.setEnrollmentPhase(resultSet.getString("estado_fase"));
+                    internTrackinList.add(internTrackin);
+                }
+                callableStatement.close();
+            }
+        } catch (SQLException e) {
+            AppLogger.log(ExceptionLevel.FATAL, e);
+            throw new DAOException("Error de conexión al obtener datos de seguimiento de practicantes.", e);
+        }
+
+        return internTrackinList;
+    }
+
 }
