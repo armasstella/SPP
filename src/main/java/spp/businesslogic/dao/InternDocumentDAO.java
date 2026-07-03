@@ -550,29 +550,31 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
         return hasFinalReportRegistered;
     }
 
-    public List<ReviewedDocumentDTO> findGradedDocumentsByInternEmail(String email) throws DAOException {
+    public List<ReviewedDocumentDTO> findGradedDocumentsByInternEmail(int internId) throws DAOException {
         final String SELECT_DOCUMENTS = "SELECT " +
-                "rv.id_evaluacion, " +
-                "    rv.id_documento, " +
-                "    rv.id_usuario_profesor, " +
-                "    rv.estado, " +
-                "    COALESCE(rv.calificacion, 'Sin calificacion') AS 'calificacion', " +
-                "    rv.fecha_revision, " +
-                "COALESCE(rv.comentarios, 'Sin comentarios'), dp.ruta_archivo AS 'comentarios' " +
+                "   dp.tipo, " +
+                "   rv.id_evaluacion, " +
+                "   rv.id_documento, " +
+                "   rv.id_usuario_profesor, " +
+                "   rv.estado, " +
+                "   COALESCE(rv.calificacion, 'Sin calificacion') AS 'calificacion', " +
+                "   rv.fecha_revision, " +
+                "   COALESCE(rv.comentarios, 'Sin comentarios') AS 'comentarios' , " +
+                "   dp.ruta_archivo " +
                 "FROM revision_documentos rv " +
                 "INNER JOIN documentos_practicantes dp " +
                 "ON rv.id_documento = dp.id_documentos_iniciales " +
-                "    WHERE dp.id_usuario_practicante = 9";
+                "    WHERE dp.id_usuario_practicante = ?";
         List<spp.businesslogic.dto.ReviewedDocumentDTO> documentsList = new ArrayList<>();
 
         try {
             Connection connection = MySQLConnection.getInstance().getConnection();
             try (PreparedStatement preparedStatement = connection.prepareStatement(SELECT_DOCUMENTS)) {
-                preparedStatement.setString(1, email);
+                preparedStatement.setInt(1, internId);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         ReviewedDocumentDTO reviewedDocumentDTO = new spp.businesslogic.dto.ReviewedDocumentDTO();
-                        String documentTypeRaw = resultSet.getString("document_type");
+                        String documentTypeRaw = resultSet.getString("tipo");
                         DocumentType documentType = DocumentType.valueOf(documentTypeRaw);
                         String documentTypeForUser = documentType.getValue();
                         reviewedDocumentDTO.setDocumentType(documentTypeForUser);
@@ -583,6 +585,7 @@ public class InternDocumentDAO implements IInitialDocumentDAO {
                         reviewedDocumentDTO.setGrade(resultSet.getString("calificacion"));
                         reviewedDocumentDTO.setRevisionDate(resultSet.getString("fecha_revision"));
                         reviewedDocumentDTO.setComments(resultSet.getString("comentarios"));
+                        reviewedDocumentDTO.setPathFile(resultSet.getString("ruta_archivo"));
                         documentsList.add(reviewedDocumentDTO);
                     }
                 }

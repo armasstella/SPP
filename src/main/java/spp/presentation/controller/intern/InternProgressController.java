@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import spp.businesslogic.dao.InternDocumentDAO;
+import spp.businesslogic.dao.UserDAO;
 import spp.businesslogic.dto.ActiveSessionDTO;
 import spp.businesslogic.dto.ReviewedDocumentDTO;
 import spp.businesslogic.exceptions.DAOException;
@@ -50,14 +51,11 @@ public class InternProgressController implements Initializable, DoubleClickListe
     @Override
     public void onItemSelected(ReviewedDocumentDTO selectedReviewedDocument) {
         displayPdf(selectedReviewedDocument.getPathFile());
+
     }
 
-    private void displayPdf(String absolutePath) {
-        Path basePath = Paths.get(System.getProperty("user.dir")).toAbsolutePath();
-        Path targetPath = Paths.get(absolutePath).toAbsolutePath();
-        Path relativePath = basePath.relativize(targetPath);
-        File pdfFile = new File(relativePath.toString());
-
+    private void displayPdf(String relativePath) {
+        File pdfFile = new File(relativePath);
         if (pdfFile.exists()) {
             pdfView.load(pdfFile);
         } else {
@@ -70,31 +68,34 @@ public class InternProgressController implements Initializable, DoubleClickListe
                 new GenericNestedSelector<>("documentType", "Valor no encontrado");
         GenericNestedSelector<ReviewedDocumentDTO> gradeStatusSelector =
                 new GenericNestedSelector<>("status", "Valor no encontrado");
-        GenericNestedSelector<ReviewedDocumentDTO> commentsSelector =
-                new GenericNestedSelector<>("comments", "Valor no encontrado");
         GenericNestedSelector<ReviewedDocumentDTO> gradeSelector =
                 new GenericNestedSelector<>("grade", "Valor no encontrado");
+        GenericNestedSelector<ReviewedDocumentDTO> commentsSelector =
+                new GenericNestedSelector<>("comments", "Valor no encontrado");
         GenericNestedSelector<ReviewedDocumentDTO> revisionDateSelector =
                 new GenericNestedSelector<>("revisionDate", "Valor no encontrado");
 
         colDocumentType.setCellValueFactory(typeSelector);
         colStatus.setCellValueFactory(gradeStatusSelector);
         colGrade.setCellValueFactory(gradeSelector);
-        colReviewedDate.setCellValueFactory(revisionDateSelector);
         colComments.setCellValueFactory(commentsSelector);
+        colReviewedDate.setCellValueFactory(revisionDateSelector);
     }
 
     private void obtainReviewedDocuments() {
         InternDocumentDAO internDocumentDAO = new InternDocumentDAO();
         try {
-            List<ReviewedDocumentDTO> reviewedDocumentList = internDocumentDAO.findGradedDocumentsByInternEmail(
-                    ActiveSessionDTO.get().getEmail());
+            UserDAO userDAO = new UserDAO();
+            int internId = userDAO.obtainId(ActiveSessionDTO.get().getEmail());
+            List<ReviewedDocumentDTO> reviewedDocumentList = internDocumentDAO.findGradedDocumentsByInternEmail(internId);
             if (reviewedDocumentList.isEmpty()) {
                 StatusLabel.showError(lblStatus, "No tiene documentos subidos");
+            } else {
+                StatusLabel.showSuccess(lblStatus, "Documentos encontrados");
             }
-            ObservableList<ReviewedDocumentDTO> reviewedDocumentsObservableList = FXCollections.observableArrayList();
+            ObservableList<ReviewedDocumentDTO> reviewedDocumentsObservableList = FXCollections.observableArrayList(reviewedDocumentList);
             tblReviewedDocuments.setItems(reviewedDocumentsObservableList);
-        } catch (DAOException e) {
+        } catch (DAOException | NullPointerException e) {
             AlertHelper.showErrorMessage("Error", e.getMessage());
         }
 

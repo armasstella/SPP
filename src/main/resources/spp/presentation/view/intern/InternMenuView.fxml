@@ -82,6 +82,9 @@
                             styleClass="option-btn, btn-add"
                             onAction="#goToAvailableProjectsView"
                     />
+
+
+
                 </VBox>
             </HBox>
         </VBox>
